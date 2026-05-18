@@ -113,6 +113,7 @@ export {
   branchBehindUpstreamScenario,
   branchDivergedScenario,
   branchTrackingUpstreamScenario,
+  chipRenderingShowcaseScenario,
   detachedHeadScenario,
   dirtyManyFilesScenario,
   featureBranchOneCommitScenario,

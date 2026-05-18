@@ -16,6 +16,7 @@ import { branchAheadOfUpstreamScenario } from './branch-ahead-of-upstream'
 import { branchBehindUpstreamScenario } from './branch-behind-upstream'
 import { branchDivergedScenario } from './branch-diverged'
 import { branchTrackingUpstreamScenario } from './branch-tracking-upstream'
+import { chipRenderingShowcaseScenario } from './chip-rendering-showcase'
 import { detachedHeadScenario } from './detached-head'
 import { dirtyManyFilesScenario } from './dirty-many-files'
 import { featureBranchOneCommitScenario } from './feature-branch-one-commit'
@@ -59,6 +60,7 @@ export const allScenarios: readonly Scenario[] = [
   midMergeConflictScenario,
   // history shapes
   richHistoryGraphScenario,
+  chipRenderingShowcaseScenario,
   // stash shapes
   stashedChangesScenario,
   // submodule shapes
@@ -79,6 +81,7 @@ export { branchAheadOfUpstreamScenario } from './branch-ahead-of-upstream'
 export { branchBehindUpstreamScenario } from './branch-behind-upstream'
 export { branchDivergedScenario } from './branch-diverged'
 export { branchTrackingUpstreamScenario } from './branch-tracking-upstream'
+export { chipRenderingShowcaseScenario } from './chip-rendering-showcase'
 export { detachedHeadScenario } from './detached-head'
 export { dirtyManyFilesScenario } from './dirty-many-files'
 export { featureBranchOneCommitScenario } from './feature-branch-one-commit'
