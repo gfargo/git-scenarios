@@ -1,0 +1,33 @@
+# Build output
+dist/
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm + eslint caches
+.npm
+.eslintcache
+
+# Coverage
+coverage/
+
+# npm pack output
+*.tgz
+
+# Local environment
+.env
+.env.local

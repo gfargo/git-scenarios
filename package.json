@@ -1,0 +1,89 @@
+{
+  "name": "@gfargo/git-scenarios",
+  "version": "0.1.0",
+  "description": "Composable atoms for spinning up real git repos in any state — merge conflicts, out-of-date submodules, multiple remotes, in-progress operations, multi-contributor history, and more. For tests, demos, and tool development.",
+  "license": "MIT",
+  "author": {
+    "name": "Griffen Fargo",
+    "url": "https://github.com/gfargo"
+  },
+  "homepage": "https://github.com/gfargo/git-scenarios#readme",
+  "bugs": {
+    "url": "https://github.com/gfargo/git-scenarios/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gfargo/git-scenarios.git"
+  },
+  "sideEffects": false,
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    },
+    "./scenarios": {
+      "types": "./dist/src/scenarios/index.d.ts",
+      "default": "./dist/src/scenarios/index.js"
+    },
+    "./tempGitRepo": {
+      "types": "./dist/src/tempGitRepo.d.ts",
+      "default": "./dist/src/tempGitRepo.js"
+    },
+    "./atoms": {
+      "types": "./dist/src/atoms/index.d.ts",
+      "default": "./dist/src/atoms/index.js"
+    }
+  },
+  "bin": {
+    "git-scenarios": "./dist/bin/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p .",
+    "clean": "rm -rf dist",
+    "lint": "eslint src",
+    "lint:fix": "eslint --fix src",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "prepublishOnly": "npm run clean && npm run build && npm test && npm run lint"
+  },
+  "keywords": [
+    "git",
+    "test",
+    "fixture",
+    "scenario",
+    "simple-git",
+    "temp-repo",
+    "submodule",
+    "merge-conflict",
+    "bisect",
+    "stash",
+    "worktree",
+    "testing",
+    "deterministic"
+  ],
+  "peerDependencies": {
+    "simple-git": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^22.10.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.57.0",
+    "jest": "^29.7.0",
+    "simple-git": "^3.27.0",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  }
+}
