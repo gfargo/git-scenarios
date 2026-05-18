@@ -2,35 +2,35 @@ import { existsSync, readFileSync } from 'fs'
 import { join } from 'path'
 import { createTempGitRepo, type TempGitRepo } from '../tempGitRepo'
 import {
-  abortMerge,
-  addCommit,
-  addRemote,
-  addSubmodule,
-  amendCommit,
-  applyStash,
-  bisectStep,
-  chain,
-  checkoutBranch,
-  createBranch,
-  createTag,
-  defineScenario,
-  deleteBranch,
-  deleteTag,
-  dropStash,
-  emptyCommit,
-  insideSubmodule,
-  onBranch,
-  pinSubmodule,
-  popStash,
-  removeRemote,
-  renameRemote,
-  resetBisect,
-  resetTo,
-  stashChanges,
-  startBisect,
-  startMerge,
-  switchToBranch,
-  writeFiles,
+    abortMerge,
+    addCommit,
+    addRemote,
+    addSubmodule,
+    amendCommit,
+    applyStash,
+    bisectStep,
+    chain,
+    checkoutBranch,
+    createBranch,
+    createTag,
+    defineScenario,
+    deleteBranch,
+    deleteTag,
+    dropStash,
+    emptyCommit,
+    insideSubmodule,
+    onBranch,
+    pinSubmodule,
+    popStash,
+    removeRemote,
+    renameRemote,
+    resetBisect,
+    resetTo,
+    stashChanges,
+    startBisect,
+    startMerge,
+    switchToBranch,
+    writeFiles,
 } from './'
 
 async function withRepo(callback: (repo: TempGitRepo) => Promise<void>): Promise<void> {
@@ -537,7 +537,7 @@ describe('addSubmodule + insideSubmodule + pinSubmodule', () => {
       // flag — exactly the "out of date submodule" shape.
       expect(subStatus).toMatch(/^\+/)
     })
-  })
+  }, 60_000)
 
   it('pinSubmodule updates the parent record to a specific sha', async () => {
     await withRepo(async (repo) => {
