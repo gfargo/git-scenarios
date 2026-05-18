@@ -25,8 +25,8 @@
  *
  * Atom catalog:
  *
- *   - **Control flow**: `chain`, `repeat`
- *   - **Working tree**: `writeFiles`, `seededFiles`
+ *   - **Control flow**: `chain`, `repeat`, `conditionally`
+ *   - **Working tree**: `writeFiles`, `deleteFiles`, `renameFile`, `seededFiles`
  *   - **Staging + commits**: `stageFiles`, `commit`, `addCommit`,
  *     `emptyCommit`, `amendCommit`
  *   - **Branches**: `switchToBranch`, `checkoutBranch`, `createBranch`,
@@ -36,14 +36,17 @@
  *   - **Stash**: `stashChanges`, `applyStash`, `popStash`, `dropStash`
  *   - **Operations**: `startMerge`, `abortMerge`, `startBisect`,
  *     `bisectStep`, `resetBisect`, `resetTo`
+ *   - **Rebase**: `startRebase`, `abortRebase`, `continueRebase`
  *   - **Submodules**: `addSubmodule`, `pinSubmodule`
- *   - **Scoping**: `onBranch`, `insideSubmodule`
+ *   - **Scoping**: `onBranch`, `insideSubmodule`, `withAuthor`
  *   - **Scenarios**: `defineScenario`
  */
 
 export type { Step, FileMap } from './types'
-export { chain, repeat } from './chain'
+export { chain, repeat, conditionally } from './chain'
 export { writeFiles } from './writeFiles'
+export { deleteFiles } from './deleteFiles'
+export { renameFile } from './renameFile'
 export { stageFiles, commit } from './staging'
 export { addCommit } from './addCommit'
 export { switchToBranch, checkoutBranch, createBranch, deleteBranch } from './branches'
@@ -63,6 +66,7 @@ export {
   emptyCommit,
   amendCommit,
 } from './operations'
+export { startRebase, abortRebase, continueRebase } from './rebase'
 export { addSubmodule, pinSubmodule } from './submodule'
 export { addWorktree, removeWorktree } from './worktrees'
 export { setConfig } from './config'
