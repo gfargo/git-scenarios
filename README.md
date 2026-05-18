@@ -6,11 +6,10 @@
 > histories, linked worktrees, and more — for tests, demos, and tool
 > development.
 
-<!-- Badges will populate once published.
 [![npm](https://img.shields.io/npm/v/@gfargo/git-scenarios.svg)](https://www.npmjs.com/package/@gfargo/git-scenarios)
 [![license](https://img.shields.io/npm/l/@gfargo/git-scenarios.svg)](./LICENSE)
-[![types](https://img.shields.io/npm/types/@gfargo/git-scenarios.svg)](#)
--->
+[![types](https://img.shields.io/npm/types/@gfargo/git-scenarios.svg)](https://www.npmjs.com/package/@gfargo/git-scenarios)
+[![CI](https://github.com/gfargo/git-scenarios/actions/workflows/ci.yml/badge.svg)](https://github.com/gfargo/git-scenarios/actions/workflows/ci.yml)
 
 ## What this is
 
@@ -262,6 +261,31 @@ await chain(
   addCommit({ message: 'init', files: { 'README.md': '# repo' } }),
   setConfig('commit.template', '.gitmessage'),
   setConfig('user.signingkey', 'ABC123'),
+)(repo)
+```
+
+### "I need a mid-rebase conflict"
+
+```ts
+await chain(
+  addCommit({ message: 'base', files: { 'x.ts': 'base\n' } }),
+  switchToBranch('feat/theirs'),
+  addCommit({ message: 'theirs', files: { 'x.ts': 'theirs\n' } }),
+  checkoutBranch('main'),
+  addCommit({ message: 'ours', files: { 'x.ts': 'ours\n' } }),
+  checkoutBranch('feat/theirs'),
+  startRebase('main'),
+  // repo is now mid-rebase with x.ts conflicted, REBASE_HEAD set
+)(repo)
+```
+
+### "I need to test rename detection"
+
+```ts
+await chain(
+  addCommit({ message: 'init', files: { 'src/old-name.ts': 'export const x = 1\n' } }),
+  renameFile('src/old-name.ts', 'src/new-name.ts'),
+  commit('refactor: rename old-name → new-name'),
 )(repo)
 ```
 
@@ -520,12 +544,15 @@ The atom signature is uniform: every atom returns a `Step`,
 |---|---|
 | `chain(...steps)` | Sequence atoms; awaits each before the next. Short-circuits on rejection. |
 | `repeat(n, factory)` | `chain(...Array.from({ length: n }, factory))` — readable "do this N times." |
+| `conditionally(condition, step)` | Run `step` only when `condition` is true. Accepts a static boolean or an async predicate `(repo) => boolean`. |
 
 #### Working tree
 
 | Atom | What it does |
 |---|---|
 | `writeFiles({ 'path': content })` | Write literal content. Parent dirs created. Does NOT stage. |
+| `deleteFiles(...paths)` | Remove files from the working directory. Does NOT stage the deletion. |
+| `renameFile(from, to)` | `git mv` — rename a tracked file. Stages the rename for rename-detection. |
 | `seededFiles({ files, seed })` | Write procedurally-generated content (seeded, byte-stable across runs). |
 
 #### Staging + commits
@@ -575,7 +602,7 @@ relative-time scenarios.
 | `popStash({ ref? })` | `git stash pop`. |
 | `dropStash({ ref? })` | `git stash drop`. |
 
-#### Operations (merge / cherry-pick / revert / bisect / reset)
+#### Operations (merge / cherry-pick / revert / rebase / bisect / reset)
 
 | Atom | What it does |
 |---|---|
@@ -584,6 +611,9 @@ relative-time scenarios.
 | `cherryPick(ref, { allowConflict?, date? })` | Cherry-pick — conflicts leave mid-cherry-pick by default. |
 | `abortCherryPick()` | `git cherry-pick --abort`. |
 | `revert(ref, { mainline?, allowConflict?, date? })` | Revert a commit (use `mainline` for merge commits). |
+| `startRebase(onto, { allowConflict? })` | Rebase current branch onto a ref — conflicts leave mid-rebase by default. |
+| `abortRebase()` | `git rebase --abort`. |
+| `continueRebase()` | `git rebase --continue` (after resolving conflicts). |
 | `startBisect({ bad, good })` | Begin a bisect at HEAD's midpoint. |
 | `bisectStep(verdict)` | `'good'` / `'bad'` / `'skip'`. |
 | `resetBisect()` | `git bisect reset`. |
