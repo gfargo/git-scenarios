@@ -1,8 +1,13 @@
-import { mkdir, writeFile as writeFileFs } from 'fs/promises'
+import { execFile } from 'child_process'
+import { mkdir, mkdtemp, rm, writeFile as writeFileFs } from 'fs/promises'
+import { tmpdir } from 'os'
 import { dirname, join } from 'path'
 import { simpleGit } from 'simple-git'
+import { promisify } from 'util'
 import type { TempGitRepo } from '../tempGitRepo'
 import type { Step } from './types'
+
+const execFileAsync = promisify(execFile)
 
 /**
  * Author identity for the `withAuthor` scope. All four fields land
@@ -160,5 +165,120 @@ export function insideSubmodule(submodulePath: string, step: Step): Step {
       },
     }
     await step(submoduleRepo)
+  }
+}
+
+/**
+ * Simulate "the remote has commits we don't" — runs `step` against a
+ * temporary clone of the parent (starting from the parent's current
+ * branch state), then fetches the clone's resulting branch tip back
+ * into the parent as `refs/remotes/<remote>/<branch>`.
+ *
+ * The clone uses the parent's history as the baseline, so commits
+ * inside the step build on top of whatever local state already
+ * exists. The parent's working tree, refs, and current branch are
+ * **untouched** — only the remote-tracking ref gets updated.
+ *
+ *   chain(
+ *     addCommit({ message: 'init', files: { 'README.md': '# repo' } }),
+ *     addCommit({ message: 'feat: A', files: { 'a.ts': 'a' } }),
+ *     addRemote('origin', '/fake/url'),
+ *
+ *     // Simulate upstream having 2 commits we don't.
+ *     withRemoteTracking('origin', 'main', chain(
+ *       addCommit({ message: 'upstream feat B', files: { 'b.ts': 'b' } }),
+ *       addCommit({ message: 'upstream feat C', files: { 'c.ts': 'c' } }),
+ *     )),
+ *
+ *     setUpstream('main', 'origin'),
+ *     // git status now reports: "Your branch is behind 'origin/main' by 2 commits"
+ *   )
+ *
+ * For "diverged" scenarios (both ahead and behind), compose with
+ * additional local commits after `withRemoteTracking`:
+ *
+ *   chain(
+ *     addCommit({ message: 'init' }),
+ *     addRemote('origin', '/fake/url'),
+ *     withRemoteTracking('origin', 'main', chain(
+ *       addCommit({ message: 'upstream only' }),
+ *     )),
+ *     addCommit({ message: 'local only' }),  // diverges from upstream
+ *     setUpstream('main', 'origin'),
+ *   )
+ *
+ * **Precondition**: the named branch must exist on the parent at the
+ * time this atom runs. The clone is initialized from the parent's
+ * current state of that branch.
+ *
+ * Shells out to `git clone` + `git fetch` via `child_process` so the
+ * `-c protocol.file.allow=always` config can be passed (required on
+ * git ≥ 2.38 for file-protocol URLs — CVE-2022-39253).
+ */
+export function withRemoteTracking(remote: string, branch: string, step: Step): Step {
+  return async (parentRepo) => {
+    const clonePath = await mkdtemp(join(tmpdir(), 'coco-remote-track-'))
+    try {
+      // Clone parent into the temp dir. `protocol.file.allow=always`
+      // is needed for file-protocol clones on git ≥ 2.38.
+      await execFileAsync(
+        'git',
+        ['-c', 'protocol.file.allow=always', 'clone', parentRepo.path, clonePath],
+      )
+
+      const cloneGit = simpleGit(clonePath)
+      // Identity + gpgsign on the clone so commits made inside `step`
+      // don't fall back to global git config (which CI runners lack).
+      await cloneGit.addConfig('user.name', 'Coco Test')
+      await cloneGit.addConfig('user.email', 'coco@example.com')
+      await cloneGit.addConfig('commit.gpgsign', 'false')
+
+      // The clone's local branches only include the parent's currently-
+      // active branch (default clone behavior). Check out `branch` —
+      // create a local one from `origin/<branch>` if needed.
+      const localBranches = await cloneGit.branchLocal()
+      if (localBranches.all.includes(branch)) {
+        await cloneGit.checkout(branch)
+      } else {
+        await cloneGit.checkout(['-b', branch, `origin/${branch}`])
+      }
+
+      // Wrap the clone as a TempGitRepo so the step sees the same
+      // shape it would on the parent.
+      const cloneRepo: TempGitRepo = {
+        path: clonePath,
+        git: cloneGit,
+        writeFile: async (filePath, content) => {
+          const abs = join(clonePath, filePath)
+          await mkdir(dirname(abs), { recursive: true })
+          await writeFileFs(abs, content)
+        },
+        commitAll: async (message) => {
+          await cloneGit.add('.')
+          await cloneGit.commit(message)
+        },
+        cleanup: async () => {
+          // No-op: outer finally handles cleanup.
+        },
+      }
+      await step(cloneRepo)
+
+      // Fetch the clone's resulting branch tip back into the parent's
+      // remote-tracking ref. The `+` prefix forces non-fast-forward
+      // updates (useful for divergent histories).
+      await execFileAsync(
+        'git',
+        [
+          '-c',
+          'protocol.file.allow=always',
+          'fetch',
+          clonePath,
+          `+${branch}:refs/remotes/${remote}/${branch}`,
+        ],
+        { cwd: parentRepo.path },
+      )
+    } finally {
+      await rm(clonePath, { recursive: true, force: true })
+    }
   }
 }

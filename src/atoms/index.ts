@@ -33,12 +33,14 @@
  *     `deleteBranch`
  *   - **Tags**: `createTag`, `deleteTag`
  *   - **Remotes**: `addRemote`, `removeRemote`, `renameRemote`
+ *   - **Upstream tracking**: `setUpstream`, `setRemoteRef`
  *   - **Stash**: `stashChanges`, `applyStash`, `popStash`, `dropStash`
  *   - **Operations**: `startMerge`, `abortMerge`, `startBisect`,
  *     `bisectStep`, `resetBisect`, `resetTo`
  *   - **Rebase**: `startRebase`, `abortRebase`, `continueRebase`
  *   - **Submodules**: `addSubmodule`, `pinSubmodule`
- *   - **Scoping**: `onBranch`, `insideSubmodule`, `withAuthor`
+ *   - **Scoping**: `onBranch`, `insideSubmodule`, `withAuthor`,
+ *     `withRemoteTracking`
  *   - **Scenarios**: `defineScenario`
  */
 
@@ -52,6 +54,7 @@ export { addCommit } from './addCommit'
 export { switchToBranch, checkoutBranch, createBranch, deleteBranch } from './branches'
 export { createTag, deleteTag } from './tags'
 export { addRemote, removeRemote, renameRemote } from './remotes'
+export { setUpstream, setRemoteRef } from './upstream'
 export { stashChanges, applyStash, popStash, dropStash } from './stash'
 export {
   startMerge,
@@ -70,7 +73,13 @@ export { startRebase, abortRebase, continueRebase } from './rebase'
 export { addSubmodule, pinSubmodule } from './submodule'
 export { addWorktree, removeWorktree } from './worktrees'
 export { setConfig } from './config'
-export { onBranch, insideSubmodule, withAuthor, type AuthorIdentity } from './scopes'
+export {
+  onBranch,
+  insideSubmodule,
+  withAuthor,
+  withRemoteTracking,
+  type AuthorIdentity,
+} from './scopes'
 export { seededFiles, type SeededFileSpec } from './seededFiles'
 export { defineScenario } from './defineScenario'
 export { daysAgo } from './time'

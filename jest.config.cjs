@@ -14,6 +14,11 @@ module.exports = {
   testEnvironment: 'node',
   roots: ['<rootDir>/src'],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+  // Many tests shell out to git via simple-git (rebase + conflict + continue,
+  // submodule clones, fetch-back patterns). CI runners are slow enough that
+  // the default 5s timeout flakes on these compound flows. 30s gives
+  // headroom without masking real hangs.
+  testTimeout: 30_000,
   transform: {
     '^.+\\.tsx?$': [
       'ts-jest',

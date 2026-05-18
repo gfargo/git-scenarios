@@ -244,6 +244,85 @@ await chain(
 )(repo)
 ```
 
+### "My tool depends on ahead/behind counts — I need a tracked branch"
+
+```ts
+// Tracked, fully synced — "Your branch is up to date with 'origin/main'."
+await chain(
+  addCommit({ message: 'init', files: { 'README.md': '# repo' } }),
+  addRemote('origin', '/fake/url'),
+  setRemoteRef('origin', 'main', 'HEAD'),
+  setUpstream('main', 'origin'),
+)(repo)
+```
+
+### "I need a branch that's N commits ahead of its upstream"
+
+```ts
+// 3 commits ahead of origin/main.
+await chain(
+  addCommit({ message: 'init', files: { 'README.md': '# repo' } }),
+  addRemote('origin', '/fake/url'),
+  // Pin the remote at the current commit ...
+  setRemoteRef('origin', 'main', 'HEAD'),
+  setUpstream('main', 'origin'),
+  // ... then add 3 local-only commits.
+  addCommit({ message: 'feat: a', files: { 'a.ts': 'a\n' } }),
+  addCommit({ message: 'feat: b', files: { 'b.ts': 'b\n' } }),
+  addCommit({ message: 'feat: c', files: { 'c.ts': 'c\n' } }),
+)(repo)
+```
+
+### "I need a branch that's N commits behind its upstream"
+
+```ts
+// `withRemoteTracking` runs a step against a temporary clone, then
+// fetches the resulting branch tip back into the parent as
+// refs/remotes/<remote>/<branch>. Any commit-producing atom works
+// inside.
+await chain(
+  addCommit({ message: 'init', files: { 'README.md': '# repo' } }),
+  addRemote('origin', '/fake/url'),
+  withRemoteTracking('origin', 'main', chain(
+    addCommit({ message: 'upstream B', files: { 'b.ts': 'b' } }),
+    addCommit({ message: 'upstream C', files: { 'c.ts': 'c' } }),
+  )),
+  setUpstream('main', 'origin'),
+)(repo)
+// git status: "Your branch is behind 'origin/main' by 2 commits"
+```
+
+### "I need a diverged branch (both ahead and behind)"
+
+```ts
+await chain(
+  addCommit({ message: 'init', files: { 'README.md': '# repo' } }),
+  addRemote('origin', '/fake/url'),
+  // Two upstream-only commits ...
+  withRemoteTracking('origin', 'main', chain(
+    addCommit({ message: 'upstream X' }),
+    addCommit({ message: 'upstream Y' }),
+  )),
+  // ... then two local-only commits that diverge.
+  addCommit({ message: 'local M', files: { 'm.ts': 'm' } }),
+  addCommit({ message: 'local N', files: { 'n.ts': 'n' } }),
+  setUpstream('main', 'origin'),
+)(repo)
+// git status: "Your branch and 'origin/main' have diverged, 2 and 2"
+```
+
+### "I need detached HEAD"
+
+```ts
+await chain(
+  addCommit({ message: 'init' }),
+  addCommit({ message: 'feat: one' }),
+  addCommit({ message: 'feat: two' }),
+  // No dedicated atom — use simple-git directly inside an inline step:
+  (async (repo) => { await repo.git.checkout(['--detach', 'main~1']) }),
+)(repo)
+```
+
 ### "I need linked worktrees"
 
 ```ts
@@ -330,7 +409,7 @@ binary at `bin.git-scenarios` in `package.json`.
 ## Available scenarios
 
 Run `git-scenarios list` (or `npm run scenario list` inside coco) for
-the live list. Current set (**11 scenarios across 6 kinds**):
+the live list. Current set (**18 scenarios across 6 kinds**):
 
 | Name | Kind | What you get |
 |---|---|---|
@@ -338,6 +417,13 @@ the live list. Current set (**11 scenarios across 6 kinds**):
 | `feature-branch-one-commit` | branch | `main` + `feat/x` (1 commit ahead, `src/feature.ts`) — minimal branch-vs-base shape |
 | `multi-commit-branch` | branch | `feat/dashboard` with 8 varied commits — baseline for navigation / filter / yank |
 | `two-commit-feature` | branch | baseline + a feat commit on `main`, clean worktree — for changelog / log / review smoke tests |
+| `branch-tracking-upstream` | branch | `main` tracks `origin/main`, both at the same commit, clean worktree — baseline "synced" state |
+| `branch-ahead-of-upstream` | branch | `main` is 3 commits ahead of `origin/main` — classic "unpushed" state |
+| `branch-behind-upstream` | branch | `main` is 3 commits behind `origin/main` — fast-forwardable |
+| `branch-diverged` | branch | `main` is 2 ahead AND 2 behind `origin/main` — diverged history |
+| `multi-remote-with-tracking` | branch | fork-workflow: `origin` + `upstream` remotes, `main` tracks `upstream/main`, `feat/fork-work` tracks `origin/feat/fork-work` |
+| `detached-head` | branch | HEAD detached at `main~2`, `main` still at its original tip |
+| `signed-commits-required` | branch | `commit.gpgsign=true` + `user.signingkey` set — for testing signing-aware UI |
 | `single-staged-file` | worktree | baseline + 1 staged README — minimum "ready to commit" shape |
 | `dirty-many-files` | worktree | 12 staged + 6 unstaged + 3 untracked files across `src/`, `tests/`, `docs/` — for the future split flow |
 | `mid-bisect` | operation | 20 commits + active `git bisect`, HEAD at midpoint — for the bisect view |
@@ -593,6 +679,13 @@ relative-time scenarios.
 | `removeRemote(name)` | Drop a remote. |
 | `renameRemote(from, to)` | Rename a remote (URL unchanged). |
 
+#### Upstream tracking
+
+| Atom | What it does |
+|---|---|
+| `setUpstream(localBranch, remote, remoteBranch?)` | Write `branch.<X>.remote` + `branch.<X>.merge` config (`git branch --set-upstream-to`). `remoteBranch` defaults to `localBranch`. |
+| `setRemoteRef(remote, branch, sha)` | Direct `git update-ref refs/remotes/<remote>/<branch>` — fabricate a remote-tracking ref without a fetch. |
+
 #### Stash
 
 | Atom | What it does |
@@ -646,6 +739,7 @@ relative-time scenarios.
 | `onBranch(name, step)` | Switch to `name`, run `step`, restore the previous branch (even on throw). |
 | `insideSubmodule(path, step)` | Run `step` against the submodule's working tree. Any atom composes inside. |
 | `withAuthor({ name, email, date? }, step)` | Run `step` with `GIT_AUTHOR_*` / `GIT_COMMITTER_*` pinned. |
+| `withRemoteTracking(remote, branch, step)` | Run `step` against a temporary clone, then fetch the resulting branch tip back into the parent as `refs/remotes/<remote>/<branch>`. Generates "upstream-only commits" without manual ref plumbing. |
 
 #### Scenario definition
 
