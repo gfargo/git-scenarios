@@ -12,13 +12,20 @@
  */
 
 import type { Scenario } from './types'
+import { branchAheadOfUpstreamScenario } from './branch-ahead-of-upstream'
+import { branchBehindUpstreamScenario } from './branch-behind-upstream'
+import { branchDivergedScenario } from './branch-diverged'
+import { branchTrackingUpstreamScenario } from './branch-tracking-upstream'
+import { detachedHeadScenario } from './detached-head'
 import { dirtyManyFilesScenario } from './dirty-many-files'
 import { featureBranchOneCommitScenario } from './feature-branch-one-commit'
 import { featurePrReadyScenario } from './feature-pr-ready'
 import { midBisectScenario } from './mid-bisect'
 import { midMergeConflictScenario } from './mid-merge-conflict'
 import { multiCommitBranchScenario } from './multi-commit-branch'
+import { multiRemoteWithTrackingScenario } from './multi-remote-with-tracking'
 import { richHistoryGraphScenario } from './rich-history-graph'
+import { signedCommitsRequiredScenario } from './signed-commits-required'
 import { singleStagedFileScenario } from './single-staged-file'
 import { stashedChangesScenario } from './stashed-changes'
 import { submoduleWithHistoryScenario } from './submodule-with-history'
@@ -35,6 +42,15 @@ export const allScenarios: readonly Scenario[] = [
   featureBranchOneCommitScenario,
   multiCommitBranchScenario,
   twoCommitFeatureScenario,
+  // upstream-tracking shapes
+  branchTrackingUpstreamScenario,
+  branchAheadOfUpstreamScenario,
+  branchBehindUpstreamScenario,
+  branchDivergedScenario,
+  multiRemoteWithTrackingScenario,
+  // detached / config shapes
+  detachedHeadScenario,
+  signedCommitsRequiredScenario,
   // worktree shapes
   singleStagedFileScenario,
   dirtyManyFilesScenario,
@@ -59,13 +75,20 @@ export function findScenario(name: string): Scenario | undefined {
 }
 
 export type { Scenario, ScenarioKind } from './types'
+export { branchAheadOfUpstreamScenario } from './branch-ahead-of-upstream'
+export { branchBehindUpstreamScenario } from './branch-behind-upstream'
+export { branchDivergedScenario } from './branch-diverged'
+export { branchTrackingUpstreamScenario } from './branch-tracking-upstream'
+export { detachedHeadScenario } from './detached-head'
 export { dirtyManyFilesScenario } from './dirty-many-files'
 export { featureBranchOneCommitScenario } from './feature-branch-one-commit'
 export { featurePrReadyScenario } from './feature-pr-ready'
 export { midBisectScenario } from './mid-bisect'
 export { midMergeConflictScenario } from './mid-merge-conflict'
 export { multiCommitBranchScenario } from './multi-commit-branch'
+export { multiRemoteWithTrackingScenario } from './multi-remote-with-tracking'
 export { richHistoryGraphScenario } from './rich-history-graph'
+export { signedCommitsRequiredScenario } from './signed-commits-required'
 export { singleStagedFileScenario } from './single-staged-file'
 export { stashedChangesScenario } from './stashed-changes'
 export { submoduleWithHistoryScenario } from './submodule-with-history'

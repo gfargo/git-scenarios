@@ -55,6 +55,9 @@ export {
   addRemote,
   removeRemote,
   renameRemote,
+  // Upstream tracking
+  setUpstream,
+  setRemoteRef,
   // Stash
   stashChanges,
   applyStash,
@@ -86,6 +89,7 @@ export {
   onBranch,
   insideSubmodule,
   withAuthor,
+  withRemoteTracking,
   // Scenarios
   defineScenario,
   // Time helpers
@@ -105,13 +109,20 @@ export {
   // Individual scenarios — exported so consumers can opt out of the
   // registry and run just one scenario directly when that's what
   // their test wants.
+  branchAheadOfUpstreamScenario,
+  branchBehindUpstreamScenario,
+  branchDivergedScenario,
+  branchTrackingUpstreamScenario,
+  detachedHeadScenario,
   dirtyManyFilesScenario,
   featureBranchOneCommitScenario,
   featurePrReadyScenario,
   midBisectScenario,
   midMergeConflictScenario,
   multiCommitBranchScenario,
+  multiRemoteWithTrackingScenario,
   richHistoryGraphScenario,
+  signedCommitsRequiredScenario,
   singleStagedFileScenario,
   stashedChangesScenario,
   submoduleWithHistoryScenario,

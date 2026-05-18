@@ -8,6 +8,50 @@ versions follow [semver](https://semver.org/).
 
 (none)
 
+## [0.3.0] — 2026-05-18
+
+### Added
+
+- **New atoms — Upstream tracking**:
+  - `setUpstream(localBranch, remote, remoteBranch?)` writes the
+    `branch.<X>.remote` + `branch.<X>.merge` config so `git status`
+    reports ahead/behind counts.
+  - `setRemoteRef(remote, branch, sha)` directly writes
+    `refs/remotes/<remote>/<branch>` via `git update-ref`. Low-level
+    primitive for fabricating remote-tracking refs without a fetch.
+- **New atom — Scoping**: `withRemoteTracking(remote, branch, step)`
+  runs a step against a temporary clone, then fetches the clone's
+  resulting branch tip back into the parent as
+  `refs/remotes/<remote>/<branch>`. The clone-and-fetch pattern that
+  lets you compose "the upstream has commits we don't" scenarios with
+  the regular atom layer (`addCommit`, `chain`, etc.) inside.
+- **Seven new registered scenarios** for upstream-tracking, detached
+  HEAD, and signed-commit states:
+  - `branch-tracking-upstream` — `main` tracks `origin/main`, both at
+    the same commit, clean worktree.
+  - `branch-ahead-of-upstream` — `main` is 3 commits ahead of
+    `origin/main`.
+  - `branch-behind-upstream` — `main` is 3 commits behind
+    `origin/main` (built with `withRemoteTracking`).
+  - `branch-diverged` — `main` is 2 ahead AND 2 behind `origin/main`.
+  - `multi-remote-with-tracking` — fork-workflow baseline: `origin` +
+    `upstream` remotes, `main` tracks `upstream/main`, `feat/fork-work`
+    tracks `origin/feat/fork-work`.
+  - `detached-head` — HEAD detached at `main~2`, `main` still at its
+    original tip.
+  - `signed-commits-required` — `commit.gpgsign=true` +
+    `user.signingkey` set (commits in the scenario itself remain
+    unsigned, since CI lacks a real GPG key).
+- Catch-up unit tests for v0.2.0 atoms that shipped without dedicated
+  coverage: `startRebase`, `abortRebase`, `continueRebase`,
+  `deleteFiles`, `renameFile`, and `conditionally`.
+
+### Notes
+
+- `withRemoteTracking` shells out via `child_process` so the
+  `-c protocol.file.allow=always` config can be passed (required on
+  git ≥ 2.38 for file-protocol URLs — CVE-2022-39253).
+
 ## [0.2.0] — 2026-05-18
 
 ### Added
@@ -107,7 +151,8 @@ duplication is resolved post-publish.
 - Node: `^22.22.2 || ^24.15.0 || >=26.0.0`
 - License: MIT
 
-[Unreleased]: https://github.com/gfargo/git-scenarios/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/gfargo/git-scenarios/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/gfargo/git-scenarios/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/gfargo/git-scenarios/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/gfargo/git-scenarios/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/gfargo/git-scenarios/releases/tag/v0.1.0
