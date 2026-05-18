@@ -409,7 +409,7 @@ binary at `bin.git-scenarios` in `package.json`.
 ## Available scenarios
 
 Run `git-scenarios list` (or `npm run scenario list` inside coco) for
-the live list. Current set (**18 scenarios across 6 kinds**):
+the live list. Current set (**19 scenarios across 6 kinds**):
 
 | Name | Kind | What you get |
 |---|---|---|
@@ -429,6 +429,7 @@ the live list. Current set (**18 scenarios across 6 kinds**):
 | `mid-bisect` | operation | 20 commits + active `git bisect`, HEAD at midpoint — for the bisect view |
 | `mid-merge-conflict` | operation | in-progress merge with 1 unresolved conflict on `src/widget.ts` — for the conflicts view |
 | `rich-history-graph` | history | 20+ commits across 6 date buckets, 2 `--no-ff` merges, 1 live unmerged `feat/wip` — for compact + full-graph rendering (bucket dividers, type coloring, branch chips, lane topology) |
+| `chip-rendering-showcase` | history | 6 commits each carrying a different branch-tip-chip kind — HEAD, plain local (`develop`), slashy local (`feat/widgets`), `origin/main`, `upstream/main`, and tag `v0.1.0` in trailing refs. For visual regression on TUIs that colour chips by kind. |
 | `stashed-changes` | stash | clean `main` + 3 stashes (LIFO ordered, each touching a distinct file) — for the stash view |
 | `submodule-with-history` | submodule | parent with 4 commits + `vendor/lib` submodule (clean pin, 4 commits, `branch = main`) — for recursive submodule navigation |
 

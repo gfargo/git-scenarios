@@ -8,6 +8,26 @@ versions follow [semver](https://semver.org/).
 
 (none)
 
+## [0.3.1] — 2026-05-18
+
+### Added
+
+- **New scenario — `chip-rendering-showcase`** (kind: `history`). Six
+  commits on `main` where each row in the history view exercises a
+  different branch-tip-chip code path — HEAD, plain local
+  (`develop`), slashy local (`feat/widgets`), remote-tracking via
+  `origin/main`, remote-tracking via `upstream/main`, and a root
+  commit tagged `v0.1.0` (tag-in-trailing-list case). `main` is
+  configured to track `origin/main` so `git status` also reports
+  the "1 ahead" tracking signal alongside the chips.
+
+  Useful for visual regression checks on TUIs that colour-code chip
+  kinds, and as a regression fixture for tools that classify refs
+  using "ref contains a slash" — `feat/widgets` must read as local,
+  not remote.
+
+  Registry now contains **19 scenarios**.
+
 ## [0.3.0] — 2026-05-18
 
 ### Added
@@ -151,7 +171,8 @@ duplication is resolved post-publish.
 - Node: `^22.22.2 || ^24.15.0 || >=26.0.0`
 - License: MIT
 
-[Unreleased]: https://github.com/gfargo/git-scenarios/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/gfargo/git-scenarios/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/gfargo/git-scenarios/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/gfargo/git-scenarios/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/gfargo/git-scenarios/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/gfargo/git-scenarios/compare/v0.1.0...v0.1.1
