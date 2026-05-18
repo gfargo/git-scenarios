@@ -1,4 +1,8 @@
+import { execFile } from 'child_process'
+import { promisify } from 'util'
 import type { Step } from './types'
+
+const execFileAsync = promisify(execFile)
 
 /**
  * Start a rebase of the current branch onto a target ref (`git rebase
@@ -76,9 +80,22 @@ export function abortRebase(): Step {
  *     stageFiles('x.ts'),
  *     continueRebase(),
  *   )
+ *
+ * `GIT_EDITOR=:` is set for the underlying spawn so git doesn't try
+ * to open an editor for the commit message on the conflict-resolution
+ * commit — which would hang any non-interactive caller (CI runners,
+ * test suites, scripted scenarios). The original commit message is
+ * preserved, which is what scripted callers want.
  */
 export function continueRebase(): Step {
   return async (repo) => {
-    await repo.git.raw(['rebase', '--continue'])
+    // Shell out via child_process so the GIT_EDITOR override is scoped
+    // to this one spawn — no mutation of `process.env` or of the shared
+    // simpleGit instance. simple-git's `.env()` mutates the receiver,
+    // which would leak into subsequent atoms in the chain.
+    await execFileAsync('git', ['rebase', '--continue'], {
+      cwd: repo.path,
+      env: { ...process.env, GIT_EDITOR: ':', GIT_SEQUENCE_EDITOR: ':' },
+    })
   }
 }
