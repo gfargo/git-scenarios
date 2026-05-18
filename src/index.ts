@@ -31,8 +31,11 @@ export {
   // Control flow
   chain,
   repeat,
+  conditionally,
   // Working tree
   writeFiles,
+  deleteFiles,
+  renameFile,
   seededFiles,
   // Staging + commits
   stageFiles,
@@ -67,6 +70,10 @@ export {
   bisectStep,
   resetBisect,
   resetTo,
+  // Rebase
+  startRebase,
+  abortRebase,
+  continueRebase,
   // Submodules
   addSubmodule,
   pinSubmodule,
