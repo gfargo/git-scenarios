@@ -8,6 +8,28 @@ versions follow [semver](https://semver.org/).
 
 (none)
 
+## [0.2.0] — 2026-05-18
+
+### Added
+
+- **New atoms — Rebase**: `startRebase(onto, { allowConflict? })`,
+  `abortRebase()`, `continueRebase()`. Same conflict-tolerant pattern
+  as `startMerge` — conflicts leave the repo mid-rebase by default.
+- **New atoms — Working tree**: `deleteFiles(...paths)` removes files
+  from the worktree (does not stage); `renameFile(from, to)` wraps
+  `git mv` for rename-detection scenarios.
+- **New atom — Control flow**: `conditionally(condition, step)` runs a
+  step only when a boolean or async predicate is true. Avoids awkward
+  ternaries inside `chain(...)`.
+- README badges activated (npm version, license, types, CI).
+- New cookbook entries: mid-rebase conflict, rename detection.
+- Kiro steering documents added (`.kiro/steering/`).
+
+### Fixed
+
+- `insideSubmodule` test no longer times out — added 60s timeout
+  matching the other submodule tests in the suite.
+
 ## [0.1.1] — 2026-05-18
 
 ### Fixed
@@ -85,5 +107,7 @@ duplication is resolved post-publish.
 - Node: `^22.22.2 || ^24.15.0 || >=26.0.0`
 - License: MIT
 
-[Unreleased]: https://github.com/gfargo/coco/tree/main/packages/git-scenarios
-[0.1.0]: https://github.com/gfargo/coco/tree/main/packages/git-scenarios
+[Unreleased]: https://github.com/gfargo/git-scenarios/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/gfargo/git-scenarios/compare/v0.1.1...v0.2.0
+[0.1.1]: https://github.com/gfargo/git-scenarios/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/gfargo/git-scenarios/releases/tag/v0.1.0
