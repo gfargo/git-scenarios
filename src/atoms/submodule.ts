@@ -1,10 +1,26 @@
 import { execFile } from 'child_process'
 import { rm } from 'fs/promises'
+import { join } from 'path'
 import { promisify } from 'util'
 import { createTempGitRepo } from '../tempGitRepo'
 import type { Step } from './types'
 
 const execFileAsync = promisify(execFile)
+
+/**
+ * Apply the same user identity + gpgsign config to a submodule clone
+ * that `createTempGitRepo` sets up on the parent. `git submodule add`
+ * clones the source's history but does NOT carry over per-repo config
+ * — so without this step the submodule clone falls back to the
+ * caller's global git config. On CI runners (no global config),
+ * subsequent commits made inside the submodule (via `insideSubmodule`)
+ * fail with "Author identity unknown".
+ */
+async function configureSubmoduleClone(submoduleAbsolutePath: string): Promise<void> {
+  await execFileAsync('git', ['config', 'user.name', 'Coco Test'], { cwd: submoduleAbsolutePath })
+  await execFileAsync('git', ['config', 'user.email', 'coco@example.com'], { cwd: submoduleAbsolutePath })
+  await execFileAsync('git', ['config', 'commit.gpgsign', 'false'], { cwd: submoduleAbsolutePath })
+}
 
 /**
  * Add a submodule to the parent repo. The submodule's own commit
@@ -76,6 +92,13 @@ export function addSubmodule(opts: {
         ],
         { cwd: parentRepo.path },
       )
+      // Set up the submodule clone's per-repo identity + gpgsign config
+      // so subsequent commits made inside it (via `insideSubmodule`)
+      // don't fall back to the caller's global git config. CI runners
+      // typically have no global config — without this, the first
+      // commit inside the submodule fails with "Author identity
+      // unknown".
+      await configureSubmoduleClone(join(parentRepo.path, opts.path))
     } finally {
       await rm(source.path, { recursive: true, force: true })
     }

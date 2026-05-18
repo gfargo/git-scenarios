@@ -6,9 +6,25 @@ versions follow [semver](https://semver.org/).
 
 ## [Unreleased]
 
-(none — staged for the v0.1.0 cut)
+(none)
 
-## [0.1.0] — Not yet published
+## [0.1.1] — 2026-05-18
+
+### Fixed
+
+- `addSubmodule` now configures `user.name` / `user.email` /
+  `commit.gpgsign` on the freshly-cloned submodule. Without this,
+  subsequent commits made inside the submodule via
+  `insideSubmodule(path, addCommit(...))` would fail with `Author
+  identity unknown` on environments without a global git config
+  (notably CI runners). Local dev tended to work because the global
+  git config rescued it.
+- Affected `insideSubmodule(path, …)` whenever the inner step
+  produced commits. `addSubmodule` itself + `pinSubmodule` were
+  unaffected since neither creates commits inside the submodule
+  clone.
+
+## [0.1.0] — 2026-05-17
 
 Initial public release. Shadow-extracted from the
 [`coco`](https://github.com/gfargo/coco) monorepo where it lived at
