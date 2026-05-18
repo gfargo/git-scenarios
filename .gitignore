@@ -31,3 +31,7 @@ coverage/
 # Local environment
 .env
 .env.local
+.docs/
+
+.kiro
+.claude
