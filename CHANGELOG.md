@@ -8,6 +8,27 @@ versions follow [semver](https://semver.org/).
 
 (none)
 
+## [0.3.3] — 2026-05-19
+
+### Added
+
+- **New scenario — `branch-sync-showcase`** (kind: `branch`). A single
+  repo with **five** local branches, each in a different sync state
+  relative to its `origin/` upstream:
+  - `main` (CHECKED OUT) — 2 commits BEHIND `origin/main`
+  - `feat/ahead-only` — 3 commits AHEAD of `origin/feat/ahead-only`
+  - `feat/diverged` — 2 ahead + 2 behind `origin/feat/diverged`
+  - `feat/synced` — at the same commit as `origin/feat/synced`
+  - `local-only` — no upstream configured
+
+  HEAD is on `main` (the behind branch) so the history / status
+  surfaces also exercise the "remote is ahead of local" affordance
+  alongside the branch-list rendering. Designed for TUIs that show
+  upstream sync state in a sidebar / branch list: every sync class is
+  visible at once.
+
+  Registry now contains **21 scenarios**.
+
 ## [0.3.2] — 2026-05-18
 
 ### Added
@@ -185,7 +206,8 @@ duplication is resolved post-publish.
 - Node: `^22.22.2 || ^24.15.0 || >=26.0.0`
 - License: MIT
 
-[Unreleased]: https://github.com/gfargo/git-scenarios/compare/v0.3.2...HEAD
+[Unreleased]: https://github.com/gfargo/git-scenarios/compare/v0.3.3...HEAD
+[0.3.3]: https://github.com/gfargo/git-scenarios/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/gfargo/git-scenarios/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/gfargo/git-scenarios/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/gfargo/git-scenarios/compare/v0.2.0...v0.3.0

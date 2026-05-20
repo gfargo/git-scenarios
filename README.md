@@ -409,7 +409,7 @@ binary at `bin.git-scenarios` in `package.json`.
 ## Available scenarios
 
 Run `git-scenarios list` (or `npm run scenario list` inside coco) for
-the live list. Current set (**20 scenarios across 6 kinds**):
+the live list. Current set (**21 scenarios across 6 kinds**):
 
 | Name | Kind | What you get |
 |---|---|---|
@@ -423,6 +423,7 @@ the live list. Current set (**20 scenarios across 6 kinds**):
 | `branch-behind-upstream` | branch | `main` is 3 commits behind `origin/main` — fast-forwardable |
 | `branch-diverged` | branch | `main` is 2 ahead AND 2 behind `origin/main` — diverged history |
 | `multi-remote-with-tracking` | branch | fork-workflow: `origin` + `upstream` remotes, `main` tracks `upstream/main`, `feat/fork-work` tracks `origin/feat/fork-work` |
+| `branch-sync-showcase` | branch | five local branches in five different upstream sync states (behind, ahead, diverged, synced, no-upstream); HEAD on the behind branch. For TUIs whose branch list shows mixed sync states at once. |
 | `detached-head` | branch | HEAD detached at `main~2`, `main` still at its original tip |
 | `signed-commits-required` | branch | `commit.gpgsign=true` + `user.signingkey` set — for testing signing-aware UI |
 | `single-staged-file` | worktree | baseline + 1 staged README — minimum "ready to commit" shape |

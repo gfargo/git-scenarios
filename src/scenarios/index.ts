@@ -15,6 +15,7 @@ import type { Scenario } from './types'
 import { branchAheadOfUpstreamScenario } from './branch-ahead-of-upstream'
 import { branchBehindUpstreamScenario } from './branch-behind-upstream'
 import { branchDivergedScenario } from './branch-diverged'
+import { branchSyncShowcaseScenario } from './branch-sync-showcase'
 import { branchTrackingUpstreamScenario } from './branch-tracking-upstream'
 import { chipRenderingShowcaseScenario } from './chip-rendering-showcase'
 import { detachedHeadScenario } from './detached-head'
@@ -52,6 +53,7 @@ export const allScenarios: readonly Scenario[] = [
   branchAheadOfUpstreamScenario,
   branchBehindUpstreamScenario,
   branchDivergedScenario,
+  branchSyncShowcaseScenario,
   multiRemoteWithTrackingScenario,
   // detached / config shapes
   detachedHeadScenario,
@@ -84,6 +86,7 @@ export type { Scenario, ScenarioKind } from './types'
 export { branchAheadOfUpstreamScenario } from './branch-ahead-of-upstream'
 export { branchBehindUpstreamScenario } from './branch-behind-upstream'
 export { branchDivergedScenario } from './branch-diverged'
+export { branchSyncShowcaseScenario } from './branch-sync-showcase'
 export { branchTrackingUpstreamScenario } from './branch-tracking-upstream'
 export { chipRenderingShowcaseScenario } from './chip-rendering-showcase'
 export { detachedHeadScenario } from './detached-head'
