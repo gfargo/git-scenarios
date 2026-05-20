@@ -112,6 +112,7 @@ export {
   branchAheadOfUpstreamScenario,
   branchBehindUpstreamScenario,
   branchDivergedScenario,
+  branchSyncShowcaseScenario,
   branchTrackingUpstreamScenario,
   chipRenderingShowcaseScenario,
   detachedHeadScenario,
