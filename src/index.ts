@@ -116,6 +116,7 @@ export {
   chipRenderingShowcaseScenario,
   detachedHeadScenario,
   dirtyManyFilesScenario,
+  emptyRepoScenario,
   featureBranchOneCommitScenario,
   featurePrReadyScenario,
   midBisectScenario,

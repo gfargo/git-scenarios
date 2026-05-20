@@ -19,6 +19,7 @@ import { branchTrackingUpstreamScenario } from './branch-tracking-upstream'
 import { chipRenderingShowcaseScenario } from './chip-rendering-showcase'
 import { detachedHeadScenario } from './detached-head'
 import { dirtyManyFilesScenario } from './dirty-many-files'
+import { emptyRepoScenario } from './empty-repo'
 import { featureBranchOneCommitScenario } from './feature-branch-one-commit'
 import { featurePrReadyScenario } from './feature-pr-ready'
 import { midBisectScenario } from './mid-bisect'
@@ -38,6 +39,9 @@ import { twoCommitFeatureScenario } from './two-commit-feature'
  * branch-y scenarios first, then worktree, then operations, then stash.
  */
 export const allScenarios: readonly Scenario[] = [
+  // empty-state edge cases (smallest first so it groups with the other
+  // degenerate shapes a tool needs to handle gracefully)
+  emptyRepoScenario,
   // branch shapes
   featurePrReadyScenario,
   featureBranchOneCommitScenario,
@@ -84,6 +88,7 @@ export { branchTrackingUpstreamScenario } from './branch-tracking-upstream'
 export { chipRenderingShowcaseScenario } from './chip-rendering-showcase'
 export { detachedHeadScenario } from './detached-head'
 export { dirtyManyFilesScenario } from './dirty-many-files'
+export { emptyRepoScenario } from './empty-repo'
 export { featureBranchOneCommitScenario } from './feature-branch-one-commit'
 export { featurePrReadyScenario } from './feature-pr-ready'
 export { midBisectScenario } from './mid-bisect'

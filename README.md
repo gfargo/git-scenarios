@@ -409,10 +409,11 @@ binary at `bin.git-scenarios` in `package.json`.
 ## Available scenarios
 
 Run `git-scenarios list` (or `npm run scenario list` inside coco) for
-the live list. Current set (**19 scenarios across 6 kinds**):
+the live list. Current set (**20 scenarios across 6 kinds**):
 
 | Name | Kind | What you get |
 |---|---|---|
+| `empty-repo` | branch | freshly-initialized repo: no commits, no files, no remotes. HEAD on `main` but unborn. The "what does your tool do on a brand-new repo?" edge case. |
 | `feature-pr-ready` | branch | `feat/widget-v2` 4 commits ahead of `main`, clean worktree — for create-pr (`C`) and changelog (`L`) flows |
 | `feature-branch-one-commit` | branch | `main` + `feat/x` (1 commit ahead, `src/feature.ts`) — minimal branch-vs-base shape |
 | `multi-commit-branch` | branch | `feat/dashboard` with 8 varied commits — baseline for navigation / filter / yank |
