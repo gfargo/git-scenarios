@@ -1,0 +1,127 @@
+---
+title: git-scenarios
+description: Spin up real git repositories in any state, deterministically.
+template: splash
+hero:
+  tagline: Composable atoms for spinning up real git repos in any state — merge conflicts, submodules, multiple remotes, in-progress operations, and more. For tests, demos, and tool development.
+  image:
+    file: ../../assets/logo-dark.svg
+  actions:
+    - text: Get Started
+      link: /docs/introduction
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/gfargo/git-scenarios
+      icon: external
+---
+
+import { Card, CardGrid, Code } from '@astrojs/starlight/components';
+
+## Install in seconds
+
+<Code code="npm install --save-dev @gfargo/git-scenarios simple-git" lang="bash" />
+
+## The problem
+
+Every git tool — TUIs, IDEs, CLIs, linters — behaves differently against different repo states. Testing those behaviors means:
+
+<CardGrid>
+  <Card title="Hand-rolled setup" icon="pencil">
+    80+ lines of `git init` → `writeFile` → `commit` per test. Drift between tests is inevitable.
+  </Card>
+  <Card title="Checked-in fixtures" icon="document">
+    Real `.git` directories in your repo. Bloats the tree, breaks on updates, no programmatic access.
+  </Card>
+  <Card title="Mocking git" icon="puzzle">
+    Tests verify "my code called the right command" — not "my code does the right thing in this state."
+  </Card>
+  <Card title="Docker containers" icon="rocket">
+    Pre-baked images with git state. Heavy, slow, CI-only. Not interactive-test-friendly.
+  </Card>
+</CardGrid>
+
+## The solution
+
+`@gfargo/git-scenarios` gives you **real git repos** in **any state** with **one line of code**:
+
+```ts
+import { spinUpScenario } from '@gfargo/git-scenarios'
+
+// One line — real repo, real refs, real worktree
+const repo = await spinUpScenario('mid-merge-conflict')
+// repo is mid-merge with src/widget.ts conflicted, MERGE_HEAD set
+```
+
+Or compose your own state from atoms:
+
+```ts
+import { chain, addCommit, switchToBranch, startMerge, createTempGitRepo } from '@gfargo/git-scenarios'
+
+const repo = await createTempGitRepo()
+await chain(
+  addCommit({ message: 'base', files: { 'x.ts': 'base\n' } }),
+  switchToBranch('feat/theirs'),
+  addCommit({ message: 'theirs', files: { 'x.ts': 'theirs\n' } }),
+  switchToBranch('main'),
+  addCommit({ message: 'ours', files: { 'x.ts': 'ours\n' } }),
+  startMerge('feat/theirs'),
+)(repo)
+```
+
+## What you get
+
+<CardGrid stagger>
+  <Card title="27 curated scenarios" icon="list-format">
+    Branch states, merge/rebase/cherry-pick/revert conflicts, bisect, stash, worktrees, submodules, shallow clones, large histories. All deterministic.
+  </Card>
+  <Card title="50+ composable atoms" icon="puzzle">
+    Build any git state from small, typed building blocks. `chain()` them together. Write your own — they're just functions.
+  </Card>
+  <Card title="Jest adapter" icon="seti:jest">
+    `describeWithScenario('name', (getRepo) => { ... })` — zero-boilerplate test setup with automatic cleanup.
+  </Card>
+  <Card title="Tool-agnostic CLI" icon="terminal">
+    `npx git-scenarios create mid-merge-conflict --run "lazygit"` — materialize any scenario and launch your tool against it.
+  </Card>
+  <Card title="Custom registration" icon="add-document">
+    `registerScenario(myScenario)` — your custom scenarios work with `spinUpScenario`, `fromScenario`, and the CLI.
+  </Card>
+  <Card title="Dual CJS/ESM" icon="setting">
+    Ships both formats. Use `import` or `require` — both work. TypeScript-first with full type declarations.
+  </Card>
+</CardGrid>
+
+## Quick CLI demo
+
+```bash
+# Spin up a merge conflict, launch lazygit against it
+npx git-scenarios create mid-merge-conflict --run "lazygit"
+
+# List all 27 scenarios
+npx git-scenarios list
+
+# Describe a specific scenario's contracts
+npx git-scenarios describe feature-pr-ready
+```
+
+## Built for tool authors
+
+Originally extracted from [coco](https://github.com/gfargo/coco), an AI-powered git CLI/TUI with 16 specialized views. Every view needed deterministic git states to test against. After writing the same `git init` + `writeFile` + `commit` setup 47 times, the scenario library was born.
+
+Now it's a standalone package for anyone building git tools — TUIs, IDE extensions, CLI utilities, linters, formatters, or anything that reads repo state.
+
+<CardGrid>
+  <Card title="Read the docs" icon="open-book">
+    [Get started →](/docs/introduction)
+  </Card>
+  <Card title="Browse scenarios" icon="list-format">
+    [See all 27 →](/docs/scenarios/overview)
+  </Card>
+  <Card title="Atom reference" icon="puzzle">
+    [50+ atoms →](/docs/atoms/overview)
+  </Card>
+  <Card title="Source code" icon="github">
+    [GitHub →](https://github.com/gfargo/git-scenarios)
+  </Card>
+</CardGrid>

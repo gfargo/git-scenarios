@@ -11,6 +11,8 @@
 [![types](https://img.shields.io/npm/types/@gfargo/git-scenarios.svg)](https://www.npmjs.com/package/@gfargo/git-scenarios)
 [![CI](https://github.com/gfargo/git-scenarios/actions/workflows/ci.yml/badge.svg)](https://github.com/gfargo/git-scenarios/actions/workflows/ci.yml)
 
+📖 **[Full documentation →](https://git-scenarios.griffen.codes)**
+
 ## What this is
 
 Real-world git tools — `coco`, `lazygit`, IDEs, custom dev tools —
