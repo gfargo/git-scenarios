@@ -16,28 +16,34 @@
     "url": "git+https://github.com/gfargo/git-scenarios.git"
   },
   "sideEffects": false,
-  "main": "./dist/src/index.js",
-  "types": "./dist/src/index.d.ts",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
-      "default": "./dist/src/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./scenarios": {
-      "types": "./dist/src/scenarios/index.d.ts",
-      "default": "./dist/src/scenarios/index.js"
+      "types": "./dist/scenarios/index.d.ts",
+      "import": "./dist/scenarios/index.js",
+      "require": "./dist/scenarios/index.cjs"
     },
     "./tempGitRepo": {
-      "types": "./dist/src/tempGitRepo.d.ts",
-      "default": "./dist/src/tempGitRepo.js"
+      "types": "./dist/tempGitRepo.d.ts",
+      "import": "./dist/tempGitRepo.js",
+      "require": "./dist/tempGitRepo.cjs"
     },
     "./atoms": {
-      "types": "./dist/src/atoms/index.d.ts",
-      "default": "./dist/src/atoms/index.js"
+      "types": "./dist/atoms/index.d.ts",
+      "import": "./dist/atoms/index.js",
+      "require": "./dist/atoms/index.cjs"
     }
   },
   "bin": {
-    "git-scenarios": "./dist/bin/cli.js"
+    "git-scenarios": "./dist/bin/cli.cjs"
   },
   "files": [
     "dist",
@@ -46,7 +52,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc -p .",
+    "build": "tsup",
+    "build:tsc": "tsc -p .",
     "clean": "rm -rf dist",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src",
@@ -82,6 +89,7 @@
     "jest": "^29.7.0",
     "simple-git": "^3.27.0",
     "ts-jest": "^29.2.5",
+    "tsup": "^8.5.1",
     "typescript": "^5.4.5"
   },
   "engines": {
