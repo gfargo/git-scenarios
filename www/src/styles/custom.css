@@ -1,87 +1,390 @@
-/* Custom styles for git-scenarios docs site */
+/*
+ * git-scenarios — Terminal-native aesthetic
+ *
+ * Design direction: Dark-first, monospace-forward, git-graph visual motif.
+ * The feeling of a well-crafted CLI tool rendered as a website.
+ * Cyan/teal primary, violet secondary, emerald tertiary — the three
+ * nodes of a git graph.
+ */
 
+/* ─── Fonts ─── */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+/* ─── Dark theme (default) ─── */
 :root {
-  --sl-color-accent-low: #1a1a2e;
-  --sl-color-accent: #4f46e5;
-  --sl-color-accent-high: #a5b4fc;
-  --sl-font-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-  --sl-font-system-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, monospace;
+  --sl-color-accent-low: #083344;
+  --sl-color-accent: #22d3ee;
+  --sl-color-accent-high: #a5f3fc;
+  --sl-color-white: #f1f5f9;
+  --sl-color-gray-1: #e2e8f0;
+  --sl-color-gray-2: #cbd5e1;
+  --sl-color-gray-3: #94a3b8;
+  --sl-color-gray-4: #64748b;
+  --sl-color-gray-5: #334155;
+  --sl-color-gray-6: #1e293b;
+  --sl-color-gray-7: #0f172a;
+  --sl-color-black: #020617;
+  --sl-color-bg-nav: #0a0e1aee;
+  --sl-color-bg-sidebar: #0d1220;
+  --sl-color-hairline-light: #1e293b;
+  --sl-color-hairline-shade: #0f172a;
+
+  --sl-font: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --sl-font-system-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+
+  /* Custom tokens */
+  --gs-cyan: #22d3ee;
+  --gs-violet: #a78bfa;
+  --gs-emerald: #34d399;
+  --gs-amber: #fbbf24;
+  --gs-surface: #0f172a;
+  --gs-surface-raised: #1e293b;
+  --gs-border: #1e293b;
+  --gs-glow-cyan: 0 0 20px rgba(34, 211, 238, 0.15);
+  --gs-glow-violet: 0 0 20px rgba(167, 139, 250, 0.15);
 }
 
+/* ─── Light theme ─── */
 :root[data-theme='light'] {
-  --sl-color-accent-low: #e0e7ff;
-  --sl-color-accent: #4f46e5;
-  --sl-color-accent-high: #312e81;
+  --sl-color-accent-low: #cffafe;
+  --sl-color-accent: #0891b2;
+  --sl-color-accent-high: #164e63;
+
+  --gs-cyan: #0891b2;
+  --gs-violet: #7c3aed;
+  --gs-emerald: #059669;
+  --gs-amber: #d97706;
+  --gs-surface: #f8fafc;
+  --gs-surface-raised: #ffffff;
+  --gs-border: #e2e8f0;
+  --gs-glow-cyan: 0 0 20px rgba(8, 145, 178, 0.1);
+  --gs-glow-violet: 0 0 20px rgba(124, 58, 237, 0.1);
 }
 
-/* Landing page hero overrides */
-.hero-section {
+/* ─── Global refinements ─── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Monospace elements get the good font */
+code, pre, kbd, samp,
+.expressive-code {
+  font-family: var(--sl-font-system-mono) !important;
+}
+
+/* ─── Navigation ─── */
+starlight-menu-button + nav {
+  backdrop-filter: blur(12px);
+}
+
+/* Site title styling */
+.site-title {
+  font-family: var(--sl-font-system-mono) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.02em;
+}
+
+/* ─── Sidebar ─── */
+nav.sidebar .top-level > li > details > summary,
+nav.sidebar .top-level > li > a {
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: var(--sl-color-gray-3);
+}
+
+/* ─── Hero / Splash page ─── */
+.page .hero {
+  padding-block: 4rem;
+  border-bottom: 1px solid var(--gs-border);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle grid background on hero */
+.page .hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--gs-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--gs-border) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* Radial glow behind hero */
+.page .hero::after {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 600px;
+  background: radial-gradient(ellipse, rgba(34, 211, 238, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero .hero-html {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hero title */
+.page .hero h1 {
+  font-family: var(--sl-font-system-mono) !important;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  background: linear-gradient(135deg, var(--gs-cyan) 0%, var(--gs-violet) 50%, var(--gs-emerald) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hero tagline */
+.page .hero .hero-tagline {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: var(--sl-color-gray-3);
+  max-width: 560px;
+}
+
+/* Hero action buttons */
+.page .hero .action {
+  border-radius: 6px;
+  font-family: var(--sl-font-system-mono);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  padding: 0.7rem 1.4rem;
+  transition: all 0.2s ease;
+}
+
+.page .hero .action.primary {
+  background: var(--gs-cyan);
+  color: #0a0e1a;
+  border: none;
+  box-shadow: var(--gs-glow-cyan);
+}
+
+.page .hero .action.primary:hover {
+  background: #67e8f9;
+  box-shadow: 0 0 30px rgba(34, 211, 238, 0.3);
+  transform: translateY(-1px);
+}
+
+.page .hero .action:not(.primary) {
+  border: 1px solid var(--gs-border);
+  color: var(--sl-color-gray-2);
+}
+
+.page .hero .action:not(.primary):hover {
+  border-color: var(--gs-cyan);
+  color: var(--gs-cyan);
+}
+
+/* ─── Content area ─── */
+.sl-markdown-content h2 {
+  font-family: var(--sl-font-system-mono);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--gs-border);
+  margin-top: 3rem;
+}
+
+.sl-markdown-content h3 {
+  font-family: var(--sl-font-system-mono);
+  font-weight: 500;
+  color: var(--gs-cyan);
+}
+
+/* ─── Cards ─── */
+.card {
+  border: 1px solid var(--gs-border);
+  border-radius: 8px;
+  background: var(--gs-surface-raised);
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gs-cyan), var(--gs-violet), var(--gs-emerald));
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.card:hover {
+  border-color: var(--sl-color-gray-4);
+  box-shadow: var(--gs-glow-cyan);
+  transform: translateY(-2px);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+.card .card-title {
+  font-family: var(--sl-font-system-mono);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* ─── Code blocks ─── */
+.expressive-code pre {
+  border: 1px solid var(--gs-border) !important;
+  border-radius: 8px !important;
+  background: #0a0e1a !important;
+}
+
+.expressive-code .frame {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ─── Tables ─── */
+.sl-markdown-content table {
+  border: 1px solid var(--gs-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.sl-markdown-content th {
+  background: var(--gs-surface-raised);
+  font-family: var(--sl-font-system-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sl-color-gray-3);
+}
+
+.sl-markdown-content td {
+  border-color: var(--gs-border);
+}
+
+.sl-markdown-content td code {
+  color: var(--gs-cyan);
+  background: rgba(34, 211, 238, 0.08);
+  border: 1px solid rgba(34, 211, 238, 0.15);
+  border-radius: 4px;
+  padding: 0.1em 0.4em;
+  font-size: 0.82em;
+}
+
+/* ─── Inline code ─── */
+.sl-markdown-content :not(pre) > code {
+  color: var(--gs-cyan);
+  background: rgba(34, 211, 238, 0.08);
+  border: 1px solid rgba(34, 211, 238, 0.12);
+  border-radius: 4px;
+  padding: 0.15em 0.4em;
+  font-size: 0.85em;
+  font-weight: 400;
+}
+
+/* ─── Links ─── */
+.sl-markdown-content a:not(.card a) {
+  color: var(--gs-cyan);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(34, 211, 238, 0.3);
+  transition: border-color 0.2s ease;
+}
+
+.sl-markdown-content a:not(.card a):hover {
+  border-bottom-color: var(--gs-cyan);
+}
+
+/* ─── Splash page specific ─── */
+[data-page-type='splash'] .sl-markdown-content {
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+[data-page-type='splash'] .sl-markdown-content > h2 {
   text-align: center;
-  padding: 4rem 2rem;
+  border-bottom: none;
+  font-size: 1.5rem;
+  margin-top: 4rem;
+  margin-bottom: 1rem;
 }
 
-.hero-section h1 {
-  font-size: 3rem;
-  font-weight: 800;
-  line-height: 1.1;
-  margin-bottom: 1.5rem;
-}
-
-.hero-section .tagline {
-  font-size: 1.25rem;
-  opacity: 0.85;
+[data-page-type='splash'] .sl-markdown-content > h2 + p {
+  text-align: center;
+  color: var(--sl-color-gray-3);
   max-width: 600px;
   margin: 0 auto 2rem;
 }
 
-.install-block {
-  background: var(--sl-color-gray-6);
-  border-radius: 0.5rem;
-  padding: 1rem 1.5rem;
-  display: inline-block;
-  font-family: var(--sl-font-system-mono);
-  font-size: 0.9rem;
-  margin-bottom: 2rem;
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-/* Feature grid */
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin: 3rem 0;
+::-webkit-scrollbar-track {
+  background: var(--gs-surface);
 }
 
-.feature-card {
-  padding: 1.5rem;
-  border-radius: 0.75rem;
-  border: 1px solid var(--sl-color-gray-5);
-  background: var(--sl-color-gray-7);
+::-webkit-scrollbar-thumb {
+  background: var(--sl-color-gray-5);
+  border-radius: 4px;
 }
 
-.feature-card h3 {
-  margin-top: 0;
-  font-size: 1.1rem;
+::-webkit-scrollbar-thumb:hover {
+  background: var(--sl-color-gray-4);
 }
 
-/* Scenario table styling */
-.scenario-table {
-  width: 100%;
-  overflow-x: auto;
+/* ─── Selection ─── */
+::selection {
+  background: rgba(34, 211, 238, 0.2);
+  color: var(--sl-color-white);
 }
 
-.scenario-table table {
-  width: 100%;
-  border-collapse: collapse;
+/* ─── Animations ─── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.scenario-table td,
-.scenario-table th {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--sl-color-gray-5);
+.page .hero > * {
+  animation: fadeInUp 0.6s ease-out both;
 }
 
-.scenario-table code {
-  font-size: 0.85em;
-  white-space: nowrap;
+.page .hero > *:nth-child(1) { animation-delay: 0s; }
+.page .hero > *:nth-child(2) { animation-delay: 0.1s; }
+.page .hero > *:nth-child(3) { animation-delay: 0.2s; }
+
+/* Card stagger on splash */
+[data-page-type='splash'] .card {
+  animation: fadeInUp 0.5s ease-out both;
 }
+
+[data-page-type='splash'] .card:nth-child(1) { animation-delay: 0.1s; }
+[data-page-type='splash'] .card:nth-child(2) { animation-delay: 0.15s; }
+[data-page-type='splash'] .card:nth-child(3) { animation-delay: 0.2s; }
+[data-page-type='splash'] .card:nth-child(4) { animation-delay: 0.25s; }
+[data-page-type='splash'] .card:nth-child(5) { animation-delay: 0.3s; }
+[data-page-type='splash'] .card:nth-child(6) { animation-delay: 0.35s; }
