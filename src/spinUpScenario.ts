@@ -22,24 +22,22 @@
  */
 
 import { createTempGitRepo, type TempGitRepo } from './tempGitRepo'
-import { findScenario } from './scenarios'
+import { findRegistered, listRegistered } from './registry'
 
 /**
  * Spin up a temp git repo and run the named scenario's setup against
  * it. The repo is the standard `TempGitRepo` shape — caller is
  * responsible for `cleanup()` in test teardown.
  *
+ * Searches both built-in and custom-registered scenarios.
+ *
  * @throws if the scenario name is unknown — error message lists the
  *   available names so the typo is easy to spot.
  */
 export async function spinUpScenario(name: string): Promise<TempGitRepo> {
-  const scenario = findScenario(name)
+  const scenario = findRegistered(name)
   if (!scenario) {
-    // Surface available names so the consumer can see the typo at a
-    // glance. The list is small (currently 4 scenarios); we can prune
-    // to fuzzy-match suggestions if it grows past ~20.
-    const { allScenarios } = await import('./scenarios')
-    const available = allScenarios.map((s) => s.name).join(', ')
+    const available = listRegistered().map((s) => s.name).join(', ')
     throw new Error(
       `Unknown scenario "${name}". Available: ${available}`
     )

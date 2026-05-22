@@ -26,6 +26,14 @@
 export { spinUpScenario } from './spinUpScenario'
 export { fromScenario } from './fromScenario'
 export { createTempGitRepo, type TempGitRepo } from './tempGitRepo'
+export {
+  registerScenario,
+  registerScenarios,
+  unregisterScenario,
+  listRegistered,
+  findRegistered,
+  resetRegistry,
+} from './registry'
 
 // Atom layer — see ./atoms/index.ts for the full catalog.
 export {
