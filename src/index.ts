@@ -25,7 +25,7 @@
 
 export { spinUpScenario } from './spinUpScenario'
 export { fromScenario } from './fromScenario'
-export { createTempGitRepo, type TempGitRepo } from './tempGitRepo'
+export { createTempGitRepo, type TempGitRepo, type CreateTempGitRepoOptions } from './tempGitRepo'
 export {
   registerScenario,
   registerScenarios,

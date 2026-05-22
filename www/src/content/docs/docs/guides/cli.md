@@ -31,7 +31,22 @@ npx git-scenarios create mid-merge-conflict --run "lazygit"
 npx git-scenarios create rich-history-graph --path ~/sandbox/test-repo
 ```
 
-## Flags
+### `git-scenarios clean [options]`
+
+Find and remove stale scenario temp directories from your system's temp folder.
+
+```bash
+# Remove all stale scenario dirs
+npx git-scenarios clean
+
+# Preview what would be removed (no deletion)
+npx git-scenarios clean --dry-run
+
+# Only remove dirs older than 24 hours
+npx git-scenarios clean --older-than 24
+```
+
+## Create flags
 
 | Flag | Behavior |
 |---|---|
@@ -39,6 +54,13 @@ npx git-scenarios create rich-history-graph --path ~/sandbox/test-repo
 | `--run <cmd>` | Launch `<cmd>` against the scenario dir after creation. Shell-style argument splitting. |
 | `--remote <url>` | Add `origin` pointing at `<url>` before launching. |
 | `--ephemeral` | Auto-clean the temp dir on exit. Without this, the dir persists. |
+
+## Clean flags
+
+| Flag | Behavior |
+|---|---|
+| `--dry-run` | List stale dirs without deleting them. |
+| `--older-than <hours>` | Only remove dirs older than N hours (default: 0 = all). |
 
 ## Examples
 
@@ -56,11 +78,74 @@ npx git-scenarios create feature-pr-ready --run "my-tool --debug"
 npx git-scenarios create feature-pr-ready \
   --run "gh pr create" \
   --remote git@github.com:org/repo.git
+
+# Clean up old scenarios (older than 2 hours)
+npx git-scenarios clean --older-than 2
 ```
 
-## Cleanup
+## Cleanup strategies
 
-Without `--ephemeral`, scenarios persist. The CLI prints a cleanup hint:
+There are three ways to handle cleanup depending on your use case:
+
+### 1. Programmatic tests — automatic via `cleanup()`
+
+In tests, always call `repo.cleanup()` in your teardown. The Jest adapter handles this automatically:
+
+```ts
+// Manual approach
+afterAll(async () => {
+  await repo.cleanup()
+})
+
+// Jest adapter — cleanup is automatic
+describeWithScenario('feature-pr-ready', (getRepo) => {
+  // No cleanup needed — handled for you
+})
+```
+
+### 2. Auto-cleanup on process exit
+
+Pass `{ autoCleanup: true }` to `createTempGitRepo()` for a safety net that cleans up when the process exits, even if you forget to call `cleanup()`:
+
+```ts
+const repo = await createTempGitRepo({ autoCleanup: true })
+// If the process exits without calling repo.cleanup(),
+// the temp dir is removed automatically via a process exit hook.
+```
+
+This is a safety net, not a replacement for explicit cleanup. Always call `cleanup()` when you can — the exit hook uses synchronous `rmSync` which may not complete for very large repos.
+
+### 3. CLI — `--ephemeral` or `clean`
+
+For manual testing via the CLI:
+
+- **`--ephemeral`** — auto-removes the scenario dir when the launched tool exits
+- **`git-scenarios clean`** — batch-removes accumulated dirs from `/tmp`
+
+```bash
+# One-shot: auto-clean when lazygit quits
+npx git-scenarios create mid-merge-conflict --run "lazygit" --ephemeral
+
+# Periodic cleanup of accumulated dirs
+npx git-scenarios clean --older-than 1
+```
+
+### When dirs accumulate
+
+Without `--ephemeral`, `create` persists the scenario dir so you can re-inspect after the tool quits. Over time these accumulate in your temp folder. The `clean` command handles this:
+
+```bash
+# See what's there
+npx git-scenarios clean --dry-run
+
+# Remove everything
+npx git-scenarios clean
+
+# Remove only old ones
+npx git-scenarios clean --older-than 24
+```
+
+The CLI prints the path and a cleanup hint after every `create`:
 
 ```
 ✓ Scenario "feature-pr-ready" ready at:
@@ -68,10 +153,4 @@ Without `--ephemeral`, scenarios persist. The CLI prints a cleanup hint:
 
 When you're done, clean up with:
     rm -rf /var/folders/.../coco-git-test-xR2qwz
-```
-
-Periodically clean accumulated temp dirs:
-
-```bash
-rm -rf $(ls -d /tmp/coco-git-test-* 2>/dev/null)
 ```
