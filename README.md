@@ -50,26 +50,28 @@ state every run), so the tests built on top are deterministic too.
    anything from "single staged file" to "three-way nested submodule
    mid-rebase."
 
-> **Status: v0.1.0.** Recently extracted from [`gfargo/coco`](https://github.com/gfargo/coco)
-> where it lived at `src/lib/testUtils/` (coco v0.43.0–v0.51.x) and
-> later `packages/git-scenarios/` during the standalone-extraction
-> spike. Now a real published npm package. API is at 0.x — minor
-> breaking changes possible until v1.0.
+> **Status: v0.5.0.** Extracted from [`gfargo/coco`](https://github.com/gfargo/coco)
+> where it lived as an internal test helper. Now a standalone npm
+> package with 27 curated scenarios, 50+ composable atoms, dual
+> CJS/ESM output, a Jest framework adapter, and programmatic
+> scenario registration. API is at 0.x — minor breaking changes
+> possible until v1.0.
 
 ## Table of contents
 
 - [Installation](#installation)
 - [Quick start](#quick-start)
+- [Jest framework adapter](#jest-framework-adapter)
 - [Common patterns (cookbook)](#common-patterns-cookbook)
 - [Available scenarios](#available-scenarios)
 - [The CLI](#the-cli)
 - [Programmatic API](#programmatic-api)
+- [Custom scenario registration](#custom-scenario-registration)
 - [Atoms — compose any repo state](#atoms--compose-any-repo-state-from-building-blocks)
 - [Defining your own scenarios](#defining-your-own-scenarios)
 - [TypeScript support](#typescript-support)
 - [Debugging](#debugging)
-- [Consumers beyond tests](#consumers-outside-of-tests)
-- [Extraction discipline](#extraction-discipline)
+- [Contributing](#contributing)
 
 ## Installation
 
@@ -86,7 +88,7 @@ project picks the version compatible with both this package and any
 other simple-git consumer you have.
 
 **Node requirement**: `^22.22.2 || ^24.15.0 || >=26.0.0`. The
-package ships ESM; CommonJS consumers should use `await import(...)`.
+package ships both ESM and CJS — use `import` or `require`, both work.
 
 > Inside the coco monorepo today, no install is needed — the package
 > is consumed via path mapping. See [coco's `CONTRIBUTING.md`](https://github.com/gfargo/coco/blob/main/CONTRIBUTING.md)
@@ -162,6 +164,61 @@ await chain(
   addRemote('origin', 'git@example.com:org/repo.git'),
 )(repo)
 // repo is now mid-merge with src/widget.ts conflicted, origin set
+```
+
+## Jest framework adapter
+
+The `@gfargo/git-scenarios/jest` subpath export provides zero-boilerplate
+scenario setup for Jest tests:
+
+```ts
+import { describeWithScenario } from '@gfargo/git-scenarios/jest'
+
+describeWithScenario('feature-pr-ready', (getRepo) => {
+  it('is on a feature branch', async () => {
+    const repo = getRepo()
+    const status = await repo.git.status()
+    expect(status.current).not.toBe('main')
+  })
+
+  it('has a clean worktree', async () => {
+    const repo = getRepo()
+    const status = await repo.git.status()
+    expect(status.isClean()).toBe(true)
+  })
+})
+```
+
+Run tests against multiple scenarios at once:
+
+```ts
+import { describeEachScenario } from '@gfargo/git-scenarios/jest'
+
+describeEachScenario(
+  ['feature-pr-ready', 'two-commit-feature', 'multi-commit-branch'],
+  (getRepo, scenarioName) => {
+    it(`has a clean worktree in ${scenarioName}`, async () => {
+      const repo = getRepo()
+      const status = await repo.git.status()
+      expect(status.isClean()).toBe(true)
+    })
+  },
+)
+```
+
+Extend a base scenario with extra steps:
+
+```ts
+describeWithScenario('single-staged-file', (getRepo) => {
+  it('has the extra dirty file', async () => {
+    const repo = getRepo()
+    const status = await repo.git.status()
+    expect(status.not_added).toContain('extra.ts')
+  })
+}, {
+  timeout: 60_000,
+  extraSteps: [writeFiles({ 'extra.ts': 'uncommitted\n' })],
+})
 ```
 
 ## Common patterns (cookbook)
@@ -371,50 +428,45 @@ await chain(
 ## Layout
 
 ```
-packages/git-scenarios/
-├── README.md               (this file)
+git-scenarios/
+├── README.md
+├── CONTRIBUTING.md
+├── CHANGELOG.md
 ├── package.json
 ├── tsconfig.json
+├── tsup.config.ts          (dual CJS/ESM build config)
+├── jest.config.cjs
 ├── src/
-│   ├── index.ts            (public API — `spinUpScenario`, `createTempGitRepo`, registry)
+│   ├── index.ts            (public API entry point)
 │   ├── tempGitRepo.ts      (low-level: init + user config + main branch)
-│   ├── spinUpScenario.ts   (programmatic API for tests)
-│   ├── spinUpScenario.test.ts
+│   ├── spinUpScenario.ts   (one-shot scenario API)
+│   ├── fromScenario.ts     (scenario + extra steps helper)
+│   ├── registry.ts         (mutable scenario registry)
+│   ├── jest.ts             (Jest framework adapter)
 │   ├── __fixtures__/
 │   │   └── generators.ts   (vendored deterministic content generator)
-│   └── scenarios/
-│       ├── types.ts        (Scenario type)
+│   ├── atoms/              (composable building blocks)
+│   │   ├── index.ts        (barrel export)
+│   │   ├── chain.ts, addCommit.ts, branches.ts, ...
+│   │   ├── sparseCheckout.ts, shallowClone.ts, notes.ts, hooks.ts
+│   │   └── *.test.ts
+│   └── scenarios/          (curated repo states)
 │       ├── index.ts        (registry + lookup)
+│       ├── types.ts        (Scenario type)
 │       ├── shared/
-│       │   └── seededFiles.ts (wrapper around the generator)
-│       ├── feature-pr-ready.ts
-│       ├── feature-branch-one-commit.ts
-│       ├── multi-commit-branch.ts
-│       ├── two-commit-feature.ts
-│       ├── single-staged-file.ts
-│       ├── dirty-many-files.ts
-│       ├── mid-bisect.ts
-│       ├── mid-merge-conflict.ts
-│       ├── stashed-changes.ts
-│       ├── rich-history-graph.ts
-│       └── submodule-with-history.ts
+│       └── *.ts / *.test.ts
 └── bin/
-    └── cli.ts              (the `git-scenarios` CLI, also reachable as `npm run scenario` inside coco)
+    └── cli.ts              (the `git-scenarios` CLI)
 ```
-
-The CLI driver lives at `bin/cli.ts` and is wired via the `scenario`
-npm script inside the coco monorepo. When extracted, it becomes the
-binary at `bin.git-scenarios` in `package.json`.
 
 ## Available scenarios
 
-Run `git-scenarios list` (or `npm run scenario list` inside coco) for
-the live list. Current set (**21 scenarios across 6 kinds**):
+Run `git-scenarios list` for the live list. Current set (**27 scenarios across 6 kinds**):
 
 | Name | Kind | What you get |
 |---|---|---|
-| `empty-repo` | branch | freshly-initialized repo: no commits, no files, no remotes. HEAD on `main` but unborn. The "what does your tool do on a brand-new repo?" edge case. |
-| `feature-pr-ready` | branch | `feat/widget-v2` 4 commits ahead of `main`, clean worktree — for create-pr (`C`) and changelog (`L`) flows |
+| `empty-repo` | branch | freshly-initialized repo: no commits, no files, no remotes. HEAD on `main` but unborn. |
+| `feature-pr-ready` | branch | `feat/widget-v2` 4 commits ahead of `main`, clean worktree — for create-pr and changelog flows |
 | `feature-branch-one-commit` | branch | `main` + `feat/x` (1 commit ahead, `src/feature.ts`) — minimal branch-vs-base shape |
 | `multi-commit-branch` | branch | `feat/dashboard` with 8 varied commits — baseline for navigation / filter / yank |
 | `two-commit-feature` | branch | baseline + a feat commit on `main`, clean worktree — for changelog / log / review smoke tests |
@@ -423,17 +475,23 @@ the live list. Current set (**21 scenarios across 6 kinds**):
 | `branch-behind-upstream` | branch | `main` is 3 commits behind `origin/main` — fast-forwardable |
 | `branch-diverged` | branch | `main` is 2 ahead AND 2 behind `origin/main` — diverged history |
 | `multi-remote-with-tracking` | branch | fork-workflow: `origin` + `upstream` remotes, `main` tracks `upstream/main`, `feat/fork-work` tracks `origin/feat/fork-work` |
-| `branch-sync-showcase` | branch | five local branches in five different upstream sync states (behind, ahead, diverged, synced, no-upstream); HEAD on the behind branch. For TUIs whose branch list shows mixed sync states at once. |
+| `branch-sync-showcase` | branch | five local branches in five different upstream sync states (behind, ahead, diverged, synced, no-upstream); HEAD on the behind branch. |
 | `detached-head` | branch | HEAD detached at `main~2`, `main` still at its original tip |
 | `signed-commits-required` | branch | `commit.gpgsign=true` + `user.signingkey` set — for testing signing-aware UI |
 | `single-staged-file` | worktree | baseline + 1 staged README — minimum "ready to commit" shape |
-| `dirty-many-files` | worktree | 12 staged + 6 unstaged + 3 untracked files across `src/`, `tests/`, `docs/` — for the future split flow |
-| `mid-bisect` | operation | 20 commits + active `git bisect`, HEAD at midpoint — for the bisect view |
-| `mid-merge-conflict` | operation | in-progress merge with 1 unresolved conflict on `src/widget.ts` — for the conflicts view |
-| `rich-history-graph` | history | 20+ commits across 6 date buckets, 2 `--no-ff` merges, 1 live unmerged `feat/wip` — for compact + full-graph rendering (bucket dividers, type coloring, branch chips, lane topology) |
-| `chip-rendering-showcase` | history | 6 commits each carrying a different branch-tip-chip kind — HEAD, plain local (`develop`), slashy local (`feat/widgets`), `origin/main`, `upstream/main`, and tag `v0.1.0` in trailing refs. For visual regression on TUIs that colour chips by kind. |
-| `stashed-changes` | stash | clean `main` + 3 stashes (LIFO ordered, each touching a distinct file) — for the stash view |
-| `submodule-with-history` | submodule | parent with 4 commits + `vendor/lib` submodule (clean pin, 4 commits, `branch = main`) — for recursive submodule navigation |
+| `dirty-many-files` | worktree | 12 staged + 6 unstaged + 3 untracked files across `src/`, `tests/`, `docs/` |
+| `multiple-worktrees` | worktree | primary worktree on `main` + 3 linked worktrees on `feat/alpha`, `feat/beta`, `hotfix/urgent` |
+| `mid-bisect` | operation | 20 commits + active `git bisect`, HEAD at midpoint |
+| `mid-merge-conflict` | operation | in-progress merge with 1 unresolved conflict on `src/widget.ts` |
+| `mid-rebase-conflict` | operation | in-progress rebase with 1 unresolved conflict on `src/config.ts` |
+| `mid-cherry-pick-conflict` | operation | in-progress cherry-pick with 1 unresolved conflict on `src/utils.ts` |
+| `mid-revert-conflict` | operation | in-progress revert with 1 unresolved conflict on `src/service.ts` |
+| `rich-history-graph` | history | 20+ commits across 6 date buckets, 2 `--no-ff` merges, 1 live unmerged `feat/wip` |
+| `chip-rendering-showcase` | history | 6 commits each carrying a different branch-tip-chip kind (HEAD, local, slashy, remote, upstream, tag) |
+| `shallow-clone` | history | 10 commits but only 4 reachable from HEAD (`.git/shallow` set) — for testing shallow-repo detection |
+| `large-repo` | history | 115 commits across 3 branches with 3 tags (`v0.1.0`, `v0.5.0`, `v1.0.0`) — for pagination/performance testing |
+| `stashed-changes` | stash | clean `main` + 3 stashes (LIFO ordered, each touching a distinct file) |
+| `submodule-with-history` | submodule | parent with 4 commits + `vendor/lib` submodule (clean pin, 4 commits, `branch = main`) |
 
 `git-scenarios describe <name>` prints the full description and the
 contract assertions for a single scenario.
@@ -577,17 +635,68 @@ where none of the named scenarios fit and you really do want to
 build from `git init`:
 
 ```ts
-import { createTempGitRepo } from 'packages/git-scenarios/src/tempGitRepo'
+import { createTempGitRepo } from '@gfargo/git-scenarios'
 
 const repo = await createTempGitRepo()
 // fresh git repo with main branch + user config + commit.gpgsign=false
 // no commits, no files — you build everything from here
 ```
 
-If you find yourself reaching for `createTempGitRepo()` to build
-something a future test will also want, **add a scenario instead**
-(see "Adding a new scenario" below), or compose one inline from the
-atom layer (see the next section).
+### `fromScenario(name, ...extraSteps)` — scenario + extras in one call
+
+When you need a scenario plus a few extra atoms on top:
+
+```ts
+import { fromScenario, addCommit, writeFiles } from '@gfargo/git-scenarios'
+
+const repo = await fromScenario('feature-pr-ready',
+  addCommit({ message: 'extra commit', files: { 'extra.ts': 'x\n' } }),
+  writeFiles({ 'dirty.ts': 'uncommitted\n' }),
+)
+// repo is feature-pr-ready + one extra commit + one dirty file
+```
+
+## Custom scenario registration
+
+Register custom scenarios so they're available via `spinUpScenario`,
+`fromScenario`, and the CLI:
+
+```ts
+import {
+  registerScenario,
+  defineScenario,
+  chain,
+  addCommit,
+  writeFiles,
+} from '@gfargo/git-scenarios'
+
+registerScenario(defineScenario({
+  name: 'my-monorepo-dirty',
+  summary: 'monorepo with uncommitted changes in packages/lib',
+  description: '...',
+  kind: 'worktree',
+  tags: ['monorepo', 'dirty'],
+  setup: chain(
+    addCommit({ message: 'init', files: { 'packages/lib/index.ts': 'v1\n' } }),
+    writeFiles({ 'packages/lib/index.ts': 'v2 (dirty)\n' }),
+  ),
+}))
+
+// Now works everywhere:
+const repo = await spinUpScenario('my-monorepo-dirty')
+```
+
+### Registry API
+
+| Function | What it does |
+|---|---|
+| `registerScenario(scenario)` | Add a custom scenario. Throws on duplicate names. |
+| `registerScenarios(scenarios)` | Batch registration. |
+| `unregisterScenario(name)` | Remove by name (returns `true`/`false`). |
+| `listRegistered()` | All scenarios (built-in + custom). |
+| `findRegistered(name)` | Lookup by name. |
+| `resetRegistry()` | Restore to built-in-only (useful in test teardown). |
+| `findScenariosByTag(tags, match?)` | Filter by tag (`'any'` or `'all'` matching). |
 
 ## Atoms — compose any repo state from building blocks
 
@@ -751,6 +860,35 @@ relative-time scenarios.
 | `defineScenario({…})` | Validating wrapper for `Scenario` (kebab-case name, kind enum, non-empty fields). |
 | `daysAgo(n)` | ISO timestamp at noon UTC N days before now. Pairs with the `date` option on commit atoms. |
 
+#### Sparse checkout
+
+| Atom | What it does |
+|---|---|
+| `enableSparseCheckout(paths, { cone? })` | Enable sparse checkout — only specified paths are checked out. |
+| `disableSparseCheckout()` | Disable sparse checkout, restoring the full working tree. |
+
+#### Shallow repo simulation
+
+| Atom | What it does |
+|---|---|
+| `shallowAt(depth)` | Write `.git/shallow` to simulate a shallow clone at the given depth. |
+| `unshallow()` | Remove the shallow boundary, restoring full history. |
+
+#### Git notes
+
+| Atom | What it does |
+|---|---|
+| `addNote(message, { ref?, namespace? })` | Add a note to a commit (overwrites existing). |
+| `appendNote(message, { ref?, namespace? })` | Append to an existing note (or create). |
+| `removeNote({ ref?, namespace? })` | Remove a note from a commit. |
+
+#### Git hooks
+
+| Atom | What it does |
+|---|---|
+| `installHook(name, script)` | Write an executable hook script to `.git/hooks/<name>`. |
+| `removeHook(name)` | Remove a hook script. |
+
 ### Worked example: "out-of-date submodule"
 
 A scenario shape that's hard with the imperative API but reads
@@ -885,23 +1023,15 @@ describe('my-tool against dirty workspace', () => {
 })
 ```
 
-Or build a local registry + helper that mirrors `spinUpScenario`:
+Or register it so it works with `spinUpScenario` and the CLI:
 
 ```ts
-// my-test-utils/scenarios/index.ts
-import { createTempGitRepo, type Scenario, type TempGitRepo } from '@gfargo/git-scenarios'
-import { twoWorkspaceDirtyScenario } from './two-workspace-dirty'
-import { releaseReadyScenario } from './release-ready'
+import { registerScenario } from '@gfargo/git-scenarios'
+import { twoWorkspaceDirtyScenario } from './my-test-utils/scenarios/two-workspace-dirty'
 
-const localScenarios: Scenario[] = [twoWorkspaceDirtyScenario, releaseReadyScenario]
-
-export async function spinUpLocalScenario(name: string): Promise<TempGitRepo> {
-  const scenario = localScenarios.find((s) => s.name === name)
-  if (!scenario) throw new Error(`Unknown local scenario "${name}"`)
-  const repo = await createTempGitRepo()
-  await scenario.setup(repo)
-  return repo
-}
+registerScenario(twoWorkspaceDirtyScenario)
+// Now: spinUpScenario('two-workspace-dirty') works
+// And: git-scenarios create two-workspace-dirty works
 ```
 
 ### The `Scenario` shape
@@ -916,6 +1046,8 @@ type Scenario = {
   description: string
   /** Filtering category. */
   kind: 'branch' | 'worktree' | 'operation' | 'history' | 'stash' | 'submodule'
+  /** Optional tags for finer-grained filtering (e.g. ['conflict', 'merge']). */
+  tags?: string[]
   /** Git-state factory — typically `chain(...)` of atoms. */
   setup: Step  // (repo: TempGitRepo) => Promise<void>
   /** Optional human-readable contract assertions. */
@@ -931,15 +1063,13 @@ otherwise blow up mid-test.
 
 If your custom scenario is generally useful (e.g. "stashed-with-untracked",
 "rebase-mid-conflict"), open a PR against
-[`gfargo/coco`](https://github.com/gfargo/coco/issues) adding:
+[`gfargo/git-scenarios`](https://github.com/gfargo/git-scenarios) adding:
 
-1. `packages/git-scenarios/src/scenarios/<kebab-name>.ts` exporting
-   the scenario.
-2. `<kebab-name>.test.ts` next to it, asserting each contract line
-   holds after setup.
-3. Register in `packages/git-scenarios/src/scenarios/index.ts`.
+1. `src/scenarios/<kebab-name>.ts` exporting the scenario.
+2. `<kebab-name>.test.ts` next to it, asserting each contract line.
+3. Register in `src/scenarios/index.ts`.
 
-The CLI picks it up automatically.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full checklist.
 
 ## TypeScript support
 
@@ -950,6 +1080,7 @@ type declarations and source maps. Types you'll commonly reach for:
 import type {
   AuthorIdentity,     // { name, email, date? } for withAuthor
   FileMap,            // { 'path': content } for writeFiles
+  GitHookName,        // 'pre-commit' | 'commit-msg' | ... for installHook
   Scenario,           // the registered-scenario shape
   ScenarioKind,       // 'branch' | 'worktree' | 'operation' | 'history' | 'stash' | 'submodule'
   SeededFileSpec,     // { path, tokens, seedOffset? } for seededFiles
@@ -1060,53 +1191,9 @@ expect(result.text).toContain('feat: my deterministic title')
 Together (scenario + mock) the test becomes deterministic top to
 bottom — same git state every run, same external response every run.
 
-## Consumers outside of tests
-
-The scenario library doubles as a benchmark / eval input source
-inside the coco monorepo — each scenario's commits are walked into
-per-file diffs and fed through the parser pipeline as a deterministic
-golden set:
-
-```bash
-npm run eval:structural-extract                 # all scenarios + fixtures
-npm run eval:structural-extract -- --scenario feature-pr-ready
-npm run eval:structural-extract -- --fixtures-only
-```
-
-The adapter lives at
-`src/lib/parsers/default/__evals__/scenarioInputs.ts` and the
-extraction-boundary rule still holds: it imports from
-`src/scenarios` and the public `findScenario` helper,
-not from any individual scenario module. When the testUtils layer
-moves out to its own package, the eval depends on the published
-package the same way any other consumer would.
-
-## Boundary discipline
-
-This package is **git-tool-agnostic** by design. Its public surface
-is the named exports from `index.ts`; everything inside knows nothing
-about which downstream tool is consuming it.
-
-### Rules contributors should keep
-
-- **Scenario signatures are pure git-state factories.**
-  `(repo: TempGitRepo) => Promise<void>`. No knowledge of which tool is
-  testing them. A scenario named `mid-bisect` produces a mid-bisect
-  repo — full stop.
-- **Public surface = `index.ts`.** Tests import named symbols from
-  the package root; nothing else should reach into individual files
-  directly.
-- **CLI (`bin/cli.ts`)** uses the generalized `--run <cmd>` flag to
-  launch any tool. The `--run-ui` legacy alias exists for backward
-  compatibility with the in-coco-monorepo workflow; external
-  consumers should use `--run "coco ui"` (or any other shell command).
-- **Imports stay minimal**: `simple-git`, Node stdlib (`fs`,
-  `path`, `os`, `child_process`, `util`), and sibling files inside
-  the package. No deps on consumer tools.
-
 ## Contributing
 
-Open an issue at [gfargo/git-scenarios](https://github.com/gfargo/git-scenarios/issues)
-with what you're trying to test and what shape the scenario should
-take. PRs welcome — see *Defining your own scenarios* above for the
-shape, plus add a paired `.test.ts` asserting each contract line.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full guide on adding
+atoms, scenarios, and tests. PRs welcome — open an issue at
+[gfargo/git-scenarios](https://github.com/gfargo/git-scenarios/issues)
+if you're unsure about the shape.
