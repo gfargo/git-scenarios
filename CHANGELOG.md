@@ -8,6 +8,48 @@ versions follow [semver](https://semver.org/).
 
 (none)
 
+## [0.5.0] — 2026-05-22
+
+### Added
+
+- **ESM dual-publish via tsup** — Package now ships both CJS (`.cjs`)
+  and ESM (`.js`) for all entry points. Added `"type": "module"` to
+  package.json. Exports map uses conditional `import`/`require`
+  resolution. Unblocks ESM-only consumers (Deno, modern bundlers).
+
+- **Four new scenarios** (27 total):
+  - `shallow-clone` — repo with `.git/shallow`, only 4 of 10 commits
+    reachable. For testing tools that detect shallow repos.
+  - `multiple-worktrees` — primary worktree on `main` + 3 linked
+    worktrees on `feat/alpha`, `feat/beta`, `hotfix/urgent`.
+  - `large-repo` — 115 commits across 3 branches with 3 tags
+    (`v0.1.0`, `v0.5.0`, `v1.0.0`). For pagination/performance testing.
+  - `mid-revert-conflict` — in-progress revert with `REVERT_HEAD` set
+    and one conflicted file.
+
+- **Programmatic scenario registration**:
+  - `registerScenario(scenario)` — add custom scenarios to the registry
+  - `registerScenarios(scenarios)` — batch registration
+  - `unregisterScenario(name)` — remove by name
+  - `listRegistered()` / `findRegistered(name)` — query the full registry
+  - `resetRegistry()` — restore to built-in-only state (test teardown)
+  - `spinUpScenario()` and `fromScenario()` now search the full registry
+
+- **Jest framework adapter** — new subpath export
+  `@gfargo/git-scenarios/jest`:
+  - `describeWithScenario(name, fn, opts?)` — auto setup/teardown
+    wrapper around Jest's `describe`
+  - `describeEachScenario(names, fn, opts?)` — run tests against
+    multiple scenarios in one call
+  - Supports `extraSteps` for extending base scenarios
+  - Configurable `timeout` for slow scenarios
+
+### Changed
+
+- Build system switched from `tsc` to `tsup` (dual CJS/ESM output).
+- `spinUpScenario()` and `fromScenario()` now use the mutable registry
+  instead of the static `allScenarios` array directly.
+
 ## [0.4.0] — 2026-05-22
 
 ### Added
@@ -273,7 +315,8 @@ duplication is resolved post-publish.
 - Node: `^22.22.2 || ^24.15.0 || >=26.0.0`
 - License: MIT
 
-[Unreleased]: https://github.com/gfargo/git-scenarios/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/gfargo/git-scenarios/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/gfargo/git-scenarios/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/gfargo/git-scenarios/compare/v0.3.3...v0.4.0
 [0.3.3]: https://github.com/gfargo/git-scenarios/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/gfargo/git-scenarios/compare/v0.3.1...v0.3.2
