@@ -83,3 +83,11 @@ export {
 export { seededFiles, type SeededFileSpec } from './seededFiles'
 export { defineScenario } from './defineScenario'
 export { daysAgo } from './time'
+// Sparse checkout
+export { enableSparseCheckout, disableSparseCheckout } from './sparseCheckout'
+// Shallow repo simulation
+export { shallowAt, unshallow } from './shallowClone'
+// Git notes
+export { addNote, appendNote, removeNote } from './notes'
+// Git hooks
+export { installHook, removeHook, type GitHookName } from './hooks'

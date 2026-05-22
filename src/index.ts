@@ -24,6 +24,7 @@
  */
 
 export { spinUpScenario } from './spinUpScenario'
+export { fromScenario } from './fromScenario'
 export { createTempGitRepo, type TempGitRepo } from './tempGitRepo'
 
 // Atom layer — see ./atoms/index.ts for the full catalog.
@@ -94,16 +95,31 @@ export {
   defineScenario,
   // Time helpers
   daysAgo,
+  // Sparse checkout
+  enableSparseCheckout,
+  disableSparseCheckout,
+  // Shallow repo
+  shallowAt,
+  unshallow,
+  // Git notes
+  addNote,
+  appendNote,
+  removeNote,
+  // Git hooks
+  installHook,
+  removeHook,
   // Types
   type Step,
   type FileMap,
   type SeededFileSpec,
   type AuthorIdentity,
+  type GitHookName,
 } from './atoms'
 
 export {
   allScenarios,
   findScenario,
+  findScenariosByTag,
   type Scenario,
   type ScenarioKind,
   // Individual scenarios — exported so consumers can opt out of the
@@ -121,7 +137,9 @@ export {
   featureBranchOneCommitScenario,
   featurePrReadyScenario,
   midBisectScenario,
+  midCherryPickConflictScenario,
   midMergeConflictScenario,
+  midRebaseConflictScenario,
   multiCommitBranchScenario,
   multiRemoteWithTrackingScenario,
   richHistoryGraphScenario,

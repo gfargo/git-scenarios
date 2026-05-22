@@ -12,13 +12,27 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  roots: ['<rootDir>/src'],
+  roots: ['<rootDir>/src', '<rootDir>/bin'],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   // Many tests shell out to git via simple-git (rebase + conflict + continue,
   // submodule clones, fetch-back patterns). CI runners are slow enough that
   // the default 5s timeout flakes on these compound flows. 30s gives
   // headroom without masking real hangs.
   testTimeout: 30_000,
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    'bin/**/*.ts',
+    '!src/**/*.test.ts',
+    '!src/__fixtures__/**',
+  ],
+  coverageThreshold: {
+    global: {
+      branches: 70,
+      functions: 80,
+      lines: 80,
+      statements: 80,
+    },
+  },
   transform: {
     '^.+\\.tsx?$': [
       'ts-jest',

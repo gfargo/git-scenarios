@@ -1,4 +1,4 @@
-import { allScenarios, findScenario } from './index'
+import { allScenarios, findScenario, findScenariosByTag } from './index'
 
 describe('scenarios registry', () => {
   it('exposes a non-empty list of scenarios', () => {
@@ -31,6 +31,11 @@ describe('scenarios registry', () => {
     }
   })
 
+  it('includes the new conflict scenarios', () => {
+    expect(findScenario('mid-rebase-conflict')).toBeDefined()
+    expect(findScenario('mid-cherry-pick-conflict')).toBeDefined()
+  })
+
   describe('findScenario', () => {
     it('returns the scenario for a known name', () => {
       const result = findScenario('feature-pr-ready')
@@ -40,6 +45,39 @@ describe('scenarios registry', () => {
 
     it('returns undefined for an unknown name', () => {
       expect(findScenario('does-not-exist')).toBeUndefined()
+    })
+  })
+
+  describe('findScenariosByTag', () => {
+    it('returns scenarios matching any of the given tags', () => {
+      const results = findScenariosByTag(['conflict'])
+      expect(results.length).toBeGreaterThanOrEqual(3) // merge, rebase, cherry-pick
+      for (const s of results) {
+        expect(s.tags).toContain('conflict')
+      }
+    })
+
+    it('returns scenarios matching all tags when match is "all"', () => {
+      const results = findScenariosByTag(['conflict', 'merge'], 'all')
+      expect(results.length).toBeGreaterThanOrEqual(1)
+      for (const s of results) {
+        expect(s.tags).toContain('conflict')
+        expect(s.tags).toContain('merge')
+      }
+    })
+
+    it('returns empty array when no scenarios match', () => {
+      const results = findScenariosByTag(['nonexistent-tag-xyz'])
+      expect(results).toEqual([])
+    })
+
+    it('returns empty for scenarios without tags', () => {
+      // Scenarios without tags should never match
+      const results = findScenariosByTag(['conflict'])
+      for (const s of results) {
+        expect(s.tags).toBeDefined()
+        expect(s.tags!.length).toBeGreaterThan(0)
+      }
     })
   })
 })

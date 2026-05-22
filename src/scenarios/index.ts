@@ -24,7 +24,9 @@ import { emptyRepoScenario } from './empty-repo'
 import { featureBranchOneCommitScenario } from './feature-branch-one-commit'
 import { featurePrReadyScenario } from './feature-pr-ready'
 import { midBisectScenario } from './mid-bisect'
+import { midCherryPickConflictScenario } from './mid-cherry-pick-conflict'
 import { midMergeConflictScenario } from './mid-merge-conflict'
+import { midRebaseConflictScenario } from './mid-rebase-conflict'
 import { multiCommitBranchScenario } from './multi-commit-branch'
 import { multiRemoteWithTrackingScenario } from './multi-remote-with-tracking'
 import { richHistoryGraphScenario } from './rich-history-graph'
@@ -64,6 +66,8 @@ export const allScenarios: readonly Scenario[] = [
   // in-progress operations
   midBisectScenario,
   midMergeConflictScenario,
+  midRebaseConflictScenario,
+  midCherryPickConflictScenario,
   // history shapes
   richHistoryGraphScenario,
   chipRenderingShowcaseScenario,
@@ -82,6 +86,28 @@ export function findScenario(name: string): Scenario | undefined {
   return allScenarios.find((s) => s.name === name)
 }
 
+/**
+ * Filter scenarios by tag. Returns all scenarios that include at
+ * least one of the specified tags. Useful for running a subset of
+ * scenarios in tests or listing related scenarios in the CLI.
+ *
+ * @param tags - One or more tags to match against
+ * @param match - 'any' (default) returns scenarios matching ANY tag;
+ *   'all' returns only scenarios matching ALL tags.
+ */
+export function findScenariosByTag(
+  tags: string[],
+  match: 'any' | 'all' = 'any',
+): readonly Scenario[] {
+  return allScenarios.filter((s) => {
+    if (!s.tags || s.tags.length === 0) return false
+    if (match === 'all') {
+      return tags.every((t) => s.tags!.includes(t))
+    }
+    return tags.some((t) => s.tags!.includes(t))
+  })
+}
+
 export type { Scenario, ScenarioKind } from './types'
 export { branchAheadOfUpstreamScenario } from './branch-ahead-of-upstream'
 export { branchBehindUpstreamScenario } from './branch-behind-upstream'
@@ -95,7 +121,9 @@ export { emptyRepoScenario } from './empty-repo'
 export { featureBranchOneCommitScenario } from './feature-branch-one-commit'
 export { featurePrReadyScenario } from './feature-pr-ready'
 export { midBisectScenario } from './mid-bisect'
+export { midCherryPickConflictScenario } from './mid-cherry-pick-conflict'
 export { midMergeConflictScenario } from './mid-merge-conflict'
+export { midRebaseConflictScenario } from './mid-rebase-conflict'
 export { multiCommitBranchScenario } from './multi-commit-branch'
 export { multiRemoteWithTrackingScenario } from './multi-remote-with-tracking'
 export { richHistoryGraphScenario } from './rich-history-graph'
