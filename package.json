@@ -40,6 +40,11 @@
       "types": "./dist/atoms/index.d.ts",
       "import": "./dist/atoms/index.js",
       "require": "./dist/atoms/index.cjs"
+    },
+    "./jest": {
+      "types": "./dist/jest.d.ts",
+      "import": "./dist/jest.js",
+      "require": "./dist/jest.cjs"
     }
   },
   "bin": {
