@@ -26,12 +26,12 @@
  */
 
 import {
-  addCommit,
-  chain,
-  checkoutBranch,
-  defineScenario,
-  startMerge,
-  switchToBranch,
+    addCommit,
+    chain,
+    checkoutBranch,
+    defineScenario,
+    startMerge,
+    switchToBranch,
 } from '../atoms'
 
 const widgetSource = (name: string): string =>
@@ -54,6 +54,7 @@ export const midMergeConflictScenario = defineScenario({
     '  - the C / Esc guard on the conflicts view',
   ].join('\n'),
   kind: 'operation',
+  tags: ['conflict', 'merge'],
   contracts: [
     'main is checked out',
     'a merge is in progress (MERGE_HEAD exists)',

@@ -48,6 +48,12 @@ export type Scenario = {
   description: string
   /** Filtering category. */
   kind: ScenarioKind
+  /**
+   * Optional: finer-grained tags for filtering scenarios beyond `kind`.
+   * Examples: `['conflict', 'merge']`, `['tracking', 'remote']`,
+   * `['dirty', 'staged', 'untracked']`.
+   */
+  tags?: string[]
   /** The actual state factory. Mutates the given repo. */
   setup: (repo: TempGitRepo) => Promise<void>
   /**

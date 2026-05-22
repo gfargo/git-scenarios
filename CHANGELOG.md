@@ -8,6 +8,73 @@ versions follow [semver](https://semver.org/).
 
 (none)
 
+## [0.4.0] — 2026-05-22
+
+### Added
+
+- **New scenarios — `mid-rebase-conflict` and `mid-cherry-pick-conflict`**
+  (kind: `operation`). Two new conflict-state scenarios that complement
+  the existing `mid-merge-conflict`:
+  - `mid-rebase-conflict` — repo mid-rebase with `.git/rebase-merge/`
+    and `REBASE_HEAD` set, one conflicted file (`src/config.ts`).
+  - `mid-cherry-pick-conflict` — repo mid-cherry-pick with
+    `CHERRY_PICK_HEAD` set, one conflicted file (`src/utils.ts`).
+
+  Tools render these three conflict types differently (different `.git`
+  state files, different resolution flows), so each deserves its own
+  scenario. Registry now contains **23 scenarios**.
+
+- **New atoms — Sparse checkout**: `enableSparseCheckout(paths, { cone? })`
+  and `disableSparseCheckout()`. Configure sparse checkout for testing
+  tools that need to detect or handle monorepo sparse-checkout mode.
+
+- **New atoms — Shallow repo simulation**: `shallowAt(depth)` and
+  `unshallow()`. Simulate `git clone --depth N` by writing
+  `.git/shallow` directly. For testing tools that behave differently
+  against shallow repositories.
+
+- **New atoms — Git notes**: `addNote(message, { ref?, namespace? })`,
+  `appendNote(message, { ref?, namespace? })`, and
+  `removeNote({ ref?, namespace? })`. For testing tools that display
+  or process git notes (code review metadata, CI annotations).
+
+- **New atoms — Git hooks**: `installHook(name, script)` and
+  `removeHook(name)`. Write executable hook scripts into `.git/hooks/`
+  for testing tools that detect, skip, or honor git hooks.
+
+- **New API — `fromScenario(name, ...extraSteps)`**: One-liner to spin
+  up a named scenario and apply additional atoms on top. Saves the
+  common `spinUpScenario` → manual `chain(...)` dance.
+
+- **New API — `findScenariosByTag(tags, match?)`**: Filter scenarios by
+  tag with `'any'` (OR, default) or `'all'` (AND) matching. Enables
+  consumers to run subsets of scenarios programmatically.
+
+- **New type field — `Scenario.tags?: string[]`**: Optional finer-grained
+  tags for filtering scenarios beyond `kind`. Tags added to all three
+  conflict scenarios: `['conflict', 'merge']`, `['conflict', 'rebase']`,
+  `['conflict', 'cherry-pick']`.
+
+- **CLI smoke tests** (`bin/cli.test.ts`): New test file validating the
+  scenario registry (field validation, uniqueness, lookup) and
+  integration tests for the create/cleanup flow.
+
+- **`CONTRIBUTING.md`**: Full contributor guide covering project
+  structure, how to add atoms/scenarios, test conventions, code style,
+  PR checklist, and release process.
+
+- **Coverage reporting**: Jest config now includes `collectCoverageFrom`
+  and `coverageThreshold` (80% lines/functions/statements, 70%
+  branches). New `test:coverage` npm script.
+
+- **Windows CI**: GitHub Actions matrix now includes `windows-latest`
+  alongside `ubuntu-latest`. Tests run with `--coverage` in CI.
+
+### Changed
+
+- Jest `roots` expanded to include `bin/` directory for CLI tests.
+- `allScenarios` array updated with the two new conflict scenarios.
+
 ## [0.3.3] — 2026-05-19
 
 ### Added
@@ -206,7 +273,8 @@ duplication is resolved post-publish.
 - Node: `^22.22.2 || ^24.15.0 || >=26.0.0`
 - License: MIT
 
-[Unreleased]: https://github.com/gfargo/git-scenarios/compare/v0.3.3...HEAD
+[Unreleased]: https://github.com/gfargo/git-scenarios/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/gfargo/git-scenarios/compare/v0.3.3...v0.4.0
 [0.3.3]: https://github.com/gfargo/git-scenarios/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/gfargo/git-scenarios/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/gfargo/git-scenarios/compare/v0.3.0...v0.3.1
