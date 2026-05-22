@@ -27,9 +27,13 @@ import { midBisectScenario } from './mid-bisect'
 import { midCherryPickConflictScenario } from './mid-cherry-pick-conflict'
 import { midMergeConflictScenario } from './mid-merge-conflict'
 import { midRebaseConflictScenario } from './mid-rebase-conflict'
+import { midRevertConflictScenario } from './mid-revert-conflict'
 import { multiCommitBranchScenario } from './multi-commit-branch'
 import { multiRemoteWithTrackingScenario } from './multi-remote-with-tracking'
+import { multipleWorktreesScenario } from './multiple-worktrees'
+import { largeRepoScenario } from './large-repo'
 import { richHistoryGraphScenario } from './rich-history-graph'
+import { shallowCloneScenario } from './shallow-clone'
 import { signedCommitsRequiredScenario } from './signed-commits-required'
 import { singleStagedFileScenario } from './single-staged-file'
 import { stashedChangesScenario } from './stashed-changes'
@@ -60,19 +64,23 @@ export const allScenarios: readonly Scenario[] = [
   // detached / config shapes
   detachedHeadScenario,
   signedCommitsRequiredScenario,
-  // worktree shapes
-  singleStagedFileScenario,
-  dirtyManyFilesScenario,
   // in-progress operations
   midBisectScenario,
   midMergeConflictScenario,
   midRebaseConflictScenario,
   midCherryPickConflictScenario,
+  midRevertConflictScenario,
   // history shapes
   richHistoryGraphScenario,
   chipRenderingShowcaseScenario,
+  shallowCloneScenario,
+  largeRepoScenario,
   // stash shapes
   stashedChangesScenario,
+  // worktree shapes
+  singleStagedFileScenario,
+  dirtyManyFilesScenario,
+  multipleWorktreesScenario,
   // submodule shapes
   submoduleWithHistoryScenario,
 ]
@@ -124,9 +132,13 @@ export { midBisectScenario } from './mid-bisect'
 export { midCherryPickConflictScenario } from './mid-cherry-pick-conflict'
 export { midMergeConflictScenario } from './mid-merge-conflict'
 export { midRebaseConflictScenario } from './mid-rebase-conflict'
+export { midRevertConflictScenario } from './mid-revert-conflict'
 export { multiCommitBranchScenario } from './multi-commit-branch'
 export { multiRemoteWithTrackingScenario } from './multi-remote-with-tracking'
+export { multipleWorktreesScenario } from './multiple-worktrees'
+export { largeRepoScenario } from './large-repo'
 export { richHistoryGraphScenario } from './rich-history-graph'
+export { shallowCloneScenario } from './shallow-clone'
 export { signedCommitsRequiredScenario } from './signed-commits-required'
 export { singleStagedFileScenario } from './single-staged-file'
 export { stashedChangesScenario } from './stashed-changes'
