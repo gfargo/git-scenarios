@@ -9,7 +9,6 @@ export default defineConfig({
     webAnalytics: { enabled: true },
   }),
   integrations: [
-    sitemap(),
     starlight({
       title: 'git-scenarios',
       description: 'Spin up real git repositories in any state, deterministically. Composable atoms for merge conflicts, submodules, multiple remotes, and more.',
