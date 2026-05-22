@@ -258,6 +258,12 @@ nav.sidebar .top-level > li > a {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08) !important;
 }
 
+/* Remove the fake terminal window chrome (title bar, dots) */
+.expressive-code .frame .header,
+.expressive-code .frame figcaption {
+  display: none !important;
+}
+
 /* Dark theme: deep navy code blocks */
 :root:not([data-theme='light']) .expressive-code pre {
   background: #0c1222 !important;
