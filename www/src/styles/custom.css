@@ -250,12 +250,31 @@ nav.sidebar .top-level > li > a {
 /* ─── Code blocks ─── */
 .expressive-code pre {
   border: 1px solid var(--gs-border) !important;
-  border-radius: 8px !important;
-  background: #0a0e1a !important;
+  border-radius: 6px !important;
 }
 
 .expressive-code .frame {
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Dark theme: deep navy code blocks */
+:root:not([data-theme='light']) .expressive-code pre {
+  background: #0c1222 !important;
+}
+
+:root:not([data-theme='light']) .expressive-code .frame {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Light theme: warm gray code blocks that blend with the page */
+:root[data-theme='light'] .expressive-code pre {
+  background: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+}
+
+:root[data-theme='light'] .expressive-code .frame {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
 }
 
 /* ─── Tables ─── */
@@ -297,6 +316,16 @@ nav.sidebar .top-level > li > a {
   padding: 0.15em 0.4em;
   font-size: 0.85em;
   font-weight: 400;
+}
+
+:root[data-theme='light'] .sl-markdown-content :not(pre) > code {
+  background: rgba(8, 145, 178, 0.06);
+  border-color: rgba(8, 145, 178, 0.15);
+}
+
+:root[data-theme='light'] .sl-markdown-content td code {
+  background: rgba(8, 145, 178, 0.06);
+  border-color: rgba(8, 145, 178, 0.15);
 }
 
 /* ─── Links ─── */
