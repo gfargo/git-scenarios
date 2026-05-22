@@ -19,13 +19,15 @@
  */
 
 import { spawnSync } from 'node:child_process'
+import { readdirSync, rmSync, statSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import * as path from 'node:path'
 
 import { allScenarios, findScenario, type Scenario } from '../src/scenarios'
 import { createTempGitRepo } from '../src/tempGitRepo'
 
 type ParsedArgs = {
-  command?: 'list' | 'describe' | 'create' | 'help'
+  command?: 'list' | 'describe' | 'create' | 'clean' | 'help'
   positional: string[]
   flags: Record<string, string | boolean>
 }
@@ -48,7 +50,7 @@ function parseArgs(argv: string[]): ParsedArgs {
         flags[arg.slice(2)] = true
       }
     } else if (!command) {
-      if (arg === 'list' || arg === 'describe' || arg === 'create' || arg === 'help') {
+      if (arg === 'list' || arg === 'describe' || arg === 'create' || arg === 'clean' || arg === 'help') {
         command = arg
       } else {
         positional.push(arg)
@@ -70,6 +72,7 @@ function printHelp(): void {
     '    git-scenarios list',
     '    git-scenarios describe <name>',
     '    git-scenarios create <name> [options]',
+    '    git-scenarios clean [options]',
     '',
     '  Create options:',
     '    --path <dir>     Materialize the scenario at <dir> instead of /tmp',
@@ -85,6 +88,10 @@ function printHelp(): void {
     '                     risking destructive actions against a real repo.',
     '    --ephemeral      Remove the scenario directory when the CLI exits',
     '                     (default: persist, print the cleanup hint)',
+    '',
+    '  Clean options:',
+    '    --dry-run        List stale scenario dirs without deleting them',
+    '    --older-than <h> Only remove dirs older than <h> hours (default: 0 = all)',
     '',
     `  Available scenarios (${allScenarios.length}):`,
     ...allScenarios.map((s) => `    ${s.name.padEnd(28)} ${s.summary}`),
@@ -231,6 +238,84 @@ async function commandCreate(
   return 0
 }
 
+/**
+ * Find and remove stale git-scenarios temp directories.
+ * Looks for directories matching the `coco-git-test-*` pattern in
+ * the system temp directory.
+ */
+async function commandClean(options: {
+  dryRun?: boolean
+  olderThanHours?: number
+}): Promise<number> {
+  const tmp = tmpdir()
+  const prefix = 'coco-git-test-'
+  const nowMs = Date.now()
+  const maxAgeMs = (options.olderThanHours || 0) * 60 * 60 * 1000
+
+  let entries: string[]
+  try {
+    entries = readdirSync(tmp)
+  } catch {
+    console.error(`Could not read temp directory: ${tmp}`)
+    return 1
+  }
+
+  const scenarioDirs = entries
+    .filter((name) => name.startsWith(prefix))
+    .map((name) => {
+      const fullPath = path.join(tmp, name)
+      try {
+        const stat = statSync(fullPath)
+        return { path: fullPath, mtime: stat.mtimeMs, isDir: stat.isDirectory() }
+      } catch {
+        return null
+      }
+    })
+    .filter((entry): entry is NonNullable<typeof entry> => entry !== null && entry.isDir)
+    .filter((entry) => {
+      if (maxAgeMs === 0) return true
+      return (nowMs - entry.mtime) > maxAgeMs
+    })
+
+  if (scenarioDirs.length === 0) {
+    console.log('')
+    console.log('  No stale scenario directories found.')
+    console.log('')
+    return 0
+  }
+
+  console.log('')
+  console.log(`  Found ${scenarioDirs.length} scenario director${scenarioDirs.length === 1 ? 'y' : 'ies'}:`)
+  console.log('')
+
+  for (const dir of scenarioDirs) {
+    const age = Math.round((nowMs - dir.mtime) / (60 * 60 * 1000))
+    console.log(`    ${dir.path}  (${age}h old)`)
+  }
+
+  if (options.dryRun) {
+    console.log('')
+    console.log('  (dry run — no directories removed)')
+    console.log('')
+    return 0
+  }
+
+  console.log('')
+  let removed = 0
+  for (const dir of scenarioDirs) {
+    try {
+      rmSync(dir.path, { recursive: true, force: true })
+      removed += 1
+    } catch (error) {
+      console.error(`  Failed to remove: ${dir.path} — ${(error as Error).message}`)
+    }
+  }
+
+  console.log(`  ✓ Removed ${removed} director${removed === 1 ? 'y' : 'ies'}.`)
+  console.log('')
+  return 0
+}
+
 async function main(): Promise<void> {
   const { command, positional, flags } = parseArgs(process.argv.slice(2))
 
@@ -251,6 +336,14 @@ async function main(): Promise<void> {
       process.exit(2)
     }
     process.exit(commandDescribe(name))
+  }
+
+  if (command === 'clean') {
+    const code = await commandClean({
+      dryRun: Boolean(flags['dry-run']),
+      olderThanHours: typeof flags['older-than'] === 'string' ? parseInt(flags['older-than'], 10) : 0,
+    })
+    process.exit(code)
   }
 
   if (command === 'create') {

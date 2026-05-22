@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none">
-  <!-- Trunk line -->
-  <path d="M14 7 L14 24" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round"/>
+  <!-- Trunk -->
+  <path d="M14 6 L14 24" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round"/>
   <!-- Branch left -->
-  <path d="M14 11 C12 13, 9 14, 7 17" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <path d="M14 10.5 C12 12.5, 9.5 13.5, 7.5 16" stroke="#cbd5e1" stroke-width="1.25" stroke-linecap="round" fill="none"/>
   <!-- Branch right -->
-  <path d="M14 15 C16 16, 19 17, 21 19" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-  <!-- Commit nodes (on top of lines) -->
-  <circle cx="14" cy="6" r="3" fill="#0891b2"/>
-  <circle cx="14" cy="12" r="2.5" fill="#0891b2"/>
-  <circle cx="7" cy="17.5" r="2.5" fill="#7c3aed"/>
-  <circle cx="14" cy="18.5" r="2.5" fill="#0891b2"/>
-  <circle cx="21" cy="19.5" r="2.5" fill="#059669"/>
-  <circle cx="14" cy="24" r="3" fill="#0891b2"/>
+  <path d="M14 14.5 C16 15.5, 18.5 16.5, 20.5 18.5" stroke="#cbd5e1" stroke-width="1.25" stroke-linecap="round" fill="none"/>
+  <!-- Nodes -->
+  <circle cx="14" cy="5.5" r="2.25" fill="#0891b2"/>
+  <circle cx="14" cy="11" r="2" fill="#0891b2"/>
+  <circle cx="7.5" cy="16.5" r="2" fill="#7c3aed"/>
+  <circle cx="14" cy="17.5" r="2" fill="#0891b2"/>
+  <circle cx="20.5" cy="19" r="2" fill="#059669"/>
+  <circle cx="14" cy="23.5" r="2.25" fill="#0891b2"/>
 </svg>
