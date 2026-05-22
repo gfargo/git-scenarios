@@ -18,12 +18,14 @@
 
 import type { Step } from './atoms/types'
 import { chain } from './atoms/chain'
-import { findScenario, allScenarios } from './scenarios'
+import { findRegistered, listRegistered } from './registry'
 import { createTempGitRepo, type TempGitRepo } from './tempGitRepo'
 
 /**
  * Spin up a named scenario, then apply zero or more additional steps
  * on top. Returns the fully-configured `TempGitRepo`.
+ *
+ * Searches both built-in and custom-registered scenarios.
  *
  * @param name - Registered scenario name (kebab-case)
  * @param extraSteps - Additional atoms to apply after the scenario's setup
@@ -43,9 +45,9 @@ export async function fromScenario(
   name: string,
   ...extraSteps: Step[]
 ): Promise<TempGitRepo> {
-  const scenario = findScenario(name)
+  const scenario = findRegistered(name)
   if (!scenario) {
-    const available = allScenarios.map((s) => s.name).join(', ')
+    const available = listRegistered().map((s) => s.name).join(', ')
     throw new Error(
       `Unknown scenario "${name}". Available: ${available}`
     )
