@@ -8,6 +8,7 @@ export default defineConfig([
       'atoms/index': 'src/atoms/index.ts',
       'scenarios/index': 'src/scenarios/index.ts',
       'tempGitRepo': 'src/tempGitRepo.ts',
+      'jest': 'src/jest.ts',
     },
     format: ['cjs', 'esm'],
     dts: true,
