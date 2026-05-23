@@ -292,9 +292,24 @@ nav.sidebar .top-level > li > a {
 
 /* ─── Tables ─── */
 .sl-markdown-content table {
+  width: 100%;
+  table-layout: fixed;
   border: 1px solid var(--gs-border);
   border-radius: 8px;
   overflow: hidden;
+  border-spacing: 0;
+}
+
+.sl-markdown-content th,
+.sl-markdown-content td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--gs-border);
+}
+
+.sl-markdown-content tr:last-child td {
+  border-bottom: none;
 }
 
 .sl-markdown-content th {
@@ -305,10 +320,34 @@ nav.sidebar .top-level > li > a {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--sl-color-gray-3);
+  white-space: nowrap;
 }
 
 .sl-markdown-content td {
   border-color: var(--gs-border);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* First column (usually the name/code column) — fixed narrow width */
+.sl-markdown-content th:first-child,
+.sl-markdown-content td:first-child {
+  width: 35%;
+  white-space: nowrap;
+}
+
+/* Last column stretches to fill remaining space */
+.sl-markdown-content th:last-child,
+.sl-markdown-content td:last-child {
+  width: 65%;
+}
+
+/* For 3-column tables, distribute more evenly */
+.sl-markdown-content th:first-child:nth-last-child(3),
+.sl-markdown-content th:first-child:nth-last-child(3) ~ th,
+.sl-markdown-content td:first-child:nth-last-child(3),
+.sl-markdown-content td:first-child:nth-last-child(3) ~ td {
+  width: auto;
 }
 
 .sl-markdown-content td code {
@@ -318,6 +357,24 @@ nav.sidebar .top-level > li > a {
   border-radius: 4px;
   padding: 0.1em 0.4em;
   font-size: 0.82em;
+}
+
+/* Zebra striping for readability */
+.sl-markdown-content tr:nth-child(even) td {
+  background: var(--gs-surface);
+}
+
+:root[data-theme='light'] .sl-markdown-content tr:nth-child(even) td {
+  background: #f8fafc;
+}
+
+/* Hover row highlight */
+.sl-markdown-content tbody tr {
+  transition: background 0.1s ease;
+}
+
+.sl-markdown-content tbody tr:hover td {
+  background: var(--gs-surface-raised);
 }
 
 /* ─── Inline code ─── */
