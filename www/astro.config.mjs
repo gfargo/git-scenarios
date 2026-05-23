@@ -77,6 +77,10 @@ export default defineConfig({
         github: 'https://github.com/gfargo/git-scenarios',
       },
       customCss: ['./src/styles/custom.css'],
+      components: {
+        // Override the Header to add nav links
+        Header: './src/components/Header.astro',
+      },
       sidebar: [
         {
           label: 'Getting Started',
