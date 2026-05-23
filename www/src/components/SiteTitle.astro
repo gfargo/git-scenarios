@@ -1,14 +1,15 @@
 ---
 /**
- * Custom Header override that adds navigation links to the Starlight header.
- * Extends the default Header with a nav bar containing key doc links.
+ * Custom SiteTitle override — renders the default site title/logo
+ * followed by inline navigation links. Since SiteTitle sits inside
+ * the header's flex row, the nav links appear on the same line,
+ * to the left of the search bar.
  */
-import Default from '@astrojs/starlight/components/Header.astro'
+import Default from '@astrojs/starlight/components/SiteTitle.astro'
 ---
 
 <Default {...Astro.props}><slot /></Default>
-
-<nav class="header-nav" aria-label="Main navigation">
+<nav class="header-nav-links" aria-label="Main navigation">
   <a href="/docs/introduction">Docs</a>
   <a href="/docs/quick-start">Quick Start</a>
   <a href="/docs/scenarios/overview">Scenarios</a>
@@ -17,35 +18,31 @@ import Default from '@astrojs/starlight/components/Header.astro'
 </nav>
 
 <style>
-  .header-nav {
+  .header-nav-links {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
-    padding: 0 1rem;
-    border-bottom: 1px solid var(--sl-color-hairline-light);
-    background: var(--sl-color-bg-nav);
+    gap: 0.1rem;
+    margin-left: 1rem;
     font-family: var(--sl-font-system-mono);
-    font-size: 0.78rem;
-    overflow-x: auto;
+    font-size: 0.75rem;
   }
 
-  .header-nav a {
+  .header-nav-links a {
     color: var(--sl-color-gray-3);
     text-decoration: none;
-    padding: 0.5rem 0.65rem;
+    padding: 0.35rem 0.55rem;
     border-radius: 4px;
     white-space: nowrap;
     transition: color 0.15s ease, background 0.15s ease;
   }
 
-  .header-nav a:hover {
+  .header-nav-links a:hover {
     color: var(--sl-color-white);
     background: var(--sl-color-gray-6);
   }
 
-  /* Hide on mobile — sidebar handles navigation there */
   @media (max-width: 50rem) {
-    .header-nav {
+    .header-nav-links {
       display: none;
     }
   }

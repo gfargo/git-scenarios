@@ -78,8 +78,8 @@ export default defineConfig({
       },
       customCss: ['./src/styles/custom.css'],
       components: {
-        // Override the Header to add nav links
-        Header: './src/components/Header.astro',
+        // Override SiteTitle to append nav links in the header row
+        SiteTitle: './src/components/SiteTitle.astro',
       },
       sidebar: [
         {

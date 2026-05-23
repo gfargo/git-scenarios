@@ -82,6 +82,13 @@ starlight-menu-button + nav {
   backdrop-filter: blur(12px);
 }
 
+/* Allow the title wrapper to grow so nav links sit inline */
+.title-wrapper {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+
 /* Site title styling */
 .site-title {
   font-family: var(--sl-font-system-mono) !important;
