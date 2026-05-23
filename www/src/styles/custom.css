@@ -292,89 +292,85 @@ nav.sidebar .top-level > li > a {
 
 /* ─── Tables ─── */
 .sl-markdown-content table {
-  width: 100%;
-  table-layout: fixed;
-  border: 1px solid var(--gs-border);
-  border-radius: 8px;
-  overflow: hidden;
-  border-spacing: 0;
+  width: 100% !important;
+  table-layout: fixed !important;
+  border: 1px solid var(--gs-border) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  border-spacing: 0 !important;
+  border-collapse: separate !important;
 }
 
-.sl-markdown-content th,
-.sl-markdown-content td {
-  padding: 0.75rem 1rem;
-  text-align: left;
-  vertical-align: top;
-  border-bottom: 1px solid var(--gs-border);
+.sl-markdown-content table th,
+.sl-markdown-content table td {
+  padding: 0.85rem 1.1rem !important;
+  text-align: left !important;
+  vertical-align: top !important;
+  border-bottom: 1px solid var(--gs-border) !important;
+  border-right: none !important;
+  border-left: none !important;
+  border-top: none !important;
 }
 
-.sl-markdown-content tr:last-child td {
-  border-bottom: none;
+.sl-markdown-content table tr:last-child td {
+  border-bottom: none !important;
 }
 
-.sl-markdown-content th {
-  background: var(--gs-surface-raised);
-  font-family: var(--sl-font-system-mono);
-  font-size: 0.8rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--sl-color-gray-3);
-  white-space: nowrap;
+.sl-markdown-content table th {
+  background: var(--gs-surface-raised) !important;
+  font-family: var(--sl-font-system-mono) !important;
+  font-size: 0.78rem !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: var(--sl-color-gray-3) !important;
+  white-space: nowrap !important;
 }
 
-.sl-markdown-content td {
-  border-color: var(--gs-border);
-  font-size: 0.9rem;
-  line-height: 1.5;
+.sl-markdown-content table td {
+  font-size: 0.9rem !important;
+  line-height: 1.55 !important;
 }
 
-/* First column (usually the name/code column) — fixed narrow width */
-.sl-markdown-content th:first-child,
-.sl-markdown-content td:first-child {
-  width: 35%;
-  white-space: nowrap;
+/* First column (name/code) — narrower fixed width */
+.sl-markdown-content table th:first-child,
+.sl-markdown-content table td:first-child {
+  width: 35% !important;
+  white-space: nowrap !important;
 }
 
-/* Last column stretches to fill remaining space */
-.sl-markdown-content th:last-child,
-.sl-markdown-content td:last-child {
-  width: 65%;
+/* Last column stretches */
+.sl-markdown-content table th:last-child,
+.sl-markdown-content table td:last-child {
+  width: 65% !important;
 }
 
-/* For 3-column tables, distribute more evenly */
-.sl-markdown-content th:first-child:nth-last-child(3),
-.sl-markdown-content th:first-child:nth-last-child(3) ~ th,
-.sl-markdown-content td:first-child:nth-last-child(3),
-.sl-markdown-content td:first-child:nth-last-child(3) ~ td {
-  width: auto;
+.sl-markdown-content table td code {
+  color: var(--gs-cyan) !important;
+  background: rgba(34, 211, 238, 0.08) !important;
+  border: 1px solid rgba(34, 211, 238, 0.15) !important;
+  border-radius: 4px !important;
+  padding: 0.15em 0.45em !important;
+  font-size: 0.82em !important;
 }
 
-.sl-markdown-content td code {
-  color: var(--gs-cyan);
-  background: rgba(34, 211, 238, 0.08);
-  border: 1px solid rgba(34, 211, 238, 0.15);
-  border-radius: 4px;
-  padding: 0.1em 0.4em;
-  font-size: 0.82em;
+:root[data-theme='light'] .sl-markdown-content table td code {
+  background: rgba(8, 145, 178, 0.06) !important;
+  border-color: rgba(8, 145, 178, 0.15) !important;
 }
 
-/* Zebra striping for readability */
-.sl-markdown-content tr:nth-child(even) td {
-  background: var(--gs-surface);
+/* Zebra striping */
+.sl-markdown-content table tr:nth-child(even) td {
+  background: var(--gs-surface) !important;
 }
 
-:root[data-theme='light'] .sl-markdown-content tr:nth-child(even) td {
-  background: #f8fafc;
+:root[data-theme='light'] .sl-markdown-content table tr:nth-child(even) td {
+  background: #f8fafc !important;
 }
 
-/* Hover row highlight */
-.sl-markdown-content tbody tr {
-  transition: background 0.1s ease;
-}
-
-.sl-markdown-content tbody tr:hover td {
-  background: var(--gs-surface-raised);
+/* Hover highlight */
+.sl-markdown-content table tbody tr:hover td {
+  background: var(--gs-surface-raised) !important;
 }
 
 /* ─── Inline code ─── */
