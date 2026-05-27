@@ -76,7 +76,8 @@ const repo = await spinUpScenario('my-monorepo-dirty')
 | `registerScenarios([...])` | Add multiple. |
 | `unregisterScenario(name)` | Remove by name. Returns boolean. |
 | `listRegistered()` | All scenarios (built-in + custom). |
-| `findRegistered(name)` | Lookup by name. |
+| `findRegistered(name)` | Lookup by name. O(1). |
+| `findRegisteredByTag(tags, match?)` | Filter by tag. Searches built-in + custom. |
 | `resetRegistry()` | Restore to built-in-only. |
 
 ### Test isolation
@@ -93,12 +94,19 @@ afterEach(() => {
 
 ## Filtering by tag
 
-```ts
-import { findScenariosByTag } from '@gfargo/git-scenarios'
+Both built-in scenarios and your custom-registered ones can be filtered by tag.
 
-// All conflict scenarios
+```ts
+import { findScenariosByTag, findRegisteredByTag } from '@gfargo/git-scenarios'
+
+// Built-ins only:
 const conflicts = findScenariosByTag(['conflict'])
 
+// Built-ins + custom-registered:
+const allConflicts = findRegisteredByTag(['conflict'])
+
 // Scenarios matching ALL tags
-const dirtyMonorepos = findScenariosByTag(['monorepo', 'dirty'], 'all')
+const dirtyMonorepos = findRegisteredByTag(['monorepo', 'dirty'], 'all')
 ```
+
+Use the registry-aware variant (`findRegisteredByTag`) when your test suite registers custom scenarios at startup and you want to query the full surface uniformly.

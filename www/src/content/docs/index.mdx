@@ -23,6 +23,10 @@ import { Card, CardGrid, Code } from '@astrojs/starlight/components';
 
 <Code code="npm install --save-dev @gfargo/git-scenarios simple-git" lang="bash" />
 
+:::tip[New in v0.6 — May 2026]
+5 new scenarios (`partial-stage`, `monorepo-multi-package`, `merge-no-conflict`, `orphan-branch`, `stash-with-untracked`), Vitest adapter, CLI `--json` / `--kind` / `--tag` filters, lifecycle-completion atoms, and more. [See the release notes →](/docs/changelog)
+:::
+
 ## The problem
 
 Every git tool — TUIs, IDEs, CLIs, linters — behaves differently against different repo states. Testing those behaviors means:
@@ -73,17 +77,17 @@ await chain(
 ## What you get
 
 <CardGrid stagger>
-  <Card title="27 curated scenarios" icon="list-format">
-    Branch states, merge/rebase/cherry-pick/revert conflicts, bisect, stash, worktrees, submodules, shallow clones, large histories. All deterministic. [Browse all →](/docs/scenarios/overview)
+  <Card title="32 curated scenarios" icon="list-format">
+    Branch states, merge/rebase/cherry-pick/revert conflicts, bisect, stash, worktrees, submodules, shallow clones, monorepos, orphan branches, large histories. All deterministic. [Browse all →](/docs/scenarios/overview)
   </Card>
-  <Card title="50+ composable atoms" icon="puzzle">
+  <Card title="60+ composable atoms" icon="puzzle">
     Build any git state from small, typed building blocks. `chain()` them together. Write your own — they're just functions. [Atom reference →](/docs/atoms/overview)
   </Card>
-  <Card title="Jest adapter" icon="seti:jest">
-    `describeWithScenario('name', (getRepo) => { ... })` — zero-boilerplate test setup with automatic cleanup. [Setup guide →](/docs/guides/jest-adapter)
+  <Card title="Jest + Vitest adapters" icon="seti:jest">
+    `describeWithScenario('name', (getRepo) => { ... })` — zero-boilerplate test setup with automatic cleanup. Works in both frameworks. [Setup guide →](/docs/guides/jest-adapter)
   </Card>
   <Card title="Tool-agnostic CLI" icon="terminal">
-    `npx git-scenarios create mid-merge-conflict --run "lazygit"` — materialize any scenario and launch your tool against it. [CLI docs →](/docs/guides/cli)
+    `npx git-scenarios create mid-merge-conflict --run "lazygit"` — materialize any scenario and launch your tool against it. JSON output and tag/kind filters too. [CLI docs →](/docs/guides/cli)
   </Card>
   <Card title="Custom registration" icon="add-document">
     `registerScenario(myScenario)` — your custom scenarios work with `spinUpScenario`, `fromScenario`, and the CLI. [Learn more →](/docs/guides/custom-scenarios)
@@ -99,8 +103,12 @@ await chain(
 # Spin up a merge conflict, launch lazygit against it
 npx git-scenarios create mid-merge-conflict --run "lazygit"
 
-# List all 27 scenarios
+# List all 32 scenarios
 npx git-scenarios list
+
+# Filter by kind or tag
+npx git-scenarios list --kind operation
+npx git-scenarios list --tag conflict --json
 
 # Describe a specific scenario's contracts
 npx git-scenarios describe feature-pr-ready
@@ -117,10 +125,10 @@ Now it's a standalone package for anyone building git tools — TUIs, IDE extens
     [Get started →](/docs/introduction)
   </Card>
   <Card title="Browse scenarios" icon="list-format">
-    [See all 27 →](/docs/scenarios/overview)
+    [See all 32 →](/docs/scenarios/overview)
   </Card>
   <Card title="Atom reference" icon="puzzle">
-    [50+ atoms →](/docs/atoms/overview)
+    [60+ atoms →](/docs/atoms/overview)
   </Card>
   <Card title="Source code" icon="github">
     [GitHub →](https://github.com/gfargo/git-scenarios)

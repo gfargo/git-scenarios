@@ -28,12 +28,26 @@ describe('my tool against a PR-ready branch', () => {
 })
 ```
 
-## Use the Jest adapter
-
-Even less boilerplate:
+`spinUpScenario` accepts an optional options bag for common needs:
 
 ```ts
+const repo = await spinUpScenario('feature-pr-ready', {
+  // Add a remote so gh-aware tools detect one
+  remote: 'git@github.com:org/repo.git',
+  // Process-exit cleanup safety net (in addition to your explicit cleanup)
+  autoCleanup: true,
+})
+```
+
+## Use the Jest or Vitest adapter
+
+Even less boilerplate — the adapter handles `beforeAll` / `afterAll` for you:
+
+```ts
+// Jest:
 import { describeWithScenario } from '@gfargo/git-scenarios/jest'
+// Vitest:
+import { describeWithScenario } from '@gfargo/git-scenarios/vitest'
 
 describeWithScenario('feature-pr-ready', (getRepo) => {
   it('detects the feature branch', async () => {
@@ -95,6 +109,6 @@ npx git-scenarios create feature-pr-ready
 
 ## Next steps
 
-- [Browse all 27 scenarios →](/docs/scenarios/overview)
+- [Browse all 32 scenarios →](/docs/scenarios/overview)
 - [Learn the atom API →](/docs/atoms/overview)
 - [Set up the Jest adapter →](/docs/guides/jest-adapter)

@@ -7,10 +7,14 @@ description: The git-scenarios command-line interface.
 
 ### `git-scenarios list`
 
-Show all scenarios grouped by kind.
+Show all scenarios grouped by kind. Filterable by kind, tag, or both.
 
 ```bash
-npx git-scenarios list
+npx git-scenarios list                                  # all scenarios
+npx git-scenarios list --kind operation                 # only operation scenarios
+npx git-scenarios list --tag conflict                   # only tagged 'conflict'
+npx git-scenarios list --kind stash --tag untracked     # AND filter
+npx git-scenarios list --json                           # machine-readable
 ```
 
 ### `git-scenarios describe <name>`
@@ -19,6 +23,7 @@ Print the full description and contract assertions for a scenario.
 
 ```bash
 npx git-scenarios describe mid-merge-conflict
+npx git-scenarios describe mid-merge-conflict --json    # machine-readable
 ```
 
 ### `git-scenarios create <name> [options]`
@@ -46,7 +51,23 @@ npx git-scenarios clean --dry-run
 npx git-scenarios clean --older-than 24
 ```
 
-## Create flags
+## Flags
+
+### List flags
+
+| Flag | Behavior |
+|---|---|
+| `--kind <kind>` | Filter by scenario kind: `branch`, `worktree`, `operation`, `history`, `stash`, `submodule`. |
+| `--tag <tag>` | Filter by tag inclusion (e.g. `conflict`, `dirty`, `upstream`). Combine with `--kind` (AND semantics). |
+| `--json` | Emit machine-readable JSON. Each entry includes `name`, `summary`, `kind`, `tags`, `contracts`. |
+
+### Describe flags
+
+| Flag | Behavior |
+|---|---|
+| `--json` | Emit machine-readable JSON. Includes `description` (the full multi-line text) plus everything in the list output. |
+
+### Create flags
 
 | Flag | Behavior |
 |---|---|
@@ -55,7 +76,7 @@ npx git-scenarios clean --older-than 24
 | `--remote <url>` | Add `origin` pointing at `<url>` before launching. |
 | `--ephemeral` | Auto-clean the temp dir on exit. Without this, the dir persists. |
 
-## Clean flags
+### Clean flags
 
 | Flag | Behavior |
 |---|---|
@@ -81,7 +102,47 @@ npx git-scenarios create feature-pr-ready \
 
 # Clean up old scenarios (older than 2 hours)
 npx git-scenarios clean --older-than 2
+
+# Pipe scenario metadata into another tool
+npx git-scenarios list --json | jq '.[] | select(.kind == "operation")'
+npx git-scenarios describe partial-stage --json | jq -r '.contracts[]'
 ```
+
+## JSON output schemas
+
+### `list --json`
+
+```json
+[
+  {
+    "name": "feature-pr-ready",
+    "summary": "feature branch with 4 commits, clean worktree, ready to open a PR",
+    "kind": "branch",
+    "tags": ["feature-branch", "pr-ready", "clean", "ahead"],
+    "contracts": [
+      "main has 3 commits",
+      "feat/widget-v2 is checked out",
+      "feat/widget-v2 is 4 commits ahead of main",
+      "worktree is clean"
+    ]
+  }
+]
+```
+
+### `describe --json`
+
+```json
+{
+  "name": "feature-pr-ready",
+  "summary": "...",
+  "description": "A feature branch ready to be PR'd. ...",
+  "kind": "branch",
+  "tags": ["feature-branch", "pr-ready", "clean", "ahead"],
+  "contracts": ["..."]
+}
+```
+
+Errors come back on stderr as `{ "error": "..." }`.
 
 ## Cleanup strategies
 
@@ -89,7 +150,7 @@ There are three ways to handle cleanup depending on your use case:
 
 ### 1. Programmatic tests — automatic via `cleanup()`
 
-In tests, always call `repo.cleanup()` in your teardown. The Jest adapter handles this automatically:
+In tests, always call `repo.cleanup()` in your teardown. The Jest/Vitest adapter handles this automatically:
 
 ```ts
 // Manual approach
@@ -97,7 +158,7 @@ afterAll(async () => {
   await repo.cleanup()
 })
 
-// Jest adapter — cleanup is automatic
+// Adapter — cleanup is automatic
 describeWithScenario('feature-pr-ready', (getRepo) => {
   // No cleanup needed — handled for you
 })
@@ -105,10 +166,10 @@ describeWithScenario('feature-pr-ready', (getRepo) => {
 
 ### 2. Auto-cleanup on process exit
 
-Pass `{ autoCleanup: true }` to `createTempGitRepo()` for a safety net that cleans up when the process exits, even if you forget to call `cleanup()`:
+Pass `{ autoCleanup: true }` to `spinUpScenario` (or `createTempGitRepo()`) for a safety net that cleans up when the process exits, even if you forget to call `cleanup()`:
 
 ```ts
-const repo = await createTempGitRepo({ autoCleanup: true })
+const repo = await spinUpScenario('feature-pr-ready', { autoCleanup: true })
 // If the process exits without calling repo.cleanup(),
 // the temp dir is removed automatically via a process exit hook.
 ```

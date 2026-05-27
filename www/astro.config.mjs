@@ -140,8 +140,7 @@ export default defineConfig({
             { label: 'Installation', slug: 'docs/installation' },
             { label: 'Quick Start', slug: 'docs/quick-start' },
           ],
-        },
-        {
+        },        {
           label: 'Scenarios',
           items: [
             { label: 'Overview', slug: 'docs/scenarios/overview' },
@@ -169,10 +168,16 @@ export default defineConfig({
         {
           label: 'Guides',
           items: [
-            { label: 'Jest Adapter', slug: 'docs/guides/jest-adapter' },
+            { label: 'Jest & Vitest Adapters', slug: 'docs/guides/jest-adapter' },
             { label: 'Custom Scenarios', slug: 'docs/guides/custom-scenarios' },
             { label: 'CLI Reference', slug: 'docs/guides/cli' },
             { label: 'Contributing', slug: 'docs/guides/contributing' },
+          ],
+        },
+        {
+          label: 'About',
+          items: [
+            { label: 'Release Notes', slug: 'docs/changelog' },
           ],
         },
       ],

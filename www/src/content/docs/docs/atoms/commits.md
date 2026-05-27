@@ -1,6 +1,6 @@
 ---
 title: Commits & Staging Atoms
-description: stageFiles, commit, addCommit, emptyCommit, amendCommit.
+description: stageFiles, unstageFiles, commit, addCommit, emptyCommit, amendCommit, bulkCommits.
 ---
 
 ## `stageFiles(...paths)`
@@ -11,6 +11,20 @@ description: stageFiles, commit, addCommit, emptyCommit, amendCommit.
 stageFiles()              // git add .
 stageFiles('src/app.ts')  // git add src/app.ts
 ```
+
+## `unstageFiles(...paths)`
+
+The inverse of `stageFiles`. With no args, resets the index (`git reset`); with paths, uses `git restore --staged`.
+
+```ts
+chain(
+  writeFiles({ 'a.ts': 'a', 'b.ts': 'b' }),
+  stageFiles(),                    // both staged
+  unstageFiles('b.ts'),            // a still staged, b unstaged
+)
+```
+
+Useful for assembling partial-stage states where some files are staged and others aren't — a very common real-world worktree shape.
 
 ## `commit(message, { date? })`
 
@@ -56,6 +70,21 @@ chain(
   amendCommit({ message: 'feat: proper message' }),
 )
 ```
+
+## `bulkCommits(specs)`
+
+Produce N commits in a tight loop. ~30% faster than `chain(...specs.map(addCommit))` for 50+ commit scenarios. Specs without `files` are committed `--allow-empty`.
+
+```ts
+bulkCommits([
+  { message: 'feat: a', files: { 'a.ts': 'a\n' } },
+  { message: 'feat: b', files: { 'b.ts': 'b\n' } },
+  { message: 'milestone' },                            // empty commit
+  { message: 'old', date: '2024-01-15T12:00:00Z' },    // pinned date
+])
+```
+
+For small numbers of commits with distinct logic, prefer `chain(...)` of `addCommit` atoms — clearer intent. Reach for `bulkCommits` when filling out long histories where the diff content doesn't matter.
 
 ## Date pinning
 
