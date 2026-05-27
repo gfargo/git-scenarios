@@ -1,0 +1,24 @@
+---
+title: Scenario Browser
+description: Filter and search across all 32 scenarios by kind, tag, or freeform text.
+---
+
+import ScenarioBrowser from '../../../../components/ScenarioBrowser.astro'
+
+Filter, search, and copy snippets for every scenario in one place. The data is generated from the package registry at build time — the same `allScenarios` array `spinUpScenario` reads from. Add a scenario in the source and it shows up here next build.
+
+<ScenarioBrowser />
+
+## Tips
+
+- **Kind chips** are mutually exclusive. Click "All" to clear.
+- **Tag chips** are multi-select with AND semantics — click two tags and you get only scenarios that carry both.
+- **Search** matches against name, summary, and contract lines.
+- **Copy buttons** put either `spinUpScenario('name')` or `npx git-scenarios create name` on your clipboard.
+- **URL hash** is honored on load: `?kind=operation&tag=conflict` would arrive pre-filtered.
+
+## See also
+
+- [Scenarios overview](/docs/scenarios/overview) — flat reference of all 32 scenarios grouped by kind
+- [CLI Reference](/docs/guides/cli) — same filter semantics as `git-scenarios list --kind ... --tag ... --json`
+- [Custom scenarios](/docs/guides/custom-scenarios) — register your own and they'll appear in the registry too (though not on this site, since the data is built from the package's source)

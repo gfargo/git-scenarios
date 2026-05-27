@@ -1,0 +1,586 @@
+[
+  {
+    "name": "empty-repo",
+    "summary": "freshly-initialized repo, no commits, no files, no remotes",
+    "description": "A `git init`'d repo on `main` with zero commits. HEAD is unborn.\nWorking tree empty. No remotes, tags, or stashes.\n\nUseful for testing:\n  - log / history views when there's no HEAD to resolve\n  - branch / tag / stash views when the underlying lists are empty\n  - status view distinguishing \"no commits yet\" from \"clean worktree\"\n  - the \"create your first commit\" affordance / empty-state copy\n\nSetup is a no-op because `createTempGitRepo` already produces this\nstate; the scenario exists so consumers can name and target it via\nthe registry alongside the rest.",
+    "kind": "branch",
+    "tags": [
+      "empty",
+      "edge-case",
+      "unborn"
+    ],
+    "contracts": [
+      "HEAD is unborn (no commits)",
+      "main is the current branch",
+      "working tree is empty",
+      "no remotes configured",
+      "no tags",
+      "no stashes"
+    ]
+  },
+  {
+    "name": "feature-pr-ready",
+    "summary": "feature branch with 4 commits, clean worktree, ready to open a PR",
+    "description": "A feature branch ready to be PR'd. `main` has 3 scaffold commits,\n`feat/widget-v2` is checked out and 4 commits ahead. Worktree is\nclean — no staged or unstaged changes.\n\nUseful for testing:\n  - create-pr flow (`C` keystroke) — title + body seeded from changelog\n  - changelog view (`L` keystroke) — exercises `--branch main` path\n  - branches view — exercises the feat branch divergence display\n  - history view — exercises commit list rendering on a non-main branch",
+    "kind": "branch",
+    "tags": [
+      "feature-branch",
+      "pr-ready",
+      "clean",
+      "ahead"
+    ],
+    "contracts": [
+      "main has 3 commits",
+      "feat/widget-v2 is checked out",
+      "feat/widget-v2 is 4 commits ahead of main",
+      "worktree is clean"
+    ]
+  },
+  {
+    "name": "feature-branch-one-commit",
+    "summary": "main + feat/x (1 commit ahead, src/feature.ts)",
+    "description": "Minimal feature-branch shape. `main` has one initial commit;\n`feat/x` is checked out with one commit on top adding\n`src/feature.ts`. The worktree is clean.\n\nUseful for testing:\n  - `coco changelog --branch main`\n  - `coco review --branch main`\n  - any branch-vs-base diff flow\n  - the changelog auto-body in the create-PR flow",
+    "kind": "branch",
+    "tags": [
+      "feature-branch",
+      "minimal",
+      "ahead"
+    ],
+    "contracts": [
+      "main has 1 commit",
+      "feat/x is checked out",
+      "feat/x has 1 commit on top of main",
+      "src/feature.ts exists",
+      "worktree is clean"
+    ]
+  },
+  {
+    "name": "multi-commit-branch",
+    "summary": "feature branch with 8 varied commits (feat/fix/chore/docs/refactor/test)",
+    "description": "A `feat/dashboard` branch with 8 commits of varied types on top of\na 2-commit `main`. Each commit touches a different file with\ndeterministic seeded content, so the history surface, filter,\nand yank behaviors have realistic inputs to exercise.\n\nUseful for testing:\n  - history surface column widths (varied subject lengths)\n  - filter / search across commit subjects\n  - palette and chord overlay interactions\n  - view switches between history / status / branches\n  - yank short-hash / full-hash from a selected commit",
+    "kind": "branch",
+    "tags": [
+      "feature-branch",
+      "multi-commit",
+      "history"
+    ],
+    "contracts": [
+      "main has 2 commits",
+      "feat/dashboard is checked out",
+      "feat/dashboard has 8 commits on top of main",
+      "worktree is clean"
+    ]
+  },
+  {
+    "name": "two-commit-feature",
+    "summary": "baseline scaffold + a single feat commit, clean worktree",
+    "description": "Two commits on `main`: a baseline scaffold and one feat commit\nadding `src/feature.ts`. The worktree is clean.\n\nUseful for testing:\n  - `coco changelog` (has one non-baseline commit to summarize)\n  - `coco log` table / JSON output (one feature commit to inspect)\n  - `coco review` against a feature branch\n  - smoke tests that need a `feat:` commit subject to render",
+    "kind": "branch",
+    "tags": [
+      "feature-branch",
+      "minimal",
+      "history"
+    ],
+    "contracts": [
+      "main has 2 commits",
+      "commit subjects are \"chore: initial commit\" and \"feat: add feature module\"",
+      "src/feature.ts exists",
+      "worktree is clean"
+    ]
+  },
+  {
+    "name": "orphan-branch",
+    "summary": "main + gh-pages with no shared history (orphan branch)",
+    "description": "A repository with two unrelated branches: `main` carries the\nregular code history, and `gh-pages` is an orphan with its own\nroot commit and no ancestor relationship with `main`. The\nclassic GitHub Pages pattern.\n\nUseful for testing:\n  - branch listings that show \"no common ancestor\"\n  - merge-base / fork-point logic\n  - tools that assume a single repo root\n  - gh-pages workflow rendering",
+    "kind": "branch",
+    "tags": [
+      "orphan",
+      "unrelated-history",
+      "gh-pages"
+    ],
+    "contracts": [
+      "main has 2 commits",
+      "gh-pages is checked out",
+      "gh-pages has 1 commit",
+      "main and gh-pages share no common ancestor"
+    ]
+  },
+  {
+    "name": "branch-tracking-upstream",
+    "summary": "main tracks origin/main, both at the same commit, worktree clean",
+    "description": "Baseline \"tracked branch\" state — `main` has its upstream set to\n`origin/main` and both refs point at the same commit. No divergence.\n\nUseful for testing:\n  - tooltips / status indicators that read tracking config\n  - branch view icons distinguishing tracked vs untracked branches\n  - \"Your branch is up to date with 'origin/main'\" rendering",
+    "kind": "branch",
+    "tags": [
+      "upstream",
+      "tracking",
+      "synced",
+      "remote",
+      "clean"
+    ],
+    "contracts": [
+      "main is checked out",
+      "main has 3 commits",
+      "origin/main exists at the same commit as main",
+      "main is configured to track origin/main",
+      "worktree is clean"
+    ]
+  },
+  {
+    "name": "branch-ahead-of-upstream",
+    "summary": "main is 3 commits ahead of origin/main, worktree clean",
+    "description": "`main` has 3 unpushed commits — `origin/main` sits 3 commits behind.\nUpstream tracking is fully configured, so `git status` reports the\nahead count.\n\nUseful for testing:\n  - push workflows / \"publish your changes\" prompts\n  - ahead-count rendering in branch lists and headers\n  - PR-creation flows that count unpushed commits",
+    "kind": "branch",
+    "tags": [
+      "upstream",
+      "tracking",
+      "ahead",
+      "remote"
+    ],
+    "contracts": [
+      "main is checked out",
+      "main has 6 commits",
+      "main is 3 commits ahead of origin/main",
+      "main tracks origin/main",
+      "worktree is clean"
+    ]
+  },
+  {
+    "name": "branch-behind-upstream",
+    "summary": "main is 3 commits behind origin/main, worktree clean",
+    "description": "`main` is fast-forwardable — `origin/main` has 3 commits the local\nbranch doesn't. Upstream tracking is configured so `git status`\nreports the behind count.\n\nUseful for testing:\n  - pull workflows / \"update available\" prompts\n  - behind-count rendering in branch lists and headers\n  - \"fast-forward possible\" indicators",
+    "kind": "branch",
+    "tags": [
+      "upstream",
+      "tracking",
+      "behind",
+      "remote",
+      "fast-forward"
+    ],
+    "contracts": [
+      "main is checked out",
+      "main has 2 commits",
+      "main is 3 commits behind origin/main",
+      "main tracks origin/main",
+      "worktree is clean"
+    ]
+  },
+  {
+    "name": "branch-diverged",
+    "summary": "main is 2 ahead AND 2 behind origin/main, worktree clean",
+    "description": "`main` has diverged from `origin/main` — both sides have commits\nthe other doesn't. The merge base is `HEAD~2` on the local side.\n\nUseful for testing:\n  - \"diverged\" warning rendering (pull --rebase / merge prompts)\n  - ahead/behind dual counts in branch lists\n  - conflict-aware sync workflows",
+    "kind": "branch",
+    "tags": [
+      "upstream",
+      "tracking",
+      "diverged",
+      "remote"
+    ],
+    "contracts": [
+      "main is checked out",
+      "main has 4 commits",
+      "main is 2 ahead and 2 behind origin/main",
+      "main tracks origin/main",
+      "worktree is clean"
+    ]
+  },
+  {
+    "name": "branch-sync-showcase",
+    "summary": "five local branches in five different upstream sync states (behind / ahead / diverged / synced / no-upstream); HEAD on the behind branch",
+    "description": "A single repo with five local branches, each in a different sync\nstate relative to its `origin/` upstream:\n\n  - `main` (CHECKED OUT) — 2 commits BEHIND `origin/main`. Drives\n    \"remote is ahead\" surfacing in the history / status views.\n  - `feat/ahead-only` — 3 commits AHEAD of `origin/feat/ahead-only`.\n    Unpushed local work.\n  - `feat/diverged` — 2 AHEAD + 2 BEHIND `origin/feat/diverged`.\n    Needs pull --rebase / merge.\n  - `feat/synced` — fully synced with its upstream. Neutral baseline.\n  - `local-only` — NO UPSTREAM. Local-only branch.\n\nUseful for testing:\n  - Branches sidebar iconography across all sync states at once\n  - History view \"remote is ahead\" affordance (HEAD is on the behind branch)\n  - Per-branch pull / push hotkeys that act on the cursored branch\n  - Branch list filtering / sorting with mixed-state input",
+    "kind": "branch",
+    "tags": [
+      "upstream",
+      "tracking",
+      "showcase",
+      "remote"
+    ],
+    "contracts": [
+      "main is checked out",
+      "main is 2 commits behind origin/main",
+      "feat/ahead-only is 3 commits ahead of origin/feat/ahead-only",
+      "feat/diverged is 2 ahead and 2 behind origin/feat/diverged",
+      "feat/synced is at the same commit as origin/feat/synced",
+      "local-only has no upstream configured",
+      "all four tracked branches have branch.<X>.remote = origin",
+      "worktree is clean"
+    ]
+  },
+  {
+    "name": "multi-remote-with-tracking",
+    "summary": "origin + upstream remotes; main tracks upstream/main, feat/fork-work tracks origin",
+    "description": "The \"OSS fork contributor\" baseline. Two remotes configured:\n`origin` (your fork) and `upstream` (the source project). `main`\ntracks `upstream/main` so you can pull source-project changes;\n`feat/fork-work` tracks your fork's branch for PR work.\n\nUseful for testing:\n  - multi-remote rendering in the remotes / branches views\n  - per-branch upstream resolution (different remotes per branch)\n  - \"which remote does this branch track?\" inspectors",
+    "kind": "branch",
+    "tags": [
+      "fork",
+      "multi-remote",
+      "tracking",
+      "remote"
+    ],
+    "contracts": [
+      "origin and upstream remotes are configured",
+      "feat/fork-work is checked out",
+      "main tracks upstream/main",
+      "feat/fork-work tracks origin/feat/fork-work",
+      "feat/fork-work is 2 commits ahead of origin/feat/fork-work",
+      "main and upstream/main are at the same commit",
+      "worktree is clean"
+    ]
+  },
+  {
+    "name": "detached-head",
+    "summary": "HEAD detached at main~2, worktree clean",
+    "description": "HEAD is detached at `main~2`. The `main` branch still exists at\nits original tip — only HEAD has moved off it.\n\nUseful for testing:\n  - detached-HEAD banners / warnings in TUIs\n  - \"make this a branch?\" affordances\n  - status-bar branch indicators when there's no current branch",
+    "kind": "branch",
+    "tags": [
+      "detached-head",
+      "edge-case"
+    ],
+    "contracts": [
+      "HEAD is detached",
+      "main still exists as a branch",
+      "main has 4 commits",
+      "HEAD is 2 commits behind main",
+      "worktree is clean"
+    ]
+  },
+  {
+    "name": "signed-commits-required",
+    "summary": "repo configured to require signed commits (commit.gpgsign=true + signingkey set)",
+    "description": "Repo is configured to require GPG-signed commits. The pre-existing\ncommits in the scenario are unsigned (the scenario sets the config\n*after* seeding history, since CI runners lack a usable GPG key).\n\nA tool can read `commit.gpgsign` and `user.signingkey` to detect\nthe \"signing required\" state and adjust UI / warnings accordingly.\n\nUseful for testing:\n  - commit-signing prompts / warnings before commit\n  - \"signing required\" indicators in commit composers\n  - signing-key inspectors in repo settings views",
+    "kind": "branch",
+    "tags": [
+      "signing",
+      "config",
+      "gpg"
+    ],
+    "contracts": [
+      "main is checked out",
+      "main has 3 commits",
+      "commit.gpgsign is true",
+      "user.signingkey is set",
+      "worktree is clean"
+    ]
+  },
+  {
+    "name": "mid-bisect",
+    "summary": "20-commit history with `git bisect` started, HEAD at midpoint",
+    "description": "A repository with 20 commits on `main` and an active `git bisect`\nrun. HEAD is detached at the midpoint candidate; no `good` / `bad`\ndecisions have been recorded yet. The bisect log carries only the\nstart markers (`git bisect start <bad> <good>`).\n\nUseful for testing:\n  - bisect view active-state rendering\n  - decision keystrokes (`g`/`b`/`s`/`x`) and their immediate effect\n  - completion-panel detection (apply `g` / `b` repeatedly until\n    git emits \"X is the first bad commit\")\n  - title-bar BISECTING badge",
+    "kind": "operation",
+    "tags": [
+      "bisect",
+      "in-progress"
+    ],
+    "contracts": [
+      "main has 20 commits",
+      "a bisect is in progress",
+      "HEAD is detached",
+      "no bisect decisions logged yet"
+    ]
+  },
+  {
+    "name": "mid-merge-conflict",
+    "summary": "in-progress merge with one unresolved conflict in src/widget.ts",
+    "description": "A repository mid-merge, blocked on one unresolved conflict.\n`main` and `feat/x` both edited the same line of `src/widget.ts`\nafter forking from a shared baseline. Running `git merge feat/x`\non `main` triggered the conflict; the merge is now sitting\nuncommitted with conflict markers in the worktree.\n\nUseful for testing:\n  - conflicts view rendering + per-file resolve actions\n  - title-bar in-progress-operation indicator\n  - the `coco doctor` / `coco ui` flows when a merge is in flight\n  - the C / Esc guard on the conflicts view",
+    "kind": "operation",
+    "tags": [
+      "conflict",
+      "merge"
+    ],
+    "contracts": [
+      "main is checked out",
+      "a merge is in progress (MERGE_HEAD exists)",
+      "src/widget.ts has unresolved conflict markers",
+      "exactly 1 unresolved conflict"
+    ]
+  },
+  {
+    "name": "mid-rebase-conflict",
+    "summary": "in-progress rebase with one unresolved conflict in src/config.ts",
+    "description": "A repository mid-rebase, blocked on one unresolved conflict.\n`feat/refactor` is being rebased onto `main` where both branches\nedited `src/config.ts` after forking from a shared baseline.\nThe rebase paused at the conflicting commit; `.git/rebase-merge/`\nexists and `REBASE_HEAD` is set.\n\nUseful for testing:\n  - rebase-specific conflict resolution UI\n  - title-bar \"REBASING\" indicator\n  - the difference between merge and rebase conflict states\n  - `git rebase --continue` / `--abort` flows",
+    "kind": "operation",
+    "tags": [
+      "conflict",
+      "rebase"
+    ],
+    "contracts": [
+      "a rebase is in progress (.git/rebase-merge/ exists)",
+      "REBASE_HEAD is set",
+      "src/config.ts has unresolved conflict markers",
+      "exactly 1 unresolved conflict"
+    ]
+  },
+  {
+    "name": "mid-cherry-pick-conflict",
+    "summary": "in-progress cherry-pick with one unresolved conflict in src/utils.ts",
+    "description": "A repository mid-cherry-pick, blocked on one unresolved conflict.\nA commit from `feat/hotfix` is being cherry-picked onto `main`\nwhere both branches edited `src/utils.ts` differently after\nforking from a shared baseline. `CHERRY_PICK_HEAD` is set and\nthe conflicted file has markers in the worktree.\n\nUseful for testing:\n  - cherry-pick-specific conflict resolution UI\n  - title-bar \"CHERRY-PICKING\" indicator\n  - distinguishing cherry-pick state from merge/rebase states\n  - `git cherry-pick --continue` / `--abort` flows",
+    "kind": "operation",
+    "tags": [
+      "conflict",
+      "cherry-pick"
+    ],
+    "contracts": [
+      "main is checked out",
+      "a cherry-pick is in progress (CHERRY_PICK_HEAD exists)",
+      "src/utils.ts has unresolved conflict markers",
+      "exactly 1 unresolved conflict"
+    ]
+  },
+  {
+    "name": "mid-revert-conflict",
+    "summary": "in-progress revert with one unresolved conflict in src/service.ts",
+    "description": "A repository mid-revert, blocked on one unresolved conflict.\nThree commits build on `src/service.ts` progressively. Reverting\nthe second commit (which added `email` and `listUsers`) conflicts\nwith the third commit (which added `role` and `deleteUser`).\n`REVERT_HEAD` is set and the conflicted file has markers.\n\nUseful for testing:\n  - revert-specific conflict resolution UI\n  - title-bar \"REVERTING\" indicator\n  - distinguishing revert state from merge/rebase/cherry-pick\n  - `git revert --continue` / `--abort` flows",
+    "kind": "operation",
+    "tags": [
+      "conflict",
+      "revert"
+    ],
+    "contracts": [
+      "main is checked out",
+      "a revert is in progress (REVERT_HEAD exists)",
+      "src/service.ts has unresolved conflict markers",
+      "exactly 1 unresolved conflict"
+    ]
+  },
+  {
+    "name": "merge-no-conflict",
+    "summary": "a successful --no-ff merge of feat/x into main, fully committed",
+    "description": "A repository with a completed `--no-ff` merge sitting at HEAD.\n`feat/x` was merged into `main` cleanly (no conflicts), and the\nmerge commit is at the tip. Distinct from a fast-forward merge\n(no merge commit produced) and from `mid-merge-conflict`\n(in-progress).\n\nUseful for testing:\n  - merge commit rendering (the 2-parent case)\n  - \"merged branches\" lists\n  - tools that distinguish --no-ff from fast-forward merges\n  - history graph visualization with merge nodes",
+    "kind": "history",
+    "tags": [
+      "merge",
+      "no-ff",
+      "history"
+    ],
+    "contracts": [
+      "main has the merge commit at HEAD",
+      "HEAD has 2 parents",
+      "worktree is clean",
+      "main is checked out",
+      "feat/x exists and is merged into main"
+    ]
+  },
+  {
+    "name": "rich-history-graph",
+    "summary": "multi-branch history that exercises bucket dividers, type coloring, branch chips, lane topology",
+    "description": "A multi-branch repo built to stress the history surface. Commits\nspan every date bucket (today / yesterday / this-week / last-week\nplus two older calendar-month buckets), every conventional-commit\ntype the renderer knows (feat / fix / chore / docs / refactor /\ntest / perf / revert plus a `fix!:` breaking marker), and three\ndistinct branch lifecycles: two feature branches merged back into\nmain with --no-ff merge commits, plus one unmerged `feat/wip`\nsitting as a live branch tip.\n\nRun with --run-ui to drive the workstation against it:\n\n  npm run scenario create rich-history-graph -- --run-ui",
+    "kind": "history",
+    "tags": [
+      "history",
+      "merge",
+      "multi-author",
+      "showcase"
+    ],
+    "contracts": [
+      "main is checked out",
+      "feat/wip exists and is NOT merged into main",
+      "two --no-ff merge commits sit on main (feat/auth, feat/payments)",
+      "worktree is clean",
+      "commits span at least 6 distinct date buckets (today through 2 older months)",
+      "commit messages cover feat / fix / chore / docs / refactor / test / perf / revert and a breaking-change `!:`"
+    ]
+  },
+  {
+    "name": "chip-rendering-showcase",
+    "summary": "6-commit history with every branch-tip-chip variant visible at once (HEAD, local, slashy-local, two remotes, tag)",
+    "description": "Every branch-tip-chip kind on screen at once. Six commits on `main`\nwhere each row in the history view exercises a different chip code\npath. Useful for:\n\n  - visual regression checks on TUIs that colour-code chip kinds\n  - verifying that \"ref contains a slash\" heuristics don't\n    misclassify local feature branches as remote\n  - multi-remote rendering (origin + upstream)\n  - confirming tag refs render in the trailing list, not as a chip\n\nComposed states:\n  - HEAD on `main` (current branch)\n  - `develop` local branch at commit 2 (plain, no slash)\n  - `feat/widgets` local branch at commit 4 (has a slash — regression\n    test for \"slash = remote\" heuristics)\n  - `origin` remote with `origin/main` pinned at commit 5\n  - `upstream` remote with `upstream/main` pinned at commit 3\n  - tag `v0.1.0` at commit 1\n  - `main` configured to track `origin/main` (1 ahead, 0 behind)",
+    "kind": "history",
+    "tags": [
+      "rendering",
+      "showcase",
+      "chips",
+      "history"
+    ],
+    "contracts": [
+      "main is checked out",
+      "main has 6 commits",
+      "develop branch exists at commit 2",
+      "feat/widgets branch exists at commit 4",
+      "origin/main exists at commit 5",
+      "upstream/main exists at commit 3",
+      "tag v0.1.0 exists at commit 1",
+      "main is 1 commit ahead of origin/main",
+      "main tracks origin/main",
+      "worktree is clean"
+    ]
+  },
+  {
+    "name": "shallow-clone",
+    "summary": "shallow repo with only 3 of 10 commits reachable from HEAD",
+    "description": "A repository that appears to be a shallow clone (depth 3).\n10 commits exist in the object store but only the last 3 are\nreachable from HEAD. `.git/shallow` is set, so\n`git rev-parse --is-shallow-repository` returns `true`.\n\nUseful for testing:\n  - tools that detect shallow repos and warn/error\n  - log views that hit the shallow boundary\n  - fetch/pull flows that offer --unshallow\n  - blame views that stop at the graft point",
+    "kind": "history",
+    "tags": [
+      "shallow",
+      "history"
+    ],
+    "contracts": [
+      "main is checked out",
+      "repo is shallow (git rev-parse --is-shallow-repository = true)",
+      "main has 10 total commits in object store",
+      "only 4 commits are reachable from HEAD (depth boundary inclusive)"
+    ]
+  },
+  {
+    "name": "large-repo",
+    "summary": "115 commits across 3 branches with tags — for pagination and performance testing",
+    "description": "A repository with 115 commits across multiple branches, designed\nfor stress-testing tools that paginate, virtualize, or filter\nlarge histories.\n\n  - `main` has 80 commits (mix of feat/fix/chore/docs/refactor)\n  - `feat/large-feature` has 25 commits (branched from main~40)\n  - `develop` has 10 commits (branched from main~20)\n  - 50+ files across src/, tests/, docs/, lib/, config/\n  - 3 tags: v0.1.0 (at commit 20), v0.5.0 (at commit 50),\n    v1.0.0 (at commit 80)\n\nUseful for testing:\n  - log pagination / infinite scroll\n  - history graph rendering performance\n  - search / filter across large commit sets\n  - branch comparison with many commits\n  - tag navigation in long histories",
+    "kind": "history",
+    "tags": [
+      "large",
+      "history",
+      "performance",
+      "pagination"
+    ],
+    "contracts": [
+      "main is checked out",
+      "main has 80 commits",
+      "feat/large-feature exists with 25 commits ahead of its fork point",
+      "develop exists with 10 commits ahead of its fork point",
+      "tags v0.1.0, v0.5.0, v1.0.0 exist",
+      "total commit count across all branches is 115"
+    ]
+  },
+  {
+    "name": "stashed-changes",
+    "summary": "clean worktree on main + 3 stashes, each touching a different file",
+    "description": "A repository with 3 distinct stashes preserved on top of a small\n2-commit `main`. The worktree is clean; the stashes live only in\n`refs/stash` and the reflog. Each stash carries edits to a\ndifferent file so applying any one is non-conflicting with the\nothers.\n\nUseful for testing:\n  - stash view list rendering + filter\n  - per-entry actions: apply, pop, drop, checkout-file-from-stash\n  - diff view in stash mode (file-by-file navigation inside a patch)\n  - sidebar stashes-tab rendering",
+    "kind": "stash",
+    "tags": [
+      "stash",
+      "multi-entry",
+      "clean-worktree"
+    ],
+    "contracts": [
+      "main has 2 commits",
+      "worktree is clean",
+      "git stash list reports 3 entries",
+      "each stash touches a different file"
+    ]
+  },
+  {
+    "name": "stash-with-untracked",
+    "summary": "one stash containing both modified tracked + untracked new files",
+    "description": "A clean worktree on `main` with a single stash entry that was\ncreated with `--include-untracked`. The stash mixes a\nmodification to an existing tracked file (`src/feature.ts`)\nwith a brand-new untracked file (`src/new-feature.ts`) — the\nrealistic shape of \"I want to set my work aside and pick it\nup later\" when that work includes scaffolding new files.\n\nUseful for testing:\n  - stash list rendering when entries contain new files\n  - apply / pop flows that have to recreate untracked content\n  - tools that highlight \"stash includes N untracked files\"",
+    "kind": "stash",
+    "tags": [
+      "stash",
+      "untracked",
+      "mixed-content"
+    ],
+    "contracts": [
+      "main has 2 commits",
+      "worktree is clean",
+      "git stash list reports 1 entry",
+      "the stash includes both modified tracked and untracked new files"
+    ]
+  },
+  {
+    "name": "single-staged-file",
+    "summary": "one baseline commit + a single staged README",
+    "description": "Minimal \"ready to commit\" state. A single baseline commit on\n`main` plus one staged file (`README.md`). No unstaged or\nuntracked files.\n\nUseful for testing:\n  - `coco commit` (any flavor — has a staged diff to summarize)\n  - any flow that asserts \"there is staged content to commit\"\n  - smoke tests that just need a valid commit-ready repo",
+    "kind": "worktree",
+    "tags": [
+      "staged",
+      "minimal",
+      "commit-ready"
+    ],
+    "contracts": [
+      "main has 1 commit",
+      "exactly 1 staged file (README.md)",
+      "no unstaged or untracked files"
+    ]
+  },
+  {
+    "name": "partial-stage",
+    "summary": "2 staged + 2 modified-unstaged + 1 untracked — the \"mixed worktree\" shape",
+    "description": "A worktree mid-development: some files staged for the next\ncommit, others modified but kept out of the index, and one\nuntracked scratch file. Models the \"I only want to commit\nhalf of what I changed\" pattern.\n\nUseful for testing:\n  - per-section status rendering (staged / unstaged / untracked)\n  - \"stage hunk\" / \"unstage hunk\" affordances\n  - commit-flow guards that warn about partial commits\n  - tools that visualize index-vs-worktree state separately",
+    "kind": "worktree",
+    "tags": [
+      "dirty",
+      "staged",
+      "unstaged",
+      "untracked",
+      "partial"
+    ],
+    "contracts": [
+      "main has 2 commits",
+      "exactly 2 staged files",
+      "exactly 2 modified-but-unstaged files",
+      "exactly 1 untracked file"
+    ]
+  },
+  {
+    "name": "monorepo-multi-package",
+    "summary": "workspaces monorepo with 3 packages: app (clean), lib (staged), cli (unstaged)",
+    "description": "A workspaces-style monorepo with three packages in distinct\nstates: `app` is clean, `lib` has staged changes, `cli` has\nunstaged worktree edits. Root config declares `packages/*` as\nworkspaces (npm/yarn/pnpm-style).\n\nUseful for testing:\n  - workspace-aware status views\n  - per-package commit flows\n  - workspace-scoped diff or log filters\n  - tools that group changes by package boundary",
+    "kind": "worktree",
+    "tags": [
+      "monorepo",
+      "workspaces",
+      "staged",
+      "unstaged"
+    ],
+    "contracts": [
+      "main has 3 commits",
+      "root package.json declares packages/* workspaces",
+      "packages/app is clean (no staged or unstaged changes)",
+      "packages/lib has staged changes",
+      "packages/cli has unstaged changes"
+    ]
+  },
+  {
+    "name": "dirty-many-files",
+    "summary": "12 staged + 6 unstaged + 3 untracked across 3 top-level dirs",
+    "description": "A worktree mid-development with a large dirty set. `main` has 2\nbaseline commits; the working tree adds 12 staged files, modifies\n6 unstaged files, and includes 3 untracked files. Changes span\nthree top-level directories (`src/`, `tests/`, `docs/`) plus\nroot-level config — exactly the shape that benefits from\n`coco commit --split`.\n\nUseful for testing:\n  - the split-in-compose flow once it ships\n  - status-surface paging behavior with many files\n  - the \"large changeset\" heuristic in compose\n  - filter / mask narrowing on the status view",
+    "kind": "worktree",
+    "tags": [
+      "dirty",
+      "staged",
+      "unstaged",
+      "untracked",
+      "large"
+    ],
+    "contracts": [
+      "main has 2 commits",
+      "worktree has 12 staged files",
+      "worktree has 6 unstaged files",
+      "worktree has 3 untracked files",
+      "changes span src/, tests/, and docs/"
+    ]
+  },
+  {
+    "name": "multiple-worktrees",
+    "summary": "primary worktree on main + 3 linked worktrees on feature/hotfix branches",
+    "description": "A repository with multiple linked worktrees, each on a different\nbranch. The primary worktree is on `main` with a baseline commit.\nThree linked worktrees exist at temp paths:\n  - `feat/alpha` — one commit ahead of main\n  - `feat/beta` — two commits ahead of main\n  - `hotfix/urgent` — one commit ahead of main\n\nUseful for testing:\n  - worktree list views\n  - branch switching when worktrees lock branches\n  - tools that detect and display linked worktrees\n  - the \"branch is checked out in another worktree\" error case",
+    "kind": "worktree",
+    "tags": [
+      "worktree",
+      "branch"
+    ],
+    "contracts": [
+      "main is checked out in the primary worktree",
+      "3 linked worktrees exist",
+      "feat/alpha has 1 commit ahead of main",
+      "feat/beta has 2 commits ahead of main",
+      "hotfix/urgent has 1 commit ahead of main"
+    ]
+  },
+  {
+    "name": "submodule-with-history",
+    "summary": "parent with 4 commits + vendor/lib submodule pinned at its 4-commit HEAD",
+    "description": "A parent repo on `main` with 4 commits, including the addition of a\nsubmodule mounted at `vendor/lib`. The submodule itself has 4 commits\nof its own, tracks branch `main`, and is currently clean (the parent\npin matches the submodule's HEAD).\n\nUseful for testing:\n  - submodule metadata loaders (`.gitmodules` + `git submodule status`)\n  - the submodule inspector side-panel (name / pinned / tracking)\n  - recursive submodule navigation: `Enter` on the submodule row\n    should drill into the submodule's history view, where the user\n    can navigate its 4 commits as if `coco ui` were launched from\n    `vendor/lib`. `Esc` / `<` pops back to the parent.\n\nNo remote is configured on either side. The URL recorded in\n`.gitmodules` points at the temp dir the submodule was cloned from\n(now removed) — read-only operations work fine offline, but do not\nrun `git submodule update --remote` or `git submodule sync`.",
+    "kind": "submodule",
+    "tags": [
+      "submodule",
+      "nested",
+      "history"
+    ],
+    "contracts": [
+      "parent main has 4 commits",
+      "main is checked out",
+      ".gitmodules registers vendor/lib with branch = main",
+      "vendor/lib is a clean submodule (pin matches HEAD)",
+      "vendor/lib has 4 commits of its own",
+      "parent worktree is clean"
+    ]
+  }
+]
