@@ -23,7 +23,7 @@
  * a unit test without going through `spinUpScenario`.
  */
 
-export { spinUpScenario } from './spinUpScenario'
+export { spinUpScenario, type SpinUpScenarioOptions } from './spinUpScenario'
 export { fromScenario } from './fromScenario'
 export { createTempGitRepo, type TempGitRepo, type CreateTempGitRepoOptions } from './tempGitRepo'
 export {

@@ -21,8 +21,24 @@
  * point consumers will import.
  */
 
-import { createTempGitRepo, type TempGitRepo } from './tempGitRepo'
+import { createTempGitRepo, type CreateTempGitRepoOptions, type TempGitRepo } from './tempGitRepo'
 import { resolveScenario } from './resolveScenario'
+
+/**
+ * Optional configuration for `spinUpScenario`. All fields are
+ * optional — the no-args form (`spinUpScenario(name)`) preserves
+ * existing behavior.
+ */
+export type SpinUpScenarioOptions = CreateTempGitRepoOptions & {
+  /**
+   * Add an `origin` remote pointing at this URL after the scenario
+   * setup runs. Useful for testing tools that detect or interact
+   * with a remote without baking the URL into the scenario itself.
+   *
+   * Mirrors the CLI's `--remote <url>` flag.
+   */
+  remote?: string
+}
 
 /**
  * Spin up a temp git repo and run the named scenario's setup against
@@ -31,12 +47,39 @@ import { resolveScenario } from './resolveScenario'
  *
  * Searches both built-in and custom-registered scenarios.
  *
+ * @param name - Registered scenario name (kebab-case)
+ * @param options - Optional config (autoCleanup, remote)
+ *
  * @throws if the scenario name is unknown — error message lists the
  *   available names so the typo is easy to spot.
+ *
+ * @example
+ * ```ts
+ * // Standard usage:
+ * const repo = await spinUpScenario('feature-pr-ready')
+ *
+ * // Auto-cleanup safety net for crashy tests:
+ * const repo = await spinUpScenario('feature-pr-ready', { autoCleanup: true })
+ *
+ * // Add a remote so gh-aware tools detect one:
+ * const repo = await spinUpScenario('feature-pr-ready', {
+ *   remote: 'git@github.com:org/repo.git',
+ * })
+ * ```
  */
-export async function spinUpScenario(name: string): Promise<TempGitRepo> {
+export async function spinUpScenario(
+  name: string,
+  options: SpinUpScenarioOptions = {},
+): Promise<TempGitRepo> {
   const scenario = resolveScenario(name, 'spinUpScenario')
-  const repo = await createTempGitRepo()
+  const { remote, ...createOptions } = options
+
+  const repo = await createTempGitRepo(createOptions)
   await scenario.setup(repo)
+
+  if (remote) {
+    await repo.git.addRemote('origin', remote)
+  }
+
   return repo
 }
