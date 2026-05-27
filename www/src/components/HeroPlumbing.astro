@@ -1,61 +1,86 @@
 ---
 /**
- * The new landing-page hero — "The Plumbing Manual" opening spread.
+ * Drafting-Room Hero — an engineering blueprint of git-scenarios.
  *
- * Editorial-technical lockup: a Fraunces display headline anchored
- * left, a CSS-rendered git-log graph anchored right. Subtle pinstripe
- * column rules in the background pull from the manpage / periodical
- * vocabulary.
+ * Three regions:
+ *   1. Title block (top): drawing metadata + the headline lockup
+ *   2. Drawing area (center): an animated SVG schematic of how
+ *      git-scenarios composes — three layers (atoms → scenarios → API)
+ *      with dimension lines and numbered callouts
+ *   3. Specifications strip (bottom): by-the-numbers stats with
+ *      dimension-line styling
  *
- * Pure HTML + CSS — no JS, no client islands. The "live commit graph"
- * is staggered animation on plain divs.
+ * Pure HTML/SVG/CSS. The schematic animates on first paint via
+ * stroke-dasharray + stroke-dashoffset.
  */
 ---
 
-<section class="ph-hero" aria-label="Introduction">
-  <div class="ph-hero__inner">
-    <!-- Meta ribbon — like the running header on a manpage -->
-    <div class="ph-meta">
-      <span class="ph-meta__page">man.gs(7)</span>
-      <span class="ph-meta__sep">·</span>
-      <span class="ph-meta__name">git-scenarios</span>
-      <span class="ph-meta__sep">·</span>
-      <span class="ph-meta__edition">first edition · v0.6.0</span>
-    </div>
+<section class="dr-hero" aria-label="Introduction">
+  <!-- Outer drawing border with corner crosshairs -->
+  <div class="dr-frame">
+    <span class="dr-corner dr-corner--tl" aria-hidden="true"></span>
+    <span class="dr-corner dr-corner--tr" aria-hidden="true"></span>
+    <span class="dr-corner dr-corner--bl" aria-hidden="true"></span>
+    <span class="dr-corner dr-corner--br" aria-hidden="true"></span>
 
-    <div class="ph-grid">
-      <!-- Left column: the editorial lockup -->
-      <div class="ph-col ph-col--text">
-        <p class="ph-eyebrow">A composable kit for git-state fixtures.</p>
+    <!-- ═══ Title block ═══ -->
+    <header class="dr-titleblock">
+      <div class="dr-titleblock__cell dr-titleblock__cell--title">
+        <span class="dr-label">Project</span>
+        <h1 class="dr-title">git&#8209;scenarios</h1>
+      </div>
+      <div class="dr-titleblock__cell">
+        <span class="dr-label">Drawn by</span>
+        <span class="dr-value">G. Fargo</span>
+      </div>
+      <div class="dr-titleblock__cell">
+        <span class="dr-label">Date</span>
+        <span class="dr-value">2026·05·27</span>
+      </div>
+      <div class="dr-titleblock__cell">
+        <span class="dr-label">Sheet</span>
+        <span class="dr-value">01 / 04</span>
+      </div>
+      <div class="dr-titleblock__cell">
+        <span class="dr-label">Revision</span>
+        <span class="dr-value dr-value--accent">F · v0.6.0</span>
+      </div>
+      <div class="dr-titleblock__cell dr-titleblock__cell--scale">
+        <span class="dr-label">Scale</span>
+        <span class="dr-value">N.T.S.</span>
+      </div>
+    </header>
 
-        <h1 class="ph-headline">
-          Real git repositories,<br/>
-          <em>any state,</em><br/>
-          one line of code.
-        </h1>
-
-        <p class="ph-lede">
+    <!-- ═══ Drawing area ═══ -->
+    <div class="dr-drawing">
+      <!-- Left column: the actual headline lockup -->
+      <div class="dr-headline">
+        <p class="dr-eyebrow">A composable kit for git‑state fixtures.</p>
+        <h2 class="dr-display">
+          <span class="dr-display__line">Real git repos.</span>
+          <span class="dr-display__line"><em>Any state.</em></span>
+          <span class="dr-display__line">One line of code.</span>
+        </h2>
+        <p class="dr-lede">
           A typed atom library and CLI for spinning up deterministic
           git fixtures &mdash; merge conflicts, submodules, multiple
-          remotes, in-progress operations, monorepos, orphan branches.
-          For tests, demos, and tool development.
+          remotes, in&#8209;progress operations, monorepos, orphan
+          branches. For tests, demos, and tool development.
         </p>
 
-        <div class="ph-actions">
-          <a class="ph-action ph-action--primary" href="/docs/quick-start">
-            <span class="ph-action__cmd">$&nbsp;</span>get&nbsp;started
-            <span class="ph-action__arrow">→</span>
+        <div class="dr-actions">
+          <a class="dr-action dr-action--primary" href="/docs/quick-start">
+            Get started <span aria-hidden="true">→</span>
           </a>
-          <a class="ph-action ph-action--ghost" href="https://github.com/gfargo/git-scenarios">
-            view source ↗
+          <a class="dr-action dr-action--ghost" href="https://github.com/gfargo/git-scenarios">
+            View source <span aria-hidden="true">↗</span>
           </a>
         </div>
 
-        <!-- The npm install snippet — small, monospace, terminal-feel -->
-        <div class="ph-install">
-          <span class="ph-install__prompt">$</span>
-          <code class="ph-install__cmd">npm i -D @gfargo/git-scenarios simple-git</code>
-          <button class="ph-install__copy" data-copy="npm install --save-dev @gfargo/git-scenarios simple-git" aria-label="Copy install command">
+        <div class="dr-install">
+          <span class="dr-install__prompt">$</span>
+          <code class="dr-install__cmd">npm i -D @gfargo/git-scenarios simple-git</code>
+          <button class="dr-install__copy" data-copy="npm install --save-dev @gfargo/git-scenarios simple-git" aria-label="Copy install command">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
               <rect x="4" y="4" width="9" height="9" rx="1.5"/>
               <path d="M3 11V3.5A1.5 1.5 0 0 1 4.5 2H11"/>
@@ -64,114 +89,204 @@
         </div>
       </div>
 
-      <!-- Right column: the git log graph specimen -->
-      <div class="ph-col ph-col--graph">
-        <div class="ph-graph" role="img" aria-label="Animated git log graph showing commits, branches, and a merge">
-          <!-- Header -->
-          <div class="ph-graph__header">
-            <span class="ph-graph__path">~/repo</span>
-            <span class="ph-graph__cmd">git log --graph --oneline</span>
-          </div>
+      <!-- Right column: SVG schematic of the layer cake -->
+      <figure class="dr-figure">
+        <svg
+          class="dr-schematic"
+          viewBox="0 0 360 380"
+          xmlns="http://www.w3.org/2000/svg"
+          role="img"
+          aria-label="Schematic showing how git-scenarios composes atoms into scenarios into the public API"
+        >
+          <defs>
+            <!-- Arrowhead for pipe flow -->
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+            </marker>
+            <!-- Tick mark for dimension lines -->
+            <marker id="tick" viewBox="-3 -4 6 8" refX="0" refY="0" markerWidth="6" markerHeight="8" orient="auto">
+              <line x1="0" y1="-4" x2="0" y2="4" stroke="currentColor" stroke-width="1.2" />
+            </marker>
+          </defs>
 
-          <!-- Commit rows -->
-          <ol class="ph-graph__rows">
-            <li class="ph-graph__row" style="--d:0.0s">
-              <span class="ph-graph__glyph" aria-hidden="true">*</span>
-              <span class="ph-graph__sha">a1b2c3d</span>
-              <span class="ph-graph__chips">
-                <em class="ph-chip ph-chip--head">HEAD</em>
-                <em class="ph-chip ph-chip--branch">main</em>
-              </span>
-              <span class="ph-graph__msg">feat: scaffold widget v2</span>
-            </li>
-            <li class="ph-graph__row" style="--d:0.08s">
-              <span class="ph-graph__glyph" aria-hidden="true">*</span>
-              <span class="ph-graph__sha">9f8e7d6</span>
-              <span class="ph-graph__msg">test: cover edge cases</span>
-            </li>
-            <li class="ph-graph__row ph-graph__row--merge" style="--d:0.16s">
-              <span class="ph-graph__glyph" aria-hidden="true">*<span class="ph-graph__merge-glyph">⤬</span></span>
-              <span class="ph-graph__sha">5e4d3c2</span>
-              <span class="ph-graph__chips">
-                <em class="ph-chip ph-chip--branch">feat/widget-v2</em>
-              </span>
-              <span class="ph-graph__msg">Merge branch 'feat/widget-v2'</span>
-            </li>
-            <li class="ph-graph__row ph-graph__row--branch" style="--d:0.24s">
-              <span class="ph-graph__glyph" aria-hidden="true">|<i>\</i></span>
-              <span class="ph-graph__sha">b1a2c3d</span>
-              <span class="ph-graph__msg">refactor: split utils module</span>
-            </li>
-            <li class="ph-graph__row ph-graph__row--branch" style="--d:0.32s">
-              <span class="ph-graph__glyph" aria-hidden="true">|&nbsp;*</span>
-              <span class="ph-graph__sha">c4d5e6f</span>
-              <span class="ph-graph__msg">feat: expose new public API</span>
-            </li>
-            <li class="ph-graph__row" style="--d:0.40s">
-              <span class="ph-graph__glyph" aria-hidden="true">*</span>
-              <span class="ph-graph__sha">7g8h9i0</span>
-              <span class="ph-graph__chips">
-                <em class="ph-chip ph-chip--remote">origin/main</em>
-              </span>
-              <span class="ph-graph__msg">chore: bump dependencies</span>
-            </li>
-            <li class="ph-graph__row" style="--d:0.48s">
-              <span class="ph-graph__glyph" aria-hidden="true">*</span>
-              <span class="ph-graph__sha">f0e9d8c</span>
-              <span class="ph-graph__chips">
-                <em class="ph-chip ph-chip--tag">v0.5.0</em>
-              </span>
-              <span class="ph-graph__msg">release: v0.5.0</span>
-            </li>
-            <li class="ph-graph__row" style="--d:0.56s">
-              <span class="ph-graph__glyph" aria-hidden="true">*</span>
-              <span class="ph-graph__sha">3a4b5c6</span>
-              <span class="ph-graph__msg">docs: update changelog</span>
-            </li>
-            <li class="ph-graph__row ph-graph__row--ellipsis" style="--d:0.64s" aria-hidden="true">
-              <span class="ph-graph__glyph">|</span>
-              <span class="ph-graph__msg">...</span>
-            </li>
-          </ol>
+          <!-- Background grid (drawing area only) -->
+          <g class="dr-schematic__grid" aria-hidden="true">
+            <!-- vertical -->
+            <line x1="20" y1="20" x2="20"  y2="360" />
+            <line x1="60" y1="20" x2="60"  y2="360" />
+            <line x1="100" y1="20" x2="100" y2="360" />
+            <line x1="140" y1="20" x2="140" y2="360" />
+            <line x1="180" y1="20" x2="180" y2="360" />
+            <line x1="220" y1="20" x2="220" y2="360" />
+            <line x1="260" y1="20" x2="260" y2="360" />
+            <line x1="300" y1="20" x2="300" y2="360" />
+            <line x1="340" y1="20" x2="340" y2="360" />
+            <!-- horizontal -->
+            <line x1="20" y1="60"  x2="340" y2="60" />
+            <line x1="20" y1="100" x2="340" y2="100" />
+            <line x1="20" y1="140" x2="340" y2="140" />
+            <line x1="20" y1="180" x2="340" y2="180" />
+            <line x1="20" y1="220" x2="340" y2="220" />
+            <line x1="20" y1="260" x2="340" y2="260" />
+            <line x1="20" y1="300" x2="340" y2="300" />
+          </g>
 
-          <!-- Caption — typeset like a figure label in a journal -->
-          <div class="ph-graph__caption">
-            <span class="ph-graph__fig">FIG. 01</span>
-            <span class="ph-graph__caption-text">An example git log produced by <code>spinUpScenario('rich-history-graph')</code> &mdash; same shape every run.</span>
-          </div>
-        </div>
-      </div>
+          <!-- Layer 3: PUBLIC API (top) -->
+          <g class="dr-schematic__layer" style="--d: 0.05s">
+            <rect x="60" y="40" width="240" height="50" rx="2"
+                  fill="var(--gs-paper)"
+                  stroke="var(--gs-cyan)"
+                  stroke-width="1.5"
+                  class="dr-schematic__rect"/>
+            <text x="180" y="63" text-anchor="middle"
+                  class="dr-schematic__label-mono">spinUpScenario(name)</text>
+            <text x="180" y="78" text-anchor="middle"
+                  class="dr-schematic__label-small">PUBLIC API</text>
+          </g>
+
+          <!-- Pipe down from API to Scenarios -->
+          <path
+            class="dr-schematic__pipe"
+            style="--d: 0.18s"
+            d="M180 90 L180 130"
+            fill="none"
+            stroke="var(--gs-cyan)"
+            stroke-width="1.5"
+            marker-end="url(#arrow)"
+          />
+
+          <!-- Layer 2: SCENARIOS (middle) -->
+          <g class="dr-schematic__layer" style="--d: 0.28s">
+            <rect x="40" y="135" width="280" height="60" rx="2"
+                  fill="var(--gs-paper)"
+                  stroke="var(--gs-cyan)"
+                  stroke-width="1.5"
+                  class="dr-schematic__rect"/>
+            <text x="180" y="158" text-anchor="middle"
+                  class="dr-schematic__label-mono">32 named scenarios</text>
+            <text x="180" y="175" text-anchor="middle"
+                  class="dr-schematic__label-small">SCENARIO REGISTRY</text>
+            <!-- Sub-divisions inside the scenario block -->
+            <line x1="100" y1="135" x2="100" y2="195" stroke="var(--gs-rule-strong)" stroke-width="0.5" stroke-dasharray="2 3"/>
+            <line x1="180" y1="135" x2="180" y2="195" stroke="var(--gs-rule-strong)" stroke-width="0.5" stroke-dasharray="2 3"/>
+            <line x1="260" y1="135" x2="260" y2="195" stroke="var(--gs-rule-strong)" stroke-width="0.5" stroke-dasharray="2 3"/>
+          </g>
+
+          <!-- Three pipes branching down to atoms -->
+          <path class="dr-schematic__pipe" style="--d: 0.42s"
+                d="M100 195 L100 230" fill="none"
+                stroke="var(--gs-cyan)" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <path class="dr-schematic__pipe" style="--d: 0.5s"
+                d="M180 195 L180 230" fill="none"
+                stroke="var(--gs-cyan)" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <path class="dr-schematic__pipe" style="--d: 0.58s"
+                d="M260 195 L260 230" fill="none"
+                stroke="var(--gs-cyan)" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <!-- Layer 1: ATOMS (bottom) — three columns -->
+          <g class="dr-schematic__layer" style="--d: 0.72s">
+            <rect x="60" y="235" width="80" height="50" rx="2"
+                  fill="var(--gs-paper)" stroke="var(--gs-cyan)" stroke-width="1.5"
+                  class="dr-schematic__rect"/>
+            <text x="100" y="255" text-anchor="middle" class="dr-schematic__label-mono dr-schematic__label-mono--sm">addCommit</text>
+            <text x="100" y="269" text-anchor="middle" class="dr-schematic__label-mono dr-schematic__label-mono--sm">chain</text>
+          </g>
+          <g class="dr-schematic__layer" style="--d: 0.78s">
+            <rect x="140" y="235" width="80" height="50" rx="2"
+                  fill="var(--gs-paper)" stroke="var(--gs-cyan)" stroke-width="1.5"
+                  class="dr-schematic__rect"/>
+            <text x="180" y="255" text-anchor="middle" class="dr-schematic__label-mono dr-schematic__label-mono--sm">startMerge</text>
+            <text x="180" y="269" text-anchor="middle" class="dr-schematic__label-mono dr-schematic__label-mono--sm">cherryPick</text>
+          </g>
+          <g class="dr-schematic__layer" style="--d: 0.84s">
+            <rect x="220" y="235" width="80" height="50" rx="2"
+                  fill="var(--gs-paper)" stroke="var(--gs-cyan)" stroke-width="1.5"
+                  class="dr-schematic__rect"/>
+            <text x="260" y="255" text-anchor="middle" class="dr-schematic__label-mono dr-schematic__label-mono--sm">withAuthor</text>
+            <text x="260" y="269" text-anchor="middle" class="dr-schematic__label-mono dr-schematic__label-mono--sm">addSubmodule</text>
+          </g>
+
+          <!-- Atom layer label -->
+          <text x="180" y="298" text-anchor="middle" class="dr-schematic__label-small dr-schematic__label-small--strong">60+ COMPOSABLE ATOMS</text>
+
+          <!-- Numbered callout balloons (right side, pointing at each layer) -->
+          <g class="dr-callout" style="--d: 1.0s">
+            <line x1="305" y1="65" x2="335" y2="65"
+                  stroke="var(--gs-vermilion)" stroke-width="1"
+                  marker-end="url(#tick)" marker-start="url(#tick)"/>
+            <circle cx="345" cy="65" r="8" fill="var(--gs-paper)"
+                    stroke="var(--gs-vermilion)" stroke-width="1.2"/>
+            <text x="345" y="68" text-anchor="middle"
+                  class="dr-schematic__callout-num">3</text>
+          </g>
+          <g class="dr-callout" style="--d: 1.08s">
+            <line x1="325" y1="165" x2="335" y2="165"
+                  stroke="var(--gs-vermilion)" stroke-width="1"
+                  marker-end="url(#tick)" marker-start="url(#tick)"/>
+            <circle cx="345" cy="165" r="8" fill="var(--gs-paper)"
+                    stroke="var(--gs-vermilion)" stroke-width="1.2"/>
+            <text x="345" y="168" text-anchor="middle"
+                  class="dr-schematic__callout-num">2</text>
+          </g>
+          <g class="dr-callout" style="--d: 1.16s">
+            <line x1="305" y1="260" x2="335" y2="260"
+                  stroke="var(--gs-vermilion)" stroke-width="1"
+                  marker-end="url(#tick)" marker-start="url(#tick)"/>
+            <circle cx="345" cy="260" r="8" fill="var(--gs-paper)"
+                    stroke="var(--gs-vermilion)" stroke-width="1.2"/>
+            <text x="345" y="263" text-anchor="middle"
+                  class="dr-schematic__callout-num">1</text>
+          </g>
+
+          <!-- Vertical dimension line on the left side -->
+          <g class="dr-dimension" style="--d: 1.3s">
+            <line x1="15" y1="50" x2="15" y2="285"
+                  stroke="var(--gs-graphite)" stroke-width="0.8"
+                  marker-start="url(#tick)" marker-end="url(#tick)"/>
+            <text x="9" y="170" text-anchor="middle"
+                  transform="rotate(-90 9 170)"
+                  class="dr-schematic__dim">3 LAYERS</text>
+          </g>
+
+          <!-- Bottom legend -->
+          <g class="dr-legend" style="--d: 1.45s">
+            <text x="20" y="335" class="dr-schematic__legend-key">FIG. 01</text>
+            <text x="68" y="335" class="dr-schematic__legend-text">Composition diagram — atoms compose into scenarios; the public</text>
+            <text x="20" y="350" class="dr-schematic__legend-text">API and CLI consume the registry. Same shape every test run.</text>
+          </g>
+        </svg>
+      </figure>
     </div>
 
-    <!-- Stats strip — newspaper-style by-the-numbers -->
-    <dl class="ph-stats">
-      <div class="ph-stat">
-        <dt>scenarios</dt>
-        <dd>32</dd>
+    <!-- ═══ Specifications strip ═══ -->
+    <footer class="dr-specs">
+      <div class="dr-spec">
+        <span class="dr-spec__num">32</span>
+        <span class="dr-spec__lbl">scenarios</span>
       </div>
-      <div class="ph-stat">
-        <dt>composable atoms</dt>
-        <dd>60+</dd>
+      <div class="dr-spec">
+        <span class="dr-spec__num">60+</span>
+        <span class="dr-spec__lbl">composable atoms</span>
       </div>
-      <div class="ph-stat">
-        <dt>test runners</dt>
-        <dd>jest · vitest</dd>
+      <div class="dr-spec">
+        <span class="dr-spec__num">2</span>
+        <span class="dr-spec__lbl">test runners (jest&nbsp;·&nbsp;vitest)</span>
       </div>
-      <div class="ph-stat">
-        <dt>supported node</dt>
-        <dd>22 · 24 · 26+</dd>
+      <div class="dr-spec">
+        <span class="dr-spec__num">22+</span>
+        <span class="dr-spec__lbl">supported node</span>
       </div>
-      <div class="ph-stat">
-        <dt>license</dt>
-        <dd>mit</dd>
+      <div class="dr-spec">
+        <span class="dr-spec__num">MIT</span>
+        <span class="dr-spec__lbl">license</span>
       </div>
-    </dl>
+    </footer>
   </div>
 </section>
 
 <script>
   // Copy button on the install snippet
-  const copyBtn = document.querySelector<HTMLButtonElement>('.ph-install__copy')
+  const copyBtn = document.querySelector<HTMLButtonElement>('.dr-install__copy')
   if (copyBtn) {
     copyBtn.addEventListener('click', async () => {
       const text = copyBtn.dataset.copy ?? ''
@@ -187,125 +302,191 @@
 </script>
 
 <style>
-  .ph-hero {
+  /* ─── Hero shell ─── */
+  .dr-hero {
     position: relative;
-    padding: 4.5rem 0 3rem;
-    overflow: hidden;
-  }
-
-  /* Pinstripe column rules running the full height — like the gutter
-     marks between columns in a printed periodical. */
-  .ph-hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(to right, var(--gs-rule) 1px, transparent 1px);
-    background-size: 8.333% 100%;
-    background-position: 0 0;
-    opacity: 0.5;
-    pointer-events: none;
-  }
-
-  /* Soft emerald glow on the right edge — the only chromatic accent */
-  .ph-hero::after {
-    content: '';
-    position: absolute;
-    top: -20%;
-    right: -15%;
-    width: 720px;
-    height: 720px;
-    background: radial-gradient(circle, var(--gs-emerald-mid) 0%, transparent 65%);
-    filter: blur(60px);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .ph-hero__inner {
-    position: relative;
-    z-index: 1;
-    max-width: 80rem;
+    padding: 1.5rem 1.5rem 4rem;
+    max-width: 88rem;
     margin: 0 auto;
-    padding: 0 1.5rem;
   }
 
-  /* ─── Meta ribbon ─── */
-  .ph-meta {
+  .dr-frame {
+    position: relative;
+    border: 1px solid var(--gs-rule-strong);
+    background: transparent;
+  }
+
+  /* Crosshair ticks at the four corners of the drawing frame */
+  .dr-corner {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+  }
+
+  .dr-corner::before,
+  .dr-corner::after {
+    content: '';
+    position: absolute;
+    background: var(--gs-cyan);
+  }
+
+  .dr-corner::before { width: 18px; height: 1.5px; top: 50%; }
+  .dr-corner::after  { width: 1.5px; height: 18px; left: 50%; }
+
+  .dr-corner--tl { top: -10px; left: -10px; }
+  .dr-corner--tr { top: -10px; right: -10px; }
+  .dr-corner--bl { bottom: -10px; left: -10px; }
+  .dr-corner--br { bottom: -10px; right: -10px; }
+
+  /* ─── Title block (top of the drawing) ─── */
+  .dr-titleblock {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 0.8fr 1fr 0.7fr;
+    border-bottom: 1px solid var(--gs-rule-strong);
+    background: var(--gs-cyan-low);
+  }
+
+  .dr-titleblock__cell {
+    padding: 0.7rem 1rem;
+    border-right: 1px solid var(--gs-rule-strong);
     display: flex;
-    align-items: center;
-    gap: 0.6rem;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-height: 4.2rem;
+    justify-content: center;
+  }
+
+  .dr-titleblock__cell:last-child {
+    border-right: 0;
+  }
+
+  .dr-titleblock__cell--title {
+    background: var(--gs-paper);
+    padding: 0.5rem 1rem 0.6rem;
+  }
+
+  .dr-label {
     font-family: var(--gs-mono);
-    font-size: 0.65rem;
+    font-size: 0.58rem;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--sl-color-gray-4);
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--gs-rule);
-    margin-bottom: 3.5rem;
+    letter-spacing: 0.16em;
+    color: var(--gs-graphite);
   }
 
-  .ph-meta__sep {
-    color: var(--gs-rule-strong);
+  .dr-value {
+    font-family: var(--gs-mono);
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--gs-ink);
   }
 
-  .ph-meta__name {
-    color: var(--gs-emerald);
+  .dr-value--accent {
+    color: var(--gs-vermilion);
     font-weight: 500;
   }
 
-  /* ─── Two-column lockup ─── */
-  .ph-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-    gap: 4rem;
-    align-items: start;
+  .dr-title {
+    font-family: var(--gs-display) !important;
+    font-variation-settings: 'opsz' 96, 'wdth' 88, 'wght' 700 !important;
+    font-size: clamp(1.6rem, 2.4vw, 2.1rem) !important;
+    letter-spacing: -0.04em !important;
+    line-height: 1 !important;
+    margin: 0.15rem 0 0 0 !important;
+    color: var(--gs-ink) !important;
   }
 
-  @media (max-width: 64rem) {
-    .ph-grid {
-      grid-template-columns: 1fr;
-      gap: 3rem;
+  @media (max-width: 900px) {
+    .dr-titleblock {
+      grid-template-columns: 2fr 1fr 1fr;
+    }
+    .dr-titleblock__cell--scale {
+      display: none;
     }
   }
 
-  /* ─── Left column: editorial copy ─── */
-  .ph-col--text {
-    max-width: 38rem;
+  @media (max-width: 600px) {
+    .dr-titleblock {
+      grid-template-columns: 1fr 1fr;
+    }
   }
 
-  .ph-eyebrow {
+  /* ─── Drawing area ─── */
+  .dr-drawing {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: stretch;
+    border-bottom: 1px solid var(--gs-rule-strong);
+  }
+
+  .dr-headline {
+    padding: 3rem 2rem 3rem 2.5rem;
+    border-right: 1px solid var(--gs-rule);
+    position: relative;
+    background:
+      linear-gradient(to right, var(--gs-grid-line) 1px, transparent 1px) 0 0 / 24px 24px,
+      linear-gradient(to bottom, var(--gs-grid-line) 1px, transparent 1px) 0 0 / 24px 24px;
+  }
+
+  /* "01" callout in the top-left of the headline area */
+  .dr-headline::before {
+    content: '01';
+    position: absolute;
+    top: 1.25rem;
+    left: 1.25rem;
+    width: 2.4rem;
+    height: 2.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--gs-vermilion);
+    border-radius: 999px;
+    background: var(--gs-paper);
+    color: var(--gs-vermilion);
     font-family: var(--gs-mono);
-    font-size: 0.7rem;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  .dr-eyebrow {
+    font-family: var(--gs-mono);
+    font-size: 0.66rem;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    color: var(--gs-emerald);
+    color: var(--gs-cyan);
     margin: 0 0 1.5rem;
-    padding-left: 0.85rem;
-    border-left: 2px solid var(--gs-emerald);
+    padding-left: 4rem;          /* clear of the 01 callout */
     line-height: 1.6;
   }
 
-  .ph-headline {
+  .dr-display {
     font-family: var(--gs-display);
-    font-variation-settings: 'opsz' 144, 'wght' 540, 'SOFT' 50;
-    font-size: clamp(2.6rem, 6.4vw, 5rem);
-    line-height: 0.95;
-    letter-spacing: -0.04em;
-    margin: 0 0 2rem;
+    font-variation-settings: 'opsz' 96, 'wdth' 88, 'wght' 700;
+    font-size: clamp(2.4rem, 5.5vw, 3.8rem);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+    margin: 0 0 1.75rem;
     color: var(--gs-ink);
-    font-feature-settings: 'ss01';
+    display: flex;
+    flex-direction: column;
+    gap: 0.05em;
   }
 
-  .ph-headline em {
+  .dr-display__line {
+    display: block;
+  }
+
+  .dr-display em {
     font-style: italic;
-    font-variation-settings: 'opsz' 144, 'wght' 460, 'SOFT' 100, 'WONK' 1;
-    color: var(--gs-emerald);
-    letter-spacing: -0.05em;
+    font-variation-settings: 'opsz' 96, 'wdth' 95, 'wght' 600;
+    color: var(--gs-vermilion);
   }
 
-  .ph-lede {
+  .dr-lede {
     font-family: var(--gs-body);
-    font-variation-settings: 'opsz' 18, 'SOFT' 50, 'WONK' 0;
+    font-variation-settings: 'opsz' 24;
     font-size: 1.1rem;
     line-height: 1.6;
     color: var(--sl-color-gray-2);
@@ -313,457 +494,330 @@
     margin: 0 0 2rem;
   }
 
-  /* ─── Actions ─── */
-  .ph-actions {
+  /* ─── Actions — high contrast, no inversion legibility issues ─── */
+  .dr-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.85rem;
     align-items: center;
-    margin-bottom: 2.25rem;
+    margin-bottom: 1.75rem;
   }
 
-  .ph-action {
+  .dr-action {
     font-family: var(--gs-mono);
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     font-weight: 500;
     padding: 0.85rem 1.4rem;
     border-radius: 2px;
     text-decoration: none;
-    border: 1px solid var(--gs-rule-strong);
-    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+    border: 1.5px solid var(--gs-cyan);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease;
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.5rem;
     line-height: 1;
+    letter-spacing: 0.01em;
   }
 
-  .ph-action--primary {
-    background: var(--gs-emerald);
+  /* Primary: cyan FILL with inked PAPER text — explicitly sets paper
+     color from CSS var so it never flashes black on white or vice
+     versa during theme switches. */
+  .dr-action--primary {
+    background: var(--gs-cyan);
     color: var(--gs-paper);
-    border-color: var(--gs-emerald);
+    border-color: var(--gs-cyan);
     font-weight: 600;
   }
 
-  .ph-action--primary:hover {
+  /* Critical: in light mode the paper is cream and the cyan is deep
+     blue; the text needs to read as light cream on deep blue. In
+     dark mode it's the reverse — bright cyan with dark navy text.
+     Both directions use --gs-paper (cream/navy respectively) so
+     contrast is consistent. */
+
+  .dr-action--primary:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 3px 3px 0 0 var(--gs-emerald-dim);
+    box-shadow: 3px 3px 0 0 var(--gs-cyan-dim);
   }
 
-  .ph-action__cmd {
-    opacity: 0.85;
-  }
-
-  .ph-action__arrow {
-    transition: transform 0.18s ease;
-  }
-
-  .ph-action--primary:hover .ph-action__arrow {
-    transform: translateX(2px);
-  }
-
-  .ph-action--ghost {
-    color: var(--sl-color-gray-2);
+  .dr-action--ghost {
+    color: var(--gs-cyan);
     background: transparent;
+    border-color: var(--gs-rule-strong);
   }
 
-  .ph-action--ghost:hover {
-    color: var(--gs-emerald);
-    border-color: var(--gs-emerald);
+  .dr-action--ghost:hover {
+    color: var(--gs-cyan);
+    border-color: var(--gs-cyan);
     transform: translate(-2px, -2px);
     box-shadow: 3px 3px 0 0 var(--gs-rule-strong);
   }
 
   /* ─── Install snippet ─── */
-  .ph-install {
+  .dr-install {
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
     padding: 0.55rem 0.85rem;
-    border: 1px solid var(--gs-rule);
-    border-radius: 4px;
-    background: var(--gs-surface);
+    border: 1px solid var(--gs-rule-strong);
+    border-radius: 2px;
+    background: var(--gs-paper);
     font-family: var(--gs-mono);
     font-size: 0.83rem;
     max-width: 100%;
   }
 
-  .ph-install__prompt {
-    color: var(--gs-emerald);
+  .dr-install__prompt {
+    color: var(--gs-cyan);
     font-weight: 600;
     user-select: none;
   }
 
-  .ph-install__cmd {
-    color: var(--sl-color-gray-1);
-    background: transparent;
-    border: none;
-    padding: 0;
+  .dr-install__cmd {
+    color: var(--gs-ink);
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
     font-size: inherit;
     font-family: inherit;
     overflow-x: auto;
     white-space: nowrap;
   }
 
-  .ph-install__copy {
+  .dr-install__copy {
     appearance: none;
     background: transparent;
     border: none;
-    color: var(--sl-color-gray-3);
+    color: var(--gs-graphite);
     cursor: pointer;
     padding: 0.25rem;
-    border-radius: 3px;
+    border-radius: 2px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     transition: color 0.15s ease, background 0.15s ease;
   }
 
-  .ph-install__copy:hover {
-    color: var(--gs-emerald);
-    background: var(--gs-emerald-low);
+  .dr-install__copy:hover {
+    color: var(--gs-cyan);
+    background: var(--gs-cyan-low);
   }
 
-  .ph-install__copy.is-copied {
-    color: var(--gs-emerald);
+  .dr-install__copy.is-copied {
+    color: var(--gs-cyan);
   }
 
-  .ph-install__copy.is-copied::after {
-    content: 'copied';
-    margin-left: 0.4rem;
+  .dr-install__copy.is-copied::after {
+    content: ' OK';
+    margin-left: 0.3rem;
     font-family: var(--gs-mono);
     font-size: 0.7rem;
-    text-transform: uppercase;
+    font-weight: 600;
     letter-spacing: 0.1em;
   }
 
-  /* ─── Right column: graph specimen ─── */
-  .ph-col--graph {
-    position: relative;
-  }
-
-  .ph-graph {
-    border: 1px solid var(--gs-rule);
-    border-radius: 6px;
-    background: var(--gs-surface);
-    padding: 1rem 1.25rem 1.1rem;
-    font-family: var(--gs-mono);
-    font-size: 0.8rem;
-    line-height: 1.7;
-    color: var(--sl-color-gray-2);
-    box-shadow:
-      0 0 0 1px var(--gs-rule) inset,
-      0 1px 0 0 rgba(0, 0, 0, 0.04);
-    position: relative;
-  }
-
-  /* Figure label in the corner — like a TOC entry */
-  .ph-graph::before {
-    content: '/* live specimen */';
-    position: absolute;
-    top: 0.75rem;
-    right: 1rem;
-    font-family: var(--gs-mono);
-    font-size: 0.62rem;
-    color: var(--sl-color-gray-4);
-    letter-spacing: 0.08em;
-    font-style: italic;
-  }
-
-  .ph-graph__header {
-    display: flex;
-    gap: 0.5rem;
-    align-items: baseline;
-    padding-bottom: 0.6rem;
-    margin-bottom: 0.7rem;
-    border-bottom: 1px dashed var(--gs-rule);
-    font-size: 0.75rem;
-    color: var(--sl-color-gray-3);
-  }
-
-  .ph-graph__path {
-    color: var(--gs-cyan);
-  }
-
-  .ph-graph__path::before {
-    content: '~/';
-    color: var(--sl-color-gray-4);
-    margin-right: 0;
-  }
-
-  .ph-graph__cmd {
-    color: var(--sl-color-gray-2);
-  }
-
-  .ph-graph__cmd::before {
-    content: '$ ';
-    color: var(--gs-emerald);
-    font-weight: 600;
-    margin-right: 0.2ch;
-  }
-
-  /* Commit rows */
-  .ph-graph__rows {
-    list-style: none;
+  /* ─── Schematic figure (right column) ─── */
+  .dr-figure {
     margin: 0;
-    padding: 0;
-    counter-reset: none;
+    padding: 1.5rem;
+    background: var(--gs-paper);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
   }
 
-  .ph-graph__row {
-    display: grid;
-    grid-template-columns: 2.5ch 8ch minmax(0, auto) 1fr;
-    gap: 0.75ch;
-    align-items: baseline;
-    padding-block: 0.05rem;
-    /* Remove the global ::before bullet from .sl-markdown-content ul */
-  }
-
-  .ph-graph__row::before {
-    content: none !important;
-  }
-
-  /* Animation: each row sweeps in from left like a typed line */
-  .ph-graph__row {
-    animation: graph-line-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-    animation-delay: var(--d, 0s);
-  }
-
-  @keyframes graph-line-in {
-    from {
-      opacity: 0;
-      transform: translateX(-8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  /* Glyph (the * | / characters) */
-  .ph-graph__glyph {
-    color: var(--gs-emerald);
-    font-weight: 600;
-    white-space: pre;
-    text-align: center;
-  }
-
-  .ph-graph__row--branch .ph-graph__glyph {
-    color: var(--gs-emerald-dim);
-  }
-
-  .ph-graph__row--merge .ph-graph__glyph {
-    color: var(--gs-amber);
-  }
-
-  .ph-graph__row--ellipsis .ph-graph__glyph {
-    color: var(--sl-color-gray-4);
-  }
-
-  .ph-graph__merge-glyph {
-    color: var(--gs-amber);
-    font-style: normal;
-  }
-
-  /* Short SHA */
-  .ph-graph__sha {
-    color: var(--gs-amber);
-    font-weight: 500;
-    letter-spacing: 0;
-  }
-
-  /* Chips (HEAD, branch, tag, remote) */
-  .ph-graph__chips {
-    display: inline-flex;
-    gap: 0.25rem;
-    align-items: baseline;
-  }
-
-  .ph-chip {
-    font-family: var(--gs-mono);
-    font-style: normal;
-    font-size: 0.66rem;
-    font-weight: 500;
-    text-transform: lowercase;
-    padding: 0 0.4rem;
-    border-radius: 2px;
-    letter-spacing: 0;
-    border: 1px solid currentColor;
-    line-height: 1.5;
-    white-space: nowrap;
-  }
-
-  .ph-chip--head {
+  .dr-schematic {
+    width: 100%;
+    height: auto;
+    max-width: 480px;
     color: var(--gs-cyan);
-    background: rgba(103, 232, 249, 0.08);
   }
 
-  .ph-chip--branch {
-    color: var(--gs-emerald);
-    background: var(--gs-emerald-low);
+  .dr-schematic__grid line {
+    stroke: var(--gs-rule);
+    stroke-width: 0.4;
   }
 
-  .ph-chip--remote {
-    color: var(--gs-red);
-    background: var(--gs-red-low);
+  .dr-schematic__rect {
+    transition: fill 0.2s ease;
   }
 
-  .ph-chip--tag {
-    color: var(--gs-amber);
-    background: rgba(251, 191, 36, 0.08);
-  }
-
-  :root[data-theme='light'] .ph-chip--head {
-    background: rgba(14, 116, 144, 0.06);
-  }
-
-  :root[data-theme='light'] .ph-chip--remote {
-    background: rgba(185, 28, 28, 0.05);
-  }
-
-  :root[data-theme='light'] .ph-chip--tag {
-    background: rgba(180, 83, 9, 0.06);
-  }
-
-  /* Commit message */
-  .ph-graph__msg {
-    color: var(--sl-color-gray-2);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .ph-graph__row--ellipsis .ph-graph__msg {
-    color: var(--sl-color-gray-4);
-    letter-spacing: 0.4em;
-  }
-
-  /* Caption under the graph */
-  .ph-graph__caption {
-    margin-top: 0.85rem;
-    padding-top: 0.7rem;
-    border-top: 1px dashed var(--gs-rule);
-    display: flex;
-    gap: 0.6rem;
-    align-items: baseline;
-    font-family: var(--gs-body);
-    font-variation-settings: 'opsz' 12, 'SOFT' 50, 'WONK' 1;
-    font-style: italic;
-    font-size: 0.78rem;
-    line-height: 1.5;
-    color: var(--sl-color-gray-3);
-  }
-
-  .ph-graph__fig {
+  .dr-schematic__label-mono {
     font-family: var(--gs-mono);
-    font-style: normal;
-    font-size: 0.65rem;
+    font-size: 11px;
     font-weight: 500;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--gs-emerald);
-    flex-shrink: 0;
-    padding-top: 0.05rem;
+    fill: var(--gs-ink);
   }
 
-  .ph-graph__caption-text code {
-    font-size: 0.72rem;
-    color: var(--gs-emerald);
-    background: var(--gs-emerald-low);
-    padding: 0.05em 0.3em;
-    border-radius: 2px;
+  .dr-schematic__label-mono--sm {
+    font-size: 9px;
+  }
+
+  .dr-schematic__label-small {
     font-family: var(--gs-mono);
-    font-style: normal;
-    border: 1px solid var(--gs-emerald-mid);
-  }
-
-  /* ─── Stats strip ─── */
-  .ph-stats {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 1rem;
-    margin: 5rem 0 0;
-    padding: 1.6rem 0 0;
-    border-top: 1px solid var(--gs-rule);
-    list-style: none;
-  }
-
-  .ph-stat {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .ph-stat dt {
-    font-family: var(--gs-mono);
-    font-size: 0.62rem;
-    text-transform: uppercase;
+    font-size: 8px;
+    font-weight: 500;
     letter-spacing: 0.18em;
-    color: var(--sl-color-gray-4);
-    margin: 0;
+    fill: var(--gs-graphite);
+    text-transform: uppercase;
   }
 
-  .ph-stat dd {
-    font-family: var(--gs-display);
-    font-variation-settings: 'opsz' 96, 'wght' 540, 'SOFT' 50;
-    font-size: 1.5rem;
-    line-height: 1;
-    letter-spacing: -0.02em;
-    margin: 0;
-    color: var(--gs-ink);
+  .dr-schematic__label-small--strong {
+    fill: var(--gs-cyan);
+    font-weight: 600;
   }
 
-  @media (max-width: 50rem) {
-    .ph-stats {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.5rem 1rem;
-    }
+  .dr-schematic__callout-num {
+    font-family: var(--gs-mono);
+    font-size: 10px;
+    font-weight: 600;
+    fill: var(--gs-vermilion);
   }
 
-  /* ─── Entrance animation ─── */
-  .ph-meta,
-  .ph-eyebrow,
-  .ph-headline,
-  .ph-lede,
-  .ph-actions,
-  .ph-install,
-  .ph-graph,
-  .ph-stats {
-    animation: ph-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  .dr-schematic__dim {
+    font-family: var(--gs-mono);
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    fill: var(--gs-graphite);
+    text-transform: uppercase;
   }
 
-  .ph-meta     { animation-delay: 0s; }
-  .ph-eyebrow  { animation-delay: 0.1s; }
-  .ph-headline { animation-delay: 0.18s; }
-  .ph-lede     { animation-delay: 0.32s; }
-  .ph-actions  { animation-delay: 0.42s; }
-  .ph-install  { animation-delay: 0.5s; }
-  .ph-graph    { animation-delay: 0.36s; }
-  .ph-stats    { animation-delay: 0.7s; }
+  .dr-schematic__legend-key {
+    font-family: var(--gs-mono);
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    fill: var(--gs-cyan);
+    text-transform: uppercase;
+  }
 
-  @keyframes ph-rise {
-    from {
-      opacity: 0;
-      transform: translateY(14px);
-    }
+  .dr-schematic__legend-text {
+    font-family: var(--gs-body);
+    font-size: 9px;
+    fill: var(--gs-graphite);
+    font-style: italic;
+  }
+
+  /* SVG entrance — fade up with a small delay per element */
+  .dr-schematic__layer,
+  .dr-schematic__pipe,
+  .dr-callout,
+  .dr-dimension,
+  .dr-legend {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: drFadeUp 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+    animation-delay: var(--d, 0s);
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  @keyframes drFadeUp {
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
 
+  /* Pipes specifically: stroke-dash animation for that "drawing in
+     real time" feel */
+  .dr-schematic__pipe {
+    stroke-dasharray: 60;
+    stroke-dashoffset: 60;
+    animation:
+      drFadeUp 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) forwards,
+      drDraw 0.5s cubic-bezier(0.5, 0, 0.5, 1) forwards;
+    animation-delay: var(--d, 0s), var(--d, 0s);
+  }
+
+  @keyframes drDraw {
+    to { stroke-dashoffset: 0; }
+  }
+
+  /* ─── Specifications strip (bottom of drawing) ─── */
+  .dr-specs {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    background: var(--gs-cyan-low);
+  }
+
+  .dr-spec {
+    padding: 1rem 1.25rem;
+    border-right: 1px solid var(--gs-rule-strong);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .dr-spec:last-child { border-right: 0; }
+
+  .dr-spec__num {
+    font-family: var(--gs-display);
+    font-variation-settings: 'opsz' 64, 'wdth' 90, 'wght' 700;
+    font-size: 1.85rem;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--gs-ink);
+  }
+
+  .dr-spec__lbl {
+    font-family: var(--gs-mono);
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--gs-graphite);
+  }
+
+  @media (max-width: 800px) {
+    .dr-drawing {
+      grid-template-columns: 1fr;
+    }
+    .dr-headline {
+      border-right: 0;
+      border-bottom: 1px solid var(--gs-rule);
+    }
+    .dr-specs {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .dr-spec:nth-child(2n) {
+      border-right: 0;
+    }
+    .dr-spec {
+      border-bottom: 1px solid var(--gs-rule-strong);
+    }
+  }
+
+  /* ─── Hero entrance ─── */
+  .dr-titleblock,
+  .dr-headline > *,
+  .dr-specs {
+    animation: drFadeUp 0.65s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .dr-titleblock          { animation-delay: 0.0s; }
+  .dr-eyebrow             { animation-delay: 0.08s; }
+  .dr-display             { animation-delay: 0.16s; }
+  .dr-lede                { animation-delay: 0.32s; }
+  .dr-actions             { animation-delay: 0.42s; }
+  .dr-install             { animation-delay: 0.5s; }
+  .dr-specs               { animation-delay: 0.7s; }
+
   @media (prefers-reduced-motion: reduce) {
-    .ph-graph__row,
-    .ph-meta,
-    .ph-eyebrow,
-    .ph-headline,
-    .ph-lede,
-    .ph-actions,
-    .ph-install,
-    .ph-graph,
-    .ph-stats {
+    .dr-titleblock,
+    .dr-headline > *,
+    .dr-specs,
+    .dr-schematic__layer,
+    .dr-schematic__pipe,
+    .dr-callout,
+    .dr-dimension,
+    .dr-legend {
       animation: none !important;
       opacity: 1 !important;
       transform: none !important;
+      stroke-dashoffset: 0 !important;
     }
   }
 </style>
