@@ -10,6 +10,7 @@ export default defineConfig([
       'tempGitRepo': 'src/tempGitRepo.ts',
       'jest': 'src/jest.ts',
       'vitest': 'src/vitest.ts',
+      'node-test': 'src/node-test.ts',
     },
     format: ['cjs', 'esm'],
     dts: true,
