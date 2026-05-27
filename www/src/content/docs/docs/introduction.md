@@ -17,7 +17,7 @@ description: What git-scenarios is and why it exists.
 
 ### Scenarios
 
-Named, curated repo states. Call `spinUpScenario('mid-merge-conflict')` and you get a real temp git repo in that state. 27 built-in scenarios cover branches, conflicts, stash, worktrees, submodules, and more.
+Named, curated repo states. Call `spinUpScenario('mid-merge-conflict')` and you get a real temp git repo in that state. 32 built-in scenarios cover branches, conflicts, stash, worktrees, submodules, monorepos, orphan branches, and more.
 
 ### Atoms
 

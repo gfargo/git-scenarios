@@ -3,6 +3,18 @@ title: History Scenarios
 description: Scenarios for testing history rendering, pagination, and graph display.
 ---
 
+## `merge-no-conflict`
+
+A successfully completed `--no-ff` merge of `feat/x` into `main`, fully committed. The merge commit is at HEAD with two parents. Distinct from `mid-merge-conflict` (in-progress) and from a fast-forward merge (no merge commit produced).
+
+**Contracts:**
+- `main` is checked out
+- HEAD has 2 parents
+- Worktree is clean
+- `feat/x` exists and is merged into `main`
+
+Useful for testing merge-commit rendering, "merged branches" lists, and tools that distinguish `--no-ff` merges from fast-forwards.
+
 ## `rich-history-graph`
 
 20+ commits across 6 date buckets, 2 `--no-ff` merges, 1 live unmerged `feat/wip` branch. For testing compact + full-graph rendering (bucket dividers, type coloring, branch chips, lane topology).

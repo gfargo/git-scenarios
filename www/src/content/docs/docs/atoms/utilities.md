@@ -1,7 +1,38 @@
 ---
 title: Utility Atoms
-description: Sparse checkout, shallow repos, git notes, hooks, config, stash, submodules, worktrees.
+description: gitClean, gitignore/gitattributes, sparse checkout, shallow repos, git notes, hooks, config, stash, submodules, worktrees.
 ---
+
+## Working tree cleanup
+
+| Atom | What it does |
+|---|---|
+| `gitClean({ directories?, force?, ignored? })` | `git clean -f`. With `directories: true` adds `-d`; with `ignored: true` adds `-x`. |
+
+```ts
+// Reset worktree between test phases
+chain(
+  // ... some test work ...
+  gitClean({ directories: true }),  // remove untracked files + dirs
+)
+```
+
+`force` defaults to `true` since `git clean` requires `-f` to do anything by default.
+
+## Git meta files
+
+| Atom | What it does |
+|---|---|
+| `writeGitignore(patterns)` | Convenience over `writeFiles`. Accepts a string array or pre-formatted string. Does NOT stage. |
+| `writeGitattributes(rules)` | Same shape as `writeGitignore` but writes to `.gitattributes`. |
+
+```ts
+chain(
+  writeGitignore(['node_modules', 'dist', '*.log']),
+  writeGitattributes(['*.png binary', '*.md text=auto']),
+  addCommit({ message: 'chore: gitignore + gitattributes' }),
+)
+```
 
 ## Sparse checkout
 

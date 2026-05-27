@@ -1,16 +1,26 @@
 ---
-title: Jest Adapter
-description: Zero-boilerplate scenario testing with the Jest framework adapter.
+title: Jest & Vitest Adapters
+description: Zero-boilerplate scenario testing with the Jest or Vitest framework adapter.
 ---
 
-The `@gfargo/git-scenarios/jest` subpath export provides helpers that handle scenario setup and teardown automatically.
+The package ships two framework adapters with the same API. Pick the one that matches your test runner — the rest of your test code stays identical.
+
+```ts
+// Jest:
+import { describeWithScenario } from '@gfargo/git-scenarios/jest'
+
+// Vitest:
+import { describeWithScenario } from '@gfargo/git-scenarios/vitest'
+```
+
+Both adapters are thin wrappers that handle scenario setup and teardown automatically — you write only the assertions.
 
 ## `describeWithScenario`
 
-Wraps Jest's `describe` with automatic `beforeAll` (spin up) and `afterAll` (cleanup):
+Wraps the test framework's `describe` with automatic `beforeAll` (spin up) and `afterAll` (cleanup):
 
 ```ts
-import { describeWithScenario } from '@gfargo/git-scenarios/jest'
+import { describeWithScenario } from '@gfargo/git-scenarios/jest'  // or /vitest
 
 describeWithScenario('feature-pr-ready', (getRepo) => {
   it('is on a feature branch', async () => {
@@ -47,7 +57,7 @@ describeWithScenario('submodule-with-history', (getRepo) => {
 Run the same tests against multiple scenarios:
 
 ```ts
-import { describeEachScenario } from '@gfargo/git-scenarios/jest'
+import { describeEachScenario } from '@gfargo/git-scenarios/jest'  // or /vitest
 
 describeEachScenario(
   ['feature-pr-ready', 'two-commit-feature', 'multi-commit-branch'],
@@ -87,3 +97,41 @@ describeWithScenario('my-custom', (getRepo) => {
   })
 })
 ```
+
+## Vitest specifics
+
+The Vitest adapter has the same surface as the Jest adapter — only the import path changes. Vitest's `describe` / `beforeAll` / `afterAll` globals are runtime-resolved through Vitest's own registry, so a separate adapter file keeps the imports clean.
+
+You'll need `vitest` installed in your project (peer-style — the adapter doesn't bundle it):
+
+```bash
+npm install --save-dev vitest @gfargo/git-scenarios simple-git
+```
+
+Then enable globals in your `vitest.config.ts`:
+
+```ts
+import { defineConfig } from 'vitest/config'
+
+export default defineConfig({
+  test: {
+    globals: true,
+  },
+})
+```
+
+Or import explicitly per file:
+
+```ts
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
+import { describeWithScenario } from '@gfargo/git-scenarios/vitest'
+```
+
+## Why two adapters instead of one?
+
+Jest and Vitest both provide `describe` / `beforeAll` / `afterAll` at runtime, but they resolve through different module registries — Jest's via `@jest/globals`, Vitest's via the `vitest` package. A single shared adapter would have to do runtime detection or carry both as dependencies.
+
+Two thin adapter files keep:
+- **Imports clean** — no `vitest` dependency for Jest users, no `jest` types for Vitest users.
+- **Behavior aligned** — the surface is identical, so swapping frameworks in your project is one import-line change per test file.
+- **Bundle size minimal** — each adapter is ~30 lines of glue.

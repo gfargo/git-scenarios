@@ -34,12 +34,12 @@ await setup(repo)
 |---|---|
 | [Control Flow](/docs/atoms/control-flow) | `chain`, `repeat`, `conditionally` |
 | [Working Tree](/docs/atoms/working-tree) | `writeFiles`, `deleteFiles`, `renameFile`, `seededFiles` |
-| [Commits & Staging](/docs/atoms/commits) | `stageFiles`, `commit`, `addCommit`, `emptyCommit`, `amendCommit` |
+| [Commits & Staging](/docs/atoms/commits) | `stageFiles`, `unstageFiles`, `commit`, `addCommit`, `emptyCommit`, `amendCommit`, `bulkCommits` |
 | [Branches & Tags](/docs/atoms/branches-tags) | `switchToBranch`, `checkoutBranch`, `createBranch`, `deleteBranch`, `createTag`, `deleteTag` |
 | [Remotes & Tracking](/docs/atoms/remotes) | `addRemote`, `removeRemote`, `renameRemote`, `setUpstream`, `setRemoteRef` |
-| [Operations](/docs/atoms/operations) | `startMerge`, `cherryPick`, `revert`, `startRebase`, `startBisect`, `resetTo`, ... |
+| [Operations](/docs/atoms/operations) | `startMerge`, `cherryPick`, `revert`, `startRebase`, `startBisect`, `resetTo`, ... + lifecycle continue/abort atoms |
 | [Scoping](/docs/atoms/scoping) | `onBranch`, `insideSubmodule`, `withAuthor`, `withRemoteTracking` |
-| [Utilities](/docs/atoms/utilities) | `enableSparseCheckout`, `shallowAt`, `addNote`, `installHook`, `setConfig`, `daysAgo` |
+| [Utilities](/docs/atoms/utilities) | `gitClean`, `writeGitignore`, `writeGitattributes`, `enableSparseCheckout`, `shallowAt`, `addNote`, `installHook`, `setConfig`, `daysAgo` |
 
 ## Writing custom atoms
 
@@ -60,3 +60,21 @@ await chain(
   myCustomAtom('value'),
 )(repo)
 ```
+
+## TempGitRepo helpers
+
+Atoms receive a `TempGitRepo` handle with a few convenience methods on top of the `simple-git` instance:
+
+```ts
+type TempGitRepo = {
+  path: string                                          // absolute fs path
+  git: SimpleGit                                        // simple-git instance
+  writeFile: (path: string, content: string) => Promise<void>
+  readFile: (path: string) => Promise<string>           // utf-8
+  exists: (path: string) => Promise<boolean>            // file or dir
+  commitAll: (message: string) => Promise<void>
+  cleanup: () => Promise<void>
+}
+```
+
+Use `repo.readFile(...)` and `repo.exists(...)` in tests instead of importing `fs` — they're scoped to the repo path automatically.

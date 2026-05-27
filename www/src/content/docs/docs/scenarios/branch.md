@@ -58,3 +58,15 @@ HEAD detached at `main~2`, `main` still at its original tip.
 ## `signed-commits-required`
 
 `commit.gpgsign=true` + `user.signingkey` set. For testing signing-aware UI. (Commits in the scenario remain unsigned since CI lacks a real GPG key.)
+
+## `orphan-branch`
+
+`main` (with regular history) plus a `gh-pages` orphan branch that has its own root commit and no ancestor relationship with `main`. The classic GitHub Pages pattern.
+
+**Contracts:**
+- `main` has 2 commits
+- `gh-pages` is checked out
+- `gh-pages` has 1 commit
+- `main` and `gh-pages` share no common ancestor
+
+Useful for surfacing tools that assume all branches descend from a single root commit.
