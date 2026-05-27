@@ -336,9 +336,11 @@ header.header {
 }
 
 /* Numbered callout circle — like a balloon mark on a drawing.
-   Scope to .sl-markdown-content so the right-hand TOC h2 ("On this
-   page") stays unaffected. */
-:not([data-has-hero]) .sl-markdown-content h2::before {
+   Scope to html:not([data-has-hero]) so the splash never gets it.
+   The bare :not([data-has-hero]) form matched every ancestor that
+   wasn't <html> (body, main-pane, etc.), so the rule fired on the
+   splash too — producing a duplicate "01" next to the hero. */
+html:not([data-has-hero]) .sl-markdown-content h2::before {
   content: counter(section, decimal-leading-zero);
   counter-increment: section;
   position: absolute;
@@ -359,6 +361,10 @@ header.header {
   background: var(--gs-paper);
   box-shadow: 0 0 0 4px var(--gs-paper);
 }
+
+/* The h2 padding-left only matters when there's a balloon to clear.
+   Splash pages don't have one — the [data-has-hero] override below
+   resets it to 0. Doc pages keep the 3.2rem clearance. */
 
 /* Hairline rule trailing the heading — like a sheet divider. Scope
    to .sl-markdown-content so it doesn't apply to the TOC heading. */
@@ -904,9 +910,12 @@ header.header {
   }
 }
 
-/* ─── Page meta ribbon — only on doc pages, never on splash ─── */
-:not([data-has-hero]) .content-panel:first-of-type::before {
-  content: 'SHEET 1 / N · git-scenarios · REV. F · drawn by gfargo';
+/* ─── Page meta ribbon — only on doc pages, never on splash.
+   Anchored to html:not([data-has-hero]) for the same reason as the
+   h2 callout above. Removed "git-scenarios" from the ribbon since
+   the header already shows the project name — no need to triple it. */
+html:not([data-has-hero]) .content-panel:first-of-type::before {
+  content: 'SHEET 01 · REV. F · drawn by gfargo · 2026·05·27';
   display: block;
   font-family: var(--gs-mono);
   font-size: 0.62rem;
