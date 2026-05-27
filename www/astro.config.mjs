@@ -144,6 +144,7 @@ export default defineConfig({
           label: 'Scenarios',
           items: [
             { label: 'Overview', slug: 'docs/scenarios/overview' },
+            { label: 'Browse & Filter', slug: 'docs/scenarios/browse' },
             { label: 'Branch Scenarios', slug: 'docs/scenarios/branch' },
             { label: 'Operation Scenarios', slug: 'docs/scenarios/operation' },
             { label: 'History Scenarios', slug: 'docs/scenarios/history' },
@@ -177,6 +178,7 @@ export default defineConfig({
         {
           label: 'About',
           items: [
+            { label: 'Architecture', slug: 'docs/architecture' },
             { label: 'Release Notes', slug: 'docs/changelog' },
           ],
         },

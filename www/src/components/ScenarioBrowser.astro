@@ -1,0 +1,557 @@
+---
+/**
+ * Interactive scenario browser — client-side filter UI over the
+ * registry data emitted at build time by scripts/generate-scenarios-json.mjs.
+ *
+ * Filters: kind (radio-style), tag (multi-select chips), freeform text.
+ * Combinator is AND across kind/tag filters, AND with text match.
+ *
+ * Renders:
+ *   - Filter controls (kind selector, tag chips, search input)
+ *   - Result count
+ *   - Card grid of matching scenarios with name, summary, kind, tags, contracts
+ *
+ * Pure HTML + CSS + a single inline script — no framework runtime,
+ * no client islands. The data is small (~32 scenarios → ~25KB JSON)
+ * so we inline it as a JSON script tag and let the browser do the
+ * filtering with vanilla JS.
+ */
+import scenarios from '../data/scenarios.json'
+
+// Pre-compute available kinds + tags for the filter UI
+const kinds = [...new Set(scenarios.map((s) => s.kind))].sort()
+const allTags = [...new Set(scenarios.flatMap((s) => s.tags ?? []))].sort()
+
+// Order kinds by the same convention used in the CLI (most-common first)
+const KIND_ORDER = ['branch', 'worktree', 'operation', 'history', 'stash', 'submodule']
+const orderedKinds = [
+  ...KIND_ORDER.filter((k) => kinds.includes(k)),
+  ...kinds.filter((k) => !KIND_ORDER.includes(k)),
+]
+---
+
+<div class="scenario-browser">
+  <div class="filters">
+    <div class="filter-group">
+      <label class="filter-label">Kind</label>
+      <div class="filter-chips" data-filter-group="kind">
+        <button class="chip chip-kind active" data-value="">All ({scenarios.length})</button>
+        {orderedKinds.map((k) => (
+          <button class="chip chip-kind" data-value={k}>
+            {k} ({scenarios.filter((s) => s.kind === k).length})
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">Tags</label>
+      <div class="filter-chips" data-filter-group="tag">
+        {allTags.map((t) => {
+          const count = scenarios.filter((s) => (s.tags ?? []).includes(t)).length
+          return (
+            <button class="chip chip-tag" data-value={t}>
+              {t} <span class="chip-count">{count}</span>
+            </button>
+          )
+        })}
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label" for="scenario-search">Search</label>
+      <input
+        id="scenario-search"
+        type="search"
+        placeholder="Filter by name, summary, or contract…"
+        autocomplete="off"
+        spellcheck="false"
+      />
+    </div>
+
+    <div class="filter-meta">
+      <span class="result-count" data-result-count>{scenarios.length}</span> of {scenarios.length} scenarios
+      <button class="reset-btn" data-reset hidden>Reset filters</button>
+    </div>
+  </div>
+
+  <ul class="scenario-grid" data-scenario-grid>
+    {scenarios.map((s) => (
+      <li
+        class="scenario-card"
+        data-scenario
+        data-kind={s.kind}
+        data-tags={(s.tags ?? []).join(' ')}
+        data-search={[s.name, s.summary, ...(s.contracts ?? [])].join(' ').toLowerCase()}
+      >
+        <div class="scenario-header">
+          <code class="scenario-name">{s.name}</code>
+          <span class={`scenario-kind kind-${s.kind}`}>{s.kind}</span>
+        </div>
+        <p class="scenario-summary">{s.summary}</p>
+        {(s.tags ?? []).length > 0 && (
+          <div class="scenario-tags">
+            {(s.tags ?? []).map((t) => (
+              <span class="scenario-tag" data-tag={t}>{t}</span>
+            ))}
+          </div>
+        )}
+        {(s.contracts ?? []).length > 0 && (
+          <details class="scenario-contracts">
+            <summary>{(s.contracts ?? []).length} contract{(s.contracts ?? []).length === 1 ? '' : 's'}</summary>
+            <ul>
+              {(s.contracts ?? []).map((c) => (
+                <li>{c}</li>
+              ))}
+            </ul>
+          </details>
+        )}
+        <div class="scenario-actions">
+          <button class="copy-btn" data-copy={`spinUpScenario('${s.name}')`} title="Copy spinUpScenario call">
+            Copy spinUpScenario
+          </button>
+          <button class="copy-btn" data-copy={`npx git-scenarios create ${s.name}`} title="Copy CLI command">
+            Copy CLI cmd
+          </button>
+        </div>
+      </li>
+    ))}
+  </ul>
+
+  <div class="empty-state" data-empty-state hidden>
+    <p>No scenarios match the current filters.</p>
+    <button class="reset-btn" data-reset>Reset filters</button>
+  </div>
+</div>
+
+<style>
+  .scenario-browser {
+    --gap: 0.75rem;
+    margin: 1.5rem 0;
+  }
+
+  .filters {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    padding: 1.125rem;
+    border: 1px solid var(--gs-border, var(--sl-color-hairline-light));
+    border-radius: 8px;
+    background: var(--gs-surface, var(--sl-color-bg-sidebar));
+    margin-bottom: 1.25rem;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .filter-label {
+    font-family: var(--sl-font-system-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--sl-color-gray-3);
+  }
+
+  .filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .chip {
+    appearance: none;
+    border: 1px solid var(--gs-border, var(--sl-color-hairline-light));
+    background: transparent;
+    color: var(--sl-color-gray-2);
+    font-family: var(--sl-font-system-mono);
+    font-size: 0.78rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+  }
+
+  .chip:hover {
+    color: var(--sl-color-white);
+    border-color: var(--gs-cyan, var(--sl-color-accent));
+  }
+
+  .chip.active {
+    background: var(--gs-cyan, var(--sl-color-accent));
+    color: var(--sl-color-black);
+    border-color: var(--gs-cyan, var(--sl-color-accent));
+    font-weight: 500;
+  }
+
+  .chip-tag {
+    color: var(--gs-violet, var(--sl-color-accent));
+    border-color: color-mix(in srgb, var(--gs-violet, var(--sl-color-accent)) 30%, transparent);
+  }
+
+  .chip-tag.active {
+    background: var(--gs-violet, var(--sl-color-accent));
+    color: var(--sl-color-black);
+    border-color: var(--gs-violet, var(--sl-color-accent));
+  }
+
+  .chip-count {
+    opacity: 0.6;
+    margin-left: 0.15rem;
+  }
+
+  #scenario-search {
+    appearance: none;
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--gs-border, var(--sl-color-hairline-light));
+    border-radius: 6px;
+    background: var(--sl-color-bg-nav, transparent);
+    color: var(--sl-color-white);
+    font-family: var(--sl-font-system-mono);
+    font-size: 0.85rem;
+  }
+
+  #scenario-search:focus {
+    outline: 2px solid var(--gs-cyan, var(--sl-color-accent));
+    outline-offset: -1px;
+    border-color: var(--gs-cyan, var(--sl-color-accent));
+  }
+
+  .filter-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.8rem;
+    color: var(--sl-color-gray-3);
+    font-family: var(--sl-font-system-mono);
+  }
+
+  .result-count {
+    font-weight: 600;
+    color: var(--sl-color-white);
+  }
+
+  .reset-btn {
+    appearance: none;
+    background: transparent;
+    border: none;
+    color: var(--gs-cyan, var(--sl-color-accent));
+    font-family: var(--sl-font-system-mono);
+    font-size: 0.78rem;
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .reset-btn:hover {
+    background: var(--sl-color-gray-6);
+  }
+
+  .scenario-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--gap);
+  }
+
+  .scenario-card {
+    border: 1px solid var(--gs-border, var(--sl-color-hairline-light));
+    border-radius: 8px;
+    padding: 1rem;
+    background: var(--gs-surface, var(--sl-color-bg-sidebar));
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    transition: border-color 0.12s ease, transform 0.12s ease;
+  }
+
+  .scenario-card:hover {
+    border-color: var(--gs-cyan, var(--sl-color-accent));
+    transform: translateY(-1px);
+  }
+
+  .scenario-card[hidden] {
+    display: none;
+  }
+
+  .scenario-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .scenario-name {
+    font-family: var(--sl-font-system-mono);
+    font-size: 0.92rem;
+    color: var(--sl-color-white);
+    background: transparent;
+    padding: 0;
+  }
+
+  .scenario-kind {
+    font-family: var(--sl-font-system-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    background: var(--sl-color-gray-6);
+    color: var(--sl-color-gray-2);
+  }
+
+  .kind-branch    { color: var(--gs-cyan,    var(--sl-color-accent)); border: 1px solid color-mix(in srgb, var(--gs-cyan,    var(--sl-color-accent)) 35%, transparent); background: color-mix(in srgb, var(--gs-cyan,    var(--sl-color-accent)) 8%, transparent); }
+  .kind-worktree  { color: var(--gs-violet,  var(--sl-color-accent)); border: 1px solid color-mix(in srgb, var(--gs-violet,  var(--sl-color-accent)) 35%, transparent); background: color-mix(in srgb, var(--gs-violet,  var(--sl-color-accent)) 8%, transparent); }
+  .kind-operation { color: var(--gs-amber,   var(--sl-color-accent)); border: 1px solid color-mix(in srgb, var(--gs-amber,   var(--sl-color-accent)) 35%, transparent); background: color-mix(in srgb, var(--gs-amber,   var(--sl-color-accent)) 8%, transparent); }
+  .kind-history   { color: var(--gs-emerald, var(--sl-color-accent)); border: 1px solid color-mix(in srgb, var(--gs-emerald, var(--sl-color-accent)) 35%, transparent); background: color-mix(in srgb, var(--gs-emerald, var(--sl-color-accent)) 8%, transparent); }
+  .kind-stash     { color: var(--sl-color-gray-2); }
+  .kind-submodule { color: var(--sl-color-gray-2); }
+
+  .scenario-summary {
+    margin: 0;
+    color: var(--sl-color-gray-2);
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+
+  .scenario-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .scenario-tag {
+    font-family: var(--sl-font-system-mono);
+    font-size: 0.68rem;
+    color: var(--sl-color-gray-3);
+    padding: 0.12rem 0.4rem;
+    border-radius: 3px;
+    background: var(--sl-color-gray-6);
+  }
+
+  .scenario-tag.active {
+    color: var(--sl-color-white);
+    background: var(--gs-violet, var(--sl-color-accent));
+  }
+
+  .scenario-contracts {
+    font-size: 0.82rem;
+  }
+
+  .scenario-contracts summary {
+    cursor: pointer;
+    color: var(--sl-color-gray-3);
+    font-family: var(--sl-font-system-mono);
+    font-size: 0.78rem;
+  }
+
+  .scenario-contracts summary:hover {
+    color: var(--sl-color-white);
+  }
+
+  .scenario-contracts ul {
+    margin: 0.4rem 0 0 0;
+    padding-left: 1.1rem;
+    color: var(--sl-color-gray-2);
+  }
+
+  .scenario-contracts li {
+    margin: 0.15rem 0;
+  }
+
+  .scenario-actions {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-top: auto;
+  }
+
+  .copy-btn {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--gs-border, var(--sl-color-hairline-light));
+    color: var(--sl-color-gray-2);
+    font-family: var(--sl-font-system-mono);
+    font-size: 0.7rem;
+    padding: 0.3rem 0.55rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: color 0.12s ease, border-color 0.12s ease;
+  }
+
+  .copy-btn:hover {
+    color: var(--sl-color-white);
+    border-color: var(--gs-cyan, var(--sl-color-accent));
+  }
+
+  .copy-btn.copied {
+    color: var(--gs-emerald, var(--sl-color-accent));
+    border-color: var(--gs-emerald, var(--sl-color-accent));
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--sl-color-gray-3);
+    font-family: var(--sl-font-system-mono);
+  }
+
+  .empty-state p {
+    margin: 0 0 1rem 0;
+  }
+</style>
+
+<script>
+  // ─── Filter logic ───
+  // State: selected kind (string | ''), selected tags (Set<string>), search (string)
+  // Read DOM, write data-state-driven visibility.
+
+  const KIND_KEY = 'kind'
+  const TAG_KEY = 'tag'
+
+  const grid = document.querySelector<HTMLElement>('[data-scenario-grid]')
+  const empty = document.querySelector<HTMLElement>('[data-empty-state]')
+  const countEl = document.querySelector<HTMLElement>('[data-result-count]')
+  const search = document.querySelector<HTMLInputElement>('#scenario-search')
+  const resetBtns = document.querySelectorAll<HTMLButtonElement>('[data-reset]')
+
+  if (!grid) {
+    // Defensive — script runs only on the browser page where these exist.
+    // eslint-disable-next-line no-console
+    console.warn('[scenario-browser] grid element not found, skipping init')
+  } else {
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>('[data-scenario]'))
+    const kindChips = document.querySelectorAll<HTMLButtonElement>('.chip-kind')
+    const tagChips = document.querySelectorAll<HTMLButtonElement>('.chip-tag')
+
+    const state = {
+      kind: '',
+      tags: new Set<string>(),
+      query: '',
+    }
+
+    function applyFilters() {
+      const q = state.query.trim().toLowerCase()
+      let visible = 0
+      for (const card of cards) {
+        const cardKind = card.dataset.kind ?? ''
+        const cardTags = (card.dataset.tags ?? '').split(' ').filter(Boolean)
+        const cardSearch = card.dataset.search ?? ''
+
+        const kindOk = !state.kind || cardKind === state.kind
+        const tagsOk = state.tags.size === 0 || [...state.tags].every((t) => cardTags.includes(t))
+        const searchOk = !q || cardSearch.includes(q)
+
+        const show = kindOk && tagsOk && searchOk
+        card.hidden = !show
+        if (show) visible += 1
+
+        // Reflect tag-active highlight on chips inside the card itself
+        for (const chip of card.querySelectorAll<HTMLElement>('.scenario-tag')) {
+          chip.classList.toggle('active', state.tags.has(chip.dataset.tag ?? ''))
+        }
+      }
+      if (countEl) countEl.textContent = String(visible)
+      if (empty) empty.hidden = visible !== 0
+      if (grid) grid.hidden = visible === 0
+
+      // Show reset button when any filter is active
+      const isFiltered = !!state.kind || state.tags.size > 0 || !!q
+      for (const btn of resetBtns) btn.hidden = !isFiltered
+    }
+
+    // Kind chip = mutually exclusive
+    for (const chip of kindChips) {
+      chip.addEventListener('click', () => {
+        const value = chip.dataset.value ?? ''
+        state.kind = value
+        for (const c of kindChips) c.classList.toggle('active', c === chip)
+        applyFilters()
+      })
+    }
+
+    // Tag chips = multi-select
+    for (const chip of tagChips) {
+      chip.addEventListener('click', () => {
+        const value = chip.dataset.value ?? ''
+        if (state.tags.has(value)) {
+          state.tags.delete(value)
+          chip.classList.remove('active')
+        } else {
+          state.tags.add(value)
+          chip.classList.add('active')
+        }
+        applyFilters()
+      })
+    }
+
+    // Search debounce — small enough that a 60ms RAF-style throttle is fine
+    let searchTimer: ReturnType<typeof setTimeout> | null = null
+    if (search) {
+      search.addEventListener('input', () => {
+        if (searchTimer) clearTimeout(searchTimer)
+        searchTimer = setTimeout(() => {
+          state.query = search.value
+          applyFilters()
+        }, 60)
+      })
+    }
+
+    // Reset
+    for (const btn of resetBtns) {
+      btn.addEventListener('click', () => {
+        state.kind = ''
+        state.tags.clear()
+        state.query = ''
+        for (const c of kindChips) c.classList.toggle('active', (c.dataset.value ?? '') === '')
+        for (const c of tagChips) c.classList.remove('active')
+        if (search) search.value = ''
+        applyFilters()
+      })
+    }
+
+    // ─── Copy buttons ───
+    for (const btn of document.querySelectorAll<HTMLButtonElement>('.copy-btn')) {
+      btn.addEventListener('click', async () => {
+        const payload = btn.dataset.copy ?? ''
+        try {
+          await navigator.clipboard.writeText(payload)
+          const orig = btn.textContent
+          btn.textContent = 'Copied!'
+          btn.classList.add('copied')
+          setTimeout(() => {
+            btn.textContent = orig
+            btn.classList.remove('copied')
+          }, 1200)
+        } catch {
+          // Fall back to selection if clipboard API is unavailable.
+          // eslint-disable-next-line no-console
+          console.warn('[scenario-browser] clipboard.writeText failed')
+        }
+      })
+    }
+
+    // Reflect URL hash if present (e.g. #kind=operation&tag=conflict)
+    const params = new URLSearchParams(location.hash.slice(1))
+    const hashKind = params.get('kind')
+    const hashTags = params.get('tag')?.split(',').filter(Boolean) ?? []
+    if (hashKind) {
+      state.kind = hashKind
+      for (const c of kindChips) c.classList.toggle('active', (c.dataset.value ?? '') === hashKind)
+    }
+    if (hashTags.length) {
+      for (const t of hashTags) state.tags.add(t)
+      for (const c of tagChips) {
+        if (state.tags.has(c.dataset.value ?? '')) c.classList.add('active')
+      }
+    }
+    applyFilters()
+  }
+</script>

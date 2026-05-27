@@ -4,6 +4,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "gen:scenarios": "node scripts/generate-scenarios-json.mjs",
+    "predev": "npm run gen:scenarios",
+    "prebuild": "npm run gen:scenarios",
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
