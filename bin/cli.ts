@@ -400,57 +400,64 @@ async function commandClean(options: {
   return 0
 }
 
-async function main(): Promise<void> {
+async function main(): Promise<number> {
   const { command, positional, flags } = parseArgs(process.argv.slice(2))
 
   if (!command || command === 'help' || flags.help) {
     printHelp()
-    process.exit(0)
+    return 0
   }
 
   if (command === 'list') {
-    const code = commandList({
+    return commandList({
       kind: typeof flags.kind === 'string' ? flags.kind : undefined,
       tag: typeof flags.tag === 'string' ? flags.tag : undefined,
       json: Boolean(flags.json),
     })
-    process.exit(code)
   }
 
   if (command === 'describe') {
     const name = positional[0]
     if (!name) {
       console.error('Missing scenario name. Try `git-scenarios list`.')
-      process.exit(2)
+      return 2
     }
-    process.exit(commandDescribe(name, { json: Boolean(flags.json) }))
+    return commandDescribe(name, { json: Boolean(flags.json) })
   }
 
   if (command === 'clean') {
-    const code = await commandClean({
+    return commandClean({
       dryRun: Boolean(flags['dry-run']),
       olderThanHours: typeof flags['older-than'] === 'string' ? parseInt(flags['older-than'], 10) : 0,
     })
-    process.exit(code)
   }
 
   if (command === 'create') {
     const name = positional[0]
     if (!name) {
       console.error('Missing scenario name. Try `git-scenarios list`.')
-      process.exit(2)
+      return 2
     }
-    const code = await commandCreate(name, {
+    return commandCreate(name, {
       targetPath: typeof flags.path === 'string' ? flags.path : undefined,
       runCommand: typeof flags.run === 'string' ? flags.run : undefined,
       ephemeral: Boolean(flags.ephemeral),
       remote: typeof flags.remote === 'string' ? flags.remote : undefined,
     })
-    process.exit(code)
   }
+
+  return 0
 }
 
-main().catch((error) => {
-  console.error(error)
-  process.exit(1)
-})
+main()
+  .then((code) => {
+    // Setting exitCode (instead of calling process.exit) lets Node
+    // drain stdout/stderr buffers naturally before exiting. Calling
+    // process.exit synchronously can truncate piped output —
+    // especially on Linux where the pipe buffer is ~8KB.
+    process.exitCode = code
+  })
+  .catch((error) => {
+    console.error(error)
+    process.exitCode = 1
+  })
