@@ -655,9 +655,15 @@ html:not([data-has-hero]) .sl-markdown-content h2::before {
 }
 
 /* ─── Tables — specification sheets ─── */
+
 .sl-markdown-content table {
   width: 100% !important;
-  table-layout: fixed !important;
+  /* `auto` lets the browser size columns to content rather than
+     forcing 35/65. Long code cells can grow; short ones don't waste
+     space. Combined with overflow-wrap on td code (below) the layout
+     stays balanced even for ultra-long signatures like
+     startMerge(branch, { allowConflict?, noFastForward?, ... }). */
+  table-layout: auto !important;
   border: 1px solid var(--gs-rule-strong) !important;
   border-radius: 2px !important;
   overflow: hidden !important;
@@ -690,21 +696,37 @@ html:not([data-has-hero]) .sl-markdown-content h2::before {
   border-bottom: 1px solid var(--gs-rule) !important;
   font-size: 0.875rem !important;
   line-height: 1.55 !important;
+  /* Critical: allow long content to wrap at word boundaries. Without
+     this, code spans like startMerge(...long sig...) blow out the
+     cell and crush the description column. */
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .sl-markdown-content table tr:last-child td {
   border-bottom: none !important;
 }
 
+/* First column: code-style names. Cap the column at a sensible width
+   via column-width tricks — with table-layout:auto we can't directly
+   set width on a th/td, but `max-width: 0` paired with `overflow-wrap`
+   forces the column to take only the proportional space the auto
+   algorithm gives it. We back this with a content-driven hint by
+   keeping `width: auto` (the default with auto layout). */
 .sl-markdown-content table th:first-child,
 .sl-markdown-content table td:first-child {
-  width: 35% !important;
-  white-space: nowrap !important;
+  width: auto !important;
+  /* Force long signatures to wrap rather than steal space from col 2 */
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
+/* Second column: prose. Soft minimum so it never gets crushed below
+   readable width. */
 .sl-markdown-content table th:last-child,
 .sl-markdown-content table td:last-child {
-  width: 65% !important;
+  width: auto !important;
+  min-width: 16ch;
 }
 
 .sl-markdown-content table td code {
@@ -714,6 +736,13 @@ html:not([data-has-hero]) .sl-markdown-content h2::before {
   border-radius: 2px !important;
   padding: 0.1em 0.4em !important;
   font-size: 0.85em !important;
+  /* Code spans inside cells need to wrap too — otherwise a long
+     function signature trapped in `…` becomes one unbreakable atom. */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  /* Inline display so wrapped fragments don't each get their own
+     full-width pill background. */
+  display: inline;
 }
 
 .sl-markdown-content table tr:nth-child(even) td {
