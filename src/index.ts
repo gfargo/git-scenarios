@@ -53,6 +53,12 @@ export {
   addCommit,
   emptyCommit,
   amendCommit,
+  bulkCommits,
+  // Working tree cleanup
+  gitClean,
+  // Git meta files
+  writeGitignore,
+  writeGitattributes,
   // Branches
   switchToBranch,
   checkoutBranch,
@@ -126,6 +132,7 @@ export {
   type SeededFileSpec,
   type AuthorIdentity,
   type GitHookName,
+  type BulkCommitSpec,
 } from './atoms'
 
 export {
