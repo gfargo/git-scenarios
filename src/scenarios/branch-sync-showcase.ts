@@ -46,15 +46,15 @@
  */
 
 import {
-  addCommit,
-  addRemote,
-  chain,
-  checkoutBranch,
-  defineScenario,
-  setRemoteRef,
-  setUpstream,
-  switchToBranch,
-  withRemoteTracking,
+    addCommit,
+    addRemote,
+    chain,
+    checkoutBranch,
+    defineScenario,
+    setRemoteRef,
+    setUpstream,
+    switchToBranch,
+    withRemoteTracking,
 } from '../atoms'
 
 export const branchSyncShowcaseScenario = defineScenario({
@@ -81,6 +81,7 @@ export const branchSyncShowcaseScenario = defineScenario({
     '  - Branch list filtering / sorting with mixed-state input',
   ].join('\n'),
   kind: 'branch',
+  tags: ['upstream', 'tracking', 'showcase', 'remote'],
   contracts: [
     'main is checked out',
     'main is 2 commits behind origin/main',

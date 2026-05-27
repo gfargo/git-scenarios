@@ -31,6 +31,17 @@ describe('scenarios registry', () => {
     }
   })
 
+  it('every scenario has at least one tag (for filterability)', () => {
+    for (const scenario of allScenarios) {
+      expect(scenario.tags).toBeDefined()
+      expect(scenario.tags!.length).toBeGreaterThan(0)
+      // Each tag is non-empty kebab-or-flat-case lowercase
+      for (const tag of scenario.tags!) {
+        expect(tag).toMatch(/^[a-z][a-z0-9-]*$/)
+      }
+    }
+  })
+
   it('includes the new conflict scenarios', () => {
     expect(findScenario('mid-rebase-conflict')).toBeDefined()
     expect(findScenario('mid-cherry-pick-conflict')).toBeDefined()

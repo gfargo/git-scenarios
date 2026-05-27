@@ -96,6 +96,28 @@ export function findRegistered(name: string): Scenario | undefined {
 }
 
 /**
+ * Filter registered scenarios (built-in + custom) by tag. Returns
+ * scenarios whose `tags` field includes one or more of the requested
+ * tags.
+ *
+ * @param tags - One or more tags to match against
+ * @param match - 'any' (default) returns scenarios matching ANY tag;
+ *   'all' returns only scenarios matching ALL tags.
+ */
+export function findRegisteredByTag(
+  tags: string[],
+  match: 'any' | 'all' = 'any',
+): readonly Scenario[] {
+  return registry.filter((s) => {
+    if (!s.tags || s.tags.length === 0) return false
+    if (match === 'all') {
+      return tags.every((t) => s.tags!.includes(t))
+    }
+    return tags.some((t) => s.tags!.includes(t))
+  })
+}
+
+/**
  * Reset the registry to only the built-in scenarios. Useful in test
  * teardown to avoid leaking custom registrations between tests.
  */

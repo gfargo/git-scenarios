@@ -33,11 +33,11 @@
  */
 
 import {
-  addCommit,
-  addSubmodule,
-  chain,
-  defineScenario,
-  seededFiles,
+    addCommit,
+    addSubmodule,
+    chain,
+    defineScenario,
+    seededFiles,
 } from '../atoms'
 
 const PARENT_SEED = 0x5ba_a1c0
@@ -66,6 +66,7 @@ export const submoduleWithHistoryScenario = defineScenario({
     'run `git submodule update --remote` or `git submodule sync`.',
   ].join('\n'),
   kind: 'submodule',
+  tags: ['submodule', 'nested', 'history'],
   contracts: [
     'parent main has 4 commits',
     'main is checked out',

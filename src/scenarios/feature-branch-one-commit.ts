@@ -32,6 +32,7 @@ export const featureBranchOneCommitScenario = defineScenario({
     '  - the changelog auto-body in the create-PR flow',
   ].join('\n'),
   kind: 'branch',
+  tags: ['feature-branch', 'minimal', 'ahead'],
   contracts: [
     'main has 1 commit',
     'feat/x is checked out',

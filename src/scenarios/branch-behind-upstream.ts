@@ -18,12 +18,12 @@
  */
 
 import {
-  addCommit,
-  addRemote,
-  chain,
-  defineScenario,
-  setUpstream,
-  withRemoteTracking,
+    addCommit,
+    addRemote,
+    chain,
+    defineScenario,
+    setUpstream,
+    withRemoteTracking,
 } from '../atoms'
 
 export const branchBehindUpstreamScenario = defineScenario({
@@ -40,6 +40,7 @@ export const branchBehindUpstreamScenario = defineScenario({
     '  - "fast-forward possible" indicators',
   ].join('\n'),
   kind: 'branch',
+  tags: ['upstream', 'tracking', 'behind', 'remote', 'fast-forward'],
   contracts: [
     'main is checked out',
     'main has 2 commits',

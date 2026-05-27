@@ -17,12 +17,12 @@
  */
 
 import {
-  addCommit,
-  chain,
-  defineScenario,
-  seededFiles,
-  stageFiles,
-  writeFiles,
+    addCommit,
+    chain,
+    defineScenario,
+    seededFiles,
+    stageFiles,
+    writeFiles,
 } from '../atoms'
 
 const SEED = 0xd1f71e5
@@ -60,6 +60,7 @@ export const dirtyManyFilesScenario = defineScenario({
     '  - filter / mask narrowing on the status view',
   ].join('\n'),
   kind: 'worktree',
+  tags: ['dirty', 'staged', 'unstaged', 'untracked', 'large'],
   contracts: [
     'main has 2 commits',
     'worktree has 12 staged files',

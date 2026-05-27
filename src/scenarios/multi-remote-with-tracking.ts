@@ -19,13 +19,13 @@
  */
 
 import {
-  addCommit,
-  addRemote,
-  chain,
-  defineScenario,
-  setRemoteRef,
-  setUpstream,
-  switchToBranch,
+    addCommit,
+    addRemote,
+    chain,
+    defineScenario,
+    setRemoteRef,
+    setUpstream,
+    switchToBranch,
 } from '../atoms'
 
 export const multiRemoteWithTrackingScenario = defineScenario({
@@ -43,6 +43,7 @@ export const multiRemoteWithTrackingScenario = defineScenario({
     '  - "which remote does this branch track?" inspectors',
   ].join('\n'),
   kind: 'branch',
+  tags: ['fork', 'multi-remote', 'tracking', 'remote'],
   contracts: [
     'origin and upstream remotes are configured',
     'feat/fork-work is checked out',

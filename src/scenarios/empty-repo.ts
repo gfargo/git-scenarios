@@ -46,6 +46,7 @@ export const emptyRepoScenario = defineScenario({
     'the registry alongside the rest.',
   ].join('\n'),
   kind: 'branch',
+  tags: ['empty', 'edge-case', 'unborn'],
   contracts: [
     'HEAD is unborn (no commits)',
     'main is the current branch',

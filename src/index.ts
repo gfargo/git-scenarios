@@ -32,6 +32,7 @@ export {
   unregisterScenario,
   listRegistered,
   findRegistered,
+  findRegisteredByTag,
   resetRegistry,
 } from './registry'
 

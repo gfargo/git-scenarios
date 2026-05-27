@@ -33,6 +33,7 @@ export const singleStagedFileScenario = defineScenario({
     '  - smoke tests that just need a valid commit-ready repo',
   ].join('\n'),
   kind: 'worktree',
+  tags: ['staged', 'minimal', 'commit-ready'],
   contracts: [
     'main has 1 commit',
     'exactly 1 staged file (README.md)',

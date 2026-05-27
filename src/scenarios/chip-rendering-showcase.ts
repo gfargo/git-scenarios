@@ -39,14 +39,14 @@
  */
 
 import {
-  addCommit,
-  addRemote,
-  chain,
-  createBranch,
-  createTag,
-  defineScenario,
-  setRemoteRef,
-  setUpstream,
+    addCommit,
+    addRemote,
+    chain,
+    createBranch,
+    createTag,
+    defineScenario,
+    setRemoteRef,
+    setUpstream,
 } from '../atoms'
 
 export const chipRenderingShowcaseScenario = defineScenario({
@@ -75,6 +75,7 @@ export const chipRenderingShowcaseScenario = defineScenario({
     '  - `main` configured to track `origin/main` (1 ahead, 0 behind)',
   ].join('\n'),
   kind: 'history',
+  tags: ['rendering', 'showcase', 'chips', 'history'],
   contracts: [
     'main is checked out',
     'main has 6 commits',

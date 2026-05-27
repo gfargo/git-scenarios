@@ -59,6 +59,7 @@ export const multiCommitBranchScenario = defineScenario({
     '  - yank short-hash / full-hash from a selected commit',
   ].join('\n'),
   kind: 'branch',
+  tags: ['feature-branch', 'multi-commit', 'history'],
   contracts: [
     'main has 2 commits',
     'feat/dashboard is checked out',

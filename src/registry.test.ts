@@ -8,6 +8,7 @@ import {
     unregisterScenario,
     listRegistered,
     findRegistered,
+    findRegisteredByTag,
     resetRegistry,
 } from './registry'
 import { defineScenario } from './atoms'
@@ -124,6 +125,35 @@ describe('registry', () => {
 
       expect(findRegistered('test-custom-scenario')).toBeUndefined()
       expect(findRegistered('empty-repo')).toBeDefined()
+    })
+  })
+
+  describe('findRegisteredByTag', () => {
+    it('finds built-in scenarios by tag', () => {
+      const conflicts = findRegisteredByTag(['conflict'])
+      expect(conflicts.length).toBeGreaterThanOrEqual(3)
+      for (const s of conflicts) {
+        expect(s.tags).toContain('conflict')
+      }
+    })
+
+    it('finds custom-registered scenarios by tag', () => {
+      registerScenario(customScenario)
+      const results = findRegisteredByTag(['custom'])
+      expect(results.some((s) => s.name === 'test-custom-scenario')).toBe(true)
+    })
+
+    it('honors match: all', () => {
+      const merge = findRegisteredByTag(['conflict', 'merge'], 'all')
+      expect(merge.length).toBeGreaterThanOrEqual(1)
+      for (const s of merge) {
+        expect(s.tags).toContain('conflict')
+        expect(s.tags).toContain('merge')
+      }
+    })
+
+    it('returns empty array for no matches', () => {
+      expect(findRegisteredByTag(['nonexistent-xyz-tag'])).toEqual([])
     })
   })
 
