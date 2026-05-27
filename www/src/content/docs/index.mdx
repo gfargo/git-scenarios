@@ -9,6 +9,8 @@ hero:
 
 import { Card, CardGrid, Code } from '@astrojs/starlight/components';
 import HeroPlumbing from '../../components/HeroPlumbing.astro';
+import DiagramPipeline from '../../components/DiagramPipeline.astro';
+import DiagramConflicts from '../../components/DiagramConflicts.astro';
 
 <HeroPlumbing />
 
@@ -43,6 +45,8 @@ await chain(
 ```
 
 Every scenario produces byte-identical state every run. Tests built on top are deterministic too — no flake from clock-drift or hash variance.
+
+<DiagramPipeline />
 
 ## §03 · Failure modes
 
@@ -87,6 +91,8 @@ Every scenario produces byte-identical state every run. Tests built on top are d
     Ships both formats. Use `import` or `require` — both work. TypeScript-first with full type declarations. [Install →](/docs/installation)
   </Card>
 </CardGrid>
+
+<DiagramConflicts />
 
 ## §05 · CLI
 

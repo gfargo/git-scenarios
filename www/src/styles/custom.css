@@ -133,6 +133,32 @@
   color-scheme: light;
 }
 
+/* ─── Content surfaces — opaque paper so grid doesn't show through prose ─── */
+
+/* The main content area on every page sits on opaque paper. The grid
+   shows through margins/gutters, never through reading copy. */
+.main-pane,
+.content-panel {
+  background: var(--gs-paper);
+  position: relative;
+  z-index: 1;
+}
+
+/* Sidebar gets a slightly different shade so it reads as a separate
+   region but still opaque. */
+nav.sidebar,
+.right-sidebar-container {
+  background: var(--sl-color-bg-sidebar);
+  position: relative;
+  z-index: 1;
+}
+
+/* The hero section itself — let the grid show *behind* the drawing
+   frame in the gutter, but the .dr-frame sits on opaque paper. */
+.dr-frame {
+  background: var(--gs-paper);
+}
+
 /* ─── Reset & global ─── */
 html {
   scroll-behavior: smooth;
@@ -149,8 +175,10 @@ body {
   position: relative;
 }
 
-/* Drafting grid — barely-there isometric grid behind the entire page,
-   like the printed grid on engineering paper. */
+/* Drafting grid — barely-there grid behind the entire page,
+   like the printed grid on engineering paper. Single layer with
+   minor lines only — the heavier major lines made the prose
+   illegible against the grid intersections. */
 body::before {
   content: '';
   position: fixed;
@@ -159,10 +187,8 @@ body::before {
   pointer-events: none;
   background-image:
     linear-gradient(to right, var(--gs-grid-line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--gs-grid-line) 1px, transparent 1px),
-    linear-gradient(to right, var(--gs-grid-major) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--gs-grid-major) 1px, transparent 1px);
-  background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
+    linear-gradient(to bottom, var(--gs-grid-line) 1px, transparent 1px);
+  background-size: 32px 32px;
   opacity: 1;
 }
 
@@ -686,8 +712,8 @@ header.header {
   font-weight: 400;
 }
 
-/* ─── Links ─── */
-.sl-markdown-content a:not(.card a) {
+/* ─── Links — prose anchors only, never inside the hero or card grids ─── */
+.sl-markdown-content a:not(.card a):not(.dr-action):not(.dr-install__copy):not([class^="dr-"]):not([class*=" dr-"]) {
   color: var(--gs-cyan);
   text-decoration: none;
   border-bottom: 1px solid var(--gs-cyan);
@@ -695,12 +721,12 @@ header.header {
   transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 }
 
-.sl-markdown-content a:not(.card a):hover {
+.sl-markdown-content a:not(.card a):not(.dr-action):not(.dr-install__copy):not([class^="dr-"]):not([class*=" dr-"]):hover {
   background: var(--gs-cyan-low);
   border-bottom-color: var(--gs-cyan-dim);
 }
 
-.sl-markdown-content a[href^='http']:not(.card a)::after {
+.sl-markdown-content a[href^='http']:not(.card a):not(.dr-action):not(.dr-install__copy):not([class^="dr-"]):not([class*=" dr-"])::after {
   content: ' ↗';
   font-size: 0.85em;
   opacity: 0.7;

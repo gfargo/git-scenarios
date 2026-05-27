@@ -1,0 +1,244 @@
+---
+/**
+ * Conflict-states diagram — illustrates the four distinct in-progress
+ * git states that git-scenarios can produce, side by side with the
+ * .git/ marker file each one leaves on disk and the scenario name
+ * that produces it.
+ *
+ * 4-up grid of "tags" — each labeled with the operation, its state
+ * file, and the scenario that produces it.
+ */
+---
+
+<figure class="dgm-conflicts">
+  <figcaption class="dgm-conflicts__caption">
+    <span class="dgm-conflicts__fig">FIG. 03</span>
+    <span class="dgm-conflicts__caption-text">
+      Four mid&#8209;operation states &mdash; each leaves a distinct
+      <code>.git/</code> marker file. <em>git&#8209;scenarios</em>
+      produces all four deterministically.
+    </span>
+  </figcaption>
+
+  <div class="dgm-conflicts__grid">
+    <article class="dgm-tag" style="--d:0.0s">
+      <header class="dgm-tag__head">
+        <span class="dgm-tag__num">M&middot;01</span>
+        <span class="dgm-tag__op">merge</span>
+      </header>
+      <code class="dgm-tag__file">.git/MERGE_HEAD</code>
+      <p class="dgm-tag__desc">Two branches edit the same line. Merge halts; conflict markers in worktree.</p>
+      <code class="dgm-tag__scenario">mid-merge-conflict</code>
+    </article>
+
+    <article class="dgm-tag" style="--d:0.08s">
+      <header class="dgm-tag__head">
+        <span class="dgm-tag__num">R&middot;02</span>
+        <span class="dgm-tag__op">rebase</span>
+      </header>
+      <code class="dgm-tag__file">.git/rebase-merge/</code>
+      <p class="dgm-tag__desc">Replay halts on a conflict. <code>REBASE_HEAD</code> set; resume with <code>--continue</code>.</p>
+      <code class="dgm-tag__scenario">mid-rebase-conflict</code>
+    </article>
+
+    <article class="dgm-tag" style="--d:0.16s">
+      <header class="dgm-tag__head">
+        <span class="dgm-tag__num">C&middot;03</span>
+        <span class="dgm-tag__op">cherry&#8209;pick</span>
+      </header>
+      <code class="dgm-tag__file">.git/CHERRY_PICK_HEAD</code>
+      <p class="dgm-tag__desc">Pick from another branch conflicts. Worktree shows both sides.</p>
+      <code class="dgm-tag__scenario">mid-cherry-pick-conflict</code>
+    </article>
+
+    <article class="dgm-tag" style="--d:0.24s">
+      <header class="dgm-tag__head">
+        <span class="dgm-tag__num">V&middot;04</span>
+        <span class="dgm-tag__op">revert</span>
+      </header>
+      <code class="dgm-tag__file">.git/REVERT_HEAD</code>
+      <p class="dgm-tag__desc">Reverting a commit conflicts with later changes. Distinct UI state.</p>
+      <code class="dgm-tag__scenario">mid-revert-conflict</code>
+    </article>
+  </div>
+</figure>
+
+<style>
+  .dgm-conflicts {
+    margin: 2rem auto !important;
+    max-width: 64rem;
+    padding: 0 1.5rem;
+  }
+
+  .dgm-conflicts__caption {
+    font-family: var(--gs-body);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--sl-color-gray-2);
+    font-style: italic;
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 0.6rem;
+    align-items: baseline;
+  }
+
+  .dgm-conflicts__fig {
+    font-family: var(--gs-mono);
+    font-style: normal;
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gs-cyan);
+    flex-shrink: 0;
+  }
+
+  .dgm-conflicts__caption-text code {
+    font-size: 0.78rem;
+    color: var(--gs-cyan);
+    background: var(--gs-cyan-low);
+    padding: 0.05em 0.3em;
+    border-radius: 2px;
+    border: 1px solid var(--gs-cyan-mid);
+    font-style: normal;
+    font-family: var(--gs-mono);
+  }
+
+  .dgm-conflicts__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+  }
+
+  @media (max-width: 800px) {
+    .dgm-conflicts__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Each "tag" — like a real specimen tag tied to a sample */
+  .dgm-tag {
+    border: 1px solid var(--gs-rule-strong);
+    border-radius: 2px;
+    background: var(--gs-paper);
+    padding: 1rem 0.9rem 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    position: relative;
+    overflow: hidden;
+    /* Hole-punch in the top-left corner like a real tag */
+    border-top: 2.5px solid var(--gs-vermilion);
+  }
+
+  /* Crosshair tick on bottom-right */
+  .dgm-tag::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 10px;
+    height: 10px;
+    border-right: 1.5px solid var(--gs-cyan);
+    border-bottom: 1.5px solid var(--gs-cyan);
+    opacity: 0.7;
+  }
+
+  .dgm-tag__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.4rem;
+    border-bottom: 1px dashed var(--gs-rule);
+    padding-bottom: 0.5rem;
+  }
+
+  .dgm-tag__num {
+    font-family: var(--gs-mono);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--gs-vermilion);
+    text-transform: uppercase;
+  }
+
+  .dgm-tag__op {
+    font-family: var(--gs-display);
+    font-variation-settings: 'opsz' 32, 'wdth' 100, 'wght' 600;
+    font-size: 1rem;
+    color: var(--gs-ink);
+    letter-spacing: -0.01em;
+  }
+
+  .dgm-tag__file {
+    font-family: var(--gs-mono);
+    font-size: 0.74rem;
+    color: var(--gs-cyan);
+    background: var(--gs-cyan-low) !important;
+    border: 1px solid var(--gs-cyan-mid) !important;
+    border-radius: 2px;
+    padding: 0.25rem 0.45rem;
+    align-self: start;
+  }
+
+  .dgm-tag__desc {
+    font-family: var(--gs-body);
+    font-variation-settings: 'opsz' 12;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--sl-color-gray-2);
+    margin: 0;
+  }
+
+  .dgm-tag__desc code {
+    font-family: var(--gs-mono);
+    font-size: 0.78rem;
+    color: var(--gs-cyan);
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+
+  .dgm-tag__scenario {
+    font-family: var(--gs-mono);
+    font-size: 0.7rem;
+    color: var(--gs-graphite);
+    background: transparent !important;
+    border-top: 1px dashed var(--gs-rule) !important;
+    border-radius: 0 !important;
+    padding: 0.5rem 0 0 !important;
+    margin-top: auto;
+    letter-spacing: 0;
+  }
+
+  .dgm-tag__scenario::before {
+    content: 'produced by ';
+    color: var(--gs-graphite);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.62rem;
+    display: block;
+    margin-bottom: 0.2rem;
+    opacity: 0.7;
+  }
+
+  /* Entrance */
+  .dgm-tag {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: dgmTagRise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+
+  @keyframes dgmTagRise {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dgm-tag {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+</style>
