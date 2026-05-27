@@ -359,7 +359,10 @@ describe('merge operations', () => {
       expect(existsSync(join(repo.path, '.git/MERGE_HEAD'))).toBe(false)
       const status = await repo.git.status()
       expect(status.isClean()).toBe(true)
-      expect(readFileSync(join(repo.path, 'x.ts'), 'utf8')).toBe('ours\n')
+      // Normalize CRLF — Windows git can rewrite line endings on
+      // checkout depending on core.autocrlf, so compare bytes loosely.
+      const content = readFileSync(join(repo.path, 'x.ts'), 'utf8').replace(/\r\n/g, '\n')
+      expect(content).toBe('ours\n')
     })
   })
 })
