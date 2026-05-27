@@ -18,6 +18,11 @@ export default defineConfig({
         replacesTitle: false,
       },
       favicon: '/favicon.svg',
+      editLink: {
+        baseUrl: 'https://github.com/gfargo/git-scenarios/edit/main/www/',
+      },
+      lastUpdated: true,
+      pagination: true,
       head: [
         // Font preloads (non-render-blocking, replaces @import in CSS)
         {
@@ -131,6 +136,7 @@ export default defineConfig({
       customCss: ['./src/styles/custom.css'],
       components: {
         SiteTitle: './src/components/SiteTitle.astro',
+        Footer: './src/components/Footer.astro',
       },
       sidebar: [
         {
