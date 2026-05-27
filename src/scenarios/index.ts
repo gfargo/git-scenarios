@@ -23,19 +23,24 @@ import { dirtyManyFilesScenario } from './dirty-many-files'
 import { emptyRepoScenario } from './empty-repo'
 import { featureBranchOneCommitScenario } from './feature-branch-one-commit'
 import { featurePrReadyScenario } from './feature-pr-ready'
+import { mergeNoConflictScenario } from './merge-no-conflict'
 import { midBisectScenario } from './mid-bisect'
 import { midCherryPickConflictScenario } from './mid-cherry-pick-conflict'
 import { midMergeConflictScenario } from './mid-merge-conflict'
 import { midRebaseConflictScenario } from './mid-rebase-conflict'
 import { midRevertConflictScenario } from './mid-revert-conflict'
+import { monorepoMultiPackageScenario } from './monorepo-multi-package'
 import { multiCommitBranchScenario } from './multi-commit-branch'
 import { multiRemoteWithTrackingScenario } from './multi-remote-with-tracking'
 import { multipleWorktreesScenario } from './multiple-worktrees'
 import { largeRepoScenario } from './large-repo'
+import { orphanBranchScenario } from './orphan-branch'
+import { partialStageScenario } from './partial-stage'
 import { richHistoryGraphScenario } from './rich-history-graph'
 import { shallowCloneScenario } from './shallow-clone'
 import { signedCommitsRequiredScenario } from './signed-commits-required'
 import { singleStagedFileScenario } from './single-staged-file'
+import { stashWithUntrackedScenario } from './stash-with-untracked'
 import { stashedChangesScenario } from './stashed-changes'
 import { submoduleWithHistoryScenario } from './submodule-with-history'
 import { twoCommitFeatureScenario } from './two-commit-feature'
@@ -54,6 +59,7 @@ export const allScenarios: readonly Scenario[] = [
   featureBranchOneCommitScenario,
   multiCommitBranchScenario,
   twoCommitFeatureScenario,
+  orphanBranchScenario,
   // upstream-tracking shapes
   branchTrackingUpstreamScenario,
   branchAheadOfUpstreamScenario,
@@ -71,14 +77,18 @@ export const allScenarios: readonly Scenario[] = [
   midCherryPickConflictScenario,
   midRevertConflictScenario,
   // history shapes
+  mergeNoConflictScenario,
   richHistoryGraphScenario,
   chipRenderingShowcaseScenario,
   shallowCloneScenario,
   largeRepoScenario,
   // stash shapes
   stashedChangesScenario,
+  stashWithUntrackedScenario,
   // worktree shapes
   singleStagedFileScenario,
+  partialStageScenario,
+  monorepoMultiPackageScenario,
   dirtyManyFilesScenario,
   multipleWorktreesScenario,
   // submodule shapes
@@ -128,19 +138,24 @@ export { dirtyManyFilesScenario } from './dirty-many-files'
 export { emptyRepoScenario } from './empty-repo'
 export { featureBranchOneCommitScenario } from './feature-branch-one-commit'
 export { featurePrReadyScenario } from './feature-pr-ready'
+export { mergeNoConflictScenario } from './merge-no-conflict'
 export { midBisectScenario } from './mid-bisect'
 export { midCherryPickConflictScenario } from './mid-cherry-pick-conflict'
 export { midMergeConflictScenario } from './mid-merge-conflict'
 export { midRebaseConflictScenario } from './mid-rebase-conflict'
 export { midRevertConflictScenario } from './mid-revert-conflict'
+export { monorepoMultiPackageScenario } from './monorepo-multi-package'
 export { multiCommitBranchScenario } from './multi-commit-branch'
 export { multiRemoteWithTrackingScenario } from './multi-remote-with-tracking'
 export { multipleWorktreesScenario } from './multiple-worktrees'
 export { largeRepoScenario } from './large-repo'
+export { orphanBranchScenario } from './orphan-branch'
+export { partialStageScenario } from './partial-stage'
 export { richHistoryGraphScenario } from './rich-history-graph'
 export { shallowCloneScenario } from './shallow-clone'
 export { signedCommitsRequiredScenario } from './signed-commits-required'
 export { singleStagedFileScenario } from './single-staged-file'
+export { stashWithUntrackedScenario } from './stash-with-untracked'
 export { stashedChangesScenario } from './stashed-changes'
 export { submoduleWithHistoryScenario } from './submodule-with-history'
 export { twoCommitFeatureScenario } from './two-commit-feature'
