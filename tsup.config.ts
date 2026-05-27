@@ -9,6 +9,7 @@ export default defineConfig([
       'scenarios/index': 'src/scenarios/index.ts',
       'tempGitRepo': 'src/tempGitRepo.ts',
       'jest': 'src/jest.ts',
+      'vitest': 'src/vitest.ts',
     },
     format: ['cjs', 'esm'],
     dts: true,

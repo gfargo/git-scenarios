@@ -45,6 +45,11 @@
       "types": "./dist/jest.d.ts",
       "import": "./dist/jest.js",
       "require": "./dist/jest.cjs"
+    },
+    "./vitest": {
+      "types": "./dist/vitest.d.ts",
+      "import": "./dist/vitest.js",
+      "require": "./dist/vitest.cjs"
     }
   },
   "bin": {
