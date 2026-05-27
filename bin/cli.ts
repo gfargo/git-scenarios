@@ -23,7 +23,8 @@ import { readdirSync, rmSync, statSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import * as path from 'node:path'
 
-import { allScenarios, findScenario, type Scenario } from '../src/scenarios'
+import type { Scenario } from '../src/scenarios'
+import { findRegistered, listRegistered } from '../src/registry'
 import { createTempGitRepo } from '../src/tempGitRepo'
 
 type ParsedArgs = {
@@ -93,18 +94,19 @@ function printHelp(): void {
     '    --dry-run        List stale scenario dirs without deleting them',
     '    --older-than <h> Only remove dirs older than <h> hours (default: 0 = all)',
     '',
-    `  Available scenarios (${allScenarios.length}):`,
-    ...allScenarios.map((s) => `    ${s.name.padEnd(28)} ${s.summary}`),
+    `  Available scenarios (${listRegistered().length}):`,
+    ...listRegistered().map((s) => `    ${s.name.padEnd(28)} ${s.summary}`),
     '',
   ].join('\n'))
 }
 
 function commandList(): void {
+  const scenarios = listRegistered()
   console.log('')
-  console.log(`Available scenarios (${allScenarios.length}):`)
+  console.log(`Available scenarios (${scenarios.length}):`)
   console.log('')
   const byKind = new Map<string, Scenario[]>()
-  for (const scenario of allScenarios) {
+  for (const scenario of scenarios) {
     const bucket = byKind.get(scenario.kind) || []
     bucket.push(scenario)
     byKind.set(scenario.kind, bucket)
@@ -119,7 +121,7 @@ function commandList(): void {
 }
 
 function commandDescribe(name: string): number {
-  const scenario = findScenario(name)
+  const scenario = findRegistered(name)
   if (!scenario) {
     console.error(`Unknown scenario "${name}". Try \`git-scenarios list\`.`)
     return 2
@@ -152,7 +154,7 @@ async function commandCreate(
     remote?: string
   },
 ): Promise<number> {
-  const scenario = findScenario(name)
+  const scenario = findRegistered(name)
   if (!scenario) {
     console.error(`Unknown scenario "${name}". Try \`git-scenarios list\`.`)
     return 2

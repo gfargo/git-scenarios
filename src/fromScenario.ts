@@ -18,7 +18,7 @@
 
 import type { Step } from './atoms/types'
 import { chain } from './atoms/chain'
-import { findRegistered, listRegistered } from './registry'
+import { resolveScenario } from './resolveScenario'
 import { createTempGitRepo, type TempGitRepo } from './tempGitRepo'
 
 /**
@@ -45,13 +45,7 @@ export async function fromScenario(
   name: string,
   ...extraSteps: Step[]
 ): Promise<TempGitRepo> {
-  const scenario = findRegistered(name)
-  if (!scenario) {
-    const available = listRegistered().map((s) => s.name).join(', ')
-    throw new Error(
-      `Unknown scenario "${name}". Available: ${available}`
-    )
-  }
+  const scenario = resolveScenario(name, 'fromScenario')
 
   const repo = await createTempGitRepo()
   await scenario.setup(repo)

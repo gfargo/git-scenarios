@@ -22,7 +22,7 @@
  */
 
 import { createTempGitRepo, type TempGitRepo } from './tempGitRepo'
-import { findRegistered, listRegistered } from './registry'
+import { resolveScenario } from './resolveScenario'
 
 /**
  * Spin up a temp git repo and run the named scenario's setup against
@@ -35,14 +35,7 @@ import { findRegistered, listRegistered } from './registry'
  *   available names so the typo is easy to spot.
  */
 export async function spinUpScenario(name: string): Promise<TempGitRepo> {
-  const scenario = findRegistered(name)
-  if (!scenario) {
-    const available = listRegistered().map((s) => s.name).join(', ')
-    throw new Error(
-      `Unknown scenario "${name}". Available: ${available}`
-    )
-  }
-
+  const scenario = resolveScenario(name, 'spinUpScenario')
   const repo = await createTempGitRepo()
   await scenario.setup(repo)
   return repo

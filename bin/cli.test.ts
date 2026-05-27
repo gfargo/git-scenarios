@@ -1,70 +1,40 @@
 /**
  * Smoke tests for the `git-scenarios` CLI.
  *
- * These tests exercise the arg parser, list/describe output, and the
- * create --ephemeral flow. They shell out to the actual CLI entry
- * point via `tsx` so the test validates the real binary path.
+ * The CLI uses the mutable registry (so custom-registered scenarios
+ * surface in `list`, `describe`, and `create`). These tests exercise
+ * that registry path — they're intentionally lightweight; the full
+ * registry surface is covered in `src/registry.test.ts`.
  */
 
-import { execFileSync } from 'child_process'
 import { existsSync } from 'fs'
 import { join } from 'path'
 
-const CLI_PATH = join(__dirname, 'cli.ts')
-const TSX = join(__dirname, '..', 'node_modules', '.bin', 'ts-node')
+import { findRegistered, listRegistered, registerScenario, resetRegistry } from '../src/registry'
+import { defineScenario, chain, addCommit } from '../src/atoms'
 
-/**
- * Run the CLI with the given args via ts-jest's runtime (since we're
- * already in a ts-jest context, we can just require and test the
- * parse logic directly). For integration-level tests we shell out.
- */
-function runCLI(args: string[]): { stdout: string; stderr: string; status: number } {
-  try {
-    const stdout = execFileSync(
-      process.execPath,
-      ['--require', require.resolve('ts-jest/utils'), '--require', 'ts-node/register', CLI_PATH, ...args],
-      {
-        encoding: 'utf-8',
-        env: { ...process.env, TS_NODE_PROJECT: join(__dirname, '..', 'tsconfig.json') },
-        timeout: 30_000,
-      },
-    )
-    return { stdout, stderr: '', status: 0 }
-  } catch (error: unknown) {
-    const e = error as { stdout?: string; stderr?: string; status?: number }
-    return {
-      stdout: e.stdout ?? '',
-      stderr: e.stderr ?? '',
-      status: e.status ?? 1,
-    }
-  }
-}
+describe('CLI — scenario registry (lookup path used by CLI)', () => {
+  afterEach(() => {
+    resetRegistry()
+  })
 
-/**
- * Simpler approach: import the scenario registry directly and test
- * the CLI's logic units. The full integration (shelling out) is
- * covered by a single create --ephemeral test.
- */
-import { allScenarios, findScenario } from '../src/scenarios'
-
-describe('CLI — scenario registry', () => {
   it('has at least 20 registered scenarios', () => {
-    expect(allScenarios.length).toBeGreaterThanOrEqual(20)
+    expect(listRegistered().length).toBeGreaterThanOrEqual(20)
   })
 
-  it('findScenario returns undefined for unknown names', () => {
-    expect(findScenario('nonexistent-scenario-xyz')).toBeUndefined()
+  it('findRegistered returns undefined for unknown names', () => {
+    expect(findRegistered('nonexistent-scenario-xyz')).toBeUndefined()
   })
 
-  it('findScenario returns a scenario for a known name', () => {
-    const scenario = findScenario('mid-merge-conflict')
+  it('findRegistered returns a scenario for a known name', () => {
+    const scenario = findRegistered('mid-merge-conflict')
     expect(scenario).toBeDefined()
     expect(scenario!.name).toBe('mid-merge-conflict')
     expect(scenario!.kind).toBe('operation')
   })
 
   it('all scenarios have required fields', () => {
-    for (const s of allScenarios) {
+    for (const s of listRegistered()) {
       expect(s.name).toMatch(/^[a-z][a-z0-9-]*$/)
       expect(s.summary.length).toBeGreaterThan(0)
       expect(s.description.length).toBeGreaterThan(0)
@@ -74,41 +44,53 @@ describe('CLI — scenario registry', () => {
   })
 
   it('scenario names are unique', () => {
-    const names = allScenarios.map((s) => s.name)
+    const names = listRegistered().map((s) => s.name)
     expect(new Set(names).size).toBe(names.length)
+  })
+
+  // Critical: the CLI must see custom-registered scenarios. This was
+  // a regression in v0.5 — the CLI was importing `findScenario` from
+  // `scenarios/index.ts` which only had built-ins.
+  it('CLI lookup path surfaces custom-registered scenarios', () => {
+    const custom = defineScenario({
+      name: 'cli-custom-test',
+      summary: 'a custom scenario for CLI lookup verification',
+      description: 'verifies the CLI uses the mutable registry, not a static array.',
+      kind: 'branch',
+      setup: chain(addCommit({ message: 'init', files: { 'a.ts': 'a\n' } })),
+    })
+    registerScenario(custom)
+    expect(findRegistered('cli-custom-test')).toBeDefined()
+    expect(listRegistered().some((s) => s.name === 'cli-custom-test')).toBe(true)
   })
 })
 
-describe('CLI — create --ephemeral', () => {
+describe('CLI — create flow (smoke)', () => {
   it('creates and cleans up a scenario', async () => {
     const { createTempGitRepo } = await import('../src/tempGitRepo')
-    const { findScenario } = await import('../src/scenarios')
 
-    const scenario = findScenario('empty-repo')!
+    const scenario = findRegistered('empty-repo')!
     const repo = await createTempGitRepo()
     await scenario.setup(repo)
 
-    // Verify the repo exists
     expect(existsSync(repo.path)).toBe(true)
     expect(existsSync(join(repo.path, '.git'))).toBe(true)
 
-    // Cleanup
     await repo.cleanup()
     expect(existsSync(repo.path)).toBe(false)
   })
 
   it('creates feature-pr-ready and verifies basic state', async () => {
     const { createTempGitRepo } = await import('../src/tempGitRepo')
-    const { findScenario } = await import('../src/scenarios')
 
-    const scenario = findScenario('feature-pr-ready')!
+    const scenario = findRegistered('feature-pr-ready')!
     const repo = await createTempGitRepo()
 
     try {
       await scenario.setup(repo)
       const branches = await repo.git.branchLocal()
       expect(branches.all).toContain('main')
-      expect(branches.current).not.toBe('main') // should be on feat branch
+      expect(branches.current).not.toBe('main')
     } finally {
       await repo.cleanup()
     }

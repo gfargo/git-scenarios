@@ -38,7 +38,7 @@
 import type { TempGitRepo } from './tempGitRepo'
 import type { Step } from './atoms/types'
 import { createTempGitRepo } from './tempGitRepo'
-import { findRegistered } from './registry'
+import { resolveScenario } from './resolveScenario'
 import { chain } from './atoms/chain'
 
 export type DescribeWithScenarioOptions = {
@@ -74,13 +74,7 @@ export function describeWithScenario(
     let repo: TempGitRepo
 
     beforeAll(async () => {
-      const scenario = findRegistered(scenarioName)
-      if (!scenario) {
-        throw new Error(
-          `describeWithScenario: unknown scenario "${scenarioName}". ` +
-          `Check the name or register it with registerScenario().`
-        )
-      }
+      const scenario = resolveScenario(scenarioName, 'describeWithScenario')
 
       repo = await createTempGitRepo()
       await scenario.setup(repo)
