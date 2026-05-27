@@ -24,11 +24,11 @@
  */
 
 import {
-  addCommit,
-  chain,
-  defineScenario,
-  stashChanges,
-  writeFiles,
+    addCommit,
+    chain,
+    defineScenario,
+    stashChanges,
+    writeFiles,
 } from '../atoms'
 
 export const stashedChangesScenario = defineScenario({
@@ -48,6 +48,7 @@ export const stashedChangesScenario = defineScenario({
     '  - sidebar stashes-tab rendering',
   ].join('\n'),
   kind: 'stash',
+  tags: ['stash', 'multi-entry', 'clean-worktree'],
   contracts: [
     'main has 2 commits',
     'worktree is clean',

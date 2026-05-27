@@ -39,6 +39,7 @@ export const signedCommitsRequiredScenario = defineScenario({
     '  - signing-key inspectors in repo settings views',
   ].join('\n'),
   kind: 'branch',
+  tags: ['signing', 'config', 'gpg'],
   contracts: [
     'main is checked out',
     'main has 3 commits',

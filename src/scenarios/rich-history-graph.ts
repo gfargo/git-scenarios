@@ -29,15 +29,15 @@
  */
 
 import {
-  addCommit,
-  chain,
-  checkoutBranch,
-  daysAgo,
-  defineScenario,
-  seededFiles,
-  startMerge,
-  switchToBranch,
-  type Step,
+    addCommit,
+    chain,
+    checkoutBranch,
+    daysAgo,
+    defineScenario,
+    seededFiles,
+    startMerge,
+    switchToBranch,
+    type Step,
 } from '../atoms'
 
 const BASE_SEED = 0xc0c0a11e
@@ -81,6 +81,7 @@ export const richHistoryGraphScenario = defineScenario({
     '  npm run scenario create rich-history-graph -- --run-ui',
   ].join('\n'),
   kind: 'history',
+  tags: ['history', 'merge', 'multi-author', 'showcase'],
   contracts: [
     'main is checked out',
     'feat/wip exists and is NOT merged into main',

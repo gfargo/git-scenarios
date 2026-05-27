@@ -17,12 +17,12 @@
  */
 
 import {
-  addCommit,
-  addRemote,
-  chain,
-  defineScenario,
-  setRemoteRef,
-  setUpstream,
+    addCommit,
+    addRemote,
+    chain,
+    defineScenario,
+    setRemoteRef,
+    setUpstream,
 } from '../atoms'
 
 export const branchTrackingUpstreamScenario = defineScenario({
@@ -38,6 +38,7 @@ export const branchTrackingUpstreamScenario = defineScenario({
     '  - "Your branch is up to date with \'origin/main\'" rendering',
   ].join('\n'),
   kind: 'branch',
+  tags: ['upstream', 'tracking', 'synced', 'remote', 'clean'],
   contracts: [
     'main is checked out',
     'main has 3 commits',

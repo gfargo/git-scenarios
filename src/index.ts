@@ -23,7 +23,7 @@
  * a unit test without going through `spinUpScenario`.
  */
 
-export { spinUpScenario } from './spinUpScenario'
+export { spinUpScenario, type SpinUpScenarioOptions } from './spinUpScenario'
 export { fromScenario } from './fromScenario'
 export { createTempGitRepo, type TempGitRepo, type CreateTempGitRepoOptions } from './tempGitRepo'
 export {
@@ -32,6 +32,7 @@ export {
   unregisterScenario,
   listRegistered,
   findRegistered,
+  findRegisteredByTag,
   resetRegistry,
 } from './registry'
 
@@ -48,10 +49,17 @@ export {
   seededFiles,
   // Staging + commits
   stageFiles,
+  unstageFiles,
   commit,
   addCommit,
   emptyCommit,
   amendCommit,
+  bulkCommits,
+  // Working tree cleanup
+  gitClean,
+  // Git meta files
+  writeGitignore,
+  writeGitattributes,
   // Branches
   switchToBranch,
   checkoutBranch,
@@ -77,7 +85,10 @@ export {
   abortMerge,
   cherryPick,
   abortCherryPick,
+  continueCherryPick,
   revert,
+  abortRevert,
+  continueRevert,
   startBisect,
   bisectStep,
   resetBisect,
@@ -122,6 +133,7 @@ export {
   type SeededFileSpec,
   type AuthorIdentity,
   type GitHookName,
+  type BulkCommitSpec,
 } from './atoms'
 
 export {
@@ -144,19 +156,24 @@ export {
   emptyRepoScenario,
   featureBranchOneCommitScenario,
   featurePrReadyScenario,
+  mergeNoConflictScenario,
   midBisectScenario,
   midCherryPickConflictScenario,
   midMergeConflictScenario,
   midRebaseConflictScenario,
   midRevertConflictScenario,
+  monorepoMultiPackageScenario,
   multiCommitBranchScenario,
   multiRemoteWithTrackingScenario,
   multipleWorktreesScenario,
   largeRepoScenario,
+  orphanBranchScenario,
+  partialStageScenario,
   richHistoryGraphScenario,
   shallowCloneScenario,
   signedCommitsRequiredScenario,
   singleStagedFileScenario,
+  stashWithUntrackedScenario,
   stashedChangesScenario,
   submoduleWithHistoryScenario,
   twoCommitFeatureScenario,

@@ -14,12 +14,12 @@
  */
 
 import {
-  addCommit,
-  addRemote,
-  chain,
-  defineScenario,
-  setRemoteRef,
-  setUpstream,
+    addCommit,
+    addRemote,
+    chain,
+    defineScenario,
+    setRemoteRef,
+    setUpstream,
 } from '../atoms'
 
 export const branchAheadOfUpstreamScenario = defineScenario({
@@ -36,6 +36,7 @@ export const branchAheadOfUpstreamScenario = defineScenario({
     '  - PR-creation flows that count unpushed commits',
   ].join('\n'),
   kind: 'branch',
+  tags: ['upstream', 'tracking', 'ahead', 'remote'],
   contracts: [
     'main is checked out',
     'main has 6 commits',

@@ -7,7 +7,7 @@ describe('large-repo scenario', () => {
   beforeAll(async () => {
     repo = await createTempGitRepo()
     await largeRepoScenario.setup(repo)
-  }, 60_000) // Large repo needs more time
+  }, 180_000) // Large repo (115 commits) is slow on Windows runners
 
   afterAll(async () => {
     await repo?.cleanup()

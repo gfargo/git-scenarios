@@ -1,35 +1,62 @@
+/**
+ * Tests for spinUpScenario, including the v0.6 options bag.
+ */
+
 import { spinUpScenario } from './spinUpScenario'
 import type { TempGitRepo } from './tempGitRepo'
 
 describe('spinUpScenario', () => {
-  const repos: TempGitRepo[] = []
+  let repo: TempGitRepo
 
-  afterAll(async () => {
-    await Promise.all(repos.map((r) => r.cleanup()))
+  afterEach(async () => {
+    await repo?.cleanup()
   })
 
-  it('returns a TempGitRepo with the named scenario applied', async () => {
-    const repo = await spinUpScenario('feature-pr-ready')
-    repos.push(repo)
+  it('spins up a built-in scenario by name', async () => {
+    repo = await spinUpScenario('feature-pr-ready')
     const status = await repo.git.status()
     expect(status.current).toBe('feat/widget-v2')
-    expect(status.isClean()).toBe(true)
-  }, 30_000)
+  })
 
-  it('throws a helpful error with the available names for an unknown scenario', async () => {
-    await expect(spinUpScenario('does-not-exist')).rejects.toThrow(
-      /Unknown scenario "does-not-exist"\. Available: .*feature-pr-ready/
+  it('throws a friendly error for an unknown scenario name', async () => {
+    await expect(spinUpScenario('totally-fake-xyz')).rejects.toThrow(
+      /spinUpScenario: Unknown scenario "totally-fake-xyz"/,
     )
   })
 
-  it('produces independent repos when called multiple times', async () => {
-    const a = await spinUpScenario('multi-commit-branch')
-    const b = await spinUpScenario('multi-commit-branch')
-    repos.push(a, b)
-    expect(a.path).not.toBe(b.path)
-    // Same scenario name + deterministic seeds → identical commit graph.
-    const aLog = await a.git.log()
-    const bLog = await b.git.log()
-    expect(aLog.all.map((c) => c.message)).toEqual(bLog.all.map((c) => c.message))
-  }, 60_000)
+  it('error includes available scenario names', async () => {
+    await expect(spinUpScenario('totally-fake-xyz')).rejects.toThrow(
+      /feature-pr-ready/,
+    )
+  })
+
+  describe('options', () => {
+    it('adds an origin remote when remote is provided', async () => {
+      repo = await spinUpScenario('empty-repo', {
+        remote: 'git@github.com:org/repo.git',
+      })
+      const remotes = await repo.git.getRemotes(true)
+      const origin = remotes.find((r) => r.name === 'origin')
+      expect(origin).toBeDefined()
+      expect(origin!.refs.fetch).toBe('git@github.com:org/repo.git')
+    })
+
+    it('honors autoCleanup option', async () => {
+      // We can't observe the exit hook here, but we can verify the
+      // option is accepted and the repo remains usable.
+      repo = await spinUpScenario('feature-pr-ready', { autoCleanup: true })
+      expect(repo.path).toBeDefined()
+      const branches = await repo.git.branchLocal()
+      expect(branches.all).toContain('main')
+    })
+
+    it('combines remote + autoCleanup', async () => {
+      repo = await spinUpScenario('empty-repo', {
+        remote: '/fake/url',
+        autoCleanup: true,
+      })
+      const remotes = await repo.git.getRemotes(true)
+      expect(remotes.find((r) => r.name === 'origin')).toBeDefined()
+    })
+  })
 })

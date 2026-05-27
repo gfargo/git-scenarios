@@ -40,6 +40,7 @@ export const featurePrReadyScenario = defineScenario({
     '  - history view — exercises commit list rendering on a non-main branch',
   ].join('\n'),
   kind: 'branch',
+  tags: ['feature-branch', 'pr-ready', 'clean', 'ahead'],
   contracts: [
     'main has 3 commits',
     'feat/widget-v2 is checked out',

@@ -1,5 +1,6 @@
 import { execFile } from 'child_process'
-import { mkdir, mkdtemp, rm, writeFile as writeFileFs } from 'fs/promises'
+import { existsSync } from 'fs'
+import { mkdir, mkdtemp, readFile as readFileFs, rm, writeFile as writeFileFs } from 'fs/promises'
 import { tmpdir } from 'os'
 import { dirname, join } from 'path'
 import { simpleGit } from 'simple-git'
@@ -132,6 +133,8 @@ export function withAuthor(identity: AuthorIdentity, step: Step): Step {
       path: repo.path,
       git: scopedGit,
       writeFile: repo.writeFile,
+      readFile: repo.readFile,
+      exists: repo.exists,
       commitAll: async (message) => {
         await scopedGit.add('.')
         await scopedGit.commit(message)
@@ -155,6 +158,12 @@ export function insideSubmodule(submodulePath: string, step: Step): Step {
         const abs = join(submoduleRoot, filePath)
         await mkdir(dirname(abs), { recursive: true })
         await writeFileFs(abs, content)
+      },
+      readFile: async (filePath) => {
+        return readFileFs(join(submoduleRoot, filePath), 'utf8')
+      },
+      exists: async (filePath) => {
+        return existsSync(join(submoduleRoot, filePath))
       },
       commitAll: async (message) => {
         await submoduleGit.add('.')
@@ -252,6 +261,12 @@ export function withRemoteTracking(remote: string, branch: string, step: Step): 
           const abs = join(clonePath, filePath)
           await mkdir(dirname(abs), { recursive: true })
           await writeFileFs(abs, content)
+        },
+        readFile: async (filePath) => {
+          return readFileFs(join(clonePath, filePath), 'utf8')
+        },
+        exists: async (filePath) => {
+          return existsSync(join(clonePath, filePath))
         },
         commitAll: async (message) => {
           await cloneGit.add('.')

@@ -16,12 +16,12 @@
  */
 
 import {
-  addCommit,
-  addRemote,
-  chain,
-  defineScenario,
-  setUpstream,
-  withRemoteTracking,
+    addCommit,
+    addRemote,
+    chain,
+    defineScenario,
+    setUpstream,
+    withRemoteTracking,
 } from '../atoms'
 
 export const branchDivergedScenario = defineScenario({
@@ -37,6 +37,7 @@ export const branchDivergedScenario = defineScenario({
     '  - conflict-aware sync workflows',
   ].join('\n'),
   kind: 'branch',
+  tags: ['upstream', 'tracking', 'diverged', 'remote'],
   contracts: [
     'main is checked out',
     'main has 4 commits',

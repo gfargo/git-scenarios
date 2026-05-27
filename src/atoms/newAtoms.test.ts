@@ -200,11 +200,16 @@ describe('hooks', () => {
       const content = readFileSync(hookPath, 'utf-8')
       expect(content).toBe(hookScript)
 
-      // Verify the hook is executable by checking file mode
-      const { statSync } = await import('fs')
-      const stats = statSync(hookPath)
-      // Check that the owner execute bit is set (0o100)
-      expect(stats.mode & 0o111).toBeGreaterThan(0)
+      // Windows file systems don't expose Unix execute bits — the
+      // mode field always reports 0 for the execute group there.
+      // Skip the executable check on Windows; the file existence +
+      // content check above is the meaningful assertion on any OS.
+      if (process.platform !== 'win32') {
+        const { statSync } = await import('fs')
+        const stats = statSync(hookPath)
+        // Check that the owner execute bit is set (0o100)
+        expect(stats.mode & 0o111).toBeGreaterThan(0)
+      }
     })
   })
 })

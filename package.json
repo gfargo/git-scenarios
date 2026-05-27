@@ -1,6 +1,6 @@
 {
   "name": "@gfargo/git-scenarios",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Composable atoms for spinning up real git repos in any state — merge conflicts, out-of-date submodules, multiple remotes, in-progress operations, multi-contributor history, and more. For tests, demos, and tool development.",
   "license": "MIT",
   "author": {
@@ -45,6 +45,11 @@
       "types": "./dist/jest.d.ts",
       "import": "./dist/jest.js",
       "require": "./dist/jest.cjs"
+    },
+    "./vitest": {
+      "types": "./dist/vitest.d.ts",
+      "import": "./dist/vitest.js",
+      "require": "./dist/vitest.cjs"
     }
   },
   "bin": {

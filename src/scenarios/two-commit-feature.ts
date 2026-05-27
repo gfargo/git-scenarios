@@ -31,6 +31,7 @@ export const twoCommitFeatureScenario = defineScenario({
     '  - smoke tests that need a `feat:` commit subject to render',
   ].join('\n'),
   kind: 'branch',
+  tags: ['feature-branch', 'minimal', 'history'],
   contracts: [
     'main has 2 commits',
     'commit subjects are "chore: initial commit" and "feat: add feature module"',

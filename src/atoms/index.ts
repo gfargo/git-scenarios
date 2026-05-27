@@ -50,7 +50,12 @@ export { writeFiles } from './writeFiles'
 export { deleteFiles } from './deleteFiles'
 export { renameFile } from './renameFile'
 export { stageFiles, commit } from './staging'
+export { unstageFiles } from './unstage'
 export { addCommit } from './addCommit'
+export { emptyCommit, amendCommit } from './commits'
+export { bulkCommits, type BulkCommitSpec } from './bulkCommits'
+export { gitClean } from './clean'
+export { writeGitignore, writeGitattributes } from './gitFiles'
 export { switchToBranch, checkoutBranch, createBranch, deleteBranch } from './branches'
 export { createTag, deleteTag } from './tags'
 export { addRemote, removeRemote, renameRemote } from './remotes'
@@ -61,13 +66,14 @@ export {
   abortMerge,
   cherryPick,
   abortCherryPick,
+  continueCherryPick,
   revert,
+  abortRevert,
+  continueRevert,
   startBisect,
   bisectStep,
   resetBisect,
   resetTo,
-  emptyCommit,
-  amendCommit,
 } from './operations'
 export { startRebase, abortRebase, continueRebase } from './rebase'
 export { addSubmodule, pinSubmodule } from './submodule'

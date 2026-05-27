@@ -8,6 +8,104 @@ versions follow [semver](https://semver.org/).
 
 (none)
 
+## [0.6.0] — 2026-05-27
+
+### Added
+
+- **Five new scenarios** (32 total):
+  - `partial-stage` (worktree) — 2 staged + 2 unstaged + 1 untracked.
+    The "I want to commit half my changes" shape that tools render
+    with separate Staged / Unstaged sections.
+  - `monorepo-multi-package` (worktree) — workspaces monorepo with
+    three packages in distinct states: `app` clean, `lib` staged,
+    `cli` unstaged. For workspace-aware tooling.
+  - `merge-no-conflict` (history) — completed `--no-ff` merge
+    sitting at HEAD with two parents. Distinct from
+    `mid-merge-conflict` (in-progress) and from fast-forward merges.
+  - `orphan-branch` (branch) — `main` + `gh-pages` with no shared
+    history. Surfaces tools that assume all branches share a root.
+  - `stash-with-untracked` (stash) — single stash containing both
+    modified tracked and untracked new files. Distinct from
+    `stashed-changes` (3 stashes, all tracked-edits-only).
+
+- **Lifecycle-completion atoms** — closes asymmetric gaps where some
+  operations had abort but not continue:
+  - `unstageFiles(...paths)` — inverse of `stageFiles`. With no args
+    uses `git reset` (works on initial commit); with paths uses
+    `git restore --staged`. Enables partial-stage scenarios.
+  - `continueCherryPick()` — paired with `abortCherryPick`.
+  - `abortRevert()` / `continueRevert()` — revert previously had no
+    lifecycle atoms at all.
+  - `startMerge({ squash: true })` — squash-merge support. Squash
+    merges leave changes staged without a merge commit.
+
+- **Utility atoms**:
+  - `gitClean({ directories?, force?, ignored? })` — wraps
+    `git clean` for removing untracked files.
+  - `writeGitignore(patterns)` — convenience over `writeFiles`.
+  - `writeGitattributes(rules)` — same shape for `.gitattributes`.
+  - `bulkCommits(specs)` — produces N commits in a tight loop, ~30%
+    faster than `chain(...specs.map(addCommit))` for 50+ commit
+    scenarios.
+
+- **TempGitRepo helpers**:
+  - `repo.readFile(path)` — read utf-8 content from a repo-relative
+    path. Symmetric with the existing `writeFile`.
+  - `repo.exists(path)` — check whether a file or directory exists.
+
+- **`spinUpScenario` options bag** (non-breaking):
+  - `autoCleanup` — process-exit cleanup safety net.
+  - `remote` — adds an `origin` remote after setup, mirroring the
+    CLI's `--remote` flag.
+
+- **CLI flags**:
+  - `list --kind <k>` filters by scenario kind.
+  - `list --tag <t>` filters by tag inclusion. Combines with
+    `--kind` (AND).
+  - `list --json` and `describe --json` emit machine-readable JSON.
+  - `describe` output now includes the Tags line.
+
+- **Vitest framework adapter** — new subpath export
+  `@gfargo/git-scenarios/vitest`:
+  - `describeWithScenario(name, fn, opts?)`
+  - `describeEachScenario(names, fn, opts?)`
+  - Same surface as the Jest adapter; routes through Vitest's
+    runtime globals.
+
+- **Tags on every scenario** — every one of the 32 scenarios now
+  carries a `tags` field, making `findScenariosByTag` and the new
+  CLI `--tag` flag broadly useful.
+
+- **`findRegisteredByTag(tags, match?)`** — filter the mutable
+  registry (built-in + custom) by tag.
+
+- **`ARCHITECTURE.md`** — documents the layered design
+  (TempGitRepo → atoms → scenarios → public API → adapters → CLI),
+  dependency rules, build pipeline, testing strategy, determinism.
+
+### Changed
+
+- **CLI now uses the mutable registry** (bug fix). The CLI was
+  importing `findScenario`/`allScenarios` from `scenarios/index.ts`
+  (built-ins only), so custom-registered scenarios were invisible
+  to `list`, `describe`, and `create`. Fixed to use
+  `findRegistered`/`listRegistered`.
+- **Registry storage switched to `Map<string, Scenario>`** for O(1)
+  name lookup (was O(n) array scan). Insertion order preserved.
+- **`emptyCommit` and `amendCommit` moved to `src/atoms/commits.ts`**
+  (out of `operations.ts`). Public exports unchanged.
+- **Shared `resolveScenario(name, origin)` helper** — the
+  "find or throw with available names" pattern was duplicated across
+  `spinUpScenario`, `fromScenario`, and the Jest adapter. Now lives
+  in one place with a consistent error format.
+
+### Fixed
+
+- CLI `process.exit()` was truncating stdout at the pipe buffer
+  boundary (~8KB on Linux) when output was piped to another command.
+  `main()` now sets `process.exitCode` instead, letting Node drain
+  buffers naturally before exiting.
+
 ## [0.5.0] — 2026-05-22
 
 ### Added
@@ -315,7 +413,8 @@ duplication is resolved post-publish.
 - Node: `^22.22.2 || ^24.15.0 || >=26.0.0`
 - License: MIT
 
-[Unreleased]: https://github.com/gfargo/git-scenarios/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/gfargo/git-scenarios/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/gfargo/git-scenarios/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/gfargo/git-scenarios/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/gfargo/git-scenarios/compare/v0.3.3...v0.4.0
 [0.3.3]: https://github.com/gfargo/git-scenarios/compare/v0.3.2...v0.3.3

@@ -1,14 +1,44 @@
-import { mkdir, mkdtemp, rm, writeFile as writeFileContent } from 'fs/promises'
-import { rmSync } from 'fs'
+import { mkdir, mkdtemp, readFile as readFileFs, rm, writeFile as writeFileContent } from 'fs/promises'
+import { existsSync, rmSync } from 'fs'
 import { tmpdir } from 'os'
 import { dirname, join } from 'path'
 import { simpleGit, SimpleGit } from 'simple-git'
 
+/**
+ * Handle returned by `createTempGitRepo` and every scenario factory.
+ *
+ * Tests get a real on-disk git repo plus a few convenience helpers.
+ * The repo is fully owned by the caller — call `cleanup()` in test
+ * teardown to remove it, or set `autoCleanup: true` for a process-exit
+ * safety net.
+ */
 export type TempGitRepo = {
+  /** Absolute path to the temp directory containing the repo. */
   path: string
+  /** Pre-configured `simple-git` instance bound to `path`. */
   git: SimpleGit
+  /**
+   * Write `content` to a path relative to the repo root. Parent
+   * directories are created as needed. Does NOT stage.
+   */
   writeFile: (filePath: string, content: string) => Promise<void>
+  /**
+   * Read a file's content (utf-8) from a path relative to the repo
+   * root. Throws if the file doesn't exist.
+   */
+  readFile: (filePath: string) => Promise<string>
+  /**
+   * Test whether a path exists in the repo (relative to the repo
+   * root). Returns `true` for files and directories alike.
+   */
+  exists: (filePath: string) => Promise<boolean>
+  /** `git add . && git commit -m <message>` in one call. */
   commitAll: (message: string) => Promise<void>
+  /**
+   * Remove the temp directory. Safe to call multiple times — the
+   * second call is a no-op. `cleanup` also removes the repo from the
+   * autoCleanup tracker so the process-exit hook doesn't double-free.
+   */
   cleanup: () => Promise<void>
 }
 
@@ -71,10 +101,20 @@ export async function createTempGitRepo(
     await writeFileContent(absolutePath, content)
   }
 
+  const readFile = async (filePath: string) => {
+    return readFileFs(join(path, filePath), 'utf8')
+  }
+
+  const exists = async (filePath: string) => {
+    return existsSync(join(path, filePath))
+  }
+
   return {
     path,
     git,
     writeFile,
+    readFile,
+    exists,
     commitAll: async (message: string) => {
       await git.add('.')
       await git.commit(message)

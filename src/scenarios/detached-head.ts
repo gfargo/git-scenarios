@@ -37,6 +37,7 @@ export const detachedHeadScenario = defineScenario({
     '  - status-bar branch indicators when there\'s no current branch',
   ].join('\n'),
   kind: 'branch',
+  tags: ['detached-head', 'edge-case'],
   contracts: [
     'HEAD is detached',
     'main still exists as a branch',

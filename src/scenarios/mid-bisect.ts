@@ -18,13 +18,13 @@
  */
 
 import {
-  addCommit,
-  chain,
-  defineScenario,
-  repeat,
-  seededFiles,
-  startBisect,
-  type Step,
+    addCommit,
+    chain,
+    defineScenario,
+    repeat,
+    seededFiles,
+    startBisect,
+    type Step,
 } from '../atoms'
 
 const SEED = 0xb15ec7
@@ -59,6 +59,7 @@ export const midBisectScenario = defineScenario({
     '  - title-bar BISECTING badge',
   ].join('\n'),
   kind: 'operation',
+  tags: ['bisect', 'in-progress'],
   contracts: [
     'main has 20 commits',
     'a bisect is in progress',
