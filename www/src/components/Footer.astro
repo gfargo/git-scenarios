@@ -1,0 +1,157 @@
+---
+/**
+ * Custom site footer rendered below the page content.
+ *
+ * Replaces Starlight's default footer (which is just the previous/next
+ * pagination component on doc pages, nothing on splash pages). We keep
+ * Starlight's pagination by re-rendering its default Footer first,
+ * then append our own block — so docs pages still get prev/next while
+ * every page gets the project links.
+ */
+import Default from '@astrojs/starlight/components/Footer.astro'
+---
+
+<Default {...Astro.props}><slot /></Default>
+
+<footer class="site-footer" aria-labelledby="site-footer-heading">
+  <h2 id="site-footer-heading" class="visually-hidden">Site footer</h2>
+  <div class="site-footer-grid">
+    <div class="site-footer-col">
+      <span class="site-footer-label">Project</span>
+      <ul>
+        <li><a href="https://github.com/gfargo/git-scenarios">GitHub</a></li>
+        <li><a href="https://www.npmjs.com/package/@gfargo/git-scenarios">npm</a></li>
+        <li><a href="https://github.com/gfargo/git-scenarios/blob/main/LICENSE">License (MIT)</a></li>
+      </ul>
+    </div>
+    <div class="site-footer-col">
+      <span class="site-footer-label">Documentation</span>
+      <ul>
+        <li><a href="/docs/quick-start">Quick start</a></li>
+        <li><a href="/docs/scenarios/browse">Browse scenarios</a></li>
+        <li><a href="/docs/atoms/overview">Atom reference</a></li>
+        <li><a href="/docs/architecture">Architecture</a></li>
+      </ul>
+    </div>
+    <div class="site-footer-col">
+      <span class="site-footer-label">Community</span>
+      <ul>
+        <li><a href="https://github.com/gfargo/git-scenarios/issues">Report an issue</a></li>
+        <li><a href="https://github.com/gfargo/git-scenarios/discussions">Discussions</a></li>
+        <li><a href="https://github.com/gfargo/git-scenarios/blob/main/CONTRIBUTING.md">Contributing</a></li>
+        <li><a href="/docs/changelog">Release notes</a></li>
+      </ul>
+    </div>
+    <div class="site-footer-col">
+      <span class="site-footer-label">Author</span>
+      <ul>
+        <li><a href="https://github.com/gfargo">@gfargo</a></li>
+        <li><a href="https://griffen.codes">griffen.codes</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="site-footer-meta">
+    <span>Released under the <a href="https://github.com/gfargo/git-scenarios/blob/main/LICENSE">MIT License</a>.</span>
+    <span class="site-footer-build-info">
+      Site built with <a href="https://starlight.astro.build">Starlight</a>.
+    </span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--sl-color-hairline-light);
+    font-family: var(--sl-font);
+    font-size: 0.875rem;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .site-footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.5rem 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .site-footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .site-footer-label {
+    font-family: var(--sl-font-system-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--sl-color-gray-3);
+  }
+
+  .site-footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .site-footer-col a {
+    color: var(--sl-color-gray-2);
+    text-decoration: none;
+    transition: color 0.12s ease;
+  }
+
+  .site-footer-col a:hover,
+  .site-footer-col a:focus-visible {
+    color: var(--gs-cyan, var(--sl-color-accent));
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .site-footer-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 1rem 0 1.75rem;
+    border-top: 1px solid var(--sl-color-hairline-shade);
+    color: var(--sl-color-gray-3);
+    font-size: 0.8125rem;
+  }
+
+  .site-footer-meta a {
+    color: var(--sl-color-gray-2);
+  }
+
+  .site-footer-meta a:hover {
+    color: var(--gs-cyan, var(--sl-color-accent));
+  }
+
+  .site-footer-build-info {
+    color: var(--sl-color-gray-4);
+    font-size: 0.75rem;
+  }
+
+  @media (max-width: 50rem) {
+    .site-footer-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem 1.5rem;
+    }
+  }
+</style>
