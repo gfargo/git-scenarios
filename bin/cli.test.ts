@@ -96,3 +96,35 @@ describe('CLI — create flow (smoke)', () => {
     }
   })
 })
+
+describe('CLI — list filtering (--kind / --tag)', () => {
+  // The CLI's applyFilters is a private helper; test the same
+  // semantics via the registry directly. The CLI calls listRegistered()
+  // then filters, which is what we mimic here.
+  it('--kind filter narrows by scenario.kind', () => {
+    const all = listRegistered()
+    const operations = all.filter((s) => s.kind === 'operation')
+    expect(operations.length).toBeGreaterThanOrEqual(5) // 4 conflict + bisect
+    for (const s of operations) {
+      expect(s.kind).toBe('operation')
+    }
+  })
+
+  it('--tag filter narrows by scenario.tags inclusion', () => {
+    const all = listRegistered()
+    const conflicts = all.filter((s) => s.tags?.includes('conflict'))
+    expect(conflicts.length).toBeGreaterThanOrEqual(4) // merge, rebase, cherry-pick, revert
+    for (const s of conflicts) {
+      expect(s.tags).toContain('conflict')
+    }
+  })
+
+  it('--kind + --tag combine (AND semantics)', () => {
+    const all = listRegistered()
+    const stashUntracked = all.filter(
+      (s) => s.kind === 'stash' && s.tags?.includes('untracked'),
+    )
+    expect(stashUntracked.length).toBe(1)
+    expect(stashUntracked[0].name).toBe('stash-with-untracked')
+  })
+})

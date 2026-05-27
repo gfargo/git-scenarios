@@ -5,7 +5,11 @@
  *
  * Usage:
  *   git-scenarios list                              # show all scenarios
+ *   git-scenarios list --json                       # machine-readable
+ *   git-scenarios list --kind operation             # filter by kind
+ *   git-scenarios list --tag conflict               # filter by tag
  *   git-scenarios describe <name>                   # describe one
+ *   git-scenarios describe <name> --json            # machine-readable
  *   git-scenarios create <name>                     # create in /tmp
  *   git-scenarios create <name> --path <dir>        # create at <dir>
  *   git-scenarios create <name> --run "<cmd>"       # create AND launch <cmd>
@@ -64,16 +68,41 @@ function parseArgs(argv: string[]): ParsedArgs {
   return { command, positional, flags }
 }
 
+/**
+ * Apply --kind / --tag filters to a scenario list. Both filters are
+ * AND'd: scenarios must match `kind` (if given) AND match `tag`
+ * (if given).
+ */
+function applyFilters(
+  scenarios: readonly Scenario[],
+  filters: { kind?: string; tag?: string },
+): readonly Scenario[] {
+  return scenarios.filter((s) => {
+    if (filters.kind && s.kind !== filters.kind) return false
+    if (filters.tag && (!s.tags || !s.tags.includes(filters.tag))) return false
+    return true
+  })
+}
+
 function printHelp(): void {
   console.log([
     '',
     '  git-scenarios — manage temp git repo states for testing',
     '',
     '  Usage:',
-    '    git-scenarios list',
-    '    git-scenarios describe <name>',
+    '    git-scenarios list [--kind <k>] [--tag <t>] [--json]',
+    '    git-scenarios describe <name> [--json]',
     '    git-scenarios create <name> [options]',
     '    git-scenarios clean [options]',
+    '',
+    '  List options:',
+    '    --kind <kind>    Filter by kind (branch | worktree | operation |',
+    '                     history | stash | submodule)',
+    '    --tag <tag>      Filter by tag (e.g. conflict, dirty, upstream)',
+    '    --json           Machine-readable JSON output',
+    '',
+    '  Describe options:',
+    '    --json           Machine-readable JSON output',
     '',
     '  Create options:',
     '    --path <dir>     Materialize the scenario at <dir> instead of /tmp',
@@ -100,38 +129,91 @@ function printHelp(): void {
   ].join('\n'))
 }
 
-function commandList(): void {
-  const scenarios = listRegistered()
+function commandList(options: { kind?: string; tag?: string; json?: boolean }): number {
+  const scenarios = applyFilters(listRegistered(), options)
+
+  if (options.json) {
+    const payload = scenarios.map((s) => ({
+      name: s.name,
+      summary: s.summary,
+      kind: s.kind,
+      tags: s.tags ?? [],
+      contracts: s.contracts ?? [],
+    }))
+    console.log(JSON.stringify(payload, null, 2))
+    return 0
+  }
+
   console.log('')
-  console.log(`Available scenarios (${scenarios.length}):`)
+  const totalCount = listRegistered().length
+  const isFiltered = options.kind || options.tag
+  if (isFiltered) {
+    console.log(`Matching scenarios (${scenarios.length} of ${totalCount}):`)
+  } else {
+    console.log(`Available scenarios (${scenarios.length}):`)
+  }
   console.log('')
+
+  if (scenarios.length === 0) {
+    console.log('  (no scenarios match the given filters)')
+    console.log('')
+    return 0
+  }
+
   const byKind = new Map<string, Scenario[]>()
   for (const scenario of scenarios) {
     const bucket = byKind.get(scenario.kind) || []
     bucket.push(scenario)
     byKind.set(scenario.kind, bucket)
   }
-  for (const [kind, scenarios] of byKind) {
+  for (const [kind, group] of byKind) {
     console.log(`  ${kind}:`)
-    for (const s of scenarios) {
+    for (const s of group) {
       console.log(`    ${s.name.padEnd(28)} ${s.summary}`)
     }
     console.log('')
   }
+  return 0
 }
 
-function commandDescribe(name: string): number {
+function commandDescribe(name: string, options: { json?: boolean } = {}): number {
   const scenario = findRegistered(name)
   if (!scenario) {
-    console.error(`Unknown scenario "${name}". Try \`git-scenarios list\`.`)
+    if (options.json) {
+      console.error(JSON.stringify({ error: `Unknown scenario "${name}"` }))
+    } else {
+      console.error(`Unknown scenario "${name}". Try \`git-scenarios list\`.`)
+    }
     return 2
   }
+
+  if (options.json) {
+    console.log(
+      JSON.stringify(
+        {
+          name: scenario.name,
+          summary: scenario.summary,
+          description: scenario.description,
+          kind: scenario.kind,
+          tags: scenario.tags ?? [],
+          contracts: scenario.contracts ?? [],
+        },
+        null,
+        2,
+      ),
+    )
+    return 0
+  }
+
   console.log('')
   console.log(`  ${scenario.name}`)
   console.log(`  ${'-'.repeat(scenario.name.length)}`)
   console.log('')
   console.log(`  Summary: ${scenario.summary}`)
   console.log(`  Kind:    ${scenario.kind}`)
+  if (scenario.tags && scenario.tags.length > 0) {
+    console.log(`  Tags:    ${scenario.tags.join(', ')}`)
+  }
   console.log('')
   console.log(scenario.description.split('\n').map((l) => `  ${l}`).join('\n'))
   if (scenario.contracts && scenario.contracts.length > 0) {
@@ -327,8 +409,12 @@ async function main(): Promise<void> {
   }
 
   if (command === 'list') {
-    commandList()
-    process.exit(0)
+    const code = commandList({
+      kind: typeof flags.kind === 'string' ? flags.kind : undefined,
+      tag: typeof flags.tag === 'string' ? flags.tag : undefined,
+      json: Boolean(flags.json),
+    })
+    process.exit(code)
   }
 
   if (command === 'describe') {
@@ -337,7 +423,7 @@ async function main(): Promise<void> {
       console.error('Missing scenario name. Try `git-scenarios list`.')
       process.exit(2)
     }
-    process.exit(commandDescribe(name))
+    process.exit(commandDescribe(name, { json: Boolean(flags.json) }))
   }
 
   if (command === 'clean') {
