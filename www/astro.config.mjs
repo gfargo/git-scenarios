@@ -45,7 +45,11 @@ export default defineConfig({
         // Open Graph
         {
           tag: 'meta',
-          attrs: { property: 'og:image', content: 'https://git-scenarios.griffen.codes/og-image.svg' },
+          attrs: { property: 'og:image', content: 'https://git-scenarios.griffen.codes/og-image.png' },
+        },
+        {
+          tag: 'meta',
+          attrs: { property: 'og:image:type', content: 'image/png' },
         },
         {
           tag: 'meta',
@@ -70,7 +74,7 @@ export default defineConfig({
         },
         {
           tag: 'meta',
-          attrs: { name: 'twitter:image', content: 'https://git-scenarios.griffen.codes/og-image.svg' },
+          attrs: { name: 'twitter:image', content: 'https://git-scenarios.griffen.codes/og-image.png' },
         },
         {
           tag: 'meta',
@@ -92,6 +96,11 @@ export default defineConfig({
         {
           tag: 'meta',
           attrs: { name: 'theme-color', content: '#ffffff', media: '(prefers-color-scheme: light)' },
+        },
+        // Robots
+        {
+          tag: 'meta',
+          attrs: { name: 'robots', content: 'index, follow' },
         },
         // Structured data (JSON-LD)
         {
