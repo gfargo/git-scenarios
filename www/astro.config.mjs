@@ -19,6 +19,29 @@ export default defineConfig({
       },
       favicon: '/favicon.svg',
       head: [
+        // Font preloads (non-render-blocking, replaces @import in CSS)
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'preconnect',
+            href: 'https://fonts.googleapis.com',
+          },
+        },
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'preconnect',
+            href: 'https://fonts.gstatic.com',
+            crossorigin: '',
+          },
+        },
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'stylesheet',
+            href: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap',
+          },
+        },
         // Open Graph
         {
           tag: 'meta',
@@ -53,7 +76,7 @@ export default defineConfig({
           tag: 'meta',
           attrs: { name: 'twitter:creator', content: '@gaborFargo' },
         },
-        // Additional SEO
+        // SEO
         {
           tag: 'meta',
           attrs: { name: 'author', content: 'Griffen Fargo' },
@@ -62,15 +85,35 @@ export default defineConfig({
           tag: 'meta',
           attrs: { name: 'keywords', content: 'git, testing, fixtures, scenarios, typescript, simple-git, deterministic, atoms, composable, merge-conflict, submodule, worktree' },
         },
-        // Theme color for mobile browsers
         {
           tag: 'meta',
-          attrs: { name: 'theme-color', content: '#0a0e1a' },
+          attrs: { name: 'theme-color', content: '#0a0e1a', media: '(prefers-color-scheme: dark)' },
         },
-        // Canonical (Starlight handles per-page, this is the default)
         {
-          tag: 'link',
-          attrs: { rel: 'canonical', href: 'https://git-scenarios.griffen.codes' },
+          tag: 'meta',
+          attrs: { name: 'theme-color', content: '#ffffff', media: '(prefers-color-scheme: light)' },
+        },
+        // Structured data (JSON-LD)
+        {
+          tag: 'script',
+          attrs: { type: 'application/ld+json' },
+          content: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'SoftwareSourceCode',
+            name: '@gfargo/git-scenarios',
+            description: 'Composable atoms for spinning up real git repositories in any state — merge conflicts, submodules, multiple remotes, in-progress operations, and more.',
+            url: 'https://git-scenarios.griffen.codes',
+            codeRepository: 'https://github.com/gfargo/git-scenarios',
+            programmingLanguage: 'TypeScript',
+            runtimePlatform: 'Node.js',
+            license: 'https://opensource.org/licenses/MIT',
+            author: {
+              '@type': 'Person',
+              name: 'Griffen Fargo',
+              url: 'https://github.com/gfargo',
+            },
+            keywords: ['git', 'testing', 'fixtures', 'scenarios', 'typescript', 'deterministic', 'composable'],
+          }),
         },
       ],
       social: {
@@ -78,7 +121,6 @@ export default defineConfig({
       },
       customCss: ['./src/styles/custom.css'],
       components: {
-        // Override SiteTitle to append nav links in the header row
         SiteTitle: './src/components/SiteTitle.astro',
       },
       sidebar: [

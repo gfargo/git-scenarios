@@ -7,8 +7,7 @@
  * nodes of a git graph.
  */
 
-/* ─── Fonts ─── */
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+/* Fonts loaded via <link> in astro.config.mjs head (non-render-blocking) */
 
 /* ─── Dark theme (default) ─── */
 :root {
@@ -49,16 +48,29 @@
   --sl-color-accent-low: #cffafe;
   --sl-color-accent: #0891b2;
   --sl-color-accent-high: #164e63;
+  --sl-color-white: #0f172a;
+  --sl-color-gray-1: #1e293b;
+  --sl-color-gray-2: #334155;
+  --sl-color-gray-3: #64748b;
+  --sl-color-gray-4: #94a3b8;
+  --sl-color-gray-5: #e2e8f0;
+  --sl-color-gray-6: #f1f5f9;
+  --sl-color-gray-7: #ffffff;
+  --sl-color-black: #ffffff;
+  --sl-color-bg-nav: #ffffffee;
+  --sl-color-bg-sidebar: #f8fafc;
+  --sl-color-hairline-light: #e2e8f0;
+  --sl-color-hairline-shade: #f1f5f9;
 
-  --gs-cyan: #0891b2;
-  --gs-violet: #7c3aed;
-  --gs-emerald: #059669;
-  --gs-amber: #d97706;
+  --gs-cyan: #0e7490;
+  --gs-violet: #6d28d9;
+  --gs-emerald: #047857;
+  --gs-amber: #b45309;
   --gs-surface: #f8fafc;
   --gs-surface-raised: #ffffff;
   --gs-border: #e2e8f0;
-  --gs-glow-cyan: 0 0 20px rgba(8, 145, 178, 0.1);
-  --gs-glow-violet: 0 0 20px rgba(124, 58, 237, 0.1);
+  --gs-glow-cyan: 0 0 20px rgba(14, 116, 144, 0.08);
+  --gs-glow-violet: 0 0 20px rgba(109, 40, 217, 0.08);
 }
 
 /* ─── Global refinements ─── */
@@ -80,13 +92,6 @@ code, pre, kbd, samp,
 /* ─── Navigation ─── */
 starlight-menu-button + nav {
   backdrop-filter: blur(12px);
-}
-
-/* Allow the title wrapper to grow so nav links sit inline */
-.title-wrapper {
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
 }
 
 /* Site title styling */
@@ -140,6 +145,14 @@ nav.sidebar .top-level > li > a {
   pointer-events: none;
 }
 
+:root[data-theme='light'] .page .hero::after {
+  background: radial-gradient(ellipse, rgba(14, 116, 144, 0.04) 0%, transparent 70%);
+}
+
+:root[data-theme='light'] .page .hero::before {
+  opacity: 0.15;
+}
+
 .hero .hero-html {
   position: relative;
   z-index: 1;
@@ -179,15 +192,27 @@ nav.sidebar .top-level > li > a {
 
 .page .hero .action.primary {
   background: var(--gs-cyan);
-  color: #0a0e1a;
+  color: #ffffff;
   border: none;
   box-shadow: var(--gs-glow-cyan);
 }
 
 .page .hero .action.primary:hover {
   background: #67e8f9;
+  color: #0a0e1a;
   box-shadow: 0 0 30px rgba(34, 211, 238, 0.3);
   transform: translateY(-1px);
+}
+
+:root[data-theme='light'] .page .hero .action.primary {
+  background: #0e7490;
+  color: #ffffff;
+}
+
+:root[data-theme='light'] .page .hero .action.primary:hover {
+  background: #0891b2;
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(14, 116, 144, 0.25);
 }
 
 .page .hero .action:not(.primary) {
@@ -446,10 +471,27 @@ nav.sidebar .top-level > li > a {
   background: var(--sl-color-gray-4);
 }
 
+:root[data-theme='light'] ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+:root[data-theme='light'] ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+
+:root[data-theme='light'] ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
 /* ─── Selection ─── */
 ::selection {
   background: rgba(34, 211, 238, 0.2);
   color: var(--sl-color-white);
+}
+
+:root[data-theme='light'] ::selection {
+  background: rgba(14, 116, 144, 0.15);
+  color: #0f172a;
 }
 
 /* ─── Animations ─── */
