@@ -8,11 +8,11 @@
  * `src/scenarios/index.ts` automatically surfaces it on the website
  * the next build, no manual sync needed.
  *
- * If the parent `dist/` folder is missing or stale (no `scenarios/index.cjs`),
- * the script falls back to running `npm run build` in the parent first.
- * This keeps Vercel builds (which only build the www/ folder) working
- * via the committed `scenarios.json`, while local dev stays fresh
- * automatically.
+ * The committed `scenarios.json` is the artifact Vercel builds against.
+ * Locally, the prebuild + predev hooks invoke this script so the JSON
+ * stays in sync with the source. On Vercel (where parent deps aren't
+ * installed), the script gracefully falls back to the committed JSON
+ * if the parent `dist/` is unavailable.
  *
  * Output: www/src/data/scenarios.json
  *
@@ -30,44 +30,66 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const wwwRoot = resolve(__dirname, '..')
 const repoRoot = resolve(wwwRoot, '..')
 const distPath = join(repoRoot, 'dist', 'scenarios', 'index.cjs')
+const parentNodeModules = join(repoRoot, 'node_modules')
+const outDir = join(wwwRoot, 'src', 'data')
+const outPath = join(outDir, 'scenarios.json')
 
-// If the parent's dist isn't built, try to build it. This keeps the
-// generator usable on a fresh checkout. On Vercel (which builds only
-// the www/ folder against a pre-committed scenarios.json), this branch
-// won't run because the JSON output is already on disk and committed.
-if (!existsSync(distPath)) {
-  console.log(`▸ Parent dist/ not found at ${distPath}`)
-  console.log('  Building parent package first…')
+// Strategy:
+//   1. If parent `dist/` exists, regenerate scenarios.json from it.
+//      This is the local-dev path — fresh every build.
+//   2. If parent `dist/` is missing AND parent `node_modules` exist,
+//      build the parent first then regenerate. Fresh-checkout path.
+//   3. If parent `dist/` is missing AND parent `node_modules` are too,
+//      AND the committed scenarios.json is on disk, use that.
+//      This is the Vercel path — the committed JSON is the artifact.
+//   4. If none of the above: fail loudly. Something is wrong.
+
+if (existsSync(distPath)) {
+  await regenerate()
+} else if (existsSync(parentNodeModules)) {
+  console.log('▸ Parent dist/ missing, but parent node_modules exist — building parent first…')
   try {
     execSync('npm run build', { cwd: repoRoot, stdio: 'inherit' })
-  } catch (err) {
-    console.error('✗ Parent build failed. Cannot generate scenarios.json.')
-    console.error('  If this is a Vercel build, the committed scenarios.json should already be in place.')
+    await regenerate()
+  } catch {
+    console.error('✗ Parent build failed.')
     process.exit(1)
   }
-}
-
-const { allScenarios } = await import(distPath)
-
-if (!Array.isArray(allScenarios) || allScenarios.length === 0) {
-  console.error(`✗ Failed to load allScenarios from ${distPath}`)
+} else if (existsSync(outPath)) {
+  console.log('ℹ Parent dist/ + node_modules unavailable — using committed scenarios.json.')
+  console.log('  (This is the expected Vercel build path.)')
+  process.exit(0)
+} else {
+  console.error('✗ Cannot generate scenarios.json:')
+  console.error('  - Parent dist/ is missing')
+  console.error('  - Parent node_modules are missing (cannot build parent)')
+  console.error('  - Committed scenarios.json is missing (no fallback)')
+  console.error('')
+  console.error('  Local fix: from the repo root, run `npm install && npm run build`')
   process.exit(1)
 }
 
-// Strip the runtime-only `setup` function — it's not serializable and
-// the browser doesn't need it. Everything else is plain data.
-const payload = allScenarios.map((s) => ({
-  name: s.name,
-  summary: s.summary,
-  description: s.description,
-  kind: s.kind,
-  tags: s.tags ?? [],
-  contracts: s.contracts ?? [],
-}))
+async function regenerate() {
+  const { allScenarios } = await import(distPath)
 
-const outDir = join(wwwRoot, 'src', 'data')
-const outPath = join(outDir, 'scenarios.json')
-mkdirSync(outDir, { recursive: true })
-writeFileSync(outPath, JSON.stringify(payload, null, 2) + '\n')
+  if (!Array.isArray(allScenarios) || allScenarios.length === 0) {
+    console.error(`✗ Failed to load allScenarios from ${distPath}`)
+    process.exit(1)
+  }
 
-console.log(`✓ Wrote ${payload.length} scenarios to src/data/scenarios.json`)
+  // Strip the runtime-only `setup` function — it's not serializable and
+  // the browser doesn't need it. Everything else is plain data.
+  const payload = allScenarios.map((s) => ({
+    name: s.name,
+    summary: s.summary,
+    description: s.description,
+    kind: s.kind,
+    tags: s.tags ?? [],
+    contracts: s.contracts ?? [],
+  }))
+
+  mkdirSync(outDir, { recursive: true })
+  writeFileSync(outPath, JSON.stringify(payload, null, 2) + '\n')
+
+  console.log(`✓ Wrote ${payload.length} scenarios to src/data/scenarios.json`)
+}
