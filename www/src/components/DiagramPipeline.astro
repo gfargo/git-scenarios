@@ -1,0 +1,343 @@
+---
+/**
+ * Pipeline diagram — illustrates how a one-liner becomes a real
+ * temp git repo on disk. Reads left to right:
+ *
+ *   spinUpScenario('mid-merge-conflict')
+ *           │
+ *           ▼
+ *   resolve in registry → run setup() → real .git/ on disk → return TempGitRepo
+ *
+ * Pure SVG, animates on first paint via stroke-dash and fade-up.
+ * Sized for a 720x340 viewBox to fit naturally in 64rem column.
+ */
+---
+
+<figure class="dgm-pipeline">
+  <figcaption class="dgm-pipeline__caption">
+    <span class="dgm-pipeline__fig">FIG. 02</span>
+    <span class="dgm-pipeline__caption-text">
+      Lifecycle of a single <code>spinUpScenario()</code> call &mdash; from one
+      line of TypeScript to a real <code>.git/</code> directory on disk.
+    </span>
+  </figcaption>
+
+  <div class="dgm-pipeline__frame">
+    <svg
+      class="dgm-pipeline__svg"
+      viewBox="0 0 720 340"
+      xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-label="Pipeline diagram showing how spinUpScenario takes a name string and produces a fully-built temp git repository"
+    >
+      <defs>
+        <marker id="dgm-pipe-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+        </marker>
+      </defs>
+
+      <!-- ░░░ Stage 1: Input — the call site ░░░ -->
+      <g class="dgm-stage" style="--d:0.05s">
+        <text x="20" y="32" class="dgm-stage__num">01</text>
+        <text x="20" y="48" class="dgm-stage__lbl">CALL SITE</text>
+        <rect x="20" y="62" width="170" height="68" rx="2"
+              fill="var(--gs-paper)" stroke="var(--gs-cyan)" stroke-width="1.5"/>
+        <text x="30" y="86" class="dgm-stage__code">await</text>
+        <text x="76" y="86" class="dgm-stage__code dgm-stage__code--accent">spinUpScenario(</text>
+        <text x="30" y="106" class="dgm-stage__code dgm-stage__code--str">'mid-merge-conflict'</text>
+        <text x="30" y="124" class="dgm-stage__code dgm-stage__code--accent">)</text>
+      </g>
+
+      <!-- ─→ Pipe 1 -->
+      <path class="dgm-pipe" style="--d:0.32s"
+            d="M195 96 L240 96"
+            fill="none" stroke="var(--gs-cyan)" stroke-width="1.5"
+            marker-end="url(#dgm-pipe-arrow)"/>
+
+      <!-- ░░░ Stage 2: Registry lookup ░░░ -->
+      <g class="dgm-stage" style="--d:0.42s">
+        <text x="248" y="32" class="dgm-stage__num">02</text>
+        <text x="248" y="48" class="dgm-stage__lbl">RESOLVE</text>
+        <rect x="248" y="62" width="170" height="68" rx="2"
+              fill="var(--gs-paper)" stroke="var(--gs-cyan)" stroke-width="1.5"/>
+        <text x="334" y="84" text-anchor="middle" class="dgm-stage__title">scenario&nbsp;registry</text>
+        <text x="334" y="102" text-anchor="middle" class="dgm-stage__sub">findRegistered(name)</text>
+        <text x="334" y="120" text-anchor="middle" class="dgm-stage__hint">[ 32 built‑in + N custom ]</text>
+      </g>
+
+      <!-- ─→ Pipe 2 -->
+      <path class="dgm-pipe" style="--d:0.7s"
+            d="M422 96 L468 96"
+            fill="none" stroke="var(--gs-cyan)" stroke-width="1.5"
+            marker-end="url(#dgm-pipe-arrow)"/>
+
+      <!-- ░░░ Stage 3: Compose + write ░░░ -->
+      <g class="dgm-stage" style="--d:0.8s">
+        <text x="476" y="32" class="dgm-stage__num">03</text>
+        <text x="476" y="48" class="dgm-stage__lbl">EXECUTE</text>
+        <rect x="476" y="62" width="220" height="68" rx="2"
+              fill="var(--gs-paper)" stroke="var(--gs-cyan)" stroke-width="1.5"/>
+        <text x="586" y="84" text-anchor="middle" class="dgm-stage__title">scenario.setup(repo)</text>
+        <text x="586" y="102" text-anchor="middle" class="dgm-stage__sub">chain( atom, atom, … )</text>
+        <text x="586" y="120" text-anchor="middle" class="dgm-stage__hint">addCommit · switchToBranch · startMerge</text>
+      </g>
+
+      <!-- ─↓ Pipe 3 down to disk -->
+      <path class="dgm-pipe" style="--d:1.05s"
+            d="M586 130 L586 170"
+            fill="none" stroke="var(--gs-cyan)" stroke-width="1.5"
+            marker-end="url(#dgm-pipe-arrow)"/>
+
+      <!-- ░░░ Stage 4: The real on-disk repo (output) ░░░ -->
+      <g class="dgm-stage" style="--d:1.18s">
+        <text x="380" y="186" class="dgm-stage__num dgm-stage__num--vermilion">04</text>
+        <text x="380" y="202" class="dgm-stage__lbl dgm-stage__lbl--vermilion">RESULT &mdash; ON DISK</text>
+        <rect x="380" y="216" width="280" height="100" rx="2"
+              fill="var(--gs-vermilion-low)" stroke="var(--gs-vermilion)" stroke-width="1.5"/>
+
+        <!-- A tiny ASCII tree of the produced repo -->
+        <text x="395" y="238" class="dgm-stage__tree">/var/folders/…/coco-git-test-xR2qwz</text>
+        <text x="395" y="254" class="dgm-stage__tree dgm-stage__tree--dim">├── .git/</text>
+        <text x="395" y="268" class="dgm-stage__tree dgm-stage__tree--dim">│   ├── HEAD</text>
+        <text x="395" y="282" class="dgm-stage__tree dgm-stage__tree--accent">│   └── MERGE_HEAD</text>
+        <text x="395" y="296" class="dgm-stage__tree dgm-stage__tree--dim">├── README.md</text>
+        <text x="395" y="310" class="dgm-stage__tree dgm-stage__tree--vermilion">└── src/widget.ts ⟵ conflicted</text>
+      </g>
+
+      <!-- ░░░ Side note: the return value ░░░ -->
+      <g class="dgm-stage" style="--d:1.32s">
+        <text x="20" y="186" class="dgm-stage__num">←</text>
+        <text x="40" y="186" class="dgm-stage__lbl">RETURNS</text>
+        <rect x="20" y="200" width="290" height="116" rx="2"
+              fill="var(--gs-paper)" stroke="var(--gs-cyan)" stroke-width="1.5"
+              stroke-dasharray="3 3"/>
+        <text x="35" y="224" class="dgm-stage__code">type&nbsp;TempGitRepo = {</text>
+        <text x="48" y="244" class="dgm-stage__code dgm-stage__code--key">path:</text>
+        <text x="98" y="244" class="dgm-stage__code dgm-stage__code--str">string</text>
+        <text x="48" y="262" class="dgm-stage__code dgm-stage__code--key">git:</text>
+        <text x="84" y="262" class="dgm-stage__code dgm-stage__code--str">SimpleGit</text>
+        <text x="48" y="280" class="dgm-stage__code dgm-stage__code--key">cleanup:</text>
+        <text x="124" y="280" class="dgm-stage__code dgm-stage__code--str">() =&gt; Promise&lt;void&gt;</text>
+        <text x="35" y="304" class="dgm-stage__code">}</text>
+      </g>
+
+      <!-- Pipe up from result to return value -->
+      <path class="dgm-pipe" style="--d:1.5s"
+            d="M380 250 L320 250 L320 250"
+            fill="none" stroke="var(--gs-cyan)" stroke-width="1.2"
+            stroke-dasharray="4 4"
+            marker-end="url(#dgm-pipe-arrow)"/>
+    </svg>
+  </div>
+</figure>
+
+<style>
+  .dgm-pipeline {
+    margin: 2rem auto !important;
+    max-width: 64rem;
+    padding: 0 1.5rem;
+  }
+
+  .dgm-pipeline__caption {
+    font-family: var(--gs-body);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--sl-color-gray-2);
+    font-style: italic;
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 0.6rem;
+    align-items: baseline;
+  }
+
+  .dgm-pipeline__fig {
+    font-family: var(--gs-mono);
+    font-style: normal;
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gs-cyan);
+    flex-shrink: 0;
+  }
+
+  .dgm-pipeline__caption-text code {
+    font-size: 0.8rem;
+    color: var(--gs-cyan);
+    background: var(--gs-cyan-low);
+    padding: 0.05em 0.3em;
+    border-radius: 2px;
+    border: 1px solid var(--gs-cyan-mid);
+    font-style: normal;
+  }
+
+  .dgm-pipeline__frame {
+    border: 1px solid var(--gs-rule-strong);
+    border-radius: 2px;
+    background: var(--gs-paper);
+    padding: 1.25rem 1rem;
+    position: relative;
+  }
+
+  /* Crosshair tick marks */
+  .dgm-pipeline__frame::before,
+  .dgm-pipeline__frame::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid var(--gs-cyan);
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .dgm-pipeline__frame::before {
+    top: -1px; left: -1px;
+    border-right: none; border-bottom: none;
+  }
+
+  .dgm-pipeline__frame::after {
+    bottom: -1px; right: -1px;
+    border-left: none; border-top: none;
+  }
+
+  .dgm-pipeline__svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    color: var(--gs-cyan);
+  }
+
+  /* Text styles inside the SVG */
+  .dgm-stage__num {
+    font-family: var(--gs-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    fill: var(--gs-cyan);
+  }
+
+  .dgm-stage__num--vermilion {
+    fill: var(--gs-vermilion);
+  }
+
+  .dgm-stage__lbl {
+    font-family: var(--gs-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    fill: var(--gs-graphite);
+    text-transform: uppercase;
+  }
+
+  .dgm-stage__lbl--vermilion {
+    fill: var(--gs-vermilion);
+    font-weight: 600;
+  }
+
+  .dgm-stage__title {
+    font-family: var(--gs-mono);
+    font-size: 12px;
+    font-weight: 600;
+    fill: var(--gs-ink);
+  }
+
+  .dgm-stage__sub {
+    font-family: var(--gs-mono);
+    font-size: 10px;
+    fill: var(--gs-cyan);
+  }
+
+  .dgm-stage__hint {
+    font-family: var(--gs-mono);
+    font-size: 9px;
+    fill: var(--gs-graphite);
+    font-style: italic;
+  }
+
+  .dgm-stage__code {
+    font-family: var(--gs-mono);
+    font-size: 11px;
+    fill: var(--gs-ink);
+  }
+
+  .dgm-stage__code--accent {
+    fill: var(--gs-cyan);
+    font-weight: 500;
+  }
+
+  .dgm-stage__code--str {
+    fill: var(--gs-vermilion);
+  }
+
+  .dgm-stage__code--key {
+    fill: var(--gs-cyan);
+    font-weight: 500;
+  }
+
+  .dgm-stage__tree {
+    font-family: var(--gs-mono);
+    font-size: 10.5px;
+    fill: var(--gs-ink);
+  }
+
+  .dgm-stage__tree--dim {
+    fill: var(--gs-graphite);
+  }
+
+  .dgm-stage__tree--accent {
+    fill: var(--gs-cyan);
+    font-weight: 500;
+  }
+
+  .dgm-stage__tree--vermilion {
+    fill: var(--gs-vermilion);
+    font-weight: 500;
+  }
+
+  /* Entrance animation — same approach as the hero schematic */
+  .dgm-stage,
+  .dgm-pipe {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: dgmFadeUp 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+
+  .dgm-pipe {
+    stroke-dasharray: 60;
+    stroke-dashoffset: 60;
+    animation:
+      dgmFadeUp 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) forwards,
+      dgmDraw 0.5s cubic-bezier(0.5, 0, 0.5, 1) forwards;
+    animation-delay: var(--d, 0s), var(--d, 0s);
+  }
+
+  @keyframes dgmFadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes dgmDraw {
+    to { stroke-dashoffset: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dgm-stage,
+    .dgm-pipe {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      stroke-dashoffset: 0 !important;
+    }
+  }
+
+  /* Mobile: shrink the SVG and let it scroll horizontally if needed */
+  @media (max-width: 700px) {
+    .dgm-pipeline__svg {
+      min-width: 600px;
+    }
+    .dgm-pipeline__frame {
+      overflow-x: auto;
+    }
+  }
+</style>

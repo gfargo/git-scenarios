@@ -424,9 +424,7 @@
     padding: 3rem 2rem 3rem 2.5rem;
     border-right: 1px solid var(--gs-rule);
     position: relative;
-    background:
-      linear-gradient(to right, var(--gs-grid-line) 1px, transparent 1px) 0 0 / 24px 24px,
-      linear-gradient(to bottom, var(--gs-grid-line) 1px, transparent 1px) 0 0 / 24px 24px;
+    /* Grid lives on body::before — no need for another one here */
   }
 
   /* "01" callout in the top-left of the headline area */
@@ -519,14 +517,15 @@
     letter-spacing: 0.01em;
   }
 
-  /* Primary: cyan FILL with inked PAPER text — explicitly sets paper
-     color from CSS var so it never flashes black on white or vice
-     versa during theme switches. */
+  /* Primary: cyan FILL with paper TEXT — explicit colors (with
+     !important) so no global a-tag rule from .sl-markdown-content
+     can leak in and break the contrast. */
   .dr-action--primary {
     background: var(--gs-cyan);
-    color: var(--gs-paper);
+    color: var(--gs-paper) !important;
     border-color: var(--gs-cyan);
     font-weight: 600;
+    border-bottom: 1.5px solid var(--gs-cyan) !important;  /* override global a underline */
   }
 
   /* Critical: in light mode the paper is cream and the cyan is deep
@@ -538,19 +537,24 @@
   .dr-action--primary:hover {
     transform: translate(-2px, -2px);
     box-shadow: 3px 3px 0 0 var(--gs-cyan-dim);
+    background: var(--gs-cyan) !important;          /* keep solid on hover */
+    color: var(--gs-paper) !important;
   }
 
   .dr-action--ghost {
-    color: var(--gs-cyan);
-    background: transparent;
+    color: var(--gs-cyan) !important;
+    background: transparent !important;
     border-color: var(--gs-rule-strong);
+    border-bottom: 1.5px solid var(--gs-rule-strong) !important;
   }
 
   .dr-action--ghost:hover {
-    color: var(--gs-cyan);
+    color: var(--gs-cyan) !important;
     border-color: var(--gs-cyan);
+    border-bottom-color: var(--gs-cyan) !important;
     transform: translate(-2px, -2px);
     box-shadow: 3px 3px 0 0 var(--gs-rule-strong);
+    background: transparent !important;
   }
 
   /* ─── Install snippet ─── */
