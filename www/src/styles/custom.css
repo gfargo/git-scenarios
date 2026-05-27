@@ -47,6 +47,12 @@
   --sl-color-bg-nav:     rgba(13, 17, 22, 0.86);
   --sl-color-bg-sidebar: #0f141b;
 
+  /* Active sidebar link — bright cyan bg + dark paper text. Override
+     Starlight's defaults (accent-high bg + accent-low text) which
+     read as cyan-on-cyan in our deep-cyan palette. */
+  --sl-color-text-accent: var(--gs-cyan);
+  --sl-color-text-invert: var(--gs-paper);
+
   /* Hairlines */
   --sl-color-hairline-light: #232c3a;
   --sl-color-hairline-shade: #161d27;
@@ -102,6 +108,10 @@
 
   --sl-color-bg-nav:     rgba(244, 234, 216, 0.9);
   --sl-color-bg-sidebar: #f0e2c5;
+
+  /* Active sidebar link — deep blueprint cyan bg + paper text */
+  --sl-color-text-accent: var(--gs-cyan);
+  --sl-color-text-invert: var(--gs-paper);
 
   --sl-color-hairline-light: #e0cfa5;
   --sl-color-hairline-shade: #ecdfc4;
@@ -275,15 +285,22 @@ nav.sidebar a {
   font-weight: 400;
 }
 
+/* Active sidebar link — paper-on-cyan with a small leading caret.
+   Starlight applies background-color from --sl-color-text-accent and
+   color from --sl-color-text-invert (both overridden in :root above
+   to land on var(--gs-cyan) bg + var(--gs-paper) text). We keep the
+   ▸ caret as a wayfinding mark and bump the font weight. */
 nav.sidebar a[aria-current="page"] {
-  color: var(--gs-cyan) !important;
-  font-weight: 500;
+  color: var(--gs-paper) !important;
+  background: var(--gs-cyan) !important;
+  font-weight: 600;
+  border-radius: 2px;
 }
 
 nav.sidebar a[aria-current="page"]::before {
   content: '▸';
   margin-right: 0.5ch;
-  color: var(--gs-cyan);
+  color: var(--gs-paper);
 }
 
 /* ─── Header bar ─── */
