@@ -48,6 +48,7 @@ export {
   seededFiles,
   // Staging + commits
   stageFiles,
+  unstageFiles,
   commit,
   addCommit,
   emptyCommit,
@@ -77,7 +78,10 @@ export {
   abortMerge,
   cherryPick,
   abortCherryPick,
+  continueCherryPick,
   revert,
+  abortRevert,
+  continueRevert,
   startBisect,
   bisectStep,
   resetBisect,

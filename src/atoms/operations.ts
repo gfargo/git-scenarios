@@ -1,4 +1,8 @@
+import { execFile } from 'child_process';
+import { promisify } from 'util';
 import type { Step } from './types';
+
+const execFileAsync = promisify(execFile);
 
 /**
  * Attempt a merge of `branch` into the current branch. With
@@ -22,13 +26,22 @@ import type { Step } from './types';
  */
 export function startMerge(
   branch: string,
-  options: { allowConflict?: boolean; noFastForward?: boolean; date?: string; message?: string } = {},
+  options: {
+    allowConflict?: boolean
+    noFastForward?: boolean
+    squash?: boolean
+    date?: string
+    message?: string
+  } = {},
 ): Step {
   const allowConflict = options.allowConflict !== false
   return async (repo) => {
     const args = ['merge', '--no-edit']
     if (options.noFastForward) {
       args.push('--no-ff')
+    }
+    if (options.squash) {
+      args.push('--squash')
     }
     if (options.message) {
       args.push('-m', options.message)
@@ -62,6 +75,10 @@ export function startMerge(
       }
       return // leave the repo in mid-merge state
     }
+
+    // `--squash` doesn't auto-commit; the staged result needs an
+    // explicit commit step from the caller. Don't error on the
+    // "merge produced no commit" path when squash is requested.
     if (mergeError) {
       // No conflicts but merge still failed — surface the original error.
       throw mergeError
@@ -202,6 +219,32 @@ export function abortCherryPick(): Step {
 }
 
 /**
+ * Continue a paused cherry-pick after conflicts have been resolved
+ * (`git cherry-pick --continue`). The caller is responsible for
+ * resolving conflicts and staging the resolution before calling.
+ *
+ *   chain(
+ *     cherryPick('feat/source'),
+ *     // resolve conflicts manually:
+ *     writeFiles({ 'x.ts': 'resolved\n' }),
+ *     stageFiles('x.ts'),
+ *     continueCherryPick(),
+ *   )
+ *
+ * `GIT_EDITOR=:` is set so git doesn't try to open an editor for
+ * the cherry-pick commit message — which would hang non-interactive
+ * callers. The original commit message is preserved.
+ */
+export function continueCherryPick(): Step {
+  return async (repo) => {
+    await execFileAsync('git', ['cherry-pick', '--continue'], {
+      cwd: repo.path,
+      env: { ...process.env, GIT_EDITOR: ':' },
+    })
+  }
+}
+
+/**
  * Revert a commit (`git revert --no-edit <sha>`). Produces a new
  * commit that undoes the named commit's changes.
  *
@@ -253,5 +296,40 @@ export function revert(
     if (revertError) {
       throw revertError
     }
+  }
+}
+
+/**
+ * Abort an in-progress revert (`git revert --abort`). Restores the
+ * working tree to pre-revert state.
+ */
+export function abortRevert(): Step {
+  return async (repo) => {
+    await repo.git.raw(['revert', '--abort'])
+  }
+}
+
+/**
+ * Continue a paused revert after conflicts have been resolved
+ * (`git revert --continue`). The caller is responsible for resolving
+ * conflicts and staging the resolution before calling.
+ *
+ *   chain(
+ *     revert('HEAD~1'),
+ *     // resolve conflicts:
+ *     writeFiles({ 'x.ts': 'resolved\n' }),
+ *     stageFiles('x.ts'),
+ *     continueRevert(),
+ *   )
+ *
+ * `GIT_EDITOR=:` is set so git doesn't open an editor for the
+ * revert commit message — which would hang non-interactive callers.
+ */
+export function continueRevert(): Step {
+  return async (repo) => {
+    await execFileAsync('git', ['revert', '--continue'], {
+      cwd: repo.path,
+      env: { ...process.env, GIT_EDITOR: ':' },
+    })
   }
 }

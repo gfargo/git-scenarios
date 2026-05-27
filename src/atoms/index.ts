@@ -50,6 +50,7 @@ export { writeFiles } from './writeFiles'
 export { deleteFiles } from './deleteFiles'
 export { renameFile } from './renameFile'
 export { stageFiles, commit } from './staging'
+export { unstageFiles } from './unstage'
 export { addCommit } from './addCommit'
 export { emptyCommit, amendCommit } from './commits'
 export { switchToBranch, checkoutBranch, createBranch, deleteBranch } from './branches'
@@ -62,7 +63,10 @@ export {
   abortMerge,
   cherryPick,
   abortCherryPick,
+  continueCherryPick,
   revert,
+  abortRevert,
+  continueRevert,
   startBisect,
   bisectStep,
   resetBisect,
