@@ -1,11 +1,13 @@
 ---
 /**
- * Custom SiteTitle — wraps Starlight's default title/logo lockup with
- * an inline nav rail. Uses `display: contents` so the nav joins the
- * parent header's flex flow without an extra wrapper.
+ * Site title + inline nav rail.
  *
- * The "$" prompt prefix and "_" cursor on the title come from the
- * global custom.css so they hold up across both themes.
+ * The default Starlight SiteTitle renders the logo + name as a link.
+ * We render it untouched, then append our own nav rail using
+ * `display: contents` so it joins the parent header's flex flow.
+ *
+ * Nav uses Bricolage Grotesque (display family) at a comfortable
+ * size — distinct from the mono UI elsewhere on the page.
  */
 import Default from '@astrojs/starlight/components/SiteTitle.astro'
 ---
@@ -13,11 +15,11 @@ import Default from '@astrojs/starlight/components/SiteTitle.astro'
 <div class="site-title-with-nav">
   <Default {...Astro.props}><slot /></Default>
   <nav class="header-nav-links" aria-label="Primary navigation">
-    <a href="/docs/quick-start">quick&nbsp;start</a>
-    <a href="/docs/scenarios/browse">browse</a>
-    <a href="/docs/atoms/overview">atoms</a>
-    <a href="/docs/architecture">architecture</a>
-    <a href="/docs/changelog">changelog</a>
+    <a href="/docs/quick-start">Quick&nbsp;start</a>
+    <a href="/docs/scenarios/browse">Browse</a>
+    <a href="/docs/atoms/overview">Atoms</a>
+    <a href="/docs/architecture">Architecture</a>
+    <a href="/docs/changelog">Changelog</a>
   </nav>
 </div>
 
@@ -29,51 +31,55 @@ import Default from '@astrojs/starlight/components/SiteTitle.astro'
   .header-nav-links {
     display: flex;
     align-items: center;
-    gap: 0.05rem;
-    margin-left: 2rem;
-    font-family: var(--gs-mono, var(--sl-font-system-mono));
-    font-size: 0.74rem;
-    font-weight: 400;
-    letter-spacing: 0.02em;
+    gap: 0.1rem;
+    margin-left: 1.75rem;
+    /* Display-family font, sized to actually be readable. */
+    font-family: var(--gs-display, system-ui);
+    font-variation-settings: 'opsz' 14, 'wdth' 100, 'wght' 500;
+    font-size: 0.92rem;
+    letter-spacing: -0.005em;
   }
 
   .header-nav-links a {
-    color: var(--sl-color-gray-3);
+    color: var(--sl-color-gray-2);
     text-decoration: none;
-    padding: 0.4rem 0.7rem;
+    padding: 0.45rem 0.75rem;
     white-space: nowrap;
     position: relative;
     transition: color 0.15s ease;
   }
 
-  /* Subtle dot separator between links — replaces background hover */
+  /* Tiny vertical separator between links — like callout list ticks */
   .header-nav-links a + a::before {
-    content: '·';
+    content: '';
     position: absolute;
-    left: -0.18rem;
+    left: -1px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--gs-rule-strong, var(--sl-color-gray-5));
+    width: 1px;
+    height: 14px;
+    background: var(--gs-rule-strong, currentColor);
+    opacity: 0.4;
     pointer-events: none;
   }
 
   .header-nav-links a:hover,
   .header-nav-links a:focus-visible {
-    color: var(--gs-emerald, var(--sl-color-accent));
+    color: var(--gs-cyan, var(--sl-color-accent));
   }
 
-  /* Tiny emerald underline that animates in on hover */
+  /* Cyan underline that scaleX-animates on hover */
   .header-nav-links a::after {
     content: '';
     position: absolute;
-    left: 0.7rem;
-    right: 0.7rem;
-    bottom: 0.18rem;
-    height: 1px;
-    background: var(--gs-emerald, var(--sl-color-accent));
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.32rem;
+    height: 1.5px;
+    background: var(--gs-cyan, var(--sl-color-accent));
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.2s ease;
+    transition: transform 0.22s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
 
   .header-nav-links a:hover::after,

@@ -12,24 +12,24 @@ import HeroPlumbing from '../../components/HeroPlumbing.astro';
 
 <HeroPlumbing />
 
-## CHAPTER · I
+## §02 · Specification
 
-### What it is
+### What it is, in one drawing
 
 Every git tool — TUI, IDE, CLI, linter, formatter, AI assistant — behaves differently against different repo states. Testing those behaviors well means starting from real repositories in carefully-constructed states. `@gfargo/git-scenarios` is the typed, composable kit for producing those states deterministically.
 
 It ships in three layers, increasingly inline:
 
 ```ts
-// 1. Named scenario — the one-liner
+// 01. Named scenario — the one-liner
 const repo = await spinUpScenario('mid-merge-conflict')
 
-// 2. Scenario + custom atoms on top
+// 02. Scenario + custom atoms on top
 const repo = await fromScenario('feature-pr-ready',
   addCommit({ message: 'extra', files: { 'x.ts': 'x' } }),
 )
 
-// 3. Compose your own from primitives
+// 03. Compose from primitives
 const repo = await createTempGitRepo()
 await chain(
   addCommit({ message: 'base', files: { 'x.ts': 'base\n' } }),
@@ -44,9 +44,9 @@ await chain(
 
 Every scenario produces byte-identical state every run. Tests built on top are deterministic too — no flake from clock-drift or hash variance.
 
-## CHAPTER · II
+## §03 · Failure modes
 
-### The problem it replaces
+### What it replaces
 
 <CardGrid>
   <Card title="Hand-rolled setup" icon="pencil">
@@ -63,9 +63,9 @@ Every scenario produces byte-identical state every run. Tests built on top are d
   </Card>
 </CardGrid>
 
-## CHAPTER · III
+## §04 · Inventory
 
-### What's in the box
+### What's in the kit
 
 <CardGrid stagger>
   <Card title="32 curated scenarios" icon="list-format">
@@ -88,9 +88,9 @@ Every scenario produces byte-identical state every run. Tests built on top are d
   </Card>
 </CardGrid>
 
-## CHAPTER · IV
+## §05 · CLI
 
-### A small CLI tour
+### A small tour
 
 ```bash
 # Spin up a merge conflict, launch lazygit against it
@@ -107,9 +107,9 @@ npx git-scenarios describe feature-pr-ready
 npx git-scenarios create monorepo-multi-package --path ~/sandbox
 ```
 
-## CHAPTER · V
+## §06 · Origins
 
-### Origins
+### Provenance
 
 Originally extracted from [coco](https://github.com/gfargo/coco), an AI-powered git CLI/TUI with sixteen specialised views. Every view needed deterministic git states to test against. After writing the same `git init` → `writeFile` → `commit` setup forty-seven times, the scenario library was born.
 
@@ -119,7 +119,7 @@ Now it stands alone — for anyone building git tools, IDE extensions, CLI utili
 Five new scenarios (`partial-stage`, `monorepo-multi-package`, `merge-no-conflict`, `orphan-branch`, `stash-with-untracked`), the Vitest adapter, CLI `--json` / `--kind` / `--tag` filters, lifecycle-completion atoms, and more. [Read the release notes →](/docs/changelog)
 :::
 
-## COLOPHON
+## §07 · Notes
 
 ### Where to next
 

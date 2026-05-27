@@ -152,7 +152,7 @@ const orderedKinds = [
     bottom: 0;
     left: 0;
     width: 2px;
-    background: var(--gs-emerald);
+    background: var(--gs-cyan);
     opacity: 0.5;
     border-radius: 6px 0 0 6px;
   }
@@ -168,7 +168,7 @@ const orderedKinds = [
     font-size: 0.62rem;
     text-transform: uppercase;
     letter-spacing: 0.18em;
-    color: var(--gs-emerald);
+    color: var(--gs-cyan);
     font-weight: 500;
   }
 
@@ -194,14 +194,14 @@ const orderedKinds = [
   }
 
   .chip:hover {
-    color: var(--gs-emerald);
-    border-color: var(--gs-emerald);
+    color: var(--gs-cyan);
+    border-color: var(--gs-cyan);
   }
 
   .chip.active {
-    background: var(--gs-emerald);
+    background: var(--gs-cyan);
     color: var(--gs-paper);
-    border-color: var(--gs-emerald);
+    border-color: var(--gs-cyan);
     font-weight: 500;
   }
 
@@ -242,9 +242,9 @@ const orderedKinds = [
   }
 
   #scenario-search:focus {
-    outline: 1px solid var(--gs-emerald);
+    outline: 1px solid var(--gs-cyan);
     outline-offset: 0;
-    border-color: var(--gs-emerald);
+    border-color: var(--gs-cyan);
   }
 
   .filter-meta {
@@ -260,13 +260,13 @@ const orderedKinds = [
 
   .filter-meta::before {
     content: '⤷';
-    color: var(--gs-emerald);
+    color: var(--gs-cyan);
     margin-right: 0.2rem;
   }
 
   .result-count {
     font-weight: 600;
-    color: var(--gs-emerald);
+    color: var(--gs-cyan);
     font-size: 0.85rem;
   }
 
@@ -286,7 +286,7 @@ const orderedKinds = [
   }
 
   .reset-btn:hover {
-    color: var(--gs-emerald);
+    color: var(--gs-cyan);
   }
 
   /* ─── Card grid ─── */
@@ -328,13 +328,13 @@ const orderedKinds = [
     height: 0;
     border-style: solid;
     border-width: 14px 14px 0 0;
-    border-color: var(--gs-emerald) transparent transparent transparent;
+    border-color: var(--gs-cyan) transparent transparent transparent;
     opacity: 0;
     transition: opacity 0.15s ease;
   }
 
   .scenario-card:hover {
-    border-color: var(--gs-emerald);
+    border-color: var(--gs-cyan);
     transform: translate(-1px, -1px);
     box-shadow: 2px 2px 0 0 var(--gs-rule-strong);
   }
@@ -377,14 +377,15 @@ const orderedKinds = [
     flex-shrink: 0;
   }
 
-  /* Each kind gets a distinct hue, all derived from accent palette
-     so the page stays cohesive. Emerald is dominant. */
-  .kind-branch    { color: var(--gs-emerald);     }
-  .kind-worktree  { color: var(--gs-emerald-dim); }
-  .kind-operation { color: var(--gs-amber);       }
-  .kind-history   { color: var(--gs-cyan);        }
-  .kind-stash     { color: var(--sl-color-gray-3); }
-  .kind-submodule { color: var(--sl-color-gray-3); }
+  /* Each kind gets a distinct hue, all derived from the drafting
+     palette so the page stays cohesive. Cyan is dominant; vermilion
+     marks the destructive/in-progress kinds. */
+  .kind-branch    { color: var(--gs-cyan);     }
+  .kind-worktree  { color: var(--gs-cyan-dim); }
+  .kind-operation { color: var(--gs-vermilion); }
+  .kind-history   { color: var(--gs-amber);    }
+  .kind-stash     { color: var(--gs-graphite); }
+  .kind-submodule { color: var(--gs-graphite); }
 
   .scenario-summary {
     font-family: var(--gs-body);
@@ -419,9 +420,9 @@ const orderedKinds = [
   }
 
   .scenario-tag.active {
-    color: var(--gs-emerald);
-    border-color: var(--gs-emerald);
-    background: var(--gs-emerald-low);
+    color: var(--gs-cyan);
+    border-color: var(--gs-cyan);
+    background: var(--gs-cyan-low);
   }
 
   /* Contracts — like a small spec list */
@@ -447,7 +448,7 @@ const orderedKinds = [
   .scenario-contracts summary::before {
     content: '▸';
     margin-right: 0.4rem;
-    color: var(--gs-emerald);
+    color: var(--gs-cyan);
     transition: transform 0.15s ease;
     display: inline-block;
   }
@@ -457,7 +458,7 @@ const orderedKinds = [
   }
 
   .scenario-contracts summary:hover {
-    color: var(--gs-emerald);
+    color: var(--gs-cyan);
   }
 
   .scenario-contracts ul {
@@ -481,7 +482,7 @@ const orderedKinds = [
     position: absolute;
     left: 0;
     top: 0;
-    color: var(--gs-emerald) !important;
+    color: var(--gs-cyan) !important;
     font-size: 0.85em !important;
     opacity: 0.8;
   }
@@ -515,15 +516,15 @@ const orderedKinds = [
   }
 
   .copy-btn:hover {
-    color: var(--gs-emerald);
-    border-color: var(--gs-emerald);
-    background: var(--gs-emerald-low);
+    color: var(--gs-cyan);
+    border-color: var(--gs-cyan);
+    background: var(--gs-cyan-low);
   }
 
   .copy-btn.copied {
     color: var(--gs-paper);
-    background: var(--gs-emerald);
-    border-color: var(--gs-emerald);
+    background: var(--gs-cyan);
+    border-color: var(--gs-cyan);
   }
 
   .empty-state {
@@ -546,7 +547,7 @@ const orderedKinds = [
     font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 0.18em;
-    color: var(--gs-emerald);
+    color: var(--gs-cyan);
     margin-bottom: 1rem;
   }
 </style>
