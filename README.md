@@ -52,10 +52,10 @@ state every run), so the tests built on top are deterministic too.
    anything from "single staged file" to "three-way nested submodule
    mid-rebase."
 
-> **Status: v0.5.0.** Extracted from [`gfargo/coco`](https://github.com/gfargo/coco)
+> **Status: v0.6.0.** Extracted from [`gfargo/coco`](https://github.com/gfargo/coco)
 > where it lived as an internal test helper. Now a standalone npm
-> package with 27 curated scenarios, 50+ composable atoms, dual
-> CJS/ESM output, a Jest framework adapter, and programmatic
+> package with 32 curated scenarios, 60+ composable atoms, dual
+> CJS/ESM output, Jest + Vitest framework adapters, and programmatic
 > scenario registration. API is at 0.x — minor breaking changes
 > possible until v1.0.
 
@@ -168,13 +168,18 @@ await chain(
 // repo is now mid-merge with src/widget.ts conflicted, origin set
 ```
 
-## Jest framework adapter
+## Jest + Vitest framework adapters
 
-The `@gfargo/git-scenarios/jest` subpath export provides zero-boilerplate
-scenario setup for Jest tests:
+The `@gfargo/git-scenarios/jest` and `@gfargo/git-scenarios/vitest`
+subpath exports provide zero-boilerplate scenario setup for tests.
+Both adapters expose the same surface — pick the one matching your
+test framework:
 
 ```ts
+// Jest:
 import { describeWithScenario } from '@gfargo/git-scenarios/jest'
+// Vitest:
+import { describeWithScenario } from '@gfargo/git-scenarios/vitest'
 
 describeWithScenario('feature-pr-ready', (getRepo) => {
   it('is on a feature branch', async () => {
@@ -463,7 +468,7 @@ git-scenarios/
 
 ## Available scenarios
 
-Run `git-scenarios list` for the live list. Current set (**27 scenarios across 6 kinds**):
+Run `git-scenarios list` for the live list. Current set (**32 scenarios across 6 kinds**):
 
 | Name | Kind | What you get |
 |---|---|---|
@@ -480,7 +485,10 @@ Run `git-scenarios list` for the live list. Current set (**27 scenarios across 6
 | `branch-sync-showcase` | branch | five local branches in five different upstream sync states (behind, ahead, diverged, synced, no-upstream); HEAD on the behind branch. |
 | `detached-head` | branch | HEAD detached at `main~2`, `main` still at its original tip |
 | `signed-commits-required` | branch | `commit.gpgsign=true` + `user.signingkey` set — for testing signing-aware UI |
+| `orphan-branch` | branch | `main` + `gh-pages` orphan branch with no shared history |
 | `single-staged-file` | worktree | baseline + 1 staged README — minimum "ready to commit" shape |
+| `partial-stage` | worktree | 2 staged + 2 unstaged + 1 untracked — the "mixed worktree" shape |
+| `monorepo-multi-package` | worktree | workspaces monorepo: app (clean), lib (staged), cli (unstaged) |
 | `dirty-many-files` | worktree | 12 staged + 6 unstaged + 3 untracked files across `src/`, `tests/`, `docs/` |
 | `multiple-worktrees` | worktree | primary worktree on `main` + 3 linked worktrees on `feat/alpha`, `feat/beta`, `hotfix/urgent` |
 | `mid-bisect` | operation | 20 commits + active `git bisect`, HEAD at midpoint |
@@ -488,11 +496,13 @@ Run `git-scenarios list` for the live list. Current set (**27 scenarios across 6
 | `mid-rebase-conflict` | operation | in-progress rebase with 1 unresolved conflict on `src/config.ts` |
 | `mid-cherry-pick-conflict` | operation | in-progress cherry-pick with 1 unresolved conflict on `src/utils.ts` |
 | `mid-revert-conflict` | operation | in-progress revert with 1 unresolved conflict on `src/service.ts` |
+| `merge-no-conflict` | history | a successful `--no-ff` merge of `feat/x` into `main`, fully committed (2-parent commit at HEAD) |
 | `rich-history-graph` | history | 20+ commits across 6 date buckets, 2 `--no-ff` merges, 1 live unmerged `feat/wip` |
 | `chip-rendering-showcase` | history | 6 commits each carrying a different branch-tip-chip kind (HEAD, local, slashy, remote, upstream, tag) |
 | `shallow-clone` | history | 10 commits but only 4 reachable from HEAD (`.git/shallow` set) — for testing shallow-repo detection |
 | `large-repo` | history | 115 commits across 3 branches with 3 tags (`v0.1.0`, `v0.5.0`, `v1.0.0`) — for pagination/performance testing |
 | `stashed-changes` | stash | clean `main` + 3 stashes (LIFO ordered, each touching a distinct file) |
+| `stash-with-untracked` | stash | one stash containing both modified tracked + untracked new files |
 | `submodule-with-history` | submodule | parent with 4 commits + `vendor/lib` submodule (clean pin, 4 commits, `branch = main`) |
 
 `git-scenarios describe <name>` prints the full description and the
@@ -503,13 +513,20 @@ contract assertions for a single scenario.
 ```bash
 # Outside coco (after `npm install --save-dev @gfargo/git-scenarios`):
 npx git-scenarios list                                                  # show all scenarios grouped by kind
+npx git-scenarios list --kind operation                                 # filter by kind
+npx git-scenarios list --tag conflict                                   # filter by tag
+npx git-scenarios list --json                                           # machine-readable
 npx git-scenarios describe feature-pr-ready                             # one-scenario detail
+npx git-scenarios describe feature-pr-ready --json                      # machine-readable
 npx git-scenarios create feature-pr-ready                               # materialize in /tmp
 npx git-scenarios create feature-pr-ready --path ~/sandbox/widget       # custom location
 npx git-scenarios create feature-pr-ready --run "lazygit"               # launch any tool against it
 npx git-scenarios create feature-pr-ready --ephemeral                   # auto-clean on exit
 npx git-scenarios create rich-history-graph \
   --run "lazygit" --remote git@github.com:org/repo.git                  # add an origin first
+npx git-scenarios clean                                                 # remove stale scenario dirs in /tmp
+npx git-scenarios clean --dry-run                                       # preview without removing
+npx git-scenarios clean --older-than 24                                 # only dirs older than 24 hours
 
 # Inside coco's monorepo, `npm run scenario` is wired as a shortcut:
 npm run scenario list
@@ -525,6 +542,9 @@ npm run scenario create feature-pr-ready -- --run-ui                    # `--run
 | `--run-ui` | Coco-monorepo back-compat alias — spawns coco's source-tree CLI (`tsx <coco>/src/index.ts ui`) against the scenario dir. External consumers use `--run "coco ui"` (or any other shell command) instead. |
 | `--remote <url>` | Add `origin` pointing at `<url>` so gh-aware tools detect a remote on launch. Pass any gh-shaped URL. Use a real one to render the tool's views with live data; use a fake one to render against an empty / unauthenticated remote (no risk of accidental destructive actions). Without this flag the scenario repo is a bare `git init` with no remote. |
 | `--ephemeral` | Auto-clean the temp dir on CLI exit. Skip for normal use — without `--ephemeral`, the dir persists so you can re-inspect after the launched tool quits. |
+| `--kind <k>` | (`list` only) Filter by scenario kind: `branch`, `worktree`, `operation`, `history`, `stash`, `submodule`. |
+| `--tag <t>` | (`list` only) Filter by tag inclusion. Combine with `--kind` (AND semantics). Example: `git-scenarios list --kind stash --tag untracked`. |
+| `--json` | (`list` and `describe`) Emit machine-readable JSON. Each list entry includes `name`, `summary`, `kind`, `tags`, `contracts`. |
 
 ### Cleanup
 
@@ -547,7 +567,7 @@ rm -rf $(ls -d /var/folders/**/coco-git-test-* 2>/dev/null)
 
 ## Programmatic API (integration tests)
 
-### `spinUpScenario(name)`
+### `spinUpScenario(name, options?)`
 
 The single import point for tests. Returns a `TempGitRepo` already
 brought into the named state:
@@ -557,6 +577,17 @@ import { spinUpScenario } from '@gfargo/git-scenarios'
 
 const repo = await spinUpScenario('feature-pr-ready')
 // repo is on feat/widget-v2, 4 commits ahead of main, clean worktree
+```
+
+Optional `options` bag (all fields optional):
+
+```ts
+const repo = await spinUpScenario('feature-pr-ready', {
+  // Auto-clean on process exit (safety net for tests that crash):
+  autoCleanup: true,
+  // Add an origin remote after setup (useful for gh-aware tooling):
+  remote: 'git@github.com:org/repo.git',
+})
 ```
 
 Throws if the name doesn't match a registered scenario — typos
@@ -569,6 +600,8 @@ type TempGitRepo = {
   path: string                                          // absolute filesystem path
   git: SimpleGit                                        // simple-git instance bound to path
   writeFile: (path: string, content: string) => Promise<void>
+  readFile: (path: string) => Promise<string>
+  exists: (path: string) => Promise<boolean>
   commitAll: (message: string) => Promise<void>
   cleanup: () => Promise<void>
 }
@@ -581,6 +614,10 @@ type TempGitRepo = {
   already set. Use for any git command in your test.
 - **`writeFile(rel, content)`** — write to a path relative to the
   repo root. Parent directories created automatically.
+- **`readFile(rel)`** — read utf-8 content from a repo-relative path.
+  Throws on missing file.
+- **`exists(rel)`** — check whether a file or directory exists at
+  the given repo-relative path.
 - **`commitAll(message)`** — `git add . && git commit -m <message>`
   in one call. Convenience for the common case.
 - **`cleanup()`** — `rm -rf` the temp dir. Call in `afterAll` /
@@ -696,9 +733,10 @@ const repo = await spinUpScenario('my-monorepo-dirty')
 | `registerScenarios(scenarios)` | Batch registration. |
 | `unregisterScenario(name)` | Remove by name (returns `true`/`false`). |
 | `listRegistered()` | All scenarios (built-in + custom). |
-| `findRegistered(name)` | Lookup by name. |
+| `findRegistered(name)` | Lookup by name. O(1). |
+| `findRegisteredByTag(tags, match?)` | Filter by tag (`'any'` or `'all'` matching). Searches built-in + custom. |
 | `resetRegistry()` | Restore to built-in-only (useful in test teardown). |
-| `findScenariosByTag(tags, match?)` | Filter by tag (`'any'` or `'all'` matching). |
+| `findScenariosByTag(tags, match?)` | Like `findRegisteredByTag` but only searches built-ins. |
 
 ## Atoms — compose any repo state from building blocks
 
@@ -760,10 +798,12 @@ The atom signature is uniform: every atom returns a `Step`,
 | Atom | What it does |
 |---|---|
 | `stageFiles(...paths)` | `git add .` (no args) or `git add <paths>`. |
+| `unstageFiles(...paths)` | Inverse of `stageFiles`. With no args resets the index (`git reset`); with paths uses `git restore --staged`. Enables partial-stage scenarios. |
 | `commit(message, { date? })` | Commit the staged set. Doesn't stage. |
 | `addCommit({ message, files?, date? })` | Workhorse: write + stage all + commit. |
 | `emptyCommit(message, { date? })` | `--allow-empty` commit. |
 | `amendCommit({ message? })` | `--amend` the last commit. |
+| `bulkCommits(specs)` | Fast-path for N commits. ~30% faster than `chain(...specs.map(addCommit))` for 50+ commit scenarios. Specs without `files` are committed `--allow-empty`. |
 
 Every commit-producing atom accepts an optional `date` (any
 `GIT_AUTHOR_DATE`-compatible ISO string). Pair with `daysAgo(n)` for
@@ -813,11 +853,14 @@ relative-time scenarios.
 
 | Atom | What it does |
 |---|---|
-| `startMerge(branch, { allowConflict?, noFastForward?, message?, date? })` | Merge — conflicts leave the repo mid-merge by default. |
+| `startMerge(branch, { allowConflict?, noFastForward?, squash?, message?, date? })` | Merge — conflicts leave the repo mid-merge by default. `squash: true` produces a staged squash without a merge commit (caller commits to finalize). |
 | `abortMerge()` | `git merge --abort`. |
 | `cherryPick(ref, { allowConflict?, date? })` | Cherry-pick — conflicts leave mid-cherry-pick by default. |
 | `abortCherryPick()` | `git cherry-pick --abort`. |
+| `continueCherryPick()` | `git cherry-pick --continue` (after resolving conflicts). |
 | `revert(ref, { mainline?, allowConflict?, date? })` | Revert a commit (use `mainline` for merge commits). |
+| `abortRevert()` | `git revert --abort`. |
+| `continueRevert()` | `git revert --continue` (after resolving conflicts). |
 | `startRebase(onto, { allowConflict? })` | Rebase current branch onto a ref — conflicts leave mid-rebase by default. |
 | `abortRebase()` | `git rebase --abort`. |
 | `continueRebase()` | `git rebase --continue` (after resolving conflicts). |
@@ -890,6 +933,19 @@ relative-time scenarios.
 |---|---|
 | `installHook(name, script)` | Write an executable hook script to `.git/hooks/<name>`. |
 | `removeHook(name)` | Remove a hook script. |
+
+#### Working tree cleanup
+
+| Atom | What it does |
+|---|---|
+| `gitClean({ directories?, force?, ignored? })` | `git clean -f` (force defaults to true). With `directories: true` adds `-d`; with `ignored: true` adds `-x`. |
+
+#### Git meta files
+
+| Atom | What it does |
+|---|---|
+| `writeGitignore(patterns)` | Convenience over `writeFiles`. Accepts a string array or pre-formatted string. Does NOT stage. |
+| `writeGitattributes(rules)` | Same shape as `writeGitignore` but writes to `.gitattributes`. |
 
 ### Worked example: "out-of-date submodule"
 
