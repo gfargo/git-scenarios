@@ -51,6 +51,7 @@ export { deleteFiles } from './deleteFiles'
 export { renameFile } from './renameFile'
 export { stageFiles, commit } from './staging'
 export { addCommit } from './addCommit'
+export { emptyCommit, amendCommit } from './commits'
 export { switchToBranch, checkoutBranch, createBranch, deleteBranch } from './branches'
 export { createTag, deleteTag } from './tags'
 export { addRemote, removeRemote, renameRemote } from './remotes'
@@ -66,8 +67,6 @@ export {
   bisectStep,
   resetBisect,
   resetTo,
-  emptyCommit,
-  amendCommit,
 } from './operations'
 export { startRebase, abortRebase, continueRebase } from './rebase'
 export { addSubmodule, pinSubmodule } from './submodule'
