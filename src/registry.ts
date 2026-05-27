@@ -22,16 +22,24 @@
  *
  *   // Now available via spinUpScenario('my-custom-scenario')
  *   // and in the CLI: git-scenarios create my-custom-scenario
+ *
+ * Internal storage uses a Map keyed by name for O(1) lookup. The
+ * insertion order is preserved (Map iteration order matches insertion),
+ * so `listRegistered()` returns scenarios in the order they were
+ * added — built-ins first (in the order defined in scenarios/index.ts),
+ * then any custom ones in registration order.
  */
 
 import type { Scenario } from './scenarios/types'
 import { allScenarios } from './scenarios'
 
 /**
- * Internal mutable registry. Starts with the built-in scenarios and
- * grows as consumers register custom ones.
+ * Internal mutable registry. Map for O(1) lookup by name; insertion
+ * order is preserved for `listRegistered()`.
  */
-const registry: Scenario[] = [...allScenarios]
+const registry = new Map<string, Scenario>(
+  allScenarios.map((s) => [s.name, s] as const),
+)
 
 /**
  * Register a custom scenario. The scenario becomes available via
@@ -43,14 +51,13 @@ const registry: Scenario[] = [...allScenarios]
  * @param scenario - A validated scenario (use `defineScenario()` to create one)
  */
 export function registerScenario(scenario: Scenario): void {
-  const existing = registry.find((s) => s.name === scenario.name)
-  if (existing) {
+  if (registry.has(scenario.name)) {
     throw new Error(
       `registerScenario: a scenario named "${scenario.name}" is already registered. ` +
-      `Use a different name or call unregisterScenario("${scenario.name}") first.`
+      `Use a different name or call unregisterScenario("${scenario.name}") first.`,
     )
   }
-  registry.push(scenario)
+  registry.set(scenario.name, scenario)
 }
 
 /**
@@ -73,26 +80,23 @@ export function registerScenarios(scenarios: Scenario[]): void {
  * them with custom versions).
  */
 export function unregisterScenario(name: string): boolean {
-  const index = registry.findIndex((s) => s.name === name)
-  if (index === -1) return false
-  registry.splice(index, 1)
-  return true
+  return registry.delete(name)
 }
 
 /**
  * List all registered scenarios (built-in + custom). Returns a
- * read-only view of the registry.
+ * read-only view of the registry in insertion order.
  */
 export function listRegistered(): readonly Scenario[] {
-  return registry
+  return Array.from(registry.values())
 }
 
 /**
  * Find a registered scenario by name. Searches both built-in and
- * custom scenarios.
+ * custom scenarios. O(1) lookup.
  */
 export function findRegistered(name: string): Scenario | undefined {
-  return registry.find((s) => s.name === name)
+  return registry.get(name)
 }
 
 /**
@@ -108,13 +112,15 @@ export function findRegisteredByTag(
   tags: string[],
   match: 'any' | 'all' = 'any',
 ): readonly Scenario[] {
-  return registry.filter((s) => {
-    if (!s.tags || s.tags.length === 0) return false
-    if (match === 'all') {
-      return tags.every((t) => s.tags!.includes(t))
-    }
-    return tags.some((t) => s.tags!.includes(t))
-  })
+  const result: Scenario[] = []
+  for (const s of registry.values()) {
+    if (!s.tags || s.tags.length === 0) continue
+    const ok = match === 'all'
+      ? tags.every((t) => s.tags!.includes(t))
+      : tags.some((t) => s.tags!.includes(t))
+    if (ok) result.push(s)
+  }
+  return result
 }
 
 /**
@@ -122,6 +128,8 @@ export function findRegisteredByTag(
  * teardown to avoid leaking custom registrations between tests.
  */
 export function resetRegistry(): void {
-  registry.length = 0
-  registry.push(...allScenarios)
+  registry.clear()
+  for (const s of allScenarios) {
+    registry.set(s.name, s)
+  }
 }
