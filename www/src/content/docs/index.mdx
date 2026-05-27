@@ -1,35 +1,52 @@
 ---
-title: git-scenarios
-description: Spin up real git repositories in any state, deterministically. Composable atoms for merge conflicts, submodules, remotes, and more.
+title: git-scenarios — real git repos, any state, one line of code
+description: Spin up real git repositories in any state, deterministically. Composable atoms for merge conflicts, submodules, remotes, in-progress operations, monorepos, orphan branches, and more.
 template: splash
 hero:
-  tagline: "Real git repos. Any state. One line of code. Composable atoms for merge conflicts, submodules, remotes, in-progress operations — for tests, demos, and tool development."
-  image:
-    file: ../../assets/logo-dark.svg
-    alt: "git-scenarios logo — a git commit graph with branching nodes in cyan, violet, and emerald"
-  actions:
-    - text: Get Started →
-      link: /docs/introduction
-      icon: right-arrow
-      variant: primary
-    - text: GitHub
-      link: https://github.com/gfargo/git-scenarios
-      icon: external
+  tagline: ""
+  actions: []
 ---
 
 import { Card, CardGrid, Code } from '@astrojs/starlight/components';
+import HeroPlumbing from '../../components/HeroPlumbing.astro';
 
-## Install in seconds
+<HeroPlumbing />
 
-<Code code="npm install --save-dev @gfargo/git-scenarios simple-git" lang="bash" />
+## CHAPTER · I
 
-:::tip[New in v0.6 — May 2026]
-5 new scenarios (`partial-stage`, `monorepo-multi-package`, `merge-no-conflict`, `orphan-branch`, `stash-with-untracked`), Vitest adapter, CLI `--json` / `--kind` / `--tag` filters, lifecycle-completion atoms, and more. [See the release notes →](/docs/changelog)
-:::
+### What it is
 
-## The problem
+Every git tool — TUI, IDE, CLI, linter, formatter, AI assistant — behaves differently against different repo states. Testing those behaviors well means starting from real repositories in carefully-constructed states. `@gfargo/git-scenarios` is the typed, composable kit for producing those states deterministically.
 
-Every git tool — TUIs, IDEs, CLIs, linters — behaves differently against different repo states. Testing those behaviors means:
+It ships in three layers, increasingly inline:
+
+```ts
+// 1. Named scenario — the one-liner
+const repo = await spinUpScenario('mid-merge-conflict')
+
+// 2. Scenario + custom atoms on top
+const repo = await fromScenario('feature-pr-ready',
+  addCommit({ message: 'extra', files: { 'x.ts': 'x' } }),
+)
+
+// 3. Compose your own from primitives
+const repo = await createTempGitRepo()
+await chain(
+  addCommit({ message: 'base', files: { 'x.ts': 'base\n' } }),
+  switchToBranch('feat/theirs'),
+  addCommit({ message: 'theirs', files: { 'x.ts': 'theirs\n' } }),
+  switchToBranch('main'),
+  addCommit({ message: 'ours', files: { 'x.ts': 'ours\n' } }),
+  startMerge('feat/theirs'),
+)(repo)
+// repo is mid-merge with src/x.ts conflicted
+```
+
+Every scenario produces byte-identical state every run. Tests built on top are deterministic too — no flake from clock-drift or hash variance.
+
+## CHAPTER · II
+
+### The problem it replaces
 
 <CardGrid>
   <Card title="Hand-rolled setup" icon="pencil">
@@ -46,91 +63,77 @@ Every git tool — TUIs, IDEs, CLIs, linters — behaves differently against dif
   </Card>
 </CardGrid>
 
-## The solution
+## CHAPTER · III
 
-`@gfargo/git-scenarios` gives you **real git repos** in **any state** with **one line of code**:
-
-```ts
-import { spinUpScenario } from '@gfargo/git-scenarios'
-
-// One line — real repo, real refs, real worktree
-const repo = await spinUpScenario('mid-merge-conflict')
-// repo is mid-merge with src/widget.ts conflicted, MERGE_HEAD set
-```
-
-Or compose your own state from atoms:
-
-```ts
-import { chain, addCommit, switchToBranch, startMerge, createTempGitRepo } from '@gfargo/git-scenarios'
-
-const repo = await createTempGitRepo()
-await chain(
-  addCommit({ message: 'base', files: { 'x.ts': 'base\n' } }),
-  switchToBranch('feat/theirs'),
-  addCommit({ message: 'theirs', files: { 'x.ts': 'theirs\n' } }),
-  switchToBranch('main'),
-  addCommit({ message: 'ours', files: { 'x.ts': 'ours\n' } }),
-  startMerge('feat/theirs'),
-)(repo)
-```
-
-## What you get
+### What's in the box
 
 <CardGrid stagger>
   <Card title="32 curated scenarios" icon="list-format">
-    Branch states, merge/rebase/cherry-pick/revert conflicts, bisect, stash, worktrees, submodules, shallow clones, monorepos, orphan branches, large histories. All deterministic. [Browse all →](/docs/scenarios/overview)
+    Branch states, merge / rebase / cherry-pick / revert conflicts, bisect, stash, worktrees, submodules, shallow clones, monorepos, orphan branches, large histories. All deterministic. [Browse them →](/docs/scenarios/browse)
   </Card>
   <Card title="60+ composable atoms" icon="puzzle">
-    Build any git state from small, typed building blocks. `chain()` them together. Write your own — they're just functions. [Atom reference →](/docs/atoms/overview)
+    Build any state from typed building blocks — `chain()`, `addCommit`, `startMerge`, `withAuthor`, `insideSubmodule`, more. Write your own; they're just functions. [Atom reference →](/docs/atoms/overview)
   </Card>
-  <Card title="Jest + Vitest adapters" icon="seti:jest">
-    `describeWithScenario('name', (getRepo) => { ... })` — zero-boilerplate test setup with automatic cleanup. Works in both frameworks. [Setup guide →](/docs/guides/jest-adapter)
+  <Card title="Jest & Vitest adapters" icon="seti:jest">
+    `describeWithScenario('name', (getRepo) => { … })` — zero-boilerplate setup with automatic cleanup. Identical surface in both frameworks. [Setup guide →](/docs/guides/jest-adapter)
   </Card>
   <Card title="Tool-agnostic CLI" icon="terminal">
-    `npx git-scenarios create mid-merge-conflict --run "lazygit"` — materialize any scenario and launch your tool against it. JSON output and tag/kind filters too. [CLI docs →](/docs/guides/cli)
+    `git-scenarios create mid-merge-conflict --run "lazygit"` — materialize any scenario and launch any tool against it. JSON output and tag/kind filters too. [CLI docs →](/docs/guides/cli)
   </Card>
   <Card title="Custom registration" icon="add-document">
-    `registerScenario(myScenario)` — your custom scenarios work with `spinUpScenario`, `fromScenario`, and the CLI. [Learn more →](/docs/guides/custom-scenarios)
+    `registerScenario(myScenario)` — your custom states work everywhere built-ins do. [Define your own →](/docs/guides/custom-scenarios)
   </Card>
-  <Card title="Dual CJS/ESM" icon="setting">
+  <Card title="Dual CJS / ESM" icon="setting">
     Ships both formats. Use `import` or `require` — both work. TypeScript-first with full type declarations. [Install →](/docs/installation)
   </Card>
 </CardGrid>
 
-## Quick CLI demo
+## CHAPTER · IV
+
+### A small CLI tour
 
 ```bash
 # Spin up a merge conflict, launch lazygit against it
 npx git-scenarios create mid-merge-conflict --run "lazygit"
 
-# List all 32 scenarios
-npx git-scenarios list
-
-# Filter by kind or tag
+# Filter the catalogue
 npx git-scenarios list --kind operation
 npx git-scenarios list --tag conflict --json
 
 # Describe a specific scenario's contracts
 npx git-scenarios describe feature-pr-ready
+
+# Persist a scenario for hand-poking
+npx git-scenarios create monorepo-multi-package --path ~/sandbox
 ```
 
-## Built for tool authors
+## CHAPTER · V
 
-Originally extracted from [coco](https://github.com/gfargo/coco), an AI-powered git CLI/TUI with 16 specialized views. Every view needed deterministic git states to test against. After writing the same `git init` + `writeFile` + `commit` setup 47 times, the scenario library was born.
+### Origins
 
-Now it's a standalone package for anyone building git tools — TUIs, IDE extensions, CLI utilities, linters, formatters, or anything that reads repo state.
+Originally extracted from [coco](https://github.com/gfargo/coco), an AI-powered git CLI/TUI with sixteen specialised views. Every view needed deterministic git states to test against. After writing the same `git init` → `writeFile` → `commit` setup forty-seven times, the scenario library was born.
+
+Now it stands alone — for anyone building git tools, IDE extensions, CLI utilities, linters, formatters, AI assistants, or any program that reads repo state.
+
+:::tip[New in v0.6 · May 2026]
+Five new scenarios (`partial-stage`, `monorepo-multi-package`, `merge-no-conflict`, `orphan-branch`, `stash-with-untracked`), the Vitest adapter, CLI `--json` / `--kind` / `--tag` filters, lifecycle-completion atoms, and more. [Read the release notes →](/docs/changelog)
+:::
+
+## COLOPHON
+
+### Where to next
 
 <CardGrid>
-  <Card title="Read the docs" icon="open-book">
-    [Get started →](/docs/introduction)
+  <Card title="Get started" icon="open-book">
+    [The quick-start guide →](/docs/quick-start)
   </Card>
   <Card title="Browse scenarios" icon="list-format">
-    [Filter & search 32 →](/docs/scenarios/browse)
+    [Filter & search the catalogue →](/docs/scenarios/browse)
   </Card>
-  <Card title="Atom reference" icon="puzzle">
-    [60+ atoms →](/docs/atoms/overview)
+  <Card title="Architecture" icon="setting">
+    [How it's layered →](/docs/architecture)
   </Card>
-  <Card title="Source code" icon="github">
+  <Card title="Source" icon="github">
     [GitHub →](https://github.com/gfargo/git-scenarios)
   </Card>
 </CardGrid>

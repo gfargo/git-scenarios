@@ -1,20 +1,23 @@
 ---
 /**
- * Custom SiteTitle — renders the default title/logo plus inline nav links.
- * Uses display:contents so the nav participates in the parent header's
- * flex layout without creating an extra wrapper.
+ * Custom SiteTitle — wraps Starlight's default title/logo lockup with
+ * an inline nav rail. Uses `display: contents` so the nav joins the
+ * parent header's flex flow without an extra wrapper.
+ *
+ * The "$" prompt prefix and "_" cursor on the title come from the
+ * global custom.css so they hold up across both themes.
  */
 import Default from '@astrojs/starlight/components/SiteTitle.astro'
 ---
 
 <div class="site-title-with-nav">
   <Default {...Astro.props}><slot /></Default>
-  <nav class="header-nav-links" aria-label="Main navigation">
-    <a href="/docs/introduction">Docs</a>
-    <a href="/docs/quick-start">Quick Start</a>
-    <a href="/docs/scenarios/overview">Scenarios</a>
-    <a href="/docs/atoms/overview">Atoms</a>
-    <a href="/docs/guides/cli">CLI</a>
+  <nav class="header-nav-links" aria-label="Primary navigation">
+    <a href="/docs/quick-start">quick&nbsp;start</a>
+    <a href="/docs/scenarios/browse">browse</a>
+    <a href="/docs/atoms/overview">atoms</a>
+    <a href="/docs/architecture">architecture</a>
+    <a href="/docs/changelog">changelog</a>
   </nav>
 </div>
 
@@ -26,27 +29,59 @@ import Default from '@astrojs/starlight/components/SiteTitle.astro'
   .header-nav-links {
     display: flex;
     align-items: center;
-    gap: 0.15rem;
-    margin-left: 1.25rem;
-    font-family: var(--sl-font-system-mono);
-    font-size: 0.75rem;
+    gap: 0.05rem;
+    margin-left: 2rem;
+    font-family: var(--gs-mono, var(--sl-font-system-mono));
+    font-size: 0.74rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
   }
 
   .header-nav-links a {
     color: var(--sl-color-gray-3);
     text-decoration: none;
-    padding: 0.3rem 0.5rem;
-    border-radius: 4px;
+    padding: 0.4rem 0.7rem;
     white-space: nowrap;
-    transition: color 0.15s ease, background 0.15s ease;
+    position: relative;
+    transition: color 0.15s ease;
   }
 
-  .header-nav-links a:hover {
-    color: var(--sl-color-white);
-    background: var(--sl-color-gray-6);
+  /* Subtle dot separator between links — replaces background hover */
+  .header-nav-links a + a::before {
+    content: '·';
+    position: absolute;
+    left: -0.18rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gs-rule-strong, var(--sl-color-gray-5));
+    pointer-events: none;
   }
 
-  @media (max-width: 50rem) {
+  .header-nav-links a:hover,
+  .header-nav-links a:focus-visible {
+    color: var(--gs-emerald, var(--sl-color-accent));
+  }
+
+  /* Tiny emerald underline that animates in on hover */
+  .header-nav-links a::after {
+    content: '';
+    position: absolute;
+    left: 0.7rem;
+    right: 0.7rem;
+    bottom: 0.18rem;
+    height: 1px;
+    background: var(--gs-emerald, var(--sl-color-accent));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.2s ease;
+  }
+
+  .header-nav-links a:hover::after,
+  .header-nav-links a:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  @media (max-width: 60rem) {
     .header-nav-links {
       display: none;
     }
@@ -54,7 +89,7 @@ import Default from '@astrojs/starlight/components/SiteTitle.astro'
 </style>
 
 <style is:global>
-  /* Ensure the header's title area grows to push search/actions to the right */
+  /* Make the title area grow so search + actions stay right-aligned */
   header.header .title-wrapper,
   header.header [data-sl-title] {
     flex-grow: 1 !important;
