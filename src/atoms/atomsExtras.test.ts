@@ -3,27 +3,27 @@ import { tmpdir } from 'os'
 import { join } from 'path'
 import { createTempGitRepo, type TempGitRepo } from '../tempGitRepo'
 import {
-  abortCherryPick,
-  addCommit,
-  addRemote,
-  addWorktree,
-  applyStash,
-  bisectStep,
-  chain,
-  checkoutBranch,
-  cherryPick,
-  daysAgo,
-  deleteBranch,
-  deleteTag,
-  pinSubmodule,
-  removeRemote,
-  removeWorktree,
-  resetBisect,
-  revert,
-  setConfig,
-  startMerge,
-  switchToBranch,
-  withAuthor,
+    abortCherryPick,
+    addCommit,
+    addRemote,
+    addWorktree,
+    applyStash,
+    bisectStep,
+    chain,
+    checkoutBranch,
+    cherryPick,
+    daysAgo,
+    deleteBranch,
+    deleteTag,
+    pinSubmodule,
+    removeRemote,
+    removeWorktree,
+    resetBisect,
+    revert,
+    setConfig,
+    startMerge,
+    switchToBranch,
+    withAuthor,
 } from './'
 
 async function withRepo(callback: (repo: TempGitRepo) => Promise<void>): Promise<void> {
@@ -165,7 +165,7 @@ describe('withAuthor', () => {
       await addCommit({ message: 'feat: default', files: { 'b.ts': 'b' } })(repo)
 
       const log = await repo.git.log()
-      expect(log.all[0].author_name).toBe('Coco Test') // most recent
+      expect(log.all[0].author_name).toBe('Git Scenarios Test') // most recent
       expect(log.all[1].author_name).toBe('Alice')
     })
   })
@@ -194,7 +194,7 @@ describe('withAuthor', () => {
       expect(authors[0]).toBe('Carol')
       expect(authors[1]).toBe('Bob')
       expect(authors[2]).toBe('Alice')
-      expect(authors[3]).toBe('Coco Test') // init
+      expect(authors[3]).toBe('Git Scenarios Test') // init
     })
   })
 
@@ -411,7 +411,7 @@ describe('composition (real-world scenarios)', () => {
       expect(log.total).toBe(4)
       const authors = log.all.map((entry) => entry.author_name)
       // Newest-first.
-      expect(authors).toEqual(['Bob', 'Alice', 'Alice', 'Coco Test'])
+      expect(authors).toEqual(['Bob', 'Alice', 'Alice', 'Git Scenarios Test'])
     })
   })
 
