@@ -961,7 +961,7 @@ html:not([data-has-hero]) .sl-markdown-content h2::before {
    h2 callout above. Removed "git-scenarios" from the ribbon since
    the header already shows the project name — no need to triple it. */
 html:not([data-has-hero]) .content-panel:first-of-type::before {
-  content: 'SHEET 01 · REV. F · drawn by gfargo · 2026·05·27';
+  content: 'SHEET 01 · REV. G · drawn by gfargo · 2026·05·28';
   display: block;
   font-family: var(--gs-mono);
   font-size: 0.62rem;

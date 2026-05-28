@@ -39,7 +39,7 @@ const repo = await spinUpScenario('feature-pr-ready', {
 })
 ```
 
-## Use the Jest or Vitest adapter
+## Use a framework adapter
 
 Even less boilerplate — the adapter handles `beforeAll` / `afterAll` for you:
 
@@ -48,6 +48,12 @@ Even less boilerplate — the adapter handles `beforeAll` / `afterAll` for you:
 import { describeWithScenario } from '@gfargo/git-scenarios/jest'
 // Vitest:
 import { describeWithScenario } from '@gfargo/git-scenarios/vitest'
+// node:test:
+import { describeWithScenario } from '@gfargo/git-scenarios/node-test'
+// Mocha:
+import { describeWithScenario } from '@gfargo/git-scenarios/mocha'
+// AVA (different shape — no describe blocks):
+import { withScenario } from '@gfargo/git-scenarios/ava'
 
 describeWithScenario('feature-pr-ready', (getRepo) => {
   it('detects the feature branch', async () => {

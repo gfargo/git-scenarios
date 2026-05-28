@@ -1,26 +1,32 @@
 ---
-title: Jest & Vitest Adapters
-description: Zero-boilerplate scenario testing with the Jest or Vitest framework adapter.
+title: Test Runner Adapters
+description: Zero-boilerplate scenario testing with Jest, Vitest, node:test, Mocha, or AVA.
 ---
 
-The package ships two framework adapters with the same API. Pick the one that matches your test runner — the rest of your test code stays identical.
+The package ships adapters for every major TypeScript test runner. Each provides zero-boilerplate scenario setup with automatic cleanup — pick the one matching your runner.
+
+## Quick comparison
+
+| Runner | Import | API shape |
+|---|---|---|
+| Jest | `@gfargo/git-scenarios/jest` | `describeWithScenario` + `describeEachScenario` |
+| Vitest | `@gfargo/git-scenarios/vitest` | `describeWithScenario` + `describeEachScenario` |
+| node:test | `@gfargo/git-scenarios/node-test` | `describeWithScenario` + `describeEachScenario` + `it` |
+| Mocha | `@gfargo/git-scenarios/mocha` | `describeWithScenario` + `describeEachScenario` |
+| AVA | `@gfargo/git-scenarios/ava` | `withScenario` + `withScenarios` |
+
+The first four share the same `describeWithScenario` pattern. AVA uses a different shape because it has no `describe` blocks.
+
+## Jest / Vitest / node:test / Mocha
+
+All four use the same API — only the import path changes:
 
 ```ts
-// Jest:
+// Pick your runner:
 import { describeWithScenario } from '@gfargo/git-scenarios/jest'
-
-// Vitest:
-import { describeWithScenario } from '@gfargo/git-scenarios/vitest'
-```
-
-Both adapters are thin wrappers that handle scenario setup and teardown automatically — you write only the assertions.
-
-## `describeWithScenario`
-
-Wraps the test framework's `describe` with automatic `beforeAll` (spin up) and `afterAll` (cleanup):
-
-```ts
-import { describeWithScenario } from '@gfargo/git-scenarios/jest'  // or /vitest
+// import { describeWithScenario } from '@gfargo/git-scenarios/vitest'
+// import { describeWithScenario } from '@gfargo/git-scenarios/node-test'
+// import { describeWithScenario } from '@gfargo/git-scenarios/mocha'
 
 describeWithScenario('feature-pr-ready', (getRepo) => {
   it('is on a feature branch', async () => {
@@ -39,7 +45,7 @@ describeWithScenario('feature-pr-ready', (getRepo) => {
 
 The `getRepo()` accessor returns the live `TempGitRepo` instance. Call it inside `it()` blocks.
 
-## Options
+### Options
 
 ```ts
 describeWithScenario('submodule-with-history', (getRepo) => {
@@ -52,12 +58,12 @@ describeWithScenario('submodule-with-history', (getRepo) => {
 })
 ```
 
-## `describeEachScenario`
+### `describeEachScenario`
 
 Run the same tests against multiple scenarios:
 
 ```ts
-import { describeEachScenario } from '@gfargo/git-scenarios/jest'  // or /vitest
+import { describeEachScenario } from '@gfargo/git-scenarios/jest'
 
 describeEachScenario(
   ['feature-pr-ready', 'two-commit-feature', 'multi-commit-branch'],
@@ -71,15 +77,100 @@ describeEachScenario(
 )
 ```
 
-This creates a separate `describe` block for each scenario, with independent setup/teardown.
+### Runner-specific notes
+
+**node:test** — also re-exports `it` for single-import convenience:
+
+```ts
+import { describeWithScenario, it } from '@gfargo/git-scenarios/node-test'
+import assert from 'node:assert/strict'
+
+describeWithScenario('feature-pr-ready', (getRepo) => {
+  it('is on a feature branch', async () => {
+    const repo = getRepo()
+    const status = await repo.git.status()
+    assert.notStrictEqual(status.current, 'main')
+  })
+})
+```
+
+Run with: `node --import tsx --test src/**/*.test.ts`
+
+**Mocha** — timeout is set via `this.timeout(ms)` internally (Mocha's convention). Pass `timeout` in options and the adapter handles it:
+
+```ts
+describeWithScenario('large-repo', (getRepo) => {
+  // ...
+}, { timeout: 120_000 })
+```
+
+## AVA
+
+AVA doesn't have `describe` blocks — tests are flat. The adapter exports `withScenario` which returns a handle for use with AVA's `test.before()` and `test.after.always()`:
+
+```ts
+import test from 'ava'
+import { withScenario } from '@gfargo/git-scenarios/ava'
+
+const scenario = withScenario('feature-pr-ready')
+
+test.before(scenario.setup)
+test.after.always(scenario.cleanup)
+
+test('is on a feature branch', async (t) => {
+  const repo = scenario.getRepo()
+  const status = await repo.git.status()
+  t.not(status.current, 'main')
+})
+
+test('has a clean worktree', async (t) => {
+  const repo = scenario.getRepo()
+  const status = await repo.git.status()
+  t.true(status.isClean())
+})
+```
+
+### With extra steps
+
+```ts
+import { withScenario } from '@gfargo/git-scenarios/ava'
+import { writeFiles } from '@gfargo/git-scenarios/atoms'
+
+const scenario = withScenario('mid-merge-conflict', {
+  extraSteps: [writeFiles({ 'extra.ts': 'extra\n' })],
+})
+```
+
+### Multiple scenarios (`withScenarios`)
+
+```ts
+import test from 'ava'
+import { withScenarios } from '@gfargo/git-scenarios/ava'
+
+const scenarios = withScenarios(['feature-pr-ready', 'two-commit-feature'])
+
+for (const [name, scenario] of Object.entries(scenarios)) {
+  test.before(scenario.setup)
+  test.after.always(scenario.cleanup)
+
+  test(`${name}: has a clean worktree`, async (t) => {
+    const repo = scenario.getRepo()
+    const status = await repo.git.status()
+    t.true(status.isClean())
+  })
+}
+```
+
+### Concurrency note
+
+AVA runs tests concurrently by default. Since all tests in a `withScenario` group share a single repo instance, use `test.serial` if your tests mutate the repo state. If tests are read-only (status checks, log queries), concurrent is fine.
 
 ## Custom scenarios
 
-The adapter searches the full registry, so custom-registered scenarios work too:
+All adapters search the full mutable registry, so custom-registered scenarios work everywhere:
 
 ```ts
 import { registerScenario, defineScenario, chain, addCommit } from '@gfargo/git-scenarios'
-import { describeWithScenario } from '@gfargo/git-scenarios/jest'
 
 registerScenario(defineScenario({
   name: 'my-custom',
@@ -89,49 +180,8 @@ registerScenario(defineScenario({
   setup: chain(addCommit({ message: 'custom', files: { 'x.ts': 'x\n' } })),
 }))
 
-describeWithScenario('my-custom', (getRepo) => {
-  it('works', async () => {
-    const repo = getRepo()
-    const log = await repo.git.log()
-    expect(log.latest?.message).toBe('custom')
-  })
-})
+// Now works in any adapter:
+describeWithScenario('my-custom', (getRepo) => { /* ... */ })
+// or:
+const scenario = withScenario('my-custom')
 ```
-
-## Vitest specifics
-
-The Vitest adapter has the same surface as the Jest adapter — only the import path changes. Vitest's `describe` / `beforeAll` / `afterAll` globals are runtime-resolved through Vitest's own registry, so a separate adapter file keeps the imports clean.
-
-You'll need `vitest` installed in your project (peer-style — the adapter doesn't bundle it):
-
-```bash
-npm install --save-dev vitest @gfargo/git-scenarios simple-git
-```
-
-Then enable globals in your `vitest.config.ts`:
-
-```ts
-import { defineConfig } from 'vitest/config'
-
-export default defineConfig({
-  test: {
-    globals: true,
-  },
-})
-```
-
-Or import explicitly per file:
-
-```ts
-import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { describeWithScenario } from '@gfargo/git-scenarios/vitest'
-```
-
-## Why two adapters instead of one?
-
-Jest and Vitest both provide `describe` / `beforeAll` / `afterAll` at runtime, but they resolve through different module registries — Jest's via `@jest/globals`, Vitest's via the `vitest` package. A single shared adapter would have to do runtime detection or carry both as dependencies.
-
-Two thin adapter files keep:
-- **Imports clean** — no `vitest` dependency for Jest users, no `jest` types for Vitest users.
-- **Behavior aligned** — the surface is identical, so swapping frameworks in your project is one import-line change per test file.
-- **Bundle size minimal** — each adapter is ~30 lines of glue.
