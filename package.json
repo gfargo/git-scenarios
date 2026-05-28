@@ -55,6 +55,11 @@
       "types": "./dist/node-test.d.ts",
       "import": "./dist/node-test.js",
       "require": "./dist/node-test.cjs"
+    },
+    "./ava": {
+      "types": "./dist/ava.d.ts",
+      "import": "./dist/ava.js",
+      "require": "./dist/ava.cjs"
     }
   },
   "bin": {

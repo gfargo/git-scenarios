@@ -11,6 +11,7 @@ export default defineConfig([
       'jest': 'src/jest.ts',
       'vitest': 'src/vitest.ts',
       'node-test': 'src/node-test.ts',
+      'ava': 'src/ava.ts',
     },
     format: ['cjs', 'esm'],
     dts: true,
