@@ -60,6 +60,11 @@
       "types": "./dist/mocha.d.ts",
       "import": "./dist/mocha.js",
       "require": "./dist/mocha.cjs"
+    },
+    "./ava": {
+      "types": "./dist/ava.d.ts",
+      "import": "./dist/ava.js",
+      "require": "./dist/ava.cjs"
     }
   },
   "bin": {
