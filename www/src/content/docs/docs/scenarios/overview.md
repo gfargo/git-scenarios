@@ -90,7 +90,7 @@ const repo = await fromScenario('feature-pr-ready',
   addCommit({ message: 'extra', files: { 'x.ts': 'x\n' } }),
 )
 
-// Via the Jest or Vitest adapter
+// Via any framework adapter (Jest, Vitest, node:test, Mocha)
 describeWithScenario('mid-merge-conflict', (getRepo) => {
   it('has conflicts', async () => {
     const repo = getRepo()

@@ -5,6 +5,29 @@ description: Version history and changelog for @gfargo/git-scenarios.
 
 The full changelog lives in [`CHANGELOG.md`](https://github.com/gfargo/git-scenarios/blob/main/CHANGELOG.md). This page summarizes recent releases.
 
+## v0.7.0 — 2026-05-28
+
+The adapter-family release. Completes test-runner coverage across the TypeScript ecosystem.
+
+### Highlights
+
+- **Three new test-runner adapters** (five total):
+  - `@gfargo/git-scenarios/node-test` — Node.js native test runner. Same `describeWithScenario` surface as Jest/Vitest, plus a re-exported `it`. No external dependencies.
+  - `@gfargo/git-scenarios/mocha` — Mocha framework adapter. Uses runtime-injected globals with `this.timeout(ms)`.
+  - `@gfargo/git-scenarios/ava` — AVA framework adapter. Different shape: `withScenario` returns a handle with `setup` / `cleanup` / `getRepo` for `test.before()` / `test.after.always()`.
+
+### Complete adapter family
+
+| Runner | Subpath | Shape |
+|---|---|---|
+| Jest | `./jest` | `describeWithScenario` + `describeEachScenario` |
+| Vitest | `./vitest` | `describeWithScenario` + `describeEachScenario` |
+| node:test | `./node-test` | `describeWithScenario` + `describeEachScenario` + `it` |
+| Mocha | `./mocha` | `describeWithScenario` + `describeEachScenario` |
+| AVA | `./ava` | `withScenario` + `withScenarios` |
+
+[Full release notes →](https://github.com/gfargo/git-scenarios/releases/tag/v0.7.0)
+
 ## v0.6.0 — 2026-05-27
 
 The audit-and-ship release. Lots of small wins, several bug fixes, two new framework-level capabilities.
