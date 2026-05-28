@@ -24,6 +24,7 @@ import type { Step } from './types'
  * the specified paths will be removed from the working tree but
  * remain in the index and history.
  *
+ * @since git 2.25.0
  * @param paths - Directory paths to include in the sparse checkout
  * @param options.cone - Use cone mode (default: true). Cone mode is
  *   faster and uses directory-based patterns. Set to false for
@@ -46,6 +47,8 @@ export function enableSparseCheckout(
 
 /**
  * Disable sparse checkout, restoring the full working tree.
+ *
+ * @since git 2.25.0
  */
 export function disableSparseCheckout(): Step {
   return async (repo) => {

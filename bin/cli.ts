@@ -324,15 +324,16 @@ async function commandCreate(
 
 /**
  * Find and remove stale git-scenarios temp directories.
- * Looks for directories matching the `coco-git-test-*` pattern in
- * the system temp directory.
+ * Looks for directories matching both `git-scenarios-*` (current) and
+ * `coco-git-test-*` (legacy) patterns in the system temp directory.
  */
 async function commandClean(options: {
   dryRun?: boolean
   olderThanHours?: number
 }): Promise<number> {
   const tmp = tmpdir()
-  const prefix = 'coco-git-test-'
+  const CURRENT_PREFIX = 'git-scenarios-'
+  const LEGACY_PREFIX = 'coco-git-test-'
   const nowMs = Date.now()
   const maxAgeMs = (options.olderThanHours || 0) * 60 * 60 * 1000
 
@@ -345,12 +346,13 @@ async function commandClean(options: {
   }
 
   const scenarioDirs = entries
-    .filter((name) => name.startsWith(prefix))
+    .filter((name) => name.startsWith(CURRENT_PREFIX) || name.startsWith(LEGACY_PREFIX))
     .map((name) => {
       const fullPath = path.join(tmp, name)
+      const isLegacy = name.startsWith(LEGACY_PREFIX)
       try {
         const stat = statSync(fullPath)
-        return { path: fullPath, mtime: stat.mtimeMs, isDir: stat.isDirectory() }
+        return { path: fullPath, mtime: stat.mtimeMs, isDir: stat.isDirectory(), isLegacy }
       } catch {
         return null
       }
@@ -374,7 +376,8 @@ async function commandClean(options: {
 
   for (const dir of scenarioDirs) {
     const age = Math.round((nowMs - dir.mtime) / (60 * 60 * 1000))
-    console.log(`    ${dir.path}  (${age}h old)`)
+    const label = dir.isLegacy ? ' (legacy)' : ''
+    console.log(`    ${dir.path}${label}  (${age}h old)`)
   }
 
   if (options.dryRun) {
@@ -387,14 +390,17 @@ async function commandClean(options: {
   console.log('')
   let removed = 0
   for (const dir of scenarioDirs) {
+    const label = dir.isLegacy ? ' (legacy)' : ''
     try {
       rmSync(dir.path, { recursive: true, force: true })
       removed += 1
+      console.log(`  removing: ${path.basename(dir.path)}${label}`)
     } catch (error) {
       console.error(`  Failed to remove: ${dir.path} — ${(error as Error).message}`)
     }
   }
 
+  console.log('')
   console.log(`  ✓ Removed ${removed} director${removed === 1 ? 'y' : 'ies'}.`)
   console.log('')
   return 0

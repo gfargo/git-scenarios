@@ -2,6 +2,7 @@ import { execFile } from 'child_process'
 import { rm } from 'fs/promises'
 import { join } from 'path'
 import { promisify } from 'util'
+import { GitCommandError } from '../errors'
 import { createTempGitRepo } from '../tempGitRepo'
 import type { Step } from './types'
 
@@ -17,8 +18,8 @@ const execFileAsync = promisify(execFile)
  * fail with "Author identity unknown".
  */
 async function configureSubmoduleClone(submoduleAbsolutePath: string): Promise<void> {
-  await execFileAsync('git', ['config', 'user.name', 'Coco Test'], { cwd: submoduleAbsolutePath })
-  await execFileAsync('git', ['config', 'user.email', 'coco@example.com'], { cwd: submoduleAbsolutePath })
+  await execFileAsync('git', ['config', 'user.name', 'Git Scenarios Test'], { cwd: submoduleAbsolutePath })
+  await execFileAsync('git', ['config', 'user.email', 'test@git-scenarios.dev'], { cwd: submoduleAbsolutePath })
   await execFileAsync('git', ['config', 'commit.gpgsign', 'false'], { cwd: submoduleAbsolutePath })
 }
 
@@ -79,19 +80,29 @@ export function addSubmodule(opts: {
     const source = await createTempGitRepo()
     try {
       await opts.setup(source)
-      await execFileAsync(
-        'git',
-        [
-          '-c',
-          'protocol.file.allow=always',
-          'submodule',
-          'add',
-          ...(opts.branch ? ['-b', opts.branch] : []),
-          source.path,
-          opts.path,
-        ],
-        { cwd: parentRepo.path },
-      )
+      try {
+        await execFileAsync(
+          'git',
+          [
+            '-c',
+            'protocol.file.allow=always',
+            'submodule',
+            'add',
+            ...(opts.branch ? ['-b', opts.branch] : []),
+            source.path,
+            opts.path,
+          ],
+          { cwd: parentRepo.path },
+        )
+      } catch (err: unknown) {
+        const execErr = err as { message?: string; code?: number; stderr?: string }
+        throw new GitCommandError({
+          command: `git submodule add ${opts.path}`,
+          exitCode: typeof execErr.code === 'number' ? execErr.code : 1,
+          stderr: execErr.stderr ?? execErr.message ?? 'unknown error',
+          atomName: 'addSubmodule',
+        })
+      }
       // Set up the submodule clone's per-repo identity + gpgsign config
       // so subsequent commits made inside it (via `insideSubmodule`)
       // don't fall back to the caller's global git config. CI runners
@@ -118,7 +129,7 @@ export function addSubmodule(opts: {
 export function pinSubmodule(path: string, sha: string): Step {
   return async (parentRepo) => {
     await execFileAsync('git', ['checkout', sha], {
-      cwd: `${parentRepo.path}/${path}`,
+      cwd: join(parentRepo.path, path),
     })
     await parentRepo.git.add(path)
   }

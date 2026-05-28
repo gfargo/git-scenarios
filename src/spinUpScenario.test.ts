@@ -3,6 +3,7 @@
  */
 
 import { spinUpScenario } from './spinUpScenario'
+import { ScenarioNotFoundError } from './errors'
 import type { TempGitRepo } from './tempGitRepo'
 
 describe('spinUpScenario', () => {
@@ -20,14 +21,19 @@ describe('spinUpScenario', () => {
 
   it('throws a friendly error for an unknown scenario name', async () => {
     await expect(spinUpScenario('totally-fake-xyz')).rejects.toThrow(
-      /spinUpScenario: Unknown scenario "totally-fake-xyz"/,
+      /Unknown scenario "totally-fake-xyz"/,
     )
   })
 
   it('error includes available scenario names', async () => {
-    await expect(spinUpScenario('totally-fake-xyz')).rejects.toThrow(
-      /feature-pr-ready/,
-    )
+    try {
+      await spinUpScenario('totally-fake-xyz')
+    } catch (err) {
+      expect(err).toBeInstanceOf(ScenarioNotFoundError)
+      const snfErr = err as ScenarioNotFoundError
+      expect(snfErr.scenarioName).toBe('totally-fake-xyz')
+      expect(snfErr.availableScenarios).toContain('feature-pr-ready')
+    }
   })
 
   describe('options', () => {

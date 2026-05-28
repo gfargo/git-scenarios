@@ -32,6 +32,11 @@ const KEBAB_CASE = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/
  *     setup: chain(…),
  *     contracts: ['…'],
  *   })
+ *
+ * @note Scenarios using filenames that differ only in case (e.g.,
+ * `README.md` vs `readme.md`) will not work on case-insensitive
+ * filesystems (macOS HFS+, Windows NTFS). Document this in the
+ * scenario's `description` field.
  */
 export function defineScenario(scenario: Scenario): Scenario {
   if (!scenario.name || !KEBAB_CASE.test(scenario.name)) {

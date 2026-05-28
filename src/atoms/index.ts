@@ -97,3 +97,5 @@ export { shallowAt, unshallow } from './shallowClone'
 export { addNote, appendNote, removeNote } from './notes'
 // Git hooks
 export { installHook, removeHook, type GitHookName } from './hooks'
+// Error wrapping
+export { withGitError } from './withGitError'

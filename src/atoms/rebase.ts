@@ -1,5 +1,6 @@
 import { execFile } from 'child_process'
 import { promisify } from 'util'
+import { requireCommits } from './preconditions'
 import type { Step } from './types'
 
 const execFileAsync = promisify(execFile)
@@ -36,6 +37,7 @@ export function startRebase(
 ): Step {
   const allowConflict = options.allowConflict !== false
   return async (repo) => {
+    await requireCommits(repo, 'startRebase')
     let rebaseError: unknown
     try {
       await repo.git.raw(['rebase', onto])

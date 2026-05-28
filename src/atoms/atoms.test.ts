@@ -2,16 +2,16 @@ import { readFileSync } from 'fs'
 import { join } from 'path'
 import { createTempGitRepo, type TempGitRepo } from '../tempGitRepo'
 import {
-  addCommit,
-  chain,
-  checkoutBranch,
-  commit,
-  repeat,
-  seededFiles,
-  stageFiles,
-  switchToBranch,
-  writeFiles,
-  type Step,
+    addCommit,
+    chain,
+    checkoutBranch,
+    commit,
+    repeat,
+    seededFiles,
+    stageFiles,
+    switchToBranch,
+    writeFiles,
+    type Step,
 } from './'
 
 async function withRepo(callback: (repo: TempGitRepo) => Promise<void>): Promise<void> {
@@ -40,6 +40,18 @@ describe('chain', () => {
     await withRepo(async (repo) => {
       await chain()(repo)
       // No commits, no files — just confirm no throw.
+      const status = await repo.git.status()
+      expect(status.isClean()).toBe(true)
+    })
+  })
+
+  it('resolves without throwing when given an empty array (no-op)', async () => {
+    await withRepo(async (repo) => {
+      const steps: Step[] = []
+      await chain(...steps)(repo)
+      // Repo state is unchanged — no commits, clean worktree.
+      const log = await repo.git.log().catch(() => null)
+      expect(log).toBeNull() // no commits exist, git log throws
       const status = await repo.git.status()
       expect(status.isClean()).toBe(true)
     })

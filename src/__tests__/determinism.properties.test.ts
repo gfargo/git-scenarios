@@ -1,0 +1,128 @@
+/**
+ * Property-based tests for determinism guarantees.
+ *
+ * Property 9: Scenario determinism — two runs of any built-in scenario
+ * that pins timestamps produce identical commit hashes.
+ *
+ * Property 10: seededFiles determinism — same seed + spec produces
+ * byte-identical content across calls.
+ *
+ * Uses fast-check to verify these properties hold across many inputs.
+ */
+
+import * as fc from 'fast-check'
+import { readFileSync } from 'fs'
+import { join } from 'path'
+import { createTempGitRepo } from '../tempGitRepo'
+import { spinUpScenario } from '../spinUpScenario'
+import { seededFiles } from '../atoms'
+
+/**
+ * Property 9: Scenario determinism
+ *
+ * For any built-in scenario that pins timestamps, running its setup
+ * function twice on two separate TempGitRepo instances produces
+ * identical `git log --format=%H` output.
+ *
+ * NOTE: Only scenarios that use `daysAgo` or explicit date env vars
+ * are hash-deterministic. We test the known-deterministic ones here.
+ *
+ * **Validates: Requirements 9.1, 9.2**
+ */
+describe('Property 9: Scenario determinism', () => {
+  const deterministicScenarios = ['rich-history-graph', 'empty-repo']
+
+  it('two runs of any deterministic scenario produce identical commit hashes', async () => {
+    await fc.assert(
+      fc.asyncProperty(
+        fc.constantFrom(...deterministicScenarios),
+        async (scenarioName) => {
+          const repo1 = await spinUpScenario(scenarioName)
+          const repo2 = await spinUpScenario(scenarioName)
+
+          try {
+            const log1 = await repo1.git.raw(['log', '--all', '--format=%H'])
+            const log2 = await repo2.git.raw(['log', '--all', '--format=%H'])
+
+            expect(log1).toBe(log2)
+          } finally {
+            await repo1.cleanup()
+            await repo2.cleanup()
+          }
+        },
+      ),
+      { numRuns: 10 },
+    )
+  }, 60_000)
+})
+
+/**
+ * Property 10: seededFiles determinism
+ *
+ * For any seed value and file spec (path, tokens), calling seededFiles
+ * twice with the same parameters produces byte-identical file content.
+ *
+ * **Validates: Requirements 9.3**
+ */
+describe('Property 10: seededFiles determinism', () => {
+  it('same seed + spec produces byte-identical content', async () => {
+    await fc.assert(
+      fc.asyncProperty(
+        fc.integer({ min: 1, max: 100000 }), // seed
+        fc.string({ minLength: 1, maxLength: 20 }).filter((s) => /^[a-z][a-z0-9]*$/.test(s)), // filename base
+        fc.integer({ min: 10, max: 200 }), // tokens
+        async (seed, filename, tokens) => {
+          const filePath = `${filename}.txt`
+          const repo1 = await createTempGitRepo()
+          const repo2 = await createTempGitRepo()
+
+          try {
+            await seededFiles({ seed, files: [{ path: filePath, tokens }] })(repo1)
+            await seededFiles({ seed, files: [{ path: filePath, tokens }] })(repo2)
+
+            const content1 = readFileSync(join(repo1.path, filePath), 'utf-8')
+            const content2 = readFileSync(join(repo2.path, filePath), 'utf-8')
+
+            expect(content1).toBe(content2)
+            // Content should be non-empty
+            expect(content1.length).toBeGreaterThan(0)
+          } finally {
+            await repo1.cleanup()
+            await repo2.cleanup()
+          }
+        },
+      ),
+      { numRuns: 20 },
+    )
+  }, 60_000)
+
+  it('different seeds produce different content for the same path', async () => {
+    await fc.assert(
+      fc.asyncProperty(
+        fc.integer({ min: 1, max: 50000 }),
+        fc.integer({ min: 50001, max: 100000 }),
+        async (seed1, seed2) => {
+          const filePath = 'example.txt'
+          const tokens = 50
+          const repo1 = await createTempGitRepo()
+          const repo2 = await createTempGitRepo()
+
+          try {
+            await seededFiles({ seed: seed1, files: [{ path: filePath, tokens }] })(repo1)
+            await seededFiles({ seed: seed2, files: [{ path: filePath, tokens }] })(repo2)
+
+            const content1 = readFileSync(join(repo1.path, filePath), 'utf-8')
+            const content2 = readFileSync(join(repo2.path, filePath), 'utf-8')
+
+            // Different seeds should produce different content
+            expect(content1).not.toBe(content2)
+          } finally {
+            await repo1.cleanup()
+            await repo2.cleanup()
+          }
+        },
+      ),
+      { numRuns: 10 },
+    )
+  }, 60_000)
+})

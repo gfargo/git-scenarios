@@ -1,5 +1,6 @@
 import { execFile } from 'child_process';
 import { promisify } from 'util';
+import { requireCommits } from './preconditions';
 import type { Step } from './types';
 
 const execFileAsync = promisify(execFile);
@@ -36,6 +37,7 @@ export function startMerge(
 ): Step {
   const allowConflict = options.allowConflict !== false
   return async (repo) => {
+    await requireCommits(repo, 'startMerge')
     const args = ['merge', '--no-edit']
     if (options.noFastForward) {
       args.push('--no-ff')
@@ -180,6 +182,7 @@ export function cherryPick(
 ): Step {
   const allowConflict = options.allowConflict !== false
   return async (repo) => {
+    await requireCommits(repo, 'cherryPick')
     const gitInstance = options.date
       ? repo.git.env({
           GIT_AUTHOR_DATE: options.date,

@@ -1,5 +1,5 @@
-import { mkdir, mkdtemp, readFile as readFileFs, rm, writeFile as writeFileContent } from 'fs/promises'
-import { existsSync, rmSync } from 'fs'
+import { access, mkdir, mkdtemp, readFile as readFileFs, rm, writeFile as writeFileContent } from 'fs/promises'
+import { constants, rmSync } from 'fs'
 import { tmpdir } from 'os'
 import { dirname, join } from 'path'
 import { simpleGit, SimpleGit } from 'simple-git'
@@ -78,15 +78,30 @@ function registerExitHook(): void {
   })
 }
 
+const DEFAULT_USER_NAME = 'Git Scenarios Test'
+const DEFAULT_USER_EMAIL = 'test@git-scenarios.dev'
+
+/**
+ * Create a fresh temporary git repository.
+ *
+ * The repo is initialized with:
+ * - Branch: `main`
+ * - Identity: `Git Scenarios Test <test@git-scenarios.dev>`
+ * - GPG signing: disabled (`commit.gpgsign=false`)
+ *
+ * @param options - Configuration options
+ * @returns A TempGitRepo handle with path, git instance, and helpers
+ */
 export async function createTempGitRepo(
   options: CreateTempGitRepoOptions = {},
 ): Promise<TempGitRepo> {
-  const path = await mkdtemp(join(tmpdir(), 'coco-git-test-'))
+  const TEMP_PREFIX = 'git-scenarios-'
+  const path = await mkdtemp(join(tmpdir(), TEMP_PREFIX))
   const git = simpleGit(path)
 
   await git.init()
-  await git.addConfig('user.name', 'Coco Test')
-  await git.addConfig('user.email', 'coco@example.com')
+  await git.addConfig('user.name', DEFAULT_USER_NAME)
+  await git.addConfig('user.email', DEFAULT_USER_EMAIL)
   await git.addConfig('commit.gpgsign', 'false')
   await git.raw(['checkout', '-b', 'main'])
 
@@ -105,8 +120,13 @@ export async function createTempGitRepo(
     return readFileFs(join(path, filePath), 'utf8')
   }
 
-  const exists = async (filePath: string) => {
-    return existsSync(join(path, filePath))
+  const exists = async (filePath: string): Promise<boolean> => {
+    try {
+      await access(join(path, filePath), constants.F_OK)
+      return true
+    } catch {
+      return false
+    }
   }
 
   return {

@@ -15,7 +15,7 @@
 
 ## What this is
 
-Real-world git tools — `coco`, `lazygit`, IDEs, custom dev tools —
+Real-world git tools — `lazygit`, `gitui`, IDEs, custom dev tools —
 behave differently against a feature-branch-ready-to-PR than against
 a mid-merge-conflict than against an out-of-date submodule. Testing
 those behaviors usually means hand-writing `git init` + `writeFile` +
@@ -52,16 +52,13 @@ state every run), so the tests built on top are deterministic too.
    anything from "single staged file" to "three-way nested submodule
    mid-rebase."
 
-> **Status: v0.6.0.** Extracted from [`gfargo/coco`](https://github.com/gfargo/coco)
-> where it lived as an internal test helper. Now a standalone npm
-> package with 32 curated scenarios, 60+ composable atoms, dual
-> CJS/ESM output, Jest + Vitest framework adapters, and programmatic
-> scenario registration. API is at 0.x — minor breaking changes
-> possible until v1.0.
+> **Status: v1.0.0** — Stable release. 32 curated scenarios, 60+ composable atoms,
+> 5 framework adapters, CLI, dual CJS/ESM output.
 
 ## Table of contents
 
 - [Installation](#installation)
+- [Prerequisites](#prerequisites)
 - [Quick start](#quick-start)
 - [Jest framework adapter](#jest-framework-adapter)
 - [Common patterns (cookbook)](#common-patterns-cookbook)
@@ -92,9 +89,19 @@ other simple-git consumer you have.
 **Node requirement**: `^22.22.2 || ^24.15.0 || >=26.0.0`. The
 package ships both ESM and CJS — use `import` or `require`, both work.
 
-> Inside the coco monorepo today, no install is needed — the package
-> is consumed via path mapping. See [coco's `CONTRIBUTING.md`](https://github.com/gfargo/coco/blob/main/CONTRIBUTING.md)
-> for the in-monorepo workflow.
+## Prerequisites
+
+- **Node.js**: ^22.22.2 || ^24.15.0 || >=26.0.0
+- **Git**: ≥2.25.0 (for sparse-checkout, worktree improvements)
+
+### Compatibility Matrix
+
+| OS | Git Version | Status |
+|---|---|---|
+| Ubuntu 24.04 | 2.43.x (system) | ✅ Tested in CI |
+| Ubuntu 24.04 | 2.25.0 (minimum) | ✅ Tested in CI |
+| Windows Server 2022 | 2.43.x (system) | ✅ Tested in CI |
+| macOS 14 (Sonoma) | 2.43.x (Xcode) | ✅ Tested in CI |
 
 ## Quick start
 
@@ -132,15 +139,8 @@ npx git-scenarios create mid-merge-conflict --run "code -n"
 
 # Spin up a dirty worktree without launching anything — get the path
 npx git-scenarios create dirty-many-files
-# → /var/folders/.../coco-git-test-xR2qwz
+# → /var/folders/.../git-scenarios-xR2qwz
 # cd in and run whatever you want against it
-```
-
-Inside coco's monorepo, `npm run scenario` is wired as a shortcut:
-
-```bash
-npm run scenario list
-npm run scenario create feature-pr-ready -- --run-ui  # launches coco ui
 ```
 
 ### Inline composition — build a scenario right in a test
@@ -521,7 +521,6 @@ contract assertions for a single scenario.
 ## The CLI
 
 ```bash
-# Outside coco (after `npm install --save-dev @gfargo/git-scenarios`):
 npx git-scenarios list                                                  # show all scenarios grouped by kind
 npx git-scenarios list --kind operation                                 # filter by kind
 npx git-scenarios list --tag conflict                                   # filter by tag
@@ -537,10 +536,6 @@ npx git-scenarios create rich-history-graph \
 npx git-scenarios clean                                                 # remove stale scenario dirs in /tmp
 npx git-scenarios clean --dry-run                                       # preview without removing
 npx git-scenarios clean --older-than 24                                 # only dirs older than 24 hours
-
-# Inside coco's monorepo, `npm run scenario` is wired as a shortcut:
-npm run scenario list
-npm run scenario create feature-pr-ready -- --run-ui                    # `--run-ui` launches coco ui
 ```
 
 ### Flags
@@ -549,7 +544,6 @@ npm run scenario create feature-pr-ready -- --run-ui                    # `--run
 |---|---|
 | `--path <dir>` | Materialize at `<dir>` instead of `/tmp`. Useful when you want to `cd` into it later and poke around. |
 | `--run <cmd>` | After materializing, spawn `<cmd>` against the scenario dir (cwd = scenario dir). Examples: `--run "lazygit"`, `--run "gitui"`, `--run "code -n"` (open in VS Code). |
-| `--run-ui` | Coco-monorepo back-compat alias — spawns coco's source-tree CLI (`tsx <coco>/src/index.ts ui`) against the scenario dir. External consumers use `--run "coco ui"` (or any other shell command) instead. |
 | `--remote <url>` | Add `origin` pointing at `<url>` so gh-aware tools detect a remote on launch. Pass any gh-shaped URL. Use a real one to render the tool's views with live data; use a fake one to render against an empty / unauthenticated remote (no risk of accidental destructive actions). Without this flag the scenario repo is a bare `git init` with no remote. |
 | `--ephemeral` | Auto-clean the temp dir on CLI exit. Skip for normal use — without `--ephemeral`, the dir persists so you can re-inspect after the launched tool quits. |
 | `--kind <k>` | (`list` only) Filter by scenario kind: `branch`, `worktree`, `operation`, `history`, `stash`, `submodule`. |
@@ -563,16 +557,16 @@ and a cleanup hint at exit:
 
 ```
 ✓ Scenario "feature-pr-ready" ready at:
-    /var/folders/.../coco-git-test-xR2qwz
+    /var/folders/.../git-scenarios-xR2qwz
 
 When you're done, clean up with:
-    rm -rf /var/folders/.../coco-git-test-xR2qwz
+    rm -rf /var/folders/.../git-scenarios-xR2qwz
 ```
 
 Over time, `/tmp` accumulates these dirs. Periodically clean them with:
 
 ```bash
-rm -rf $(ls -d /var/folders/**/coco-git-test-* 2>/dev/null)
+rm -rf $(ls -d /var/folders/**/git-scenarios-* 2>/dev/null)
 ```
 
 ## Programmatic API (integration tests)
@@ -620,7 +614,7 @@ type TempGitRepo = {
 - **`path`** — absolute path to the temp dir. Use for shell-out
   operations or anywhere a string path is needed.
 - **`git`** — pre-configured `simple-git` instance. User identity
-  (`Coco Test <coco@example.com>`) and `commit.gpgsign=false` are
+  (`Git Scenarios Test <test@git-scenarios.dev>`) and `commit.gpgsign=false` are
   already set. Use for any git command in your test.
 - **`writeFile(rel, content)`** — write to a path relative to the
   repo root. Parent directories created automatically.
@@ -1194,10 +1188,10 @@ compose cleanly into `chain(...)` alongside the built-ins.
 
 ```bash
 # Spin up without --ephemeral (default) so the dir persists
-npm run scenario create feature-pr-ready
+npx git-scenarios create feature-pr-ready
 
 # CLI prints the path; cd in and look around
-cd /var/folders/.../coco-git-test-XXXXXX
+cd /var/folders/.../git-scenarios-XXXXXX
 git log --oneline
 git status
 git branch
@@ -1226,14 +1220,12 @@ accumulate dirs.
 
 ### "How do I run just one scenario's test?"
 
-Inside the coco monorepo:
-
 ```bash
 # All scenario tests
-npm run test:jest -- --testPathPatterns scenarios
+npm test -- --testPathPatterns scenarios
 
 # A specific scenario
-npm run test:jest -- --testPathPatterns feature-pr-ready
+npm test -- --testPathPatterns feature-pr-ready
 ```
 
 ### Mocking external services (LLM / network / hooks) in scenario-based tests
