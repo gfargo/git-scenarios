@@ -168,12 +168,22 @@ await chain(
 // repo is now mid-merge with src/widget.ts conflicted, origin set
 ```
 
-## Jest + Vitest framework adapters
+## Framework adapters (Jest, Vitest, node:test, Mocha, AVA)
 
-The `@gfargo/git-scenarios/jest` and `@gfargo/git-scenarios/vitest`
-subpath exports provide zero-boilerplate scenario setup for tests.
-Both adapters expose the same surface — pick the one matching your
-test framework:
+The library ships adapters for every major TypeScript test runner.
+Each provides zero-boilerplate scenario setup with automatic cleanup.
+
+```ts
+// Jest:
+import { describeWithScenario } from '@gfargo/git-scenarios/jest'
+// Vitest:
+import { describeWithScenario } from '@gfargo/git-scenarios/vitest'
+// node:test:
+import { describeWithScenario } from '@gfargo/git-scenarios/node-test'
+// Mocha:
+import { describeWithScenario } from '@gfargo/git-scenarios/mocha'
+// AVA (different shape — no describe blocks):
+import { withScenario } from '@gfargo/git-scenarios/ava'
 
 ```ts
 // Jest:

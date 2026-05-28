@@ -8,6 +8,35 @@ versions follow [semver](https://semver.org/).
 
 (none)
 
+## [0.7.0] — 2026-05-28
+
+### Added
+
+- **Three new test runner adapters** — completing the adapter family
+  across the TypeScript ecosystem:
+  - `@gfargo/git-scenarios/node-test` — Node.js native test runner
+    (`node:test`). Same `describeWithScenario` / `describeEachScenario`
+    surface as Jest/Vitest, plus a re-exported `it` for single-import
+    convenience. No external dependencies — `node:test` is a built-in.
+  - `@gfargo/git-scenarios/mocha` — Mocha framework adapter. Uses
+    Mocha's runtime-injected globals with `this.timeout(ms)` for
+    suite-level timeout (Mocha's convention).
+  - `@gfargo/git-scenarios/ava` — AVA framework adapter. Different
+    shape since AVA has no `describe` blocks: exports `withScenario`
+    returning a handle with `setup` / `cleanup` / `getRepo` for use
+    with `test.before()` and `test.after.always()`. Also exports
+    `withScenarios` for parameterized test files.
+
+### Test runner adapter family (complete)
+
+| Runner | Subpath | Shape |
+|---|---|---|
+| Jest | `./jest` | `describeWithScenario` + `describeEachScenario` |
+| Vitest | `./vitest` | `describeWithScenario` + `describeEachScenario` |
+| node:test | `./node-test` | `describeWithScenario` + `describeEachScenario` + `it` |
+| Mocha | `./mocha` | `describeWithScenario` + `describeEachScenario` |
+| AVA | `./ava` | `withScenario` + `withScenarios` |
+
 ## [0.6.0] — 2026-05-27
 
 ### Added
@@ -413,7 +442,8 @@ duplication is resolved post-publish.
 - Node: `^22.22.2 || ^24.15.0 || >=26.0.0`
 - License: MIT
 
-[Unreleased]: https://github.com/gfargo/git-scenarios/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/gfargo/git-scenarios/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/gfargo/git-scenarios/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/gfargo/git-scenarios/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/gfargo/git-scenarios/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/gfargo/git-scenarios/compare/v0.3.3...v0.4.0
