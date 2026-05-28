@@ -42,6 +42,9 @@ const { spinUpScenario } = require('@gfargo/git-scenarios')
 | `@gfargo/git-scenarios/tempGitRepo` | Low-level `createTempGitRepo` only |
 | `@gfargo/git-scenarios/jest` | Jest framework adapter (`describeWithScenario`) |
 | `@gfargo/git-scenarios/vitest` | Vitest framework adapter (same shape as Jest) |
+| `@gfargo/git-scenarios/node-test` | Node.js native test runner adapter (`node:test`) |
+| `@gfargo/git-scenarios/mocha` | Mocha framework adapter |
+| `@gfargo/git-scenarios/ava` | AVA framework adapter (`withScenario` handle pattern) |
 
 ## TypeScript
 
