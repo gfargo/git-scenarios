@@ -56,6 +56,11 @@
       "import": "./dist/node-test.js",
       "require": "./dist/node-test.cjs"
     },
+    "./mocha": {
+      "types": "./dist/mocha.d.ts",
+      "import": "./dist/mocha.js",
+      "require": "./dist/mocha.cjs"
+    },
     "./ava": {
       "types": "./dist/ava.d.ts",
       "import": "./dist/ava.js",
