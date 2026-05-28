@@ -8,6 +8,7 @@
  */
 
 import type { Scenario } from './scenarios/types'
+import { ScenarioNotFoundError } from './errors'
 import { findRegistered, listRegistered } from './registry'
 
 /**
@@ -19,14 +20,12 @@ import { findRegistered, listRegistered } from './registry'
  * `'spinUpScenario'`) — useful when the same lookup happens through
  * multiple wrappers.
  */
-export function resolveScenario(name: string, origin?: string): Scenario {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function resolveScenario(name: string, _origin?: string): Scenario {
   const scenario = findRegistered(name)
   if (!scenario) {
-    const available = listRegistered().map((s) => s.name).join(', ')
-    const prefix = origin ? `${origin}: ` : ''
-    throw new Error(
-      `${prefix}Unknown scenario "${name}". Available: ${available}`,
-    )
+    const availableScenarios = listRegistered().map((s) => s.name)
+    throw new ScenarioNotFoundError(name, availableScenarios)
   }
   return scenario
 }
