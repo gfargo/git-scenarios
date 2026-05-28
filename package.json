@@ -50,6 +50,11 @@
       "types": "./dist/vitest.d.ts",
       "import": "./dist/vitest.js",
       "require": "./dist/vitest.cjs"
+    },
+    "./node-test": {
+      "types": "./dist/node-test.d.ts",
+      "import": "./dist/node-test.js",
+      "require": "./dist/node-test.cjs"
     }
   },
   "bin": {
