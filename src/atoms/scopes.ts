@@ -238,8 +238,8 @@ export function withRemoteTracking(remote: string, branch: string, step: Step): 
       const cloneGit = simpleGit(clonePath)
       // Identity + gpgsign on the clone so commits made inside `step`
       // don't fall back to global git config (which CI runners lack).
-      await cloneGit.addConfig('user.name', 'Coco Test')
-      await cloneGit.addConfig('user.email', 'coco@example.com')
+      await cloneGit.addConfig('user.name', 'Git Scenarios Test')
+      await cloneGit.addConfig('user.email', 'test@git-scenarios.dev')
       await cloneGit.addConfig('commit.gpgsign', 'false')
 
       // The clone's local branches only include the parent's currently-

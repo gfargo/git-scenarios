@@ -1,3 +1,4 @@
+import { requireCommits } from './preconditions'
 import type { Step } from './types'
 
 /**
@@ -16,6 +17,7 @@ import type { Step } from './types'
  */
 export function switchToBranch(name: string, options: { from?: string } = {}): Step {
   return async (repo) => {
+    await requireCommits(repo, 'switchToBranch')
     if (options.from) {
       await repo.git.checkoutBranch(name, options.from)
     } else {
@@ -43,6 +45,7 @@ export function checkoutBranch(name: string): Step {
  */
 export function createBranch(name: string, options: { from?: string } = {}): Step {
   return async (repo) => {
+    await requireCommits(repo, 'createBranch')
     if (options.from) {
       await repo.git.branch([name, options.from])
     } else {
