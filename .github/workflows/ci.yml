@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         node: ['22.22.2', '24.15.0']
 
     steps:
@@ -43,3 +43,22 @@ jobs:
 
       - name: Verify pack
         run: npm pack --dry-run
+
+  test-git-compat:
+    name: git-compat (${{ matrix.git-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        git-version: ['2.25.0', 'latest']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install git ${{ matrix.git-version }}
+        run: |
+          sudo add-apt-repository ppa:git-core/ppa -y
+          sudo apt-get update
+          sudo apt-get install git=${{ matrix.git-version }}* -y || sudo apt-get install git -y
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.2'
+      - run: npm ci
+      - run: npm test
