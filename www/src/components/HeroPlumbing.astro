@@ -13,6 +13,14 @@
  * Pure HTML/SVG/CSS. The schematic animates on first paint via
  * stroke-dasharray + stroke-dashoffset.
  */
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+
+// Read version from root package.json at build time
+const rootPkg = JSON.parse(
+  readFileSync(resolve(process.cwd(), '..', 'package.json'), 'utf-8')
+);
+const version = rootPkg.version;
 ---
 
 <section class="dr-hero" aria-label="Introduction">
@@ -47,7 +55,7 @@
       </div>
       <div class="dr-titleblock__cell">
         <span class="dr-label">Revision</span>
-        <span class="dr-value dr-value--accent">G · v0.7.0</span>
+        <span class="dr-value dr-value--accent">G · v{version}</span>
       </div>
       <div class="dr-titleblock__cell dr-titleblock__cell--scale">
         <span class="dr-label">Scale</span>

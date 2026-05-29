@@ -5,6 +5,30 @@ description: Version history and changelog for @gfargo/git-scenarios.
 
 The full changelog lives in [`CHANGELOG.md`](https://github.com/gfargo/git-scenarios/blob/main/CHANGELOG.md). This page summarizes recent releases.
 
+## v1.0.0 — 2026-05-29
+
+The **stable release**. v1 is about trust, not new features — typed errors, cross-platform verification, determinism guarantees, and removing the last traces of the library's origin as a coco internal helper.
+
+### Highlights
+
+- **Exported error type hierarchy**: `GitScenariosError` base class with `ScenarioNotFoundError`, `GitCommandError`, and `InvalidArgumentError` subclasses. All errors carry a discriminating `code` field.
+- **Precondition guards**: `switchToBranch`, `startMerge`, `cherryPick`, `startRebase`, `createBranch` throw `InvalidArgumentError` immediately on empty repos instead of failing deep inside git.
+- **`withGitError` helper**: Wraps git command failures in `GitCommandError` with atom name traceability.
+- **Async `exists()` fix**: `TempGitRepo.exists()` now uses `fs/promises.access` instead of blocking `existsSync`.
+- **Branding cleanup**: Temp prefix `coco-git-test-` → `git-scenarios-`, identity `Coco Test` → `Git Scenarios Test`.
+- **macOS CI**: 3 OS × 2 Node versions matrix.
+- **Git version compatibility**: Documented minimum (≥2.25.0), CI job testing 2.25.0 + latest.
+- **Cross-platform path hardening**: Audited all atoms, fixed `pinSubmodule`, added case-sensitivity docs.
+- **11 property-based tests** (fast-check) covering error hierarchy, determinism, path normalization.
+- **Determinism verification** for all 32 built-in scenarios.
+- **`MIGRATION.md`** documenting all breaking changes with before/after examples.
+
+### Breaking changes
+
+See the [Migration Guide](https://github.com/gfargo/git-scenarios/blob/main/MIGRATION.md) for full details.
+
+[Full release notes →](https://github.com/gfargo/git-scenarios/releases/tag/v1.0.0)
+
 ## v0.7.0 — 2026-05-28
 
 The adapter-family release. Completes test-runner coverage across the TypeScript ecosystem.
