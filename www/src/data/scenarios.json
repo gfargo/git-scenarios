@@ -16,7 +16,9 @@
       "no remotes configured",
       "no tags",
       "no stashes"
-    ]
+    ],
+    "graph": [],
+    "branches": []
   },
   {
     "name": "feature-pr-ready",
@@ -34,6 +36,19 @@
       "feat/widget-v2 is checked out",
       "feat/widget-v2 is 4 commits ahead of main",
       "worktree is clean"
+    ],
+    "graph": [
+      "* 0d92e8f (HEAD -> feat/widget-v2) docs: document widget-v2 API and migration path",
+      "* 7e06c32 test: cover widget-v2 happy path and edge cases",
+      "* 4a4ba62 feat: expose widget-v2 from public index",
+      "* 7ef2a30 feat: add widget-v2 entry point and types",
+      "* 8f8c1d3 (main) test: add baseline widget tests",
+      "* 3377978 feat: scaffold widget module",
+      "* 51d305e chore: initial commit"
+    ],
+    "branches": [
+      "feat/widget-v2",
+      "main"
     ]
   },
   {
@@ -52,6 +67,14 @@
       "feat/x has 1 commit on top of main",
       "src/feature.ts exists",
       "worktree is clean"
+    ],
+    "graph": [
+      "* 7d4e915 (HEAD -> feat/x) feat: add feature module",
+      "* 26c2b1e (main) chore: initial commit"
+    ],
+    "branches": [
+      "feat/x",
+      "main"
     ]
   },
   {
@@ -69,6 +92,22 @@
       "feat/dashboard is checked out",
       "feat/dashboard has 8 commits on top of main",
       "worktree is clean"
+    ],
+    "graph": [
+      "* 7e70f15 (HEAD -> feat/dashboard) feat: add dashboard export-to-csv action",
+      "* 8dc878e chore: bump dev dependencies",
+      "* e65142a docs: document dashboard configuration",
+      "* a1f5fd4 refactor: extract dashboard data-fetch into hook",
+      "* d1545d7 fix: dashboard refresh interval respects user setting",
+      "* 0448e2b test: cover dashboard reducer",
+      "* 60ff18b feat: wire dashboard to data source",
+      "* a6e44d1 feat: add dashboard layout",
+      "* 5c57eab (main) chore: baseline app shell",
+      "* 36b092a chore: initial scaffold"
+    ],
+    "branches": [
+      "feat/dashboard",
+      "main"
     ]
   },
   {
@@ -86,6 +125,13 @@
       "commit subjects are \"chore: initial commit\" and \"feat: add feature module\"",
       "src/feature.ts exists",
       "worktree is clean"
+    ],
+    "graph": [
+      "* 7d4e915 (HEAD -> main) feat: add feature module",
+      "* 26c2b1e chore: initial commit"
+    ],
+    "branches": [
+      "main"
     ]
   },
   {
@@ -103,6 +149,15 @@
       "gh-pages is checked out",
       "gh-pages has 1 commit",
       "main and gh-pages share no common ancestor"
+    ],
+    "graph": [
+      "* 0895935 (HEAD -> gh-pages) docs: scaffold gh-pages site",
+      "* d0a705b (main) feat: add module",
+      "* 3e7cbf7 chore: initial commit"
+    ],
+    "branches": [
+      "gh-pages",
+      "main"
     ]
   },
   {
@@ -123,6 +178,14 @@
       "origin/main exists at the same commit as main",
       "main is configured to track origin/main",
       "worktree is clean"
+    ],
+    "graph": [
+      "* 6e30e6b (HEAD -> main, origin/main) feat: two",
+      "* c9e8aea feat: one",
+      "* 7520170 chore: initial"
+    ],
+    "branches": [
+      "main"
     ]
   },
   {
@@ -142,6 +205,17 @@
       "main is 3 commits ahead of origin/main",
       "main tracks origin/main",
       "worktree is clean"
+    ],
+    "graph": [
+      "* e27a9c8 (HEAD -> main) feat: ahead three",
+      "* afb7f71 feat: ahead two",
+      "* a2b6066 feat: ahead one",
+      "* 0d8eaf9 (origin/main) feat: baseline two",
+      "* f269069 feat: baseline one",
+      "* 7520170 chore: initial"
+    ],
+    "branches": [
+      "main"
     ]
   },
   {
@@ -162,6 +236,16 @@
       "main is 3 commits behind origin/main",
       "main tracks origin/main",
       "worktree is clean"
+    ],
+    "graph": [
+      "* 2237af0 (origin/main) upstream feat three",
+      "* 0890736 upstream feat two",
+      "* 4fe142e upstream feat one",
+      "* e657666 (HEAD -> main) feat: shared baseline",
+      "* 7520170 chore: initial"
+    ],
+    "branches": [
+      "main"
     ]
   },
   {
@@ -181,6 +265,18 @@
       "main is 2 ahead and 2 behind origin/main",
       "main tracks origin/main",
       "worktree is clean"
+    ],
+    "graph": [
+      "* a64cf51 (HEAD -> main) local N",
+      "* 3d6bc88 local M",
+      "| * 6b28d74 (origin/main) upstream Y",
+      "| * 2b2b356 upstream X",
+      "|/  ",
+      "* e657666 feat: shared baseline",
+      "* 7520170 chore: initial"
+    ],
+    "branches": [
+      "main"
     ]
   },
   {
@@ -203,6 +299,33 @@
       "local-only has no upstream configured",
       "all four tracked branches have branch.<X>.remote = origin",
       "worktree is clean"
+    ],
+    "graph": [
+      "* f5f2e63 (local-only) wip: local-only experiment",
+      "| * a0d340e (feat/diverged) local: diverged 2",
+      "| * a3e16ed local: diverged 1",
+      "|/  ",
+      "| * 9899a93 (feat/ahead-only) feat: ahead three",
+      "| * 1fb5f8e feat: ahead two",
+      "| * 9f3f5cc feat: ahead one",
+      "|/  ",
+      "| * c7736d0 (origin/main) upstream: main 2",
+      "| * 867156f upstream: main 1",
+      "|/  ",
+      "| * e334429 (origin/feat/synced, feat/synced) feat: synced-branch work",
+      "|/  ",
+      "| * bd9cfd5 (origin/feat/diverged) upstream: diverged 2",
+      "| * 6a8b392 upstream: diverged 1",
+      "|/  ",
+      "* 7443f6e (HEAD -> main, origin/feat/ahead-only) feat: shared baseline module",
+      "* 3657d81 chore: initial commit"
+    ],
+    "branches": [
+      "feat/ahead-only",
+      "feat/diverged",
+      "feat/synced",
+      "local-only",
+      "main"
     ]
   },
   {
@@ -224,6 +347,17 @@
       "feat/fork-work is 2 commits ahead of origin/feat/fork-work",
       "main and upstream/main are at the same commit",
       "worktree is clean"
+    ],
+    "graph": [
+      "* ad1e759 (HEAD -> feat/fork-work) feat: fork work two",
+      "* 6ba3e46 feat: fork work one",
+      "* 59f2ca6 (origin/feat/fork-work) feat: scaffold fork work",
+      "* a0dbf3b (upstream/main, main) feat: baseline",
+      "* 5eb70f1 chore: initial"
+    ],
+    "branches": [
+      "feat/fork-work",
+      "main"
     ]
   },
   {
@@ -241,6 +375,16 @@
       "main has 4 commits",
       "HEAD is 2 commits behind main",
       "worktree is clean"
+    ],
+    "graph": [
+      "* 34c4535 (main) feat: three",
+      "* 3c9536f feat: two",
+      "* 1ab1c9c (HEAD) feat: one",
+      "* 7520170 chore: initial"
+    ],
+    "branches": [
+      "(HEAD detached at 1ab1c9c)",
+      "main"
     ]
   },
   {
@@ -259,6 +403,14 @@
       "commit.gpgsign is true",
       "user.signingkey is set",
       "worktree is clean"
+    ],
+    "graph": [
+      "* 3c9536f (HEAD -> main) feat: two",
+      "* 1ab1c9c feat: one",
+      "* 7520170 chore: initial"
+    ],
+    "branches": [
+      "main"
     ]
   },
   {
@@ -275,6 +427,32 @@
       "a bisect is in progress",
       "HEAD is detached",
       "no bisect decisions logged yet"
+    ],
+    "graph": [
+      "* 15b968b (main) feat: step 19",
+      "* 776dd30 feat: step 18",
+      "* a99fde7 feat: step 17",
+      "* 8bd95f6 feat: step 16",
+      "* 0355588 feat: step 15",
+      "* 9158a8d feat: step 14",
+      "* 4f6883e feat: step 13",
+      "* a47e02b feat: step 12",
+      "* 254b819 feat: step 11",
+      "* 5bc0d05 feat: step 10",
+      "* 7f298e0 (HEAD) feat: step 9",
+      "* b3adf88 feat: step 8",
+      "* feb4808 feat: step 7",
+      "* 6bdf65e feat: step 6",
+      "* 533991d feat: step 5",
+      "* 7f97f0c feat: step 4",
+      "* e368ff3 feat: step 3",
+      "* de6b63b feat: step 2",
+      "* 92f90a2 feat: step 1",
+      "* 06a10b7 chore: initial scaffold"
+    ],
+    "branches": [
+      "(no branch, bisect started on main)",
+      "main"
     ]
   },
   {
@@ -291,6 +469,17 @@
       "a merge is in progress (MERGE_HEAD exists)",
       "src/widget.ts has unresolved conflict markers",
       "exactly 1 unresolved conflict"
+    ],
+    "graph": [
+      "* a9cd5e1 (HEAD -> main) feat: rename widget on main",
+      "| * 4be74e3 (feat/x) feat: rename widget on feat/x",
+      "|/  ",
+      "* 43bb961 feat: baseline widget",
+      "* f1f1793 chore: initial scaffold"
+    ],
+    "branches": [
+      "feat/x",
+      "main"
     ]
   },
   {
@@ -307,6 +496,18 @@
       "REBASE_HEAD is set",
       "src/config.ts has unresolved conflict markers",
       "exactly 1 unresolved conflict"
+    ],
+    "graph": [
+      "* 36f0bb6 (HEAD, main) feat: switch to production env",
+      "| * fb0615b (feat/refactor) refactor: use staging env",
+      "|/  ",
+      "* 2de6c56 feat: baseline config",
+      "* 8b3fa17 chore: initial scaffold"
+    ],
+    "branches": [
+      "(no branch, rebasing feat/refactor)",
+      "feat/refactor",
+      "main"
     ]
   },
   {
@@ -323,6 +524,17 @@
       "a cherry-pick is in progress (CHERRY_PICK_HEAD exists)",
       "src/utils.ts has unresolved conflict markers",
       "exactly 1 unresolved conflict"
+    ],
+    "graph": [
+      "* 9668eb6 (HEAD -> main) feat: use UTC string for dates",
+      "| * 04126d9 (feat/hotfix) fix: use locale string for dates",
+      "|/  ",
+      "* ebd06d3 feat: baseline utils",
+      "* 1e9b280 chore: initial scaffold"
+    ],
+    "branches": [
+      "feat/hotfix",
+      "main"
     ]
   },
   {
@@ -339,6 +551,14 @@
       "a revert is in progress (REVERT_HEAD exists)",
       "src/service.ts has unresolved conflict markers",
       "exactly 1 unresolved conflict"
+    ],
+    "graph": [
+      "* 26066af (HEAD -> main) feat: add role field and deleteUser method",
+      "* 16aeb7f feat: add email field and listUsers method",
+      "* 44eebf1 feat: add user service"
+    ],
+    "branches": [
+      "main"
     ]
   },
   {
@@ -357,6 +577,18 @@
       "worktree is clean",
       "main is checked out",
       "feat/x exists and is merged into main"
+    ],
+    "graph": [
+      "*   34a6587 (HEAD -> main) Merge branch feat/x",
+      "|\\  ",
+      "| * ad8c9b1 (feat/x) feat: add x",
+      "|/  ",
+      "* d37e34b feat: baseline a",
+      "* 7520170 chore: initial"
+    ],
+    "branches": [
+      "feat/x",
+      "main"
     ]
   },
   {
@@ -377,6 +609,42 @@
       "worktree is clean",
       "commits span at least 6 distinct date buckets (today through 2 older months)",
       "commit messages cover feat / fix / chore / docs / refactor / test / perf / revert and a breaking-change `!:`"
+    ],
+    "graph": [
+      "* db458aa (HEAD -> main) feat(search): trigram-based subject filter",
+      "* 1815c84 revert: temporary rollback of v1-shim removal",
+      "* 5917b38 chore: tidy imports",
+      "* 3f89892 fix!: drop deprecated v1 endpoints",
+      "| * 3cbe2f1 (feat/wip) chore(search): prototype lookup cache",
+      "| * 85cd19d feat(search): experimental trigram backend",
+      "|/  ",
+      "* c7be9ad perf(db): index user_id on sessions",
+      "* ee5371f fix(db): retry on transient timeout",
+      "* 81cbe1d perf(api): cache compiled route matcher",
+      "*   6d5d861 Merge branch 'feat/payments'",
+      "|\\  ",
+      "| * f92da17 (feat/payments) test: cover stripe checkout flow",
+      "| * 6abdfd7 fix(payments): handle 3D-secure redirect",
+      "| * acebb34 feat(payments): stripe checkout adapter",
+      "|/  ",
+      "* d0370c5 docs: contributor guide",
+      "* 427be5c chore(deps): bump simple-git to 4.x",
+      "* 48fbad8 fix(api): route precedence for catch-all",
+      "* 5f6cb96 refactor(api): centralise error shapes",
+      "*   155d753 Merge branch 'feat/auth'",
+      "|\\  ",
+      "| * cfce619 (feat/auth) test: cover session edge cases",
+      "| * ff3b5e5 feat(auth): session middleware",
+      "|/  ",
+      "* 739641e docs: project README and contributor guide",
+      "* 6ac41c2 feat(api): public router skeleton",
+      "* b76ef7d Initial scaffold"
+    ],
+    "branches": [
+      "feat/auth",
+      "feat/payments",
+      "feat/wip",
+      "main"
     ]
   },
   {
@@ -401,6 +669,19 @@
       "main is 1 commit ahead of origin/main",
       "main tracks origin/main",
       "worktree is clean"
+    ],
+    "graph": [
+      "* 7476241 (HEAD -> main) feat: widget tests",
+      "* 0ca3242 (origin/main) feat: widget interactions",
+      "* 7f6d04d (feat/widgets) feat: add widget module",
+      "* c4e9179 (upstream/main) refactor: extract helpers",
+      "* af22682 (develop) feat: scaffold core module",
+      "* 2cbc857 (tag: v0.1.0) chore: initial commit"
+    ],
+    "branches": [
+      "develop",
+      "feat/widgets",
+      "main"
     ]
   },
   {
@@ -417,6 +698,15 @@
       "repo is shallow (git rev-parse --is-shallow-repository = true)",
       "main has 10 total commits in object store",
       "only 4 commits are reachable from HEAD (depth boundary inclusive)"
+    ],
+    "graph": [
+      "* e5dcc92 (HEAD -> main) chore: release v1.0.0",
+      "* c6d192f docs: update readme",
+      "* 5059beb test: add test suite",
+      "* 8d9bff2 (grafted) feat: add auth"
+    ],
+    "branches": [
+      "main"
     ]
   },
   {
@@ -437,6 +727,130 @@
       "develop exists with 10 commits ahead of its fork point",
       "tags v0.1.0, v0.5.0, v1.0.0 exist",
       "total commit count across all branches is 115"
+    ],
+    "graph": [
+      "* b1c0890 (HEAD -> main, tag: v1.0.0) ci: implement module 79",
+      "* 0a045ef perf: implement module 78",
+      "* 65cbaf4 test: implement module 77",
+      "* 710e670 refactor: implement module 76",
+      "* fe8e254 docs: implement module 75",
+      "* 7190ec9 chore: implement module 74",
+      "* e206fee fix: implement module 73",
+      "* 35f598f feat: implement module 72",
+      "* 436f9bc ci: implement module 71",
+      "* f4c3f31 perf: implement module 70",
+      "* 27f4cea test: implement module 69",
+      "* 0af78ce refactor: implement module 68",
+      "* 11dfb38 docs: implement module 67",
+      "* a7310db chore: implement module 66",
+      "* ea5d4a7 fix: implement module 65",
+      "* 14ee0bd feat: implement module 64",
+      "* 6eca227 ci: implement module 63",
+      "* 56748de perf: implement module 62",
+      "* 3da726d test: implement module 61",
+      "* 1c5c8fa refactor: implement module 60",
+      "| * 989beb1 (develop) feat: develop iteration 10",
+      "| * 5bad990 feat: develop iteration 9",
+      "| * 5736a01 feat: develop iteration 8",
+      "| * e24278a feat: develop iteration 7",
+      "| * 4372311 feat: develop iteration 6",
+      "| * c06bc45 feat: develop iteration 5",
+      "| * 82afcfa feat: develop iteration 4",
+      "| * be22023 feat: develop iteration 3",
+      "| * bf49971 feat: develop iteration 2",
+      "| * 15c32b6 feat: develop iteration 1",
+      "|/  ",
+      "* 12af7f3 (tag: v0.5.0) docs: implement module 59",
+      "* 89d507e chore: implement module 58",
+      "* 08770c7 fix: implement module 57",
+      "* 077215c feat: implement module 56",
+      "* bef04c9 ci: implement module 55",
+      "* 4209dfd perf: implement module 54",
+      "* 1302551 test: implement module 53",
+      "* 7db0e61 refactor: implement module 52",
+      "* 67fc474 docs: implement module 51",
+      "* cfc9e79 chore: implement module 50",
+      "* 07a9dee fix: implement module 49",
+      "* f8b9d89 feat: implement module 48",
+      "* 5b72539 ci: implement module 47",
+      "* bf0572b perf: implement module 46",
+      "* d385530 test: implement module 45",
+      "* 271ca4d refactor: implement module 44",
+      "* 4ec6208 docs: implement module 43",
+      "* 81ebee3 chore: implement module 42",
+      "* e635343 fix: implement module 41",
+      "* 9334e2e feat: implement module 40",
+      "| * ef7c08d (feat/large-feature) feat: large-feature step 25",
+      "| * 3887a6f feat: large-feature step 24",
+      "| * 96a6efd feat: large-feature step 23",
+      "| * ab42f78 feat: large-feature step 22",
+      "| * 2effada feat: large-feature step 21",
+      "| * 6f41315 feat: large-feature step 20",
+      "| * d44eadf feat: large-feature step 19",
+      "| * 4a31dd7 feat: large-feature step 18",
+      "| * 9464e9e feat: large-feature step 17",
+      "| * 72e8580 feat: large-feature step 16",
+      "| * 893b047 feat: large-feature step 15",
+      "| * 1443724 feat: large-feature step 14",
+      "| * 39f4d4d feat: large-feature step 13",
+      "| * ad4cb6b feat: large-feature step 12",
+      "| * 9ebefc1 feat: large-feature step 11",
+      "| * db1b9fd feat: large-feature step 10",
+      "| * 6b2c4a5 feat: large-feature step 9",
+      "| * 578b519 feat: large-feature step 8",
+      "| * ce39f33 feat: large-feature step 7",
+      "| * 55c6a20 feat: large-feature step 6",
+      "| * 5309d8f feat: large-feature step 5",
+      "| * e1aa4b4 feat: large-feature step 4",
+      "| * 55d72de feat: large-feature step 3",
+      "| * 6e48154 feat: large-feature step 2",
+      "| * 2e10cea feat: large-feature step 1",
+      "|/  ",
+      "* 6b01f40 ci: implement module 39",
+      "* e3652b4 perf: implement module 38",
+      "* 3e99867 test: implement module 37",
+      "* aacd176 refactor: implement module 36",
+      "* 02dd835 docs: implement module 35",
+      "* e501176 chore: implement module 34",
+      "* 925d604 fix: implement module 33",
+      "* 263311b feat: implement module 32",
+      "* e3c596c ci: implement module 31",
+      "* e8d31aa perf: implement module 30",
+      "* 76101c2 test: implement module 29",
+      "* 5e2b2fa refactor: implement module 28",
+      "* 66b050f docs: implement module 27",
+      "* 6a0a86d chore: implement module 26",
+      "* c5001c3 fix: implement module 25",
+      "* bd2f59a feat: implement module 24",
+      "* 1bdf060 ci: implement module 23",
+      "* 8c97a7b perf: implement module 22",
+      "* fdc5804 test: implement module 21",
+      "* 1b7985c refactor: implement module 20",
+      "* 4b36a8e (tag: v0.1.0) docs: implement module 19",
+      "* c12dcec chore: implement module 18",
+      "* 5253217 fix: implement module 17",
+      "* 08bfd34 feat: implement module 16",
+      "* 8457df2 ci: implement module 15",
+      "* 0ecda09 perf: implement module 14",
+      "* 344f85b test: implement module 13",
+      "* 496ee34 refactor: implement module 12",
+      "* 72566f5 docs: implement module 11",
+      "* da6326c chore: implement module 10",
+      "* 789d452 fix: implement module 9",
+      "* 724ee95 feat: implement module 8",
+      "* c56f9a1 ci: implement module 7",
+      "* 1a435dc perf: implement module 6",
+      "* 29a2395 test: implement module 5",
+      "* 79ec158 refactor: implement module 4",
+      "* 1e49b44 docs: implement module 3",
+      "* cf4ca59 chore: implement module 2",
+      "* 0835472 fix: implement module 1",
+      "* 2fdb479 feat: implement module 0"
+    ],
+    "branches": [
+      "develop",
+      "feat/large-feature",
+      "main"
     ]
   },
   {
@@ -454,6 +868,18 @@
       "worktree is clean",
       "git stash list reports 3 entries",
       "each stash touches a different file"
+    ],
+    "graph": [
+      "*-.   79423b5 (refs/stash) On main: WIP: experiment-c",
+      "|\\ \\  ",
+      "| | * 69a2165 untracked files on main: 0e3655b chore: baseline content for stashing",
+      "| * ec8f6a3 index on main: 0e3655b chore: baseline content for stashing",
+      "|/  ",
+      "* 0e3655b (HEAD -> main) chore: baseline content for stashing",
+      "* 257b4b9 chore: initial scaffold"
+    ],
+    "branches": [
+      "main"
     ]
   },
   {
@@ -471,6 +897,18 @@
       "worktree is clean",
       "git stash list reports 1 entry",
       "the stash includes both modified tracked and untracked new files"
+    ],
+    "graph": [
+      "*-.   5b6e7cc (refs/stash) On main: WIP: feature v2 + new-feature scaffolding",
+      "|\\ \\  ",
+      "| | * b27d53a untracked files on main: 44f2eaf feat: baseline feature",
+      "| * 8c19173 index on main: 44f2eaf feat: baseline feature",
+      "|/  ",
+      "* 44f2eaf (HEAD -> main) feat: baseline feature",
+      "* c3cfc31 chore: initial scaffold"
+    ],
+    "branches": [
+      "main"
     ]
   },
   {
@@ -487,6 +925,12 @@
       "main has 1 commit",
       "exactly 1 staged file (README.md)",
       "no unstaged or untracked files"
+    ],
+    "graph": [
+      "* bdc267e (HEAD -> main) chore: initial commit"
+    ],
+    "branches": [
+      "main"
     ]
   },
   {
@@ -506,6 +950,13 @@
       "exactly 2 staged files",
       "exactly 2 modified-but-unstaged files",
       "exactly 1 untracked file"
+    ],
+    "graph": [
+      "* 0ab8fc8 (HEAD -> main) chore: baseline content",
+      "* ff79513 chore: initial commit"
+    ],
+    "branches": [
+      "main"
     ]
   },
   {
@@ -525,6 +976,14 @@
       "packages/app is clean (no staged or unstaged changes)",
       "packages/lib has staged changes",
       "packages/cli has unstaged changes"
+    ],
+    "graph": [
+      "* 821231a (HEAD -> main) feat(lib,cli): scaffold lib + cli packages",
+      "* 698a421 feat(app): scaffold app package",
+      "* 5bf487d chore: scaffold workspace root"
+    ],
+    "branches": [
+      "main"
     ]
   },
   {
@@ -545,6 +1004,13 @@
       "worktree has 6 unstaged files",
       "worktree has 3 untracked files",
       "changes span src/, tests/, and docs/"
+    ],
+    "graph": [
+      "* b963a11 (HEAD -> main) chore: baseline app scaffold",
+      "* 15d9042 chore: initial commit"
+    ],
+    "branches": [
+      "main"
     ]
   },
   {
@@ -562,6 +1028,21 @@
       "feat/alpha has 1 commit ahead of main",
       "feat/beta has 2 commits ahead of main",
       "hotfix/urgent has 1 commit ahead of main"
+    ],
+    "graph": [
+      "* c4f2fe0 (hotfix/urgent) fix: critical hotfix",
+      "| * 9c01773 (feat/beta) feat: beta part 2",
+      "| * afd85cf feat: beta part 1",
+      "|/  ",
+      "| * e586e91 (feat/alpha) feat: alpha feature",
+      "|/  ",
+      "* f53cf2e (HEAD -> main) chore: initial scaffold"
+    ],
+    "branches": [
+      "feat/alpha",
+      "feat/beta",
+      "hotfix/urgent",
+      "main"
     ]
   },
   {
@@ -581,6 +1062,15 @@
       "vendor/lib is a clean submodule (pin matches HEAD)",
       "vendor/lib has 4 commits of its own",
       "parent worktree is clean"
+    ],
+    "graph": [
+      "* 8554d0b (HEAD -> main) feat: integrate vendor/lib into entry point",
+      "* 1660bc7 chore: add vendor/lib submodule",
+      "* 9326672 feat: app shell",
+      "* 5f49d93 chore: initial scaffold"
+    ],
+    "branches": [
+      "main"
     ]
   }
 ]

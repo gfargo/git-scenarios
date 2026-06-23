@@ -177,6 +177,7 @@ export default defineConfig({
           label: 'Guides',
           items: [
             { label: 'Test Runner Adapters', slug: 'docs/guides/jest-adapter' },
+            { label: 'Testing Recipes', slug: 'docs/guides/recipes' },
             { label: 'Custom Scenarios', slug: 'docs/guides/custom-scenarios' },
             { label: 'CLI Reference', slug: 'docs/guides/cli' },
             { label: 'Contributing', slug: 'docs/guides/contributing' },

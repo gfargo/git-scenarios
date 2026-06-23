@@ -6,7 +6,86 @@ versions follow [semver](https://semver.org/).
 
 ## [Unreleased]
 
-(none)
+### Fixed
+
+- **Full hash determinism across all 32 scenarios.** Previously only the
+  3 scenarios that pinned dates produced stable commit hashes — the
+  other 29 stamped commits with the wall clock, so hashes (and, for
+  merge/divergence scenarios, `git log --all` ordering) drifted between
+  runs. This contradicted the library's core "byte-identical every run"
+  promise. A new deterministic commit clock (`src/commitClock.ts`) hands
+  every commit a monotonic date from a fixed epoch when the caller
+  doesn't pin one, so all commit-creating paths — `addCommit`, `commit`,
+  `emptyCommit`, `amendCommit`, `bulkCommits`, `startMerge`,
+  `cherryPick`, `revert`, `commitAll`, and the `withAuthor` /
+  `insideSubmodule` / `withRemoteTracking` scopes — are now reproducible.
+  `addSubmodule` also normalizes the recorded `.gitmodules` URL (which
+  previously leaked the source repo's random temp path). The determinism
+  property test now covers **all** registered scenarios, not just two.
+  Commit hashes for existing scenarios change once with this fix; since
+  they were never stable before, nothing could have depended on specific
+  values.
+
+### Added
+
+- **`git-scenarios inspect <name>`** — a read-only counterpart to
+  `create`. Materializes a scenario in a throwaway temp repo, prints
+  its commit graph (`git log --graph --oneline --all`), branches, and
+  working-tree status, then cleans up. Use it to see a scenario's shape
+  without leaving anything on disk. Supports `--json` for a structured
+  `{ graph, branches, status, contracts }` payload. Empty repos (no
+  commits) report an empty graph rather than erroring.
+- **`git-scenarios capture [path]`** — snapshot a real repository's
+  shape into a reusable `defineScenario(...)` module. Reproduces the
+  current branch, the commit-graph shape (base commits + how far the
+  branch is ahead, with messages and author dates), and the working
+  tree's dirty state; emits a ready-to-edit TypeScript module to stdout
+  (or `--out <file>`). `--json` emits the structured shape with file
+  contents omitted. Read-only against the target repo. New programmatic
+  helpers `gatherRepoState`, `renderScenarioModule`, `captureToJson`,
+  `deriveContracts`, and `normalizeName` are available from the
+  `@gfargo/git-scenarios/capture` subpath.
+
+## [1.0.0] — 2026-05-29
+
+The **stable release**. v1 is about trust, not new features — typed
+errors, cross-platform verification, determinism guarantees, and
+removing the last traces of the library's origin as a coco internal
+helper.
+
+### Added
+
+- **Exported error type hierarchy** — `GitScenariosError` base class
+  with `ScenarioNotFoundError`, `GitCommandError`, and
+  `InvalidArgumentError` subclasses. All errors carry a discriminating
+  `code` field.
+- **Precondition guards** — `switchToBranch`, `startMerge`,
+  `cherryPick`, `startRebase`, and `createBranch` throw
+  `InvalidArgumentError` immediately on empty repos instead of failing
+  deep inside git.
+- **`withGitError` helper** — wraps git command failures in
+  `GitCommandError` with atom-name traceability.
+- **11 property-based tests** (fast-check) covering the error
+  hierarchy, determinism, and path normalization.
+- **Determinism verification** for all 32 built-in scenarios.
+- **`MIGRATION.md`** documenting all breaking changes with
+  before/after examples.
+
+### Changed
+
+- **Async `exists()`** — `TempGitRepo.exists()` now uses
+  `fs/promises.access` instead of the blocking `existsSync`.
+- **macOS CI** — the matrix now spans 3 OS × 2 Node versions, plus a
+  git-version compatibility job testing 2.25.0 (minimum) + latest.
+- **Cross-platform path hardening** — audited all atoms, fixed
+  `pinSubmodule`, and documented case-sensitivity caveats.
+
+### Breaking changes
+
+- Temp-dir prefix `coco-git-test-` → `git-scenarios-`.
+- Default test identity `Coco Test` → `Git Scenarios Test`.
+
+See [`MIGRATION.md`](./MIGRATION.md) for full before/after details.
 
 ## [0.7.0] — 2026-05-28
 

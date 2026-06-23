@@ -13,6 +13,10 @@
 
 📖 **[Full documentation →](https://git-scenarios.griffen.codes)**
 
+<p align="center">
+  <img src="./tapes/hero.gif" alt="git-scenarios inspect: a clean PR-ready feature branch, then an in-progress merge conflict — real repos in any state, one command" width="800">
+</p>
+
 ## What this is
 
 Real-world git tools — `lazygit`, `gitui`, IDEs, custom dev tools —
@@ -527,12 +531,16 @@ npx git-scenarios list --tag conflict                                   # filter
 npx git-scenarios list --json                                           # machine-readable
 npx git-scenarios describe feature-pr-ready                             # one-scenario detail
 npx git-scenarios describe feature-pr-ready --json                      # machine-readable
+npx git-scenarios inspect feature-pr-ready                              # graph + branches + status, no files kept
+npx git-scenarios inspect feature-pr-ready --json                      # machine-readable
 npx git-scenarios create feature-pr-ready                               # materialize in /tmp
 npx git-scenarios create feature-pr-ready --path ~/sandbox/widget       # custom location
 npx git-scenarios create feature-pr-ready --run "lazygit"               # launch any tool against it
 npx git-scenarios create feature-pr-ready --ephemeral                   # auto-clean on exit
 npx git-scenarios create rich-history-graph \
   --run "lazygit" --remote git@github.com:org/repo.git                  # add an origin first
+npx git-scenarios capture . --name my-bug-repro > my-bug.ts             # snapshot a real repo's shape into a scenario
+npx git-scenarios capture . --json                                      # structured capture data
 npx git-scenarios clean                                                 # remove stale scenario dirs in /tmp
 npx git-scenarios clean --dry-run                                       # preview without removing
 npx git-scenarios clean --older-than 24                                 # only dirs older than 24 hours
@@ -546,9 +554,42 @@ npx git-scenarios clean --older-than 24                                 # only d
 | `--run <cmd>` | After materializing, spawn `<cmd>` against the scenario dir (cwd = scenario dir). Examples: `--run "lazygit"`, `--run "gitui"`, `--run "code -n"` (open in VS Code). |
 | `--remote <url>` | Add `origin` pointing at `<url>` so gh-aware tools detect a remote on launch. Pass any gh-shaped URL. Use a real one to render the tool's views with live data; use a fake one to render against an empty / unauthenticated remote (no risk of accidental destructive actions). Without this flag the scenario repo is a bare `git init` with no remote. |
 | `--ephemeral` | Auto-clean the temp dir on CLI exit. Skip for normal use — without `--ephemeral`, the dir persists so you can re-inspect after the launched tool quits. |
-| `--kind <k>` | (`list` only) Filter by scenario kind: `branch`, `worktree`, `operation`, `history`, `stash`, `submodule`. |
 | `--tag <t>` | (`list` only) Filter by tag inclusion. Combine with `--kind` (AND semantics). Example: `git-scenarios list --kind stash --tag untracked`. |
-| `--json` | (`list` and `describe`) Emit machine-readable JSON. Each list entry includes `name`, `summary`, `kind`, `tags`, `contracts`. |
+| `--name <name>` | (`capture` only) Scenario name (kebab-cased). Defaults to the captured repo's directory name. |
+| `--summary <s>` | (`capture` only) One-line summary for the generated scenario. |
+| `--out <file>` | (`capture` only) Write the generated module to `<file>` instead of stdout. |
+| `--kind <k>` | (`list` and `capture`) `list`: filter by scenario kind (`branch`, `worktree`, `operation`, `history`, `stash`, `submodule`). `capture`: override the inferred kind. |
+| `--json` | (`list`, `describe`, `inspect`, `capture`) Emit machine-readable JSON. List → `name`/`summary`/`kind`/`tags`/`contracts`; `inspect` → `graph`/`branches`/`status`; `capture` → the structured shape (file contents omitted). |
+
+### Capturing a real repo
+
+Hit a bug against a repo in some peculiar state? Instead of hand-writing
+a scenario to reproduce it, point `capture` at the repo and get a
+ready-to-edit `defineScenario(...)` module:
+
+```bash
+npx git-scenarios capture . --name my-bug-repro > scenarios/my-bug.ts
+```
+
+`capture` is **read-only** against the target repo. What it reproduces
+faithfully:
+
+- the current branch (and whether `HEAD` is detached)
+- the commit-graph shape — base-branch commits plus the commits your
+  branch is ahead by (e.g. "4 commits ahead of `main`"), with each
+  commit's message and author date preserved
+- the working tree's dirty state — which paths are staged, modified, or
+  untracked (with their current content, size-capped)
+
+What it deliberately does **not** reproduce: exact commit hashes (the
+library's whole point is fresh deterministic hashes), historical file
+contents (placeholders are emitted), or merge topology and non-current
+branches (surfaced as a comment to fill in). The output is a starting
+point you edit — register it with `registerScenario(...)` and it works
+everywhere the built-ins do.
+
+Use `--json` for the structured shape instead of a module; note that
+JSON output omits captured file contents.
 
 ### Cleanup
 
