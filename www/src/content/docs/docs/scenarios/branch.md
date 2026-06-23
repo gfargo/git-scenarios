@@ -27,6 +27,32 @@ const status = await repo.git.status()
 // status.current === 'feat/widget-v2'
 ```
 
+## `feature-branch-one-commit`
+
+Minimal feature-branch shape: `main` has one initial commit, `feat/x` is checked out with a single commit on top adding `src/feature.ts`, clean worktree. The smallest branch-vs-base diff.
+
+**Contracts:**
+- `main` has 1 commit
+- `feat/x` is checked out, 1 commit on top of `main`
+- Worktree is clean
+
+## `multi-commit-branch`
+
+`feat/dashboard` with 8 commits of varied types (feat/fix/chore/docs/refactor/test) on top of a 2-commit `main`. Each commit touches a different file with deterministic seeded content — realistic inputs for history surfaces, filtering, and yank flows.
+
+**Contracts:**
+- `main` has 2 commits
+- `feat/dashboard` is checked out, 8 commits on top of `main`
+
+## `two-commit-feature`
+
+Two commits on `main` — a baseline scaffold plus one `feat:` commit adding `src/feature.ts` — clean worktree. The minimal "one feature commit to summarize" shape for changelog / log / review smoke tests.
+
+**Contracts:**
+- `main` has 2 commits (`chore: initial commit`, `feat: add feature module`)
+- `src/feature.ts` exists
+- Worktree is clean
+
 ## `branch-tracking-upstream`
 
 `main` tracks `origin/main`, both at the same commit. The baseline "synced" state where `git status` reports "Your branch is up to date."
