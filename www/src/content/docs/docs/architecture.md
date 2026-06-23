@@ -86,7 +86,7 @@ snap.stashes         // stash entry count
 snap.graph           // git log --graph --oneline --all lines
 ```
 
-The same logic is exposed standalone as `snapshotRepo(git, path)` for use against any `simple-git` instance, and is the shared foundation the test matchers and `diff` / `doctor` CLI commands build on. Because every scenario is deterministic, a scenario's snapshot is byte-for-byte identical across runs.
+The same logic is exposed standalone as `snapshotRepo(git)` for use against any `simple-git` instance, and is the shared foundation the test matchers and `diff` / `doctor` CLI commands build on. Because every scenario is deterministic, a scenario's snapshot is byte-for-byte identical across runs.
 
 ## Layer 2: Atoms
 

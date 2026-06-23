@@ -153,7 +153,7 @@ export async function createTempGitRepo(
       const date = nextCommitDate(path)
       await git.env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date }).commit(message)
     },
-    snapshot: () => snapshotRepo(git, path),
+    snapshot: () => snapshotRepo(git),
     cleanup: async () => {
       autoCleanupPaths.delete(path)
       resetCommitClock(path)

@@ -163,17 +163,17 @@ function parseStatus(raw: string): Omit<StatusSnapshot, 'clean'> {
 }
 
 /**
- * Build a {@link RepoSnapshot} for the repo at `repoPath` using the
- * provided `simple-git` instance. Read-only.
+ * Build a {@link RepoSnapshot} from the provided `simple-git` instance.
+ * Read-only — runs git plumbing and reads a few marker files under the
+ * git dir, never mutating the repo.
+ *
+ * The git dir (needed for in-progress-operation detection) is resolved
+ * via `rev-parse --absolute-git-dir`, so this works for linked worktrees
+ * as well as ordinary repos — no working-tree path argument required.
  *
  * @param git - a `simple-git` instance bound to the repo
- * @param repoPath - absolute path to the repo's working tree (used only
- *   to label nothing today, but kept for symmetry and future use; the
- *   git dir is resolved via `rev-parse`)
  */
-export async function snapshotRepo(git: SimpleGit, repoPath?: string): Promise<RepoSnapshot> {
-  void repoPath // reserved; git dir is resolved via rev-parse for worktree safety
-
+export async function snapshotRepo(git: SimpleGit): Promise<RepoSnapshot> {
   // HEAD. `symbolic-ref` succeeds (and names the branch) whenever HEAD
   // points at a branch — including a fresh repo whose branch has no
   // commits yet. It fails only when HEAD is detached.

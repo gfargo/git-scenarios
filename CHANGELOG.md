@@ -15,7 +15,7 @@ versions follow [semver](https://semver.org/).
   in-progress operation (`merge` / `rebase` / `cherry-pick` / `revert`
   / `bisect` / `null`), conflicted paths, stash count, and the commit
   graph. The programmatic counterpart to `git-scenarios inspect`. Also
-  exported standalone as `snapshotRepo(git, path)` for use against any
+  exported standalone as `snapshotRepo(git)` for use against any
   `simple-git` instance, with types `RepoSnapshot`, `HeadSnapshot`,
   `StatusSnapshot`, and `InProgressOperation`. This is the shared
   foundation the upcoming test matchers and `diff` / `doctor` CLI

@@ -147,7 +147,7 @@ export function withAuthor(identity: AuthorIdentity, step: Step): Step {
           .env({ ...env, GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
           .commit(message)
       },
-      snapshot: () => snapshotRepo(scopedGit, repo.path),
+      snapshot: () => snapshotRepo(scopedGit),
       cleanup: async () => {
         // No-op: the parent's cleanup owns the actual repo.
       },
@@ -183,7 +183,7 @@ export function insideSubmodule(submodulePath: string, step: Step): Step {
           .env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
           .commit(message)
       },
-      snapshot: () => snapshotRepo(submoduleGit, submoduleRoot),
+      snapshot: () => snapshotRepo(submoduleGit),
       cleanup: async () => {
         // No-op: the parent's cleanup removes the submodule clone too.
       },
@@ -294,7 +294,7 @@ export function withRemoteTracking(remote: string, branch: string, step: Step): 
             .env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
             .commit(message)
         },
-        snapshot: () => snapshotRepo(cloneGit, clonePath),
+        snapshot: () => snapshotRepo(cloneGit),
         cleanup: async () => {
           // No-op: outer finally handles cleanup.
         },
