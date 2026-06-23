@@ -8,6 +8,7 @@ export default defineConfig([
       'atoms/index': 'src/atoms/index.ts',
       'scenarios/index': 'src/scenarios/index.ts',
       'capture': 'src/capture.ts',
+      'matchers': 'src/matchers.ts',
       'tempGitRepo': 'src/tempGitRepo.ts',
       'jest': 'src/jest.ts',
       'vitest': 'src/vitest.ts',

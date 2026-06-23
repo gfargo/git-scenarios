@@ -28,7 +28,10 @@ export {
   ScenarioNotFoundError,
   GitCommandError,
   InvalidArgumentError,
+  RepoAssertionError,
 } from './errors'
+
+export { assertRepo, RepoAssertion, type SnapshotSource } from './assert'
 
 export { spinUpScenario, type SpinUpScenarioOptions } from './spinUpScenario'
 export { fromScenario } from './fromScenario'

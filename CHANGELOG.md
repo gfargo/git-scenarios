@@ -20,6 +20,29 @@ versions follow [semver](https://semver.org/).
   `StatusSnapshot`, and `InProgressOperation`. This is the shared
   foundation the upcoming test matchers and `diff` / `doctor` CLI
   commands build on.
+- **`assertRepo(...)` fluent assertion API** — a chainable,
+  runner-agnostic way to assert repo state, built on `snapshot()`:
+  `await assertRepo(repo).onBranch('main').cleanWorktree().commitCount(7)`.
+  Queues checks synchronously and evaluates them against a single
+  snapshot when awaited (one chain → one snapshot), resolving to that
+  snapshot. Throws a new `RepoAssertionError` (carrying
+  `assertion` / `expected` / `actual`) on mismatch. Accepts a
+  `TempGitRepo` or a raw `simple-git` instance. Covers branch / detached
+  / clean / dirty / staged / modified / untracked / ahead / behind /
+  in-sync / commit-count / operation / conflicts / stash.
+- **`expect(...)` matchers** (`@gfargo/git-scenarios/matchers`) — a thin
+  layer over `assertRepo` for Jest and Vitest: `toBeOnBranch`,
+  `toBeDetached`, `toHaveCleanWorktree`, `toHaveDirtyWorktree`,
+  `toHaveStagedFile` / `toHaveModifiedFile` / `toHaveUntrackedFile`,
+  `toBeAheadBy` / `toBeBehindBy` / `toBeInSyncWithUpstream`,
+  `toHaveCommitCount`, `toBeMidMerge` / `toBeMidRebase` /
+  `toBeMidCherryPick` / `toBeMidRevert` / `toBeMidBisect` /
+  `toBeMidOperation`, `toHaveConflictIn` / `toHaveNoConflicts`, and
+  `toHaveStash`. Register with `expect.extend(matchers)`. Jest types ship
+  automatically; Vitest users augment `Assertion` with the exported
+  `GitScenariosMatchers` interface (4 lines, no `vitest` dependency
+  required of this package). The other three runners (node:test, Mocha,
+  AVA) use `assertRepo` directly — same checks, same messages.
 
 ## [1.1.0] — 2026-06-23
 

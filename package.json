@@ -45,6 +45,11 @@
       "import": "./dist/capture.js",
       "require": "./dist/capture.cjs"
     },
+    "./matchers": {
+      "types": "./dist/matchers.d.ts",
+      "import": "./dist/matchers.js",
+      "require": "./dist/matchers.cjs"
+    },
     "./atoms": {
       "types": "./dist/atoms/index.d.ts",
       "import": "./dist/atoms/index.js",
