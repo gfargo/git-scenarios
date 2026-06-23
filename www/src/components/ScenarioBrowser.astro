@@ -106,6 +106,12 @@ const orderedKinds = [
             </ul>
           </details>
         )}
+        {(s.graph ?? []).length > 0 && (
+          <details class="scenario-graph">
+            <summary>commit graph · {(s.graph ?? []).length} line{(s.graph ?? []).length === 1 ? '' : 's'}</summary>
+            <pre class="graph-pre"><code>{(s.graph ?? []).join('\n')}</code></pre>
+          </details>
+        )}
         <div class="scenario-actions">
           <button class="copy-btn" data-copy={`spinUpScenario('${s.name}')`} title="Copy spinUpScenario call">
             Copy spinUpScenario
@@ -485,6 +491,66 @@ const orderedKinds = [
     color: var(--gs-cyan) !important;
     font-size: 0.85em !important;
     opacity: 0.8;
+  }
+
+  /* Commit graph — the real `git log --graph` output, captured at build */
+  .scenario-graph {
+    font-family: var(--gs-mono);
+    font-size: 0.78rem;
+  }
+
+  .scenario-graph summary {
+    cursor: pointer;
+    color: var(--sl-color-gray-3);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    list-style: none;
+    user-select: none;
+  }
+
+  .scenario-graph summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .scenario-graph summary::before {
+    content: '▸';
+    margin-right: 0.4rem;
+    color: var(--gs-amber);
+    transition: transform 0.15s ease;
+    display: inline-block;
+  }
+
+  .scenario-graph[open] summary::before {
+    transform: rotate(90deg);
+  }
+
+  .scenario-graph summary:hover {
+    color: var(--gs-amber);
+  }
+
+  .graph-pre {
+    margin: 0.5rem 0 0 0 !important;
+    padding: 0.7rem 0.8rem !important;
+    background: var(--gs-paper) !important;
+    border: 1px solid var(--gs-rule) !important;
+    border-left: 2px solid var(--gs-amber) !important;
+    border-radius: 2px;
+    max-height: 16rem;
+    overflow: auto;
+    white-space: pre;
+  }
+
+  .graph-pre code {
+    font-family: var(--gs-mono);
+    font-size: 0.72rem;
+    line-height: 1.5;
+    color: var(--sl-color-gray-1);
+    background: transparent;
+    border: none;
+    padding: 0;
+    white-space: pre;
+    tab-size: 2;
   }
 
   /* Action buttons */

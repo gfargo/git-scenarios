@@ -98,6 +98,18 @@ Every scenario produces byte-identical state every run. Tests built on top are d
 
 ### A small tour
 
+<figure>
+  <img
+    src="/hero.gif"
+    alt="git-scenarios inspect: a clean PR-ready feature branch, then an in-progress merge conflict — a real repo in any state from one command"
+    loading="lazy"
+    style="width:100%;border:1px solid var(--gs-rule);border-radius:6px;"
+  />
+  <figcaption style="font-family:var(--gs-mono);font-size:0.72rem;color:var(--sl-color-gray-3);margin-top:0.5rem;">
+    `git-scenarios inspect` — see any scenario's commit graph, branches, and status without keeping a thing on disk.
+  </figcaption>
+</figure>
+
 ```bash
 # Spin up a merge conflict, launch lazygit against it
 npx git-scenarios create mid-merge-conflict --run "lazygit"
@@ -108,6 +120,12 @@ npx git-scenarios list --tag conflict --json
 
 # Describe a specific scenario's contracts
 npx git-scenarios describe feature-pr-ready
+
+# See a scenario's shape — graph, branches, status — without keeping it
+npx git-scenarios inspect feature-pr-ready
+
+# Snapshot a real repo's shape into a reusable scenario module
+npx git-scenarios capture . --name my-bug-repro > scenarios/my-bug.ts
 
 # Persist a scenario for hand-poking
 npx git-scenarios create monorepo-multi-package --path ~/sandbox
@@ -121,8 +139,8 @@ Originally extracted from [coco](https://github.com/gfargo/coco), an AI-powered 
 
 Now it stands alone — for anyone building git tools, IDE extensions, CLI utilities, linters, formatters, AI assistants, or any program that reads repo state.
 
-:::tip[New in v0.7 · May 2026]
-Complete test-runner adapter family: node:test, Mocha, and AVA join Jest + Vitest. Five adapters, one consistent API. Also: five new scenarios, lifecycle atoms, CLI filters, and more from v0.6. [Read the release notes →](/docs/changelog)
+:::tip[Now stable · v1.0.0]
+v1 is about trust: a typed error hierarchy (`GitScenariosError` and friends), precondition guards, determinism verified across all 32 scenarios, and a 3-OS × 2-Node CI matrix plus a git-version compatibility job. Five test-runner adapters — Jest, Vitest, node:test, Mocha, AVA — share one consistent API. [Read the release notes →](/docs/changelog)
 :::
 
 ## §07 · Notes

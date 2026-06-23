@@ -7,6 +7,8 @@ import ScenarioBrowser from '../../../../components/ScenarioBrowser.astro'
 
 Filter, search, and copy snippets for every scenario in one place. The data is generated from the package registry at build time — the same `allScenarios` array `spinUpScenario` reads from. Add a scenario in the source and it shows up here next build.
 
+Each card has a **commit graph** view — the real `git log --graph` output, captured at build time by materializing the scenario. Because every scenario is byte-identical (and therefore hash-identical) on every run, the short hashes you see here are exactly the ones you'll get locally.
+
 <ScenarioBrowser />
 
 ## Tips
@@ -14,6 +16,7 @@ Filter, search, and copy snippets for every scenario in one place. The data is g
 - **Kind chips** are mutually exclusive. Click "All" to clear.
 - **Tag chips** are multi-select with AND semantics — click two tags and you get only scenarios that carry both.
 - **Search** matches against name, summary, and contract lines.
+- **Commit graph** expands the captured `git log --graph` for that scenario — fork lines, merge tips, and decorations included.
 - **Copy buttons** put either `spinUpScenario('name')` or `npx git-scenarios create name` on your clipboard.
 - **URL hash** is honored on load: `?kind=operation&tag=conflict` would arrive pre-filtered.
 

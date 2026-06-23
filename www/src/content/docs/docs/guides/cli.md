@@ -26,6 +26,45 @@ npx git-scenarios describe mid-merge-conflict
 npx git-scenarios describe mid-merge-conflict --json    # machine-readable
 ```
 
+### `git-scenarios inspect <name>`
+
+See a scenario's shape without keeping it on disk. `inspect` materializes the scenario in a throwaway temp repo, prints its commit graph, branches, and working-tree status, then cleans up. It's the read-only counterpart to `create` — perfect for picking the right scenario before you wire it into a test.
+
+```bash
+npx git-scenarios inspect feature-pr-ready
+npx git-scenarios inspect mid-merge-conflict --json    # machine-readable
+```
+
+Example output:
+
+```
+  feature-pr-ready  ·  branch
+  ---------------------------
+  feature branch with 4 commits, clean worktree, ready to open a PR
+
+  Commit graph:
+    * 0d92e8f (HEAD -> feat/widget-v2) docs: document widget-v2 API and migration path
+    * 7e06c32 test: cover widget-v2 happy path and edge cases
+    * 4a4ba62 feat: expose widget-v2 from public index
+    * 7ef2a30 feat: add widget-v2 entry point and types
+    * 8f8c1d3 (main) test: add baseline widget tests
+    * 3377978 feat: scaffold widget module
+    * 51d305e chore: initial commit
+
+  Branches:
+    * feat/widget-v2
+      main
+
+  Status (git status -sb):
+    ## feat/widget-v2
+
+  Contracts:
+    - main has 3 commits
+    - feat/widget-v2 is checked out
+    - feat/widget-v2 is 4 commits ahead of main
+    - worktree is clean
+```
+
 ### `git-scenarios create <name> [options]`
 
 Materialize a scenario on disk.
@@ -35,6 +74,43 @@ npx git-scenarios create feature-pr-ready
 npx git-scenarios create mid-merge-conflict --run "lazygit"
 npx git-scenarios create rich-history-graph --path ~/sandbox/test-repo
 ```
+
+### `git-scenarios capture [path] [options]`
+
+Snapshot a **real** repository's shape into a reusable scenario module. Hit a bug against a repo in some peculiar state? Instead of hand-writing a scenario to reproduce it, point `capture` at the repo (default: the current directory) and get a ready-to-edit `defineScenario(...)` module on stdout.
+
+```bash
+# Capture the current repo into a scenario file
+npx git-scenarios capture . --name my-bug-repro > scenarios/my-bug.ts
+
+# Capture another repo, give it a summary, write to a file
+npx git-scenarios capture ~/work/widgets --name widgets-mid-feature \
+  --summary "widgets repo mid-feature, 3 staged files" \
+  --out scenarios/widgets.ts
+
+# Structured shape instead of a module (file contents omitted)
+npx git-scenarios capture . --json
+```
+
+`capture` is **read-only** against the target repo — it runs git plumbing and reads working-tree files, and never writes to the repo.
+
+**What it reproduces faithfully:**
+
+- the current branch (and whether `HEAD` is detached)
+- the commit-graph shape — base-branch commits plus the commits your branch is ahead by (e.g. "4 commits ahead of `main`"), with each commit's message and author date preserved
+- the working tree's dirty state — which paths are staged, modified, or untracked, with their current content (size-capped at 4 KB, binary files skipped)
+
+**What it deliberately does _not_ reproduce:**
+
+- exact commit hashes — the library's whole point is fresh, deterministic hashes
+- historical file contents — placeholders are emitted so each commit is non-empty and the count matches
+- merge topology and the contents of non-current branches — surfaced as a comment for you to fill in
+
+The output is a **starting point you edit**, not a byte-perfect clone. Register the result with `registerScenario(...)` and it works everywhere the built-ins do.
+
+:::caution
+`capture` reads the content of changed/untracked files into the generated module so the dirty state reproduces faithfully. If your working tree contains secrets, review the output before committing it — or use `--json`, which omits file contents.
+:::
 
 ### `git-scenarios clean [options]`
 
@@ -67,6 +143,12 @@ npx git-scenarios clean --older-than 24
 |---|---|
 | `--json` | Emit machine-readable JSON. Includes `description` (the full multi-line text) plus everything in the list output. |
 
+### Inspect flags
+
+| Flag | Behavior |
+|---|---|
+| `--json` | Emit machine-readable JSON: `name`, `kind`, `graph` (array of lines), `branches` (array), `status` (array of `git status -sb` lines), `contracts`. |
+
 ### Create flags
 
 | Flag | Behavior |
@@ -75,6 +157,16 @@ npx git-scenarios clean --older-than 24
 | `--run <cmd>` | Launch `<cmd>` against the scenario dir after creation. Shell-style argument splitting. |
 | `--remote <url>` | Add `origin` pointing at `<url>` before launching. |
 | `--ephemeral` | Auto-clean the temp dir on exit. Without this, the dir persists. |
+
+### Capture flags
+
+| Flag | Behavior |
+|---|---|
+| `--name <name>` | Scenario name (kebab-cased). Defaults to the captured repo's directory name. |
+| `--summary <s>` | One-line summary for the generated scenario. |
+| `--kind <kind>` | Override the inferred kind (`branch`, `worktree`, etc.). Inference: dirty worktree → `worktree`, otherwise `branch`. |
+| `--out <file>` | Write the generated module to `<file>` instead of stdout. |
+| `--json` | Emit the structured capture shape instead of a TypeScript module. File contents are omitted. |
 
 ### Clean flags
 
@@ -141,6 +233,44 @@ npx git-scenarios describe partial-stage --json | jq -r '.contracts[]'
   "contracts": ["..."]
 }
 ```
+
+### `inspect --json`
+
+```json
+{
+  "name": "feature-pr-ready",
+  "kind": "branch",
+  "graph": [
+    "* c477604 (HEAD -> feat/widget-v2) docs: document widget-v2 API and migration path",
+    "* 773c76b (main) test: add baseline widget tests"
+  ],
+  "branches": ["* feat/widget-v2", "main"],
+  "status": ["## feat/widget-v2"],
+  "contracts": ["main has 3 commits", "..."]
+}
+```
+
+For empty repos (no commits yet) `graph` is an empty array — the call still succeeds.
+
+### `capture --json`
+
+```json
+{
+  "name": "my-bug-repro",
+  "currentBranch": "feat/widget-v2",
+  "detached": false,
+  "baseBranch": "main",
+  "baseCommits": [{ "message": "chore: initial commit", "date": "2026-05-01T12:00:00Z" }],
+  "branchCommits": [{ "message": "feat: add widget-v2", "date": "2026-05-02T12:00:00Z" }],
+  "localBranches": ["main", "feat/widget-v2"],
+  "remotes": [{ "name": "origin", "url": "git@github.com:org/repo.git" }],
+  "changes": [{ "path": "src/x.ts", "staged": true, "untracked": false }],
+  "clean": false,
+  "contracts": ["feat/widget-v2 is checked out", "main has 1 commits"]
+}
+```
+
+File **contents** are intentionally omitted from JSON output (they're only in the rendered module).
 
 Errors come back on stderr as `{ "error": "..." }`.
 
@@ -210,8 +340,8 @@ The CLI prints the path and a cleanup hint after every `create`:
 
 ```
 ✓ Scenario "feature-pr-ready" ready at:
-    /var/folders/.../coco-git-test-xR2qwz
+    /var/folders/.../git-scenarios-xR2qwz
 
 When you're done, clean up with:
-    rm -rf /var/folders/.../coco-git-test-xR2qwz
+    rm -rf /var/folders/.../git-scenarios-xR2qwz
 ```

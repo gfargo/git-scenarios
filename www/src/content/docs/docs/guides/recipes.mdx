@@ -1,0 +1,304 @@
+---
+title: Testing Recipes
+description: Copy-paste recipes for testing git tools against real repo states — the same test across all five runners, plus patterns for conflicts, dirty trees, parameterized suites, and more.
+---
+
+import { Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+Practical, copy-paste patterns for testing git-aware code against real repositories. Every snippet here is built on the public API — adapt the scenario name and assertions to your tool.
+
+## The same test, five ways
+
+The adapter surface is deliberately uniform. Here's "the repo is on a clean feature branch" written for each runner — only the import path and assertion style change.
+
+<Tabs syncKey="runner">
+  <TabItem label="Jest">
+```ts
+import { describeWithScenario } from '@gfargo/git-scenarios/jest'
+
+describeWithScenario('feature-pr-ready', (getRepo) => {
+  it('is on a clean feature branch', async () => {
+    const repo = getRepo()
+    const status = await repo.git.status()
+    expect(status.current).toBe('feat/widget-v2')
+    expect(status.isClean()).toBe(true)
+  })
+
+  it('is 4 commits ahead of main', async () => {
+    const repo = getRepo()
+    const ahead = await repo.git.raw(['rev-list', '--count', 'main..HEAD'])
+    expect(ahead.trim()).toBe('4')
+  })
+})
+```
+  </TabItem>
+  <TabItem label="Vitest">
+```ts
+import { describeWithScenario } from '@gfargo/git-scenarios/vitest'
+import { expect, it } from 'vitest'
+
+describeWithScenario('feature-pr-ready', (getRepo) => {
+  it('is on a clean feature branch', async () => {
+    const repo = getRepo()
+    const status = await repo.git.status()
+    expect(status.current).toBe('feat/widget-v2')
+    expect(status.isClean()).toBe(true)
+  })
+})
+```
+  </TabItem>
+  <TabItem label="node:test">
+```ts
+import { describeWithScenario, it } from '@gfargo/git-scenarios/node-test'
+import assert from 'node:assert/strict'
+
+describeWithScenario('feature-pr-ready', (getRepo) => {
+  it('is on a clean feature branch', async () => {
+    const repo = getRepo()
+    const status = await repo.git.status()
+    assert.equal(status.current, 'feat/widget-v2')
+    assert.equal(status.isClean(), true)
+  })
+})
+```
+
+Run with: `node --import tsx --test src/**/*.test.ts`
+  </TabItem>
+  <TabItem label="Mocha">
+```ts
+import { describeWithScenario } from '@gfargo/git-scenarios/mocha'
+import { expect } from 'chai'
+
+describeWithScenario('feature-pr-ready', (getRepo) => {
+  it('is on a clean feature branch', async () => {
+    const repo = getRepo()
+    const status = await repo.git.status()
+    expect(status.current).to.equal('feat/widget-v2')
+    expect(status.isClean()).to.equal(true)
+  })
+})
+```
+  </TabItem>
+  <TabItem label="AVA">
+```ts
+import test from 'ava'
+import { withScenario } from '@gfargo/git-scenarios/ava'
+
+const scenario = withScenario('feature-pr-ready')
+test.before(scenario.setup)
+test.after.always(scenario.cleanup)
+
+test('is on a clean feature branch', async (t) => {
+  const repo = scenario.getRepo()
+  const status = await repo.git.status()
+  t.is(status.current, 'feat/widget-v2')
+  t.true(status.isClean())
+})
+```
+  </TabItem>
+</Tabs>
+
+<Aside type="note">
+`status.ahead` reflects distance from the *upstream tracking* branch, not a local one. Since `feature-pr-ready` has no remote, "4 commits ahead of `main`" is measured with `git rev-list --count main..HEAD` (shown in the Jest tab) — for upstream-aware scenarios like `branch-ahead-of-upstream`, `status.ahead` is populated.
+</Aside>
+
+The rest of this page uses Jest syntax for brevity — swap the import and assertion style per the table above for your runner. See the [Test Runner Adapters guide](/docs/guides/jest-adapter) for the full adapter reference.
+
+## Assert against a merge conflict
+
+`repo.git.status()` exposes `conflicted` — the list of paths with unresolved markers. Pair it with an `exists()` check for `MERGE_HEAD` to confirm a merge is actually in progress.
+
+```ts
+import { describeWithScenario } from '@gfargo/git-scenarios/jest'
+
+describeWithScenario('mid-merge-conflict', (getRepo) => {
+  it('has exactly one conflicted file', async () => {
+    const repo = getRepo()
+    const status = await repo.git.status()
+    expect(status.conflicted).toEqual(['src/widget.ts'])
+  })
+
+  it('is mid-merge (MERGE_HEAD present)', async () => {
+    const repo = getRepo()
+    expect(await repo.exists('.git/MERGE_HEAD')).toBe(true)
+  })
+
+  it('has conflict markers in the file', async () => {
+    const repo = getRepo()
+    const contents = await repo.readFile('src/widget.ts')
+    expect(contents).toContain('<<<<<<<')
+    expect(contents).toContain('>>>>>>>')
+  })
+})
+```
+
+The same shape works for `mid-rebase-conflict`, `mid-cherry-pick-conflict`, and `mid-revert-conflict` — just check `REBASE_HEAD` / `CHERRY_PICK_HEAD` / `REVERT_HEAD` instead.
+
+## Assert the staged / unstaged / untracked split
+
+For "mixed worktree" tools (anything that renders a Staged vs. Unstaged section), `partial-stage` is the canonical fixture. `simple-git`'s status splits the work for you: `staged` (in the index), `modified` (changed in the worktree), and `not_added` (untracked).
+
+```ts
+describeWithScenario('partial-stage', (getRepo) => {
+  it('has 2 staged, 2 unstaged, 1 untracked', async () => {
+    const repo = getRepo()
+    const status = await repo.git.status()
+    expect(status.staged).toHaveLength(2)
+    expect(status.not_added).toHaveLength(1)   // untracked
+  })
+})
+```
+
+## Run one suite across many scenarios
+
+`describeEachScenario` runs the same test body against a list of scenarios — ideal for invariants your tool must hold everywhere ("never crashes", "renders a status line", "exits 0").
+
+```ts
+import { describeEachScenario } from '@gfargo/git-scenarios/jest'
+
+describeEachScenario(
+  ['feature-pr-ready', 'detached-head', 'mid-merge-conflict', 'stashed-changes'],
+  (getRepo, scenarioName) => {
+    it(`renders without throwing in ${scenarioName}`, async () => {
+      const repo = getRepo()
+      // Drive your tool against repo.path here.
+      await expect(renderStatusLine(repo.path)).resolves.toBeDefined()
+    })
+  },
+)
+```
+
+<Aside type="tip">
+Each scenario gets its own fresh repo and automatic cleanup — there's no cross-test state to reset.
+</Aside>
+
+## Extend a scenario with extra steps
+
+Need a base scenario plus one tweak? Pass `extraSteps` — they run after the scenario's own setup, composed with the same atoms you'd use to write a scenario.
+
+```ts
+import { describeWithScenario } from '@gfargo/git-scenarios/jest'
+import { writeFiles, stageFiles } from '@gfargo/git-scenarios'
+
+describeWithScenario(
+  'feature-pr-ready',
+  (getRepo) => {
+    it('now has an extra staged file on top of the clean branch', async () => {
+      const repo = getRepo()
+      const status = await repo.git.status()
+      expect(status.staged).toContain('HOTFIX.md')
+    })
+  },
+  {
+    extraSteps: [
+      writeFiles({ 'HOTFIX.md': '# urgent\n' }),
+      stageFiles('HOTFIX.md'),
+    ],
+    timeout: 60_000, // bump for slow scenarios (submodules, large histories)
+  },
+)
+```
+
+## Use a custom scenario
+
+Register your own scenario once (e.g. in a test setup file) and it works in every adapter, exactly like a built-in.
+
+```ts
+import {
+  registerScenario, defineScenario, chain, addCommit, switchToBranch, checkoutBranch,
+} from '@gfargo/git-scenarios'
+import { describeWithScenario } from '@gfargo/git-scenarios/jest'
+
+registerScenario(defineScenario({
+  name: 'two-feature-branches',
+  summary: 'main + two independent feature branches',
+  description: 'Reproduces the bug from issue #123.',
+  kind: 'branch',
+  setup: chain(
+    addCommit({ message: 'init', files: { 'a.ts': 'a\n' } }),
+    switchToBranch('feat/one'),       // creates + checks out
+    addCommit({ message: 'one', files: { 'one.ts': '1\n' } }),
+    checkoutBranch('main'),           // switches to the existing branch
+    switchToBranch('feat/two'),       // creates the second feature branch off main
+    addCommit({ message: 'two', files: { 'two.ts': '2\n' } }),
+  ),
+}))
+
+describeWithScenario('two-feature-branches', (getRepo) => {
+  it('has both feature branches', async () => {
+    const branches = await getRepo().git.branchLocal()
+    expect(branches.all).toEqual(
+      expect.arrayContaining(['main', 'feat/one', 'feat/two']),
+    )
+  })
+})
+```
+
+<Aside>
+Captured a real repo with [`git-scenarios capture`](/docs/guides/cli#git-scenarios-capture-path)? The emitted module is a `defineScenario(...)` call — register it the same way.
+</Aside>
+
+## Test a tool that talks to a remote
+
+Some tools (gh-CLI wrappers, push/pull flows) detect an `origin`. Add one without baking the URL into the scenario via the `remote` option — works with `spinUpScenario` directly, or via the CLI's `--remote` flag.
+
+```ts
+import { spinUpScenario } from '@gfargo/git-scenarios'
+
+let repo
+beforeAll(async () => {
+  repo = await spinUpScenario('feature-pr-ready', {
+    remote: 'git@github.com:org/repo.git',
+  })
+})
+afterAll(() => repo?.cleanup())
+
+it('detects the origin remote', async () => {
+  const remotes = await repo.git.getRemotes(true)
+  expect(remotes.map((r) => r.name)).toContain('origin')
+})
+```
+
+Use a real URL for live data, or a fake one to exercise the views without risking destructive actions against a real repo.
+
+## Drop the adapter: raw spinUpScenario
+
+When you need full control over lifecycle (or you're not in a test runner at all — a script, a benchmark, a CLI), use `spinUpScenario` and `cleanup()` directly.
+
+```ts
+import { spinUpScenario } from '@gfargo/git-scenarios'
+
+const repo = await spinUpScenario('rich-history-graph')
+try {
+  const log = await repo.git.log()
+  console.log(`${log.total} commits, HEAD = ${log.latest?.hash.slice(0, 7)}`)
+} finally {
+  await repo.cleanup()
+}
+```
+
+Pass `{ autoCleanup: true }` as a safety net that removes the temp dir on process exit even if you forget `cleanup()` — though explicit cleanup is always better (the exit hook is synchronous and may not finish for very large repos).
+
+## Snapshot a commit graph
+
+For golden-file tests of graph-rendering tools, capture the deterministic `git log --graph` and snapshot it. Because every scenario is byte-identical on every run, the snapshot is stable across machines and CI.
+
+```ts
+describeWithScenario('mid-merge-conflict', (getRepo) => {
+  it('matches the expected graph shape', async () => {
+    const repo = getRepo()
+    const graph = await repo.git.raw([
+      'log', '--graph', '--oneline', '--all', '--decorate',
+    ])
+    expect(graph).toMatchSnapshot()
+  })
+})
+```
+
+You can preview every scenario's graph ahead of time on the [Browse page](/docs/scenarios/browse), or from the CLI with `git-scenarios inspect <name>`.
+
+## See also
+
+- [Test Runner Adapters](/docs/guides/jest-adapter) — the full adapter reference for all five runners
+- [Custom Scenarios](/docs/guides/custom-scenarios) — define and register your own states
+- [CLI Reference](/docs/guides/cli) — `inspect`, `capture`, and the rest of the command-line surface

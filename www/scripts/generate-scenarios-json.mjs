@@ -77,19 +77,75 @@ async function regenerate() {
     process.exit(1)
   }
 
-  // Strip the runtime-only `setup` function — it's not serializable and
-  // the browser doesn't need it. Everything else is plain data.
-  const payload = allScenarios.map((s) => ({
-    name: s.name,
-    summary: s.summary,
-    description: s.description,
-    kind: s.kind,
-    tags: s.tags ?? [],
-    contracts: s.contracts ?? [],
-  }))
+  // `createTempGitRepo` lives in the parent's main entry. We use it to
+  // materialize each scenario and capture its real commit graph — the
+  // library guarantees byte-identical (and thus hash-identical) output,
+  // so the graph committed here reproduces deterministically.
+  const indexPath = join(repoRoot, 'dist', 'index.cjs')
+  const { createTempGitRepo } = await import(indexPath)
+
+  /**
+   * Materialize one scenario and capture a compact `git log --graph`
+   * rendering plus the local branch list. Failures (e.g. linked
+   * worktrees that touch sibling dirs) degrade gracefully to an empty
+   * graph rather than failing the whole build.
+   */
+  async function captureGraph(scenario) {
+    const repo = await createTempGitRepo()
+    try {
+      await scenario.setup(repo)
+      let graph = []
+      try {
+        const raw = await repo.git.raw([
+          'log',
+          '--graph',
+          '--oneline',
+          '--all',
+          '--decorate',
+          '--color=never',
+        ])
+        graph = raw.trimEnd().split('\n').filter(Boolean)
+      } catch {
+        // Empty repo (no commits) — git log exits non-zero. Leave [].
+      }
+      let branches = []
+      try {
+        const raw = await repo.git.raw(['branch', '--format=%(refname:short)'])
+        branches = raw.trimEnd().split('\n').filter(Boolean)
+      } catch {
+        /* ignore */
+      }
+      return { graph, branches }
+    } catch (err) {
+      console.warn(`  ⚠ could not capture graph for "${scenario.name}": ${err.message}`)
+      return { graph: [], branches: [] }
+    } finally {
+      await repo.cleanup()
+    }
+  }
+
+  const payload = []
+  for (const s of allScenarios) {
+    const { graph, branches } = await captureGraph(s)
+    // Strip the runtime-only `setup` function — it's not serializable
+    // and the browser doesn't need it. Everything else is plain data.
+    payload.push({
+      name: s.name,
+      summary: s.summary,
+      description: s.description,
+      kind: s.kind,
+      tags: s.tags ?? [],
+      contracts: s.contracts ?? [],
+      graph,
+      branches,
+    })
+  }
 
   mkdirSync(outDir, { recursive: true })
   writeFileSync(outPath, JSON.stringify(payload, null, 2) + '\n')
 
-  console.log(`✓ Wrote ${payload.length} scenarios to src/data/scenarios.json`)
+  const withGraph = payload.filter((p) => p.graph.length > 0).length
+  console.log(
+    `✓ Wrote ${payload.length} scenarios to src/data/scenarios.json (${withGraph} with commit graphs)`,
+  )
 }
