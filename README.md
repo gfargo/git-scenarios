@@ -56,8 +56,9 @@ state every run), so the tests built on top are deterministic too.
    anything from "single staged file" to "three-way nested submodule
    mid-rebase."
 
-> **Status: v1.0.0** — Stable release. 32 curated scenarios, 60+ composable atoms,
-> 5 framework adapters, CLI, dual CJS/ESM output.
+> **Status: v1.1.0** — Stable release. 32 curated scenarios, 60+ composable atoms,
+> 5 framework adapters, CLI (`list` · `describe` · `inspect` · `create` · `capture` · `clean`),
+> dual CJS/ESM output.
 
 ## Table of contents
 

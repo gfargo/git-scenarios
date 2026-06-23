@@ -5,6 +5,23 @@ description: Version history and changelog for @gfargo/git-scenarios.
 
 The full changelog lives in [`CHANGELOG.md`](https://github.com/gfargo/git-scenarios/blob/main/CHANGELOG.md). This page summarizes recent releases.
 
+## v1.1.0 — 2026-06-23
+
+Tooling and trust. Two new CLI commands for working with scenarios interactively, plus a determinism fix that makes the "byte-identical every run" promise hold across **all** 32 scenarios — not just the few that pinned dates.
+
+### Highlights
+
+- **`git-scenarios inspect <name>`** — a read-only counterpart to `create`. Materializes a scenario in a throwaway temp repo, prints its commit graph, branches, and working-tree status, then cleans up. `--json` emits a structured `{ graph, branches, status, contracts }` payload. See a scenario's shape without leaving anything on disk.
+- **`git-scenarios capture [path]`** — snapshot a real repository's shape into a reusable `defineScenario(...)` module. Reproduces the current branch, commit-graph shape, and working-tree dirty state; emits a ready-to-edit TypeScript module (or `--json` with file contents omitted). Read-only against the target repo. Programmatic helpers available from the new `@gfargo/git-scenarios/capture` subpath.
+- **Full hash determinism across all 32 scenarios.** A new deterministic commit clock hands every commit a monotonic date from a fixed epoch, so every commit-creating path is reproducible. Previously only 3 date-pinning scenarios had stable hashes across runs; the rest stamped the wall clock and drifted. Commit hashes for existing scenarios change once with this fix — but since they were never stable before, nothing could have depended on specific values.
+
+### Docs
+
+- New [Testing Recipes](/docs/guides/recipes) guide covering all 5 runner adapters, merge-conflict assertions, staged/unstaged splits, custom scenarios, and graph snapshots.
+- Scenario browser now shows each scenario's commit graph inline.
+
+[Full release notes →](https://github.com/gfargo/git-scenarios/releases/tag/v1.1.0)
+
 ## v1.0.0 — 2026-05-29
 
 The **stable release**. v1 is about trust, not new features — typed errors, cross-platform verification, determinism guarantees, and removing the last traces of the library's origin as a coco internal helper.
