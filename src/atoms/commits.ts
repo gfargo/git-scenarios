@@ -1,3 +1,4 @@
+import { nextCommitDate } from '../commitClock'
 import type { Step } from './types'
 
 /**
@@ -18,13 +19,10 @@ import type { Step } from './types'
  */
 export function emptyCommit(message: string, options: { date?: string } = {}): Step {
   return async (repo) => {
-    const gitInstance = options.date
-      ? repo.git.env({
-          GIT_AUTHOR_DATE: options.date,
-          GIT_COMMITTER_DATE: options.date,
-        })
-      : repo.git
-    await gitInstance.raw(['commit', '--allow-empty', '-m', message])
+    const date = options.date ?? nextCommitDate(repo.path)
+    await repo.git
+      .env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
+      .raw(['commit', '--allow-empty', '-m', message])
   }
 }
 
@@ -44,7 +42,7 @@ export function emptyCommit(message: string, options: { date?: string } = {}): S
  *     amendCommit({ message: 'feat: with new file' }),
  *   )
  */
-export function amendCommit(options: { message?: string } = {}): Step {
+export function amendCommit(options: { message?: string; date?: string } = {}): Step {
   return async (repo) => {
     const args = ['commit', '--amend', '--all']
     if (options.message) {
@@ -52,6 +50,9 @@ export function amendCommit(options: { message?: string } = {}): Step {
     } else {
       args.push('--no-edit')
     }
-    await repo.git.raw(args)
+    // Amending rewrites the commit, so its committer date (and thus
+    // hash) would otherwise drift to wall-clock time. Pin it.
+    const date = options.date ?? nextCommitDate(repo.path)
+    await repo.git.env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date }).raw(args)
   }
 }

@@ -4,6 +4,8 @@ import { tmpdir } from 'os'
 import { dirname, join } from 'path'
 import { simpleGit, SimpleGit } from 'simple-git'
 
+import { nextCommitDate, resetCommitClock } from './commitClock'
+
 /**
  * Handle returned by `createTempGitRepo` and every scenario factory.
  *
@@ -137,10 +139,15 @@ export async function createTempGitRepo(
     exists,
     commitAll: async (message: string) => {
       await git.add('.')
-      await git.commit(message)
+      // Deterministic date so the commit hash is reproducible. An
+      // explicit-date path isn't offered here — callers that need to
+      // pin a date use the `commit`/`addCommit` atoms.
+      const date = nextCommitDate(path)
+      await git.env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date }).commit(message)
     },
     cleanup: async () => {
       autoCleanupPaths.delete(path)
+      resetCommitClock(path)
       await rm(path, { recursive: true, force: true })
     },
   }

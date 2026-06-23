@@ -5,6 +5,7 @@ import { tmpdir } from 'os'
 import { dirname, join } from 'path'
 import { simpleGit } from 'simple-git'
 import { promisify } from 'util'
+import { nextCommitDate } from '../commitClock'
 import type { TempGitRepo } from '../tempGitRepo'
 import type { Step } from './types'
 
@@ -137,7 +138,13 @@ export function withAuthor(identity: AuthorIdentity, step: Step): Step {
       exists: repo.exists,
       commitAll: async (message) => {
         await scopedGit.add('.')
-        await scopedGit.commit(message)
+        // Pin a deterministic date (continuing the parent repo's clock)
+        // while preserving the author identity env. Build a fresh
+        // instance so we don't mutate `scopedGit` across commits.
+        const date = identity.date ?? nextCommitDate(repo.path)
+        await simpleGit(repo.path)
+          .env({ ...env, GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
+          .commit(message)
       },
       cleanup: async () => {
         // No-op: the parent's cleanup owns the actual repo.
@@ -167,7 +174,12 @@ export function insideSubmodule(submodulePath: string, step: Step): Step {
       },
       commitAll: async (message) => {
         await submoduleGit.add('.')
-        await submoduleGit.commit(message)
+        // The submodule is its own repo with its own history, so it
+        // gets its own deterministic clock keyed by its path.
+        const date = nextCommitDate(submoduleRoot)
+        await simpleGit(submoduleRoot)
+          .env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
+          .commit(message)
       },
       cleanup: async () => {
         // No-op: the parent's cleanup removes the submodule clone too.
@@ -270,7 +282,14 @@ export function withRemoteTracking(remote: string, branch: string, step: Step): 
         },
         commitAll: async (message) => {
           await cloneGit.add('.')
-          await cloneGit.commit(message)
+          // Continue the PARENT's clock (keyed by parentRepo.path), not
+          // the clone's — otherwise upstream commits would reuse the same
+          // timestamps as the parent's local commits and `git log --all`
+          // ordering between the diverged tips would tie (non-deterministic).
+          const date = nextCommitDate(parentRepo.path)
+          await simpleGit(clonePath)
+            .env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
+            .commit(message)
         },
         cleanup: async () => {
           // No-op: outer finally handles cleanup.

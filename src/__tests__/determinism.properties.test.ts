@@ -14,46 +14,44 @@ import * as fc from 'fast-check'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { createTempGitRepo } from '../tempGitRepo'
+import { allScenarios } from '../scenarios'
 import { spinUpScenario } from '../spinUpScenario'
 import { seededFiles } from '../atoms'
 
 /**
  * Property 9: Scenario determinism
  *
- * For any built-in scenario that pins timestamps, running its setup
- * function twice on two separate TempGitRepo instances produces
- * identical `git log --format=%H` output.
+ * Running ANY built-in scenario's setup twice on two separate
+ * TempGitRepo instances produces identical commit hashes AND identical
+ * `git log --all` ordering. This is the library's headline guarantee:
+ * every scenario is byte-identical (and hash-identical) on every run,
+ * enabled by the deterministic commit clock (see `commitClock.ts`).
  *
- * NOTE: Only scenarios that use `daysAgo` or explicit date env vars
- * are hash-deterministic. We test the known-deterministic ones here.
+ * Covers all registered scenarios — not just the date-pinned ones — so
+ * a regression that reintroduces wall-clock dates anywhere is caught.
  *
  * **Validates: Requirements 9.1, 9.2**
  */
-describe('Property 9: Scenario determinism', () => {
-  const deterministicScenarios = ['rich-history-graph', 'empty-repo']
+describe('Property 9: Scenario determinism (all scenarios)', () => {
+  // `--all` includes every ref; %H is the full hash, %aI the author
+  // date. Comparing both runs catches hash drift AND ordering ties.
+  const fingerprint = (repo: { git: { raw: (a: string[]) => Promise<string> } }) =>
+    repo.git.raw(['log', '--all', '--format=%H %aI %s'])
 
-  it('two runs of any deterministic scenario produce identical commit hashes', async () => {
-    await fc.assert(
-      fc.asyncProperty(
-        fc.constantFrom(...deterministicScenarios),
-        async (scenarioName) => {
-          const repo1 = await spinUpScenario(scenarioName)
-          const repo2 = await spinUpScenario(scenarioName)
-
-          try {
-            const log1 = await repo1.git.raw(['log', '--all', '--format=%H'])
-            const log2 = await repo2.git.raw(['log', '--all', '--format=%H'])
-
-            expect(log1).toBe(log2)
-          } finally {
-            await repo1.cleanup()
-            await repo2.cleanup()
-          }
-        },
-      ),
-      { numRuns: 10 },
-    )
-  }, 60_000)
+  it.each(allScenarios.map((s) => s.name))(
+    '%s produces identical hashes across two runs',
+    async (scenarioName) => {
+      const repo1 = await spinUpScenario(scenarioName)
+      const repo2 = await spinUpScenario(scenarioName)
+      try {
+        expect(await fingerprint(repo1)).toBe(await fingerprint(repo2))
+      } finally {
+        await repo1.cleanup()
+        await repo2.cleanup()
+      }
+    },
+    30_000,
+  )
 })
 
 /**

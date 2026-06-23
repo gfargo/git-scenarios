@@ -21,6 +21,7 @@ import {
 import { join } from 'path'
 import { mkdtemp } from 'fs/promises'
 import { tmpdir } from 'os'
+import { nextCommitDate } from '../commitClock'
 import type { Step } from '../atoms/types'
 
 /**
@@ -51,7 +52,13 @@ function addWorktreeWithCommit(
         await writeFile(absPath, content)
       }
       await wtGit.add('.')
-      await wtGit.commit(c.message)
+      // Linked worktrees share the parent's object DB and refs, so
+      // continue the parent's deterministic clock to keep commit
+      // hashes (and `git log --all` ordering) stable.
+      const date = nextCommitDate(repo.path)
+      await wtGit
+        .env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
+        .commit(c.message)
     }
   }
 }
