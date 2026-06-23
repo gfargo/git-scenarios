@@ -6,6 +6,10 @@ versions follow [semver](https://semver.org/).
 
 ## [Unreleased]
 
+(none)
+
+## [1.1.0] — 2026-06-23
+
 ### Fixed
 
 - **Full hash determinism across all 32 scenarios.** Previously only the
