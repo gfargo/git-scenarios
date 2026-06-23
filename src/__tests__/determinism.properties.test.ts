@@ -50,7 +50,12 @@ describe('Property 9: Scenario determinism (all scenarios)', () => {
         await repo2.cleanup()
       }
     },
-    30_000,
+    // Generous upper bound, not a perf target: cases run serially and
+    // only the heaviest scenario (`large-repo`, 115 commits) comes close
+    // — spun up twice it can take ~80s on slow Windows runners where git
+    // process-spawn overhead dominates. The fast scenarios still finish
+    // in well under a second; this cap only stops a genuine hang.
+    180_000,
   )
 })
 
