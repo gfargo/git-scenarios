@@ -190,12 +190,12 @@ import { describeWithScenario } from '@gfargo/git-scenarios/node-test'
 import { describeWithScenario } from '@gfargo/git-scenarios/mocha'
 // AVA (different shape — no describe blocks):
 import { withScenario } from '@gfargo/git-scenarios/ava'
+```
+
+The first four share one API — only the import path changes:
 
 ```ts
-// Jest:
 import { describeWithScenario } from '@gfargo/git-scenarios/jest'
-// Vitest:
-import { describeWithScenario } from '@gfargo/git-scenarios/vitest'
 
 describeWithScenario('feature-pr-ready', (getRepo) => {
   it('is on a feature branch', async () => {
