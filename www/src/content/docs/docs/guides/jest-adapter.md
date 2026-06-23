@@ -165,6 +165,26 @@ for (const [name, scenario] of Object.entries(scenarios)) {
 
 AVA runs tests concurrently by default. Since all tests in a `withScenario` group share a single repo instance, use `test.serial` if your tests mutate the repo state. If tests are read-only (status checks, log queries), concurrent is fine.
 
+## Assertion matchers (Jest & Vitest)
+
+Alongside the lifecycle wrappers, the library ships `expect(...)` matchers for asserting repo state directly — register them once in your setup file:
+
+```ts
+import { matchers } from '@gfargo/git-scenarios/matchers'
+expect.extend(matchers)
+```
+
+```ts
+await expect(repo).toBeOnBranch('feat/widget-v2')
+await expect(repo).toHaveCleanWorktree()
+await expect(repo).toBeMidMerge()
+await expect(repo).toHaveConflictIn('src/widget.ts')
+await expect(repo).toBeAheadBy(2)
+await expect(repo).not.toHaveDirtyWorktree()
+```
+
+Jest types ship automatically. Vitest users add a 4-line `Assertion` augmentation (no `vitest` dependency required of this package) — see the [Testing Recipes guide](/docs/guides/recipes#assert-in-one-line-assertrepo-and-expect-matchers) for the snippet, the full matcher list, and the `assertRepo(...)` fluent API that the other three runners (node:test, Mocha, AVA) use instead.
+
 ## Custom scenarios
 
 All adapters search the full mutable registry, so custom-registered scenarios work everywhere:

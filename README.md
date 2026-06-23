@@ -57,7 +57,8 @@ state every run), so the tests built on top are deterministic too.
    mid-rebase."
 
 > **Status: v1.1.0** — Stable release. 32 curated scenarios, 60+ composable atoms,
-> 5 framework adapters, CLI (`list` · `describe` · `inspect` · `create` · `capture` · `clean`),
+> 5 framework adapters, `assertRepo()` + `expect` matchers, CLI
+> (`list` · `describe` · `inspect` · `create` · `capture` · `clean`),
 > dual CJS/ESM output.
 
 ## Table of contents
@@ -649,6 +650,7 @@ type TempGitRepo = {
   readFile: (path: string) => Promise<string>
   exists: (path: string) => Promise<boolean>
   commitAll: (message: string) => Promise<void>
+  snapshot: () => Promise<RepoSnapshot>  // structured, read-only state
   cleanup: () => Promise<void>
 }
 ```
@@ -666,6 +668,11 @@ type TempGitRepo = {
   the given repo-relative path.
 - **`commitAll(message)`** — `git add . && git commit -m <message>`
   in one call. Convenience for the common case.
+- **`snapshot()`** — a structured, read-only description of the repo's
+  current state (HEAD, branches, staged/modified/untracked split,
+  ahead/behind, commit count, in-progress operation, conflicts, stashes,
+  graph). The programmatic counterpart to `git-scenarios inspect`. See
+  [Asserting against a scenario](#asserting-against-a-scenario).
 - **`cleanup()`** — `rm -rf` the temp dir. Call in `afterAll` /
   `afterEach`. Idempotent (safe to call twice).
 
@@ -711,6 +718,56 @@ expect(content).toContain('updated')
 const status = await repo.git.status()
 expect(status.staged).toEqual(['src/foo.ts'])
 ```
+
+### Asserting against a scenario
+
+For the common checks you don't have to hand-roll `git` calls. Three
+options, all built on `repo.snapshot()`:
+
+**`repo.snapshot()`** — read the whole state as one structured object:
+
+```ts
+const snap = await repo.snapshot()
+snap.head.branch     // current branch, or null when detached
+snap.status.clean    // boolean
+snap.status.staged   // string[]  (also .modified, .untracked)
+snap.status.ahead    // number    (vs upstream; also .behind)
+snap.commitCount     // commits reachable from HEAD
+snap.operation       // 'merge' | 'rebase' | 'cherry-pick' | 'revert' | 'bisect' | null
+snap.conflicts       // string[]  unmerged paths
+snap.stashes         // number
+```
+
+`snapshotRepo(git)` is exported too, for use against any `simple-git`
+instance.
+
+**`assertRepo(...)`** — a fluent, runner-agnostic assertion chain that
+throws `RepoAssertionError` on the first mismatch (works in every test
+runner):
+
+```ts
+import { assertRepo } from '@gfargo/git-scenarios'
+
+await assertRepo(repo)
+  .onBranch('feat/widget-v2')
+  .cleanWorktree()
+  .commitCount(7)
+```
+
+**`expect(...)` matchers** — for Jest and Vitest, register once then
+assert directly:
+
+```ts
+import { matchers } from '@gfargo/git-scenarios/matchers'
+expect.extend(matchers)
+
+await expect(repo).toBeMidMerge()
+await expect(repo).toHaveConflictIn('src/widget.ts')
+await expect(repo).not.toHaveCleanWorktree()
+```
+
+See the [Testing Recipes guide](https://github.com/gfargo/git-scenarios/blob/main/www/src/content/docs/docs/guides/recipes.mdx)
+for the full matcher list and the 4-line Vitest type augmentation.
 
 ### Raw `createTempGitRepo()` — when scenarios don't fit
 
