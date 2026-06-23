@@ -23,19 +23,36 @@
  */
 
 import { spawnSync } from 'node:child_process'
-import { readdirSync, rmSync, statSync } from 'node:fs'
+import { readdirSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import * as path from 'node:path'
 
-import type { Scenario } from '../src/scenarios'
+import { simpleGit } from 'simple-git'
+
+import type { Scenario, ScenarioKind } from '../src/scenarios'
+import {
+  captureToJson,
+  gatherRepoState,
+  normalizeName,
+  renderScenarioModule,
+} from '../src/capture'
 import { findRegistered, listRegistered } from '../src/registry'
 import { createTempGitRepo } from '../src/tempGitRepo'
 
 type ParsedArgs = {
-  command?: 'list' | 'describe' | 'create' | 'clean' | 'help'
+  command?: 'list' | 'describe' | 'inspect' | 'create' | 'capture' | 'clean' | 'help'
   positional: string[]
   flags: Record<string, string | boolean>
 }
+
+const VALID_KINDS: readonly ScenarioKind[] = [
+  'branch',
+  'worktree',
+  'operation',
+  'history',
+  'stash',
+  'submodule',
+]
 
 function parseArgs(argv: string[]): ParsedArgs {
   const positional: string[] = []
@@ -55,7 +72,7 @@ function parseArgs(argv: string[]): ParsedArgs {
         flags[arg.slice(2)] = true
       }
     } else if (!command) {
-      if (arg === 'list' || arg === 'describe' || arg === 'create' || arg === 'clean' || arg === 'help') {
+      if (arg === 'list' || arg === 'describe' || arg === 'inspect' || arg === 'create' || arg === 'capture' || arg === 'clean' || arg === 'help') {
         command = arg
       } else {
         positional.push(arg)
@@ -92,7 +109,9 @@ function printHelp(): void {
     '  Usage:',
     '    git-scenarios list [--kind <k>] [--tag <t>] [--json]',
     '    git-scenarios describe <name> [--json]',
+    '    git-scenarios inspect <name> [--json]',
     '    git-scenarios create <name> [options]',
+    '    git-scenarios capture [path] [options]',
     '    git-scenarios clean [options]',
     '',
     '  List options:',
@@ -103,6 +122,12 @@ function printHelp(): void {
     '',
     '  Describe options:',
     '    --json           Machine-readable JSON output',
+    '',
+    '  Inspect options:',
+    '    Materializes the scenario in a throwaway temp dir, prints its',
+    '    commit graph, branches, and working-tree status, then cleans up.',
+    '    Use it to see a scenario\'s shape without keeping anything on disk.',
+    '    --json           Machine-readable JSON (graph / branches / status)',
     '',
     '  Create options:',
     '    --path <dir>     Materialize the scenario at <dir> instead of /tmp',
@@ -118,6 +143,17 @@ function printHelp(): void {
     '                     risking destructive actions against a real repo.',
     '    --ephemeral      Remove the scenario directory when the CLI exits',
     '                     (default: persist, print the cleanup hint)',
+    '',
+    '  Capture options:',
+    '    Reads a real repo (default: current dir) and prints a',
+    '    defineScenario(...) module that reproduces its shape — branch',
+    '    layout, commit-graph structure, and working-tree state. A',
+    '    starting point you edit, not a byte-perfect clone.',
+    '    --name <name>    Scenario name (kebab-case; default: repo dir name)',
+    '    --summary <s>    One-line summary for the scenario',
+    '    --kind <kind>    Override the inferred kind (branch | worktree | …)',
+    '    --out <file>     Write the module to <file> instead of stdout',
+    '    --json           Emit structured capture data instead of a TS module',
     '',
     '  Clean options:',
     '    --dry-run        List stale scenario dirs without deleting them',
@@ -227,6 +263,102 @@ function commandDescribe(name: string, options: { json?: boolean } = {}): number
   return 0
 }
 
+/**
+ * Materialize a scenario into a throwaway temp repo, capture its shape
+ * (commit graph, branches, working-tree status), tear it down, and
+ * print the captured snapshot. Lets you *see* what a scenario produces
+ * without leaving anything on disk — the read-only counterpart to
+ * `create`.
+ *
+ * Empty repos (no commits yet) have no `git log` output; that's not an
+ * error, so the graph section is simply reported as empty.
+ */
+async function commandInspect(name: string, options: { json?: boolean } = {}): Promise<number> {
+  const scenario = findRegistered(name)
+  if (!scenario) {
+    if (options.json) {
+      console.error(JSON.stringify({ error: `Unknown scenario "${name}"` }))
+    } else {
+      console.error(`Unknown scenario "${name}". Try \`git-scenarios list\`.`)
+    }
+    return 2
+  }
+
+  const repo = await createTempGitRepo()
+  let graph = ''
+  let branches = ''
+  let status = ''
+  try {
+    await scenario.setup(repo)
+
+    // `--color=never` keeps the captured text clean for JSON / piping.
+    try {
+      graph = (
+        await repo.git.raw(['log', '--graph', '--oneline', '--all', '--decorate', '--color=never'])
+      ).trimEnd()
+    } catch {
+      // No commits yet (e.g. empty-repo) — git log exits non-zero.
+      graph = ''
+    }
+    branches = (await repo.git.raw(['branch', '-a', '--no-color'])).trimEnd()
+    // `git status` has no `--no-color` flag; simple-git pipes stdout
+    // (non-TTY), so output is uncolored anyway.
+    status = (await repo.git.raw(['status', '-sb'])).trimEnd()
+  } catch (error) {
+    console.error(`Scenario setup failed: ${(error as Error).message}`)
+    await repo.cleanup()
+    return 1
+  } finally {
+    await repo.cleanup()
+  }
+
+  if (options.json) {
+    console.log(
+      JSON.stringify(
+        {
+          name: scenario.name,
+          kind: scenario.kind,
+          graph: graph ? graph.split('\n') : [],
+          branches: branches ? branches.split('\n').map((l) => l.trim()) : [],
+          status: status ? status.split('\n') : [],
+          contracts: scenario.contracts ?? [],
+        },
+        null,
+        2,
+      ),
+    )
+    return 0
+  }
+
+  const indent = (text: string): string =>
+    text.length === 0
+      ? '    (none)'
+      : text.split('\n').map((l) => `    ${l}`).join('\n')
+
+  console.log('')
+  console.log(`  ${scenario.name}  ·  ${scenario.kind}`)
+  console.log(`  ${'-'.repeat(scenario.name.length + scenario.kind.length + 5)}`)
+  console.log(`  ${scenario.summary}`)
+  console.log('')
+  console.log('  Commit graph:')
+  console.log(indent(graph))
+  console.log('')
+  console.log('  Branches:')
+  console.log(indent(branches))
+  console.log('')
+  console.log('  Status (git status -sb):')
+  console.log(indent(status))
+  if (scenario.contracts && scenario.contracts.length > 0) {
+    console.log('')
+    console.log('  Contracts:')
+    for (const c of scenario.contracts) {
+      console.log(`    - ${c}`)
+    }
+  }
+  console.log('')
+  return 0
+}
+
 async function commandCreate(
   name: string,
   options: {
@@ -319,6 +451,80 @@ async function commandCreate(
     console.log('')
   }
 
+  return 0
+}
+
+/**
+ * Capture a real repository's shape as a reusable scenario module.
+ *
+ * Read-only against the target repo — runs git plumbing and reads
+ * working-tree files, never writes to it. Output goes to stdout (so it
+ * pipes into a file or clipboard) unless `--out` is given.
+ */
+async function commandCapture(
+  targetPath: string,
+  options: {
+    name?: string
+    summary?: string
+    kind?: string
+    out?: string
+    json?: boolean
+  },
+): Promise<number> {
+  const repoPath = path.resolve(targetPath)
+  const git = simpleGit(repoPath)
+
+  // Confirm it's actually a git repo before doing anything else.
+  try {
+    const isRepo = await git.checkIsRepo()
+    if (!isRepo) {
+      console.error(`Not a git repository: ${repoPath}`)
+      return 1
+    }
+  } catch {
+    console.error(`Not a git repository: ${repoPath}`)
+    return 1
+  }
+
+  if (options.kind && !VALID_KINDS.includes(options.kind as ScenarioKind)) {
+    console.error(
+      `Invalid --kind "${options.kind}". Expected one of: ${VALID_KINDS.join(', ')}.`,
+    )
+    return 2
+  }
+
+  const derivedName = options.name ?? path.basename(repoPath)
+  const name = normalizeName(derivedName)
+
+  const state = await gatherRepoState(git, repoPath)
+
+  if (options.json) {
+    console.log(JSON.stringify(captureToJson(state, name), null, 2))
+    return 0
+  }
+
+  const moduleSource = renderScenarioModule(state, {
+    name,
+    summary: options.summary,
+    kind: options.kind as ScenarioKind | undefined,
+  })
+
+  if (options.out) {
+    const outPath = path.resolve(options.out)
+    try {
+      writeFileSync(outPath, moduleSource)
+    } catch (error) {
+      console.error(`Failed to write ${outPath}: ${(error as Error).message}`)
+      return 1
+    }
+    console.error(`✓ Wrote captured scenario "${name}" to ${outPath}`)
+    return 0
+  }
+
+  // Module to stdout (pipeable); progress note to stderr so it doesn't
+  // pollute the captured source when redirected.
+  console.error(`✓ Captured "${name}" from ${repoPath}`)
+  console.log(moduleSource)
   return 0
 }
 
@@ -429,6 +635,26 @@ async function main(): Promise<number> {
       return 2
     }
     return commandDescribe(name, { json: Boolean(flags.json) })
+  }
+
+  if (command === 'inspect') {
+    const name = positional[0]
+    if (!name) {
+      console.error('Missing scenario name. Try `git-scenarios list`.')
+      return 2
+    }
+    return commandInspect(name, { json: Boolean(flags.json) })
+  }
+
+  if (command === 'capture') {
+    const targetPath = positional[0] ?? '.'
+    return commandCapture(targetPath, {
+      name: typeof flags.name === 'string' ? flags.name : undefined,
+      summary: typeof flags.summary === 'string' ? flags.summary : undefined,
+      kind: typeof flags.kind === 'string' ? flags.kind : undefined,
+      out: typeof flags.out === 'string' ? flags.out : undefined,
+      json: Boolean(flags.json),
+    })
   }
 
   if (command === 'clean') {
