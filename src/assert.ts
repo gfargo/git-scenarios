@@ -26,7 +26,7 @@
 
 import type { SimpleGit } from 'simple-git'
 
-import { RepoAssertionError } from './errors'
+import { InvalidArgumentError, RepoAssertionError } from './errors'
 import { snapshotRepo, type InProgressOperation, type RepoSnapshot } from './snapshot'
 
 /** Anything `assertRepo` can read a snapshot from. */
@@ -44,7 +44,22 @@ async function readSnapshot(source: SnapshotSource): Promise<RepoSnapshot> {
   return isSnapshottable(source) ? source.snapshot() : snapshotRepo(source as SimpleGit)
 }
 
-type Check = (snap: RepoSnapshot) => void
+function isSimpleGit(val: unknown): val is SimpleGit {
+  return typeof val === 'object' && val !== null && typeof (val as { raw?: unknown }).raw === 'function'
+}
+
+/**
+ * Extract a SimpleGit handle from any SnapshotSource. Returns `null`
+ * when the source is a plain `{ snapshot() }` object with no `.git`
+ * property — `aheadOf`/`behindOf` require a git-bearing source.
+ */
+function resolveGit(source: SnapshotSource): SimpleGit | null {
+  if (!isSnapshottable(source)) return source as SimpleGit
+  const g = (source as Record<string, unknown>).git
+  return isSimpleGit(g) ? g : null
+}
+
+type Check = (snap: RepoSnapshot) => void | Promise<void>
 
 function fail(assertion: string, expected: unknown, actual: unknown, message: string): never {
   throw new RepoAssertionError({ assertion, expected, actual, message })
@@ -241,6 +256,52 @@ export class RepoAssertion implements PromiseLike<RepoSnapshot> {
     return this
   }
 
+  /**
+   * Assert HEAD is exactly `n` commits ahead of an arbitrary `ref` (e.g.
+   * `'origin/main'`, `'main'`). Requires a git-bearing source — pass a
+   * `TempGitRepo` or a raw `SimpleGit` instance.
+   */
+  aheadOf(ref: string, n: number): this {
+    const git = resolveGit(this.source)
+    if (!git) {
+      throw new InvalidArgumentError({
+        parameterName: 'source',
+        constraint: '`aheadOf()` requires a source that exposes a SimpleGit handle — pass a TempGitRepo or a raw SimpleGit instance',
+      })
+    }
+    this.checks.push(async () => {
+      const out = await git.raw(['rev-list', '--count', `${ref}..HEAD`])
+      const actual = parseInt(out.trim(), 10)
+      if (actual !== n) {
+        fail('aheadOf', n, actual, `Expected HEAD to be ${n} commit(s) ahead of "${ref}", but found ${actual}.`)
+      }
+    })
+    return this
+  }
+
+  /**
+   * Assert HEAD is exactly `n` commits behind an arbitrary `ref` (e.g.
+   * `'origin/main'`, `'main'`). Requires a git-bearing source — pass a
+   * `TempGitRepo` or a raw `SimpleGit` instance.
+   */
+  behindOf(ref: string, n: number): this {
+    const git = resolveGit(this.source)
+    if (!git) {
+      throw new InvalidArgumentError({
+        parameterName: 'source',
+        constraint: '`behindOf()` requires a source that exposes a SimpleGit handle — pass a TempGitRepo or a raw SimpleGit instance',
+      })
+    }
+    this.checks.push(async () => {
+      const out = await git.raw(['rev-list', '--count', `HEAD..${ref}`])
+      const actual = parseInt(out.trim(), 10)
+      if (actual !== n) {
+        fail('behindOf', n, actual, `Expected HEAD to be ${n} commit(s) behind "${ref}", but found ${actual}.`)
+      }
+    })
+    return this
+  }
+
   /** Assert the stash has exactly `n` entries — or, with no argument, at least one. */
   hasStash(n?: number): this {
     this.checks.push((s) => {
@@ -256,7 +317,7 @@ export class RepoAssertion implements PromiseLike<RepoSnapshot> {
   /** Run all queued checks against a fresh snapshot. Resolves to that snapshot. */
   private async run(): Promise<RepoSnapshot> {
     const snap = await readSnapshot(this.source)
-    for (const check of this.checks) check(snap)
+    for (const check of this.checks) await check(snap)
     return snap
   }
 

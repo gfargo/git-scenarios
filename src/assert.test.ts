@@ -6,9 +6,9 @@
  */
 
 import { assertRepo } from './assert'
-import { RepoAssertionError } from './errors'
+import { InvalidArgumentError, RepoAssertionError } from './errors'
 import { spinUpScenario } from './spinUpScenario'
-import type { TempGitRepo } from './tempGitRepo'
+import { createTempGitRepo, type TempGitRepo } from './tempGitRepo'
 
 describe('assertRepo', () => {
   describe('feature-pr-ready', () => {
@@ -100,6 +100,59 @@ describe('assertRepo', () => {
     it('asserts a positive ahead count', async () => {
       const snap = await repo.snapshot()
       await assertRepo(repo).ahead(snap.status.ahead).behind(0)
+    })
+  })
+
+  describe('aheadOf / behindOf', () => {
+    let repo: TempGitRepo
+
+    beforeAll(async () => {
+      repo = await createTempGitRepo()
+      // Commit A on main, tag it as v0, then add commit B.
+      // HEAD (B) is then 1 ahead of v0 and 0 behind v0.
+      await repo.writeFile('a.txt', '1')
+      await repo.commitAll('base commit')
+      await repo.git.raw(['tag', 'v0'])   // lightweight tag at commit A
+      await repo.writeFile('a.txt', '2')
+      await repo.commitAll('extra commit') // commit B — now 1 ahead of v0
+    })
+
+    afterAll(async () => {
+      await repo.cleanup()
+    })
+
+    it('aheadOf passes when the ahead count matches', async () => {
+      await assertRepo(repo).aheadOf('v0', 1)
+    })
+
+    it('aheadOf throws RepoAssertionError on mismatch', async () => {
+      const err = await assertRepo(repo).aheadOf('v0', 5).then(() => null, (e) => e)
+      expect(err).toBeInstanceOf(RepoAssertionError)
+      const rae = err as RepoAssertionError
+      expect(rae.assertion).toBe('aheadOf')
+      expect(rae.expected).toBe(5)
+      expect(rae.actual).toBe(1)
+    })
+
+    it('behindOf passes when the behind count matches (v0 is ancestor of HEAD → 0 behind)', async () => {
+      await assertRepo(repo).behindOf('v0', 0)
+    })
+
+    it('behindOf throws RepoAssertionError on mismatch', async () => {
+      await expect(assertRepo(repo).behindOf('v0', 99)).rejects.toThrow(/99.*behind.*"v0"/)
+    })
+
+    it('aheadOf works with a raw SimpleGit instance', async () => {
+      await assertRepo(repo.git).aheadOf('v0', 1)
+    })
+
+    it('aheadOf throws InvalidArgumentError for plain snapshot sources', () => {
+      const plainSource = { snapshot: () => Promise.resolve({} as never) }
+      expect(() => assertRepo(plainSource).aheadOf('v0', 1)).toThrow(InvalidArgumentError)
+    })
+
+    it('can combine aheadOf and behindOf in one chain', async () => {
+      await assertRepo(repo).aheadOf('v0', 1).behindOf('v0', 0)
     })
   })
 
