@@ -43,6 +43,7 @@ type TempGitRepo = {
   readFile: (path) => Promise<string>
   exists: (path) => Promise<boolean>
   commitAll: (message) => Promise<void>
+  snapshot: () => Promise<RepoSnapshot>  // structured state, read-only
   cleanup: () => Promise<void>
 }
 ```
@@ -59,6 +60,33 @@ type TempGitRepo = {
 - No assumptions about branch shape, file structure, or workflow
 
 The `TempGitRepo` type is the universal currency of every layer above. Atoms take one and produce side effects on it; scenarios compose atoms over one; the public API returns one.
+
+### `repo.snapshot()`
+
+`snapshot()` captures a structured, read-only description of the repo's current state — the programmatic counterpart to the `git-scenarios inspect` CLI command. Use it to assert against a materialized scenario without hand-rolling `git` calls:
+
+```ts
+const repo = await spinUpScenario('mid-merge-conflict')
+const snap = await repo.snapshot()
+
+snap.head.branch     // current branch, or null when detached
+snap.head.detached   // true when HEAD points at a commit
+snap.head.sha        // short SHA, or null on an empty repo
+snap.branches        // local branch names
+snap.status.clean    // false here
+snap.status.staged   // staged paths
+snap.status.modified // unstaged tracked changes
+snap.status.untracked
+snap.status.ahead    // vs upstream (0 when no upstream)
+snap.status.behind
+snap.commitCount     // commits reachable from HEAD
+snap.operation       // 'merge' | 'rebase' | 'cherry-pick' | 'revert' | 'bisect' | null
+snap.conflicts       // unmerged paths — non-empty mid-conflict
+snap.stashes         // stash entry count
+snap.graph           // git log --graph --oneline --all lines
+```
+
+The same logic is exposed standalone as `snapshotRepo(git, path)` for use against any `simple-git` instance, and is the shared foundation the test matchers and `diff` / `doctor` CLI commands build on. Because every scenario is deterministic, a scenario's snapshot is byte-for-byte identical across runs.
 
 ## Layer 2: Atoms
 

@@ -6,6 +6,7 @@ import { dirname, join } from 'path'
 import { simpleGit } from 'simple-git'
 import { promisify } from 'util'
 import { nextCommitDate } from '../commitClock'
+import { snapshotRepo } from '../snapshot'
 import type { TempGitRepo } from '../tempGitRepo'
 import type { Step } from './types'
 
@@ -146,6 +147,7 @@ export function withAuthor(identity: AuthorIdentity, step: Step): Step {
           .env({ ...env, GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
           .commit(message)
       },
+      snapshot: () => snapshotRepo(scopedGit, repo.path),
       cleanup: async () => {
         // No-op: the parent's cleanup owns the actual repo.
       },
@@ -181,6 +183,7 @@ export function insideSubmodule(submodulePath: string, step: Step): Step {
           .env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
           .commit(message)
       },
+      snapshot: () => snapshotRepo(submoduleGit, submoduleRoot),
       cleanup: async () => {
         // No-op: the parent's cleanup removes the submodule clone too.
       },
@@ -291,6 +294,7 @@ export function withRemoteTracking(remote: string, branch: string, step: Step): 
             .env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
             .commit(message)
         },
+        snapshot: () => snapshotRepo(cloneGit, clonePath),
         cleanup: async () => {
           // No-op: outer finally handles cleanup.
         },

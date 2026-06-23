@@ -6,7 +6,20 @@ versions follow [semver](https://semver.org/).
 
 ## [Unreleased]
 
-(none)
+### Added
+
+- **`repo.snapshot()`** — a structured, read-only description of a
+  repo's current state: HEAD (branch / detached / short SHA), local
+  branches, working-tree status split into staged / modified /
+  untracked plus upstream ahead/behind, total commit count, the
+  in-progress operation (`merge` / `rebase` / `cherry-pick` / `revert`
+  / `bisect` / `null`), conflicted paths, stash count, and the commit
+  graph. The programmatic counterpart to `git-scenarios inspect`. Also
+  exported standalone as `snapshotRepo(git, path)` for use against any
+  `simple-git` instance, with types `RepoSnapshot`, `HeadSnapshot`,
+  `StatusSnapshot`, and `InProgressOperation`. This is the shared
+  foundation the upcoming test matchers and `diff` / `doctor` CLI
+  commands build on.
 
 ## [1.1.0] — 2026-06-23
 

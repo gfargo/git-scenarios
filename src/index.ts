@@ -34,6 +34,13 @@ export { spinUpScenario, type SpinUpScenarioOptions } from './spinUpScenario'
 export { fromScenario } from './fromScenario'
 export { createTempGitRepo, type TempGitRepo, type CreateTempGitRepoOptions } from './tempGitRepo'
 export {
+  snapshotRepo,
+  type RepoSnapshot,
+  type HeadSnapshot,
+  type StatusSnapshot,
+  type InProgressOperation,
+} from './snapshot'
+export {
   registerScenario,
   registerScenarios,
   unregisterScenario,
