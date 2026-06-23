@@ -59,6 +59,26 @@ export class GitCommandError extends GitScenariosError {
 }
 
 /**
+ * Thrown by the `assertRepo(...)` fluent assertion API when a repo's
+ * state doesn't match an expectation. Carries the human-readable
+ * mismatch plus the structured `expected` / `actual` values so callers
+ * (and the test matchers built on top) can render rich diffs.
+ */
+export class RepoAssertionError extends GitScenariosError {
+  readonly assertion: string
+  readonly expected: unknown
+  readonly actual: unknown
+
+  constructor(opts: { assertion: string; expected: unknown; actual: unknown; message: string }) {
+    super(opts.message, 'REPO_ASSERTION_FAILED')
+    this.name = 'RepoAssertionError'
+    this.assertion = opts.assertion
+    this.expected = opts.expected
+    this.actual = opts.actual
+  }
+}
+
+/**
  * Thrown when an atom receives invalid arguments.
  */
 export class InvalidArgumentError extends GitScenariosError {

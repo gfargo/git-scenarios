@@ -104,6 +104,71 @@ test('is on a clean feature branch', async (t) => {
 
 The rest of this page uses Jest syntax for brevity — swap the import and assertion style per the table above for your runner. See the [Test Runner Adapters guide](/docs/guides/jest-adapter) for the full adapter reference.
 
+## Assert in one line: `assertRepo` and `expect` matchers
+
+You can always reach for `repo.git.status()` and assert by hand (the rest of this page does, to show what's underneath). But for the common checks there are two higher-level options built on [`repo.snapshot()`](/docs/architecture#reposnapshot).
+
+**`assertRepo(...)` — fluent, works in every runner.** Chain checks; they evaluate against a single snapshot when awaited, and throw a `RepoAssertionError` with a readable message on the first mismatch.
+
+```ts
+import { spinUpScenario, assertRepo } from '@gfargo/git-scenarios'
+
+const repo = await spinUpScenario('feature-pr-ready')
+await assertRepo(repo)
+  .onBranch('feat/widget-v2')
+  .hasBranch('main')
+  .cleanWorktree()
+  .commitCount(7)
+```
+
+**`expect(...)` matchers — for Jest and Vitest.** Register once in your setup file, then assert directly against a `TempGitRepo`:
+
+<Tabs>
+<TabItem label="Jest">
+```ts
+// jest.setup.ts  — referenced from setupFilesAfterEnv
+import { matchers } from '@gfargo/git-scenarios/matchers'
+expect.extend(matchers)
+```
+```ts
+// any test — types ship automatically
+await expect(repo).toBeMidMerge()
+await expect(repo).toHaveConflictIn('src/widget.ts')
+await expect(repo).not.toHaveCleanWorktree()
+```
+</TabItem>
+<TabItem label="Vitest">
+```ts
+// vitest.setup.ts  — add to test.setupFiles
+import { expect } from 'vitest'
+import { matchers } from '@gfargo/git-scenarios/matchers'
+expect.extend(matchers)
+```
+```ts
+// vitest.d.ts  — 4 lines for full type-checking (no vitest dep on our side)
+import type { GitScenariosMatchers } from '@gfargo/git-scenarios/matchers'
+declare module 'vitest' {
+  interface Assertion<T = unknown> extends GitScenariosMatchers<Promise<void>> {}
+}
+```
+</TabItem>
+<TabItem label="node:test / Mocha / AVA">
+```ts
+// No expect.extend in these runners — use assertRepo directly.
+// Same checks, same messages:
+import { assertRepo } from '@gfargo/git-scenarios'
+
+await assertRepo(repo).inOperation('merge').hasConflict('src/widget.ts')
+```
+</TabItem>
+</Tabs>
+
+<Aside type="tip">
+Matchers and `assertRepo` are async — always `await` them. The available checks mirror the snapshot: branch, detached, clean/dirty, staged/modified/untracked, ahead/behind, commit count, in-progress operation, conflicts, and stash.
+</Aside>
+
+The hand-rolled recipes below still work and are useful when you need an assertion the matchers don't cover — they read the same `simple-git` status the snapshot is built from.
+
 ## Assert against a merge conflict
 
 `repo.git.status()` exposes `conflicted` — the list of paths with unresolved markers. Pair it with an `exists()` check for `MERGE_HEAD` to confirm a merge is actually in progress.
@@ -235,7 +300,7 @@ describeWithScenario('two-feature-branches', (getRepo) => {
 ```
 
 <Aside>
-Captured a real repo with [`git-scenarios capture`](/docs/guides/cli#git-scenarios-capture-path)? The emitted module is a `defineScenario(...)` call — register it the same way.
+Captured a real repo with [`git-scenarios capture`](/docs/guides/cli#git-scenarios-capture-path-options)? The emitted module is a `defineScenario(...)` call — register it the same way.
 </Aside>
 
 ## Test a tool that talks to a remote

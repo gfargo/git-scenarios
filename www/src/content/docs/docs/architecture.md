@@ -203,14 +203,25 @@ import { describeWithScenario } from '@gfargo/git-scenarios/vitest'
 
 The two adapters are nearly identical — Vitest's globals (`describe`, `beforeAll`, `afterAll`) are runtime-resolved through its own registry, so a separate file keeps the import shape clean.
 
+## Assertion layer
+
+A read-only layer that sits on top of `snapshotRepo()` (Layer 1) and is consumed by tests in any runner:
+
+- **`assertRepo(source)`** — a fluent, runner-agnostic assertion chain. Checks queue synchronously and evaluate against a single snapshot when the chain is awaited (one chain → one snapshot), resolving to that snapshot. Throws `RepoAssertionError` (carrying `assertion` / `expected` / `actual`) on the first mismatch. Accepts a `TempGitRepo` or a raw `simple-git` instance.
+- **`@gfargo/git-scenarios/matchers`** — `expect(...)` matchers for Jest and Vitest, each a thin translation of an `assertRepo` check into the `{ pass, message }` shape both runners accept. Consistent with the adapters, this takes **no** dependency on a test runner: Jest types ship via a `jest.Matchers` augmentation; Vitest users augment `Assertion` with the exported `GitScenariosMatchers` interface.
+
+Because both build on the deterministic snapshot, the same assertions hold byte-for-byte across runs.
+
 ## CLI
 
 `bin/cli.ts` is a thin wrapper around the same public API:
 
 - `list` → `listRegistered()` → group by kind, optionally filter by `--kind` / `--tag`, optionally emit `--json`
 - `describe` → `findRegistered(name)` → format human or JSON
+- `inspect` → materialize ephemerally → print `repo.snapshot()` (graph, branches, status, contracts) → clean up
 - `create` → `createTempGitRepo()` + `scenario.setup(repo)` + optional `--remote` / `--path` / `--run` / `--ephemeral`
-- `clean` → scan tmpdir for stale `coco-git-test-*` dirs, prune
+- `capture` → read a real repo's shape → emit a `defineScenario(...)` module (or `--json`)
+- `clean` → scan tmpdir for stale `git-scenarios-*` dirs, prune
 
 The CLI uses the **mutable registry**, not the static built-in array, so custom-registered scenarios surface in `list` and `describe` too. This was a regression in v0.5 (the CLI had its own static lookup) and was fixed in v0.6.
 

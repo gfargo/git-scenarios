@@ -36,10 +36,12 @@ const { spinUpScenario } = require('@gfargo/git-scenarios')
 
 | Subpath | What it provides |
 |---|---|
-| `@gfargo/git-scenarios` | Main API: `spinUpScenario`, `fromScenario`, `createTempGitRepo`, all atoms, all scenarios, registry |
+| `@gfargo/git-scenarios` | Main API: `spinUpScenario`, `fromScenario`, `createTempGitRepo`, `assertRepo`, `snapshotRepo`, all atoms, all scenarios, registry |
 | `@gfargo/git-scenarios/atoms` | Atom layer only (tree-shakeable) |
 | `@gfargo/git-scenarios/scenarios` | Scenario registry only |
 | `@gfargo/git-scenarios/tempGitRepo` | Low-level `createTempGitRepo` only |
+| `@gfargo/git-scenarios/matchers` | Jest/Vitest `expect(...)` matchers (`toBeMidMerge`, `toHaveConflictIn`, …) |
+| `@gfargo/git-scenarios/capture` | Programmatic `capture` helpers (`gatherRepoState`, `renderScenarioModule`, …) |
 | `@gfargo/git-scenarios/jest` | Jest framework adapter (`describeWithScenario`) |
 | `@gfargo/git-scenarios/vitest` | Vitest framework adapter (same shape as Jest) |
 | `@gfargo/git-scenarios/node-test` | Node.js native test runner adapter (`node:test`) |

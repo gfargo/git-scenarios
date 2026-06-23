@@ -97,6 +97,37 @@ const repo = await fromScenario('feature-pr-ready',
 // feature-pr-ready + extra commit + dirty file
 ```
 
+## Assert against the state
+
+Read the repo's state as one structured object, or assert against it without hand-rolling `git` calls:
+
+```ts
+import { spinUpScenario, assertRepo } from '@gfargo/git-scenarios'
+
+const repo = await spinUpScenario('feature-pr-ready')
+
+// One structured snapshot…
+const snap = await repo.snapshot()
+snap.head.branch     // 'feat/widget-v2'
+snap.status.clean    // true
+snap.operation       // null
+
+// …or a fluent assertion chain (throws on the first mismatch)
+await assertRepo(repo).onBranch('feat/widget-v2').cleanWorktree().commitCount(7)
+```
+
+In Jest or Vitest you can register `expect(...)` matchers instead:
+
+```ts
+import { matchers } from '@gfargo/git-scenarios/matchers'
+expect.extend(matchers)
+
+await expect(repo).toBeMidMerge()
+await expect(repo).toHaveConflictIn('src/widget.ts')
+```
+
+See the [Testing Recipes guide](/docs/guides/recipes#assert-in-one-line-assertrepo-and-expect-matchers) for the full set.
+
 ## Use the CLI
 
 Test any tool against a known git state:
@@ -110,11 +141,11 @@ npx git-scenarios create dirty-many-files --run "code -n"
 
 # Just get the path
 npx git-scenarios create feature-pr-ready
-# → /var/folders/.../coco-git-test-xR2qwz
+# → /var/folders/.../git-scenarios-xR2qwz
 ```
 
 ## Next steps
 
-- [Browse all 32 scenarios →](/docs/scenarios/overview)
+- [Browse all 32 scenarios →](/docs/scenarios/browse)
 - [Learn the atom API →](/docs/atoms/overview)
 - [Set up the Jest adapter →](/docs/guides/jest-adapter)
