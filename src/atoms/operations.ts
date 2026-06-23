@@ -1,5 +1,6 @@
 import { execFile } from 'child_process';
 import { promisify } from 'util';
+import { nextCommitDate } from '../commitClock';
 import { requireCommits } from './preconditions';
 import type { Step } from './types';
 
@@ -49,12 +50,11 @@ export function startMerge(
       args.push('-m', options.message)
     }
     args.push(branch)
-    const gitInstance = options.date
-      ? repo.git.env({
-          GIT_AUTHOR_DATE: options.date,
-          GIT_COMMITTER_DATE: options.date,
-        })
-      : repo.git
+    const date = options.date ?? nextCommitDate(repo.path)
+    const gitInstance = repo.git.env({
+      GIT_AUTHOR_DATE: date,
+      GIT_COMMITTER_DATE: date,
+    })
 
     let mergeError: unknown
     try {
@@ -183,12 +183,11 @@ export function cherryPick(
   const allowConflict = options.allowConflict !== false
   return async (repo) => {
     await requireCommits(repo, 'cherryPick')
-    const gitInstance = options.date
-      ? repo.git.env({
-          GIT_AUTHOR_DATE: options.date,
-          GIT_COMMITTER_DATE: options.date,
-        })
-      : repo.git
+    const date = options.date ?? nextCommitDate(repo.path)
+    const gitInstance = repo.git.env({
+      GIT_AUTHOR_DATE: date,
+      GIT_COMMITTER_DATE: date,
+    })
 
     let cherryError: unknown
     try {
@@ -274,12 +273,11 @@ export function revert(
       args.push('-m', String(options.mainline))
     }
     args.push(ref)
-    const gitInstance = options.date
-      ? repo.git.env({
-          GIT_AUTHOR_DATE: options.date,
-          GIT_COMMITTER_DATE: options.date,
-        })
-      : repo.git
+    const date = options.date ?? nextCommitDate(repo.path)
+    const gitInstance = repo.git.env({
+      GIT_AUTHOR_DATE: date,
+      GIT_COMMITTER_DATE: date,
+    })
 
     let revertError: unknown
     try {

@@ -1,3 +1,4 @@
+import { nextCommitDate } from '../commitClock'
 import type { FileMap, Step } from './types'
 import { writeFiles } from './writeFiles'
 
@@ -50,13 +51,10 @@ export function bulkCommits(specs: BulkCommitSpec[]): Step {
         await repo.git.add('.')
       }
       args.push('-m', spec.message)
-      const gitInstance = spec.date
-        ? repo.git.env({
-            GIT_AUTHOR_DATE: spec.date,
-            GIT_COMMITTER_DATE: spec.date,
-          })
-        : repo.git
-      await gitInstance.raw(args)
+      const date = spec.date ?? nextCommitDate(repo.path)
+      await repo.git
+        .env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
+        .raw(args)
     }
   }
 }

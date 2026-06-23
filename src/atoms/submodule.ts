@@ -75,6 +75,15 @@ export function addSubmodule(opts: {
   path: string
   setup: Step
   branch?: string
+  /**
+   * The URL recorded in `.gitmodules`. Defaults to a deterministic
+   * placeholder — the source repo is cloned from an ephemeral temp dir
+   * whose random path would otherwise leak into the committed
+   * `.gitmodules` and make the parent commit non-reproducible. The
+   * default keeps captures byte-identical; pass a real URL only if a
+   * scenario needs `git submodule update` to resolve.
+   */
+  url?: string
 }): Step {
   return async (parentRepo) => {
     const source = await createTempGitRepo()
@@ -110,6 +119,19 @@ export function addSubmodule(opts: {
       // commit inside the submodule fails with "Author identity
       // unknown".
       await configureSubmoduleClone(join(parentRepo.path, opts.path))
+
+      // `git submodule add` records the *source* URL in `.gitmodules` —
+      // here that's the ephemeral temp dir's random path, which would
+      // leak into the committed `.gitmodules` and make the parent commit
+      // non-reproducible. Rewrite it to a deterministic placeholder and
+      // re-stage so the caller's next commit captures the stable value.
+      const stableUrl = opts.url ?? `https://git-scenarios.test/${opts.path}.git`
+      await execFileAsync(
+        'git',
+        ['config', '-f', '.gitmodules', `submodule.${opts.path}.url`, stableUrl],
+        { cwd: parentRepo.path },
+      )
+      await parentRepo.git.add('.gitmodules')
     } finally {
       await rm(source.path, { recursive: true, force: true })
     }

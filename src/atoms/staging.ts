@@ -1,3 +1,4 @@
+import { nextCommitDate } from '../commitClock'
 import type { Step } from './types'
 
 /**
@@ -40,12 +41,11 @@ export function stageFiles(...paths: string[]): Step {
  */
 export function commit(message: string, options: { date?: string } = {}): Step {
   return async (repo) => {
-    if (options.date) {
-      await repo.git
-        .env({ GIT_AUTHOR_DATE: options.date, GIT_COMMITTER_DATE: options.date })
-        .raw(['commit', '-m', message])
-    } else {
-      await repo.git.commit(message)
-    }
+    // Pin a date always — an explicit one if given, else the next
+    // deterministic tick — so the commit hash is reproducible.
+    const date = options.date ?? nextCommitDate(repo.path)
+    await repo.git
+      .env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
+      .raw(['commit', '-m', message])
   }
 }
