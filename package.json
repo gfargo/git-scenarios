@@ -40,6 +40,11 @@
       "import": "./dist/tempGitRepo.js",
       "require": "./dist/tempGitRepo.cjs"
     },
+    "./capture": {
+      "types": "./dist/capture.d.ts",
+      "import": "./dist/capture.js",
+      "require": "./dist/capture.cjs"
+    },
     "./atoms": {
       "types": "./dist/atoms/index.d.ts",
       "import": "./dist/atoms/index.js",

@@ -11,12 +11,30 @@
  */
 
 import { spawnSync } from 'child_process'
-import { existsSync, mkdtempSync, rmSync } from 'fs'
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'fs'
 import { tmpdir } from 'os'
 import { join } from 'path'
 
 const CLI = join(__dirname, '..', 'dist', 'bin', 'cli.cjs')
 const HAS_BUILD = existsSync(CLI)
+
+/** Build a small real git repo on disk for capture tests. */
+function makeRepo(): string {
+  const dir = mkdtempSync(join(tmpdir(), 'git-scenarios-capture-src-'))
+  const git = (args: string[]) => spawnSync('git', args, { cwd: dir, encoding: 'utf-8' })
+  git(['init', '-b', 'main'])
+  git(['config', 'user.name', 'Test'])
+  git(['config', 'user.email', 'test@example.com'])
+  git(['config', 'commit.gpgsign', 'false'])
+  writeFileSync(join(dir, 'a.txt'), 'a\n')
+  git(['add', '.'])
+  git(['commit', '-m', 'chore: first'])
+  git(['checkout', '-b', 'feature'])
+  writeFileSync(join(dir, 'b.txt'), 'b\n')
+  git(['add', '.'])
+  git(['commit', '-m', 'feat: second'])
+  return dir
+}
 
 function runCLI(args: string[]): { stdout: string; stderr: string; status: number } {
   // spawnSync drains the child's pipes correctly even for large outputs
@@ -112,6 +130,100 @@ function runCLI(args: string[]): { stdout: string; stderr: string; status: numbe
       expect(status).toBe(2)
       expect(stderr).toMatch(/Unknown scenario/)
     })
+  })
+
+  describe('inspect', () => {
+    it('prints the commit graph, branches, and status for a scenario', () => {
+      const { stdout, status } = runCLI(['inspect', 'feature-pr-ready'])
+      expect(status).toBe(0)
+      expect(stdout).toContain('feature-pr-ready')
+      expect(stdout).toContain('Commit graph:')
+      expect(stdout).toContain('Branches:')
+      expect(stdout).toContain('Status (git status -sb):')
+    }, 30_000)
+
+    it('--json emits structured graph / branches / status', () => {
+      const { stdout, status } = runCLI(['inspect', 'feature-pr-ready', '--json'])
+      expect(status).toBe(0)
+      const data = JSON.parse(stdout)
+      expect(data.name).toBe('feature-pr-ready')
+      expect(data.kind).toBe('branch')
+      expect(Array.isArray(data.graph)).toBe(true)
+      expect(data.graph.length).toBeGreaterThan(0)
+      expect(Array.isArray(data.branches)).toBe(true)
+      expect(Array.isArray(data.status)).toBe(true)
+    }, 30_000)
+
+    it('handles an empty repo (no commits) without erroring', () => {
+      const { stdout, status } = runCLI(['inspect', 'empty-repo', '--json'])
+      expect(status).toBe(0)
+      const data = JSON.parse(stdout)
+      expect(data.name).toBe('empty-repo')
+      // No commits yet → empty graph, but the call still succeeds.
+      expect(Array.isArray(data.graph)).toBe(true)
+      expect(data.graph.length).toBe(0)
+    }, 30_000)
+
+    it('errors on unknown scenario', () => {
+      const { status, stderr } = runCLI(['inspect', 'totally-fake-xyz'])
+      expect(status).toBe(2)
+      expect(stderr).toMatch(/Unknown scenario/)
+    })
+  })
+
+  describe('capture', () => {
+    it('emits a defineScenario module for a real repo', () => {
+      const dir = makeRepo()
+      try {
+        const { stdout, stderr, status } = runCLI(['capture', dir, '--name', 'my-repro'])
+        expect(status).toBe(0)
+        expect(stdout).toContain('defineScenario(')
+        expect(stdout).toContain('name: "my-repro"')
+        expect(stdout).toContain('switchToBranch("feature")')
+        // Progress note goes to stderr so stdout stays pipeable.
+        expect(stderr).toContain('Captured')
+      } finally {
+        rmSync(dir, { recursive: true, force: true })
+      }
+    }, 30_000)
+
+    it('--json emits structured capture data', () => {
+      const dir = makeRepo()
+      try {
+        const { stdout, status } = runCLI(['capture', dir, '--name', 'my-repro', '--json'])
+        expect(status).toBe(0)
+        const data = JSON.parse(stdout)
+        expect(data.name).toBe('my-repro')
+        expect(data.currentBranch).toBe('feature')
+        expect(data.baseBranch).toBe('main')
+        expect(data.baseCommits).toHaveLength(1)
+        expect(data.branchCommits).toHaveLength(1)
+      } finally {
+        rmSync(dir, { recursive: true, force: true })
+      }
+    }, 30_000)
+
+    it('errors on a non-git directory', () => {
+      const dir = mkdtempSync(join(tmpdir(), 'git-scenarios-not-a-repo-'))
+      try {
+        const { status, stderr } = runCLI(['capture', dir])
+        expect(status).toBe(1)
+        expect(stderr).toMatch(/Not a git repository/)
+      } finally {
+        rmSync(dir, { recursive: true, force: true })
+      }
+    })
+
+    it('rejects an invalid --kind', () => {
+      const dir = makeRepo()
+      try {
+        const { status, stderr } = runCLI(['capture', dir, '--kind', 'bogus'])
+        expect(status).toBe(2)
+        expect(stderr).toMatch(/Invalid --kind/)
+      } finally {
+        rmSync(dir, { recursive: true, force: true })
+      }
+    }, 30_000)
   })
 
   describe('help', () => {
