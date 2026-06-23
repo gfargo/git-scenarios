@@ -5,6 +5,7 @@ import { dirname, join } from 'path'
 import { simpleGit, SimpleGit } from 'simple-git'
 
 import { nextCommitDate, resetCommitClock } from './commitClock'
+import { snapshotRepo, type RepoSnapshot } from './snapshot'
 
 /**
  * Handle returned by `createTempGitRepo` and every scenario factory.
@@ -36,6 +37,13 @@ export type TempGitRepo = {
   exists: (filePath: string) => Promise<boolean>
   /** `git add . && git commit -m <message>` in one call. */
   commitAll: (message: string) => Promise<void>
+  /**
+   * Capture a structured snapshot of the repo's current state — HEAD,
+   * branches, working-tree status, in-progress operation, conflicts,
+   * stashes, and the commit graph. Read-only. The programmatic
+   * counterpart to the `git-scenarios inspect` CLI command.
+   */
+  snapshot: () => Promise<RepoSnapshot>
   /**
    * Remove the temp directory. Safe to call multiple times — the
    * second call is a no-op. `cleanup` also removes the repo from the
@@ -145,6 +153,7 @@ export async function createTempGitRepo(
       const date = nextCommitDate(path)
       await git.env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date }).commit(message)
     },
+    snapshot: () => snapshotRepo(git),
     cleanup: async () => {
       autoCleanupPaths.delete(path)
       resetCommitClock(path)
