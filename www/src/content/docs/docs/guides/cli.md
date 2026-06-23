@@ -112,6 +112,8 @@ The output is a **starting point you edit**, not a byte-perfect clone. Register 
 `capture` reads the content of changed/untracked files into the generated module so the dirty state reproduces faithfully. If your working tree contains secrets, review the output before committing it — or use `--json`, which omits file contents.
 :::
 
+The same logic is available programmatically from the `@gfargo/git-scenarios/capture` subpath for tool authors who want to build on it: `gatherRepoState(git, cwd)`, `renderScenarioModule(state, opts)`, `captureToJson(state, name)`, `deriveContracts(state)`, and `normalizeName(raw)`.
+
 ### `git-scenarios clean [options]`
 
 Find and remove stale scenario temp directories from your system's temp folder.
