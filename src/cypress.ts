@@ -135,10 +135,15 @@ export function registerScenarioTasks(
   on('task', {
     [`${prefix}:spinUp`]: async (args: unknown): Promise<CypressScenarioResult> => {
       const { name, options: taskOptions = {} } = args as SpinUpTaskArgs
+      const { remote, ...createOptions } = taskOptions
 
       const scenario = resolveScenario(name, `cypress/${prefix}:spinUp`)
-      const repo = await createTempGitRepo(taskOptions)
+      const repo = await createTempGitRepo(createOptions)
       await scenario.setup(repo)
+
+      if (remote) {
+        await repo.git.addRemote('origin', remote)
+      }
 
       activeRepos.set(repo.path, repo)
       return { path: repo.path }

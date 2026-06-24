@@ -69,6 +69,21 @@ describe('playwright adapter', () => {
       expect(existsSync(capturedRepo!.path)).toBe(false)
     }, 30_000)
 
+    it('applies the remote option as an origin remote', async () => {
+      await scenarioFixtures.repo(
+        {
+          scenarioName: 'feature-pr-ready',
+          scenarioOptions: { remote: 'https://github.com/example/repo.git' },
+        },
+        async (repo) => {
+          const remotes = await repo.git.getRemotes(true)
+          const origin = remotes.find((r) => r.name === 'origin')
+          expect(origin).toBeDefined()
+          expect(origin!.refs.fetch).toBe('https://github.com/example/repo.git')
+        },
+      )
+    }, 30_000)
+
     it('throws on unknown scenario name', async () => {
       await expect(
         scenarioFixtures.repo(

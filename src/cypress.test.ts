@@ -12,6 +12,7 @@
  */
 
 import { existsSync } from 'fs'
+import { simpleGit } from 'simple-git'
 import { registerScenarioTasks } from './cypress'
 
 type TaskFn = (args: unknown) => Promise<unknown>
@@ -93,5 +94,18 @@ describe('cypress adapter', () => {
         tasks['gitScenario:spinUp']({ name: 'totally-fake-xyz' }),
       ).rejects.toThrow(/Unknown scenario/)
     })
+
+    it('spinUp applies the remote option as an origin remote', async () => {
+      const result = await tasks['gitScenario:spinUp']({
+        name: 'empty-repo',
+        options: { remote: 'https://github.com/example/repo.git' },
+      }) as { path: string }
+
+      const git = simpleGit(result.path)
+      const remotes = await git.getRemotes(true)
+      const origin = remotes.find((r) => r.name === 'origin')
+      expect(origin).toBeDefined()
+      expect(origin!.refs.fetch).toBe('https://github.com/example/repo.git')
+    }, 30_000)
   })
 })

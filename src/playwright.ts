@@ -122,10 +122,14 @@ export const scenarioFixtures = {
     }: { scenarioName: string; scenarioOptions: PlaywrightScenarioOptions },
     use: PlaywrightUse<TempGitRepo>,
   ): Promise<void> => {
-    const { extraSteps, ...spinOptions } = scenarioOptions
+    const { extraSteps, remote, ...createOptions } = scenarioOptions
     const scenario = resolveScenario(scenarioName, 'playwright/repo fixture')
-    const repo = await createTempGitRepo(spinOptions)
+    const repo = await createTempGitRepo(createOptions)
     await scenario.setup(repo)
+
+    if (remote) {
+      await repo.git.addRemote('origin', remote)
+    }
 
     if (extraSteps && extraSteps.length > 0) {
       await chain(...extraSteps)(repo)
