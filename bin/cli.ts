@@ -26,6 +26,8 @@ import { spawnSync } from 'node:child_process'
 import { readdirSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import * as path from 'node:path'
+import { emitKeypressEvents } from 'node:readline'
+import * as tty from 'node:tty'
 
 import { simpleGit } from 'simple-git'
 
@@ -36,6 +38,7 @@ import {
   normalizeName,
   renderScenarioModule,
 } from '../src/capture'
+import { filterScenarios, renderPreview } from '../src/interactive'
 import { findRegistered, listRegistered } from '../src/registry'
 import { createTempGitRepo } from '../src/tempGitRepo'
 
@@ -105,6 +108,8 @@ function printHelp(): void {
   console.log([
     '',
     '  git-scenarios — manage temp git repo states for testing',
+    '',
+    '  Run without arguments (TTY) to open the interactive scenario picker.',
     '',
     '  Usage:',
     '    git-scenarios list [--kind <k>] [--tag <t>] [--json]',
@@ -612,12 +617,213 @@ async function commandClean(options: {
   return 0
 }
 
+type KeyEvent = { name?: string; ctrl?: boolean; meta?: boolean }
+
+async function runActionMenu(scenario: Scenario): Promise<number> {
+  console.log('')
+  console.log(`  \x1B[1m${scenario.name}\x1B[0m  ·  ${scenario.kind}`)
+  console.log(`  ${scenario.summary}`)
+  console.log('')
+  console.log('  Actions:')
+  console.log('    [c] create   — materialize scenario in /tmp')
+  console.log('    [i] inspect  — show commit graph, branches, status')
+  console.log('    [d] describe — print description and contracts')
+  console.log('    [q] cancel')
+  console.log('')
+  process.stdout.write('  Action: ')
+
+  const stdin = process.stdin as tty.ReadStream
+  emitKeypressEvents(process.stdin)
+  stdin.setRawMode(true)
+  process.stdin.resume()
+
+  return new Promise<number>((resolve) => {
+    const onAction = (_str: string | undefined, key: KeyEvent | undefined): void => {
+      if (!key) return
+      process.stdin.removeListener('keypress', onAction)
+      stdin.setRawMode(false)
+      process.stdin.pause()
+
+      if (key.name === 'c') {
+        console.log('create')
+        console.log('')
+        void commandCreate(scenario.name, {}).then(resolve)
+      } else if (key.name === 'i') {
+        console.log('inspect')
+        console.log('')
+        void commandInspect(scenario.name).then(resolve)
+      } else if (key.name === 'd') {
+        console.log('describe')
+        console.log('')
+        resolve(commandDescribe(scenario.name))
+      } else {
+        console.log('')
+        console.log('  (cancelled)')
+        resolve(0)
+      }
+    }
+    process.stdin.on('keypress', onAction)
+  })
+}
+
+/**
+ * Interactive fuzzy-find scenario picker. Opens when the CLI is invoked
+ * with no arguments in a TTY. Falls back to printHelp() when stdin/stdout
+ * is not a TTY, when CI=true, or when --no-interactive is passed.
+ */
+async function commandPick(options: { noInteractive?: boolean } = {}): Promise<number> {
+  const isTTY = Boolean(process.stdin.isTTY && process.stdout.isTTY)
+  if (!isTTY || options.noInteractive || process.env['CI']) {
+    printHelp()
+    return 0
+  }
+
+  const all = listRegistered()
+  if (all.length === 0) {
+    printHelp()
+    return 0
+  }
+
+  const R = '\x1B[0m'   // reset
+  const B = '\x1B[1m'   // bold
+  const D = '\x1B[2m'   // dim
+  const V = '\x1B[7m'   // reverse video (selection highlight)
+  const MAX_LIST = 10
+
+  let query = ''
+  let filtered = filterScenarios('', all)
+  let selIdx = 0
+  let lastLines = 0
+
+  const stdin = process.stdin as tty.ReadStream
+
+  function cols(): number { return process.stdout.columns || 80 }
+
+  function trunc(s: string, max: number): string {
+    return s.length > max ? s.slice(0, max - 1) + '…' : s
+  }
+
+  function draw(): void {
+    const w = cols()
+    const divider = '  ' + '─'.repeat(Math.min(w - 4, 58))
+    const lines: string[] = []
+
+    lines.push(`${B}  git-scenarios${R}  ↑↓ navigate · Enter select · Esc exit`)
+    lines.push(`  Filter: ${query}▌`)
+    lines.push(divider)
+
+    if (filtered.length === 0) {
+      lines.push(`  ${D}(no matches)${R}`)
+    } else {
+      const pageStart = Math.max(0, selIdx - MAX_LIST + 1)
+      const pageItems = filtered.slice(pageStart, pageStart + MAX_LIST)
+      for (let i = 0; i < pageItems.length; i++) {
+        const s = pageItems[i]
+        const absIdx = pageStart + i
+        const isSel = absIdx === selIdx
+        const nameStr = s.name.padEnd(28)
+        const sumStr = trunc(s.summary, Math.max(10, w - 36))
+        const row = `  ${isSel ? '▶ ' : '  '}${nameStr} ${sumStr}`
+        lines.push(isSel ? `${V}${row}${R}` : `${D}${row}${R}`)
+      }
+      if (filtered.length > MAX_LIST) {
+        lines.push(`  ${D}  (${filtered.length} total — keep typing to narrow)${R}`)
+      }
+    }
+
+    lines.push(divider)
+
+    const sel = filtered[selIdx]
+    if (sel) {
+      const rows = process.stdout.rows || 24
+      const maxPvLines = Math.max(3, rows - lines.length - 2)
+      for (const pl of renderPreview(sel).split('\n').slice(0, maxPvLines)) {
+        lines.push(trunc(pl, w - 2))
+      }
+    }
+
+    if (lastLines > 0) {
+      process.stdout.write(`\x1B[${lastLines}A\x1B[J`)
+    }
+    process.stdout.write(lines.join('\n') + '\n')
+    lastLines = lines.length
+  }
+
+  function restoreTerminal(): void {
+    process.stdout.write('\x1B[?25h')
+    stdin.setRawMode(false)
+    process.stdin.pause()
+  }
+
+  emitKeypressEvents(process.stdin)
+  stdin.setRawMode(true)
+  process.stdout.write('\x1B[?25l')
+  draw()
+
+  return new Promise<number>((resolve) => {
+    const onKeypress = (str: string | undefined, key: KeyEvent | undefined): void => {
+      if (!key) return
+
+      if ((key.ctrl && key.name === 'c') || key.name === 'escape') {
+        process.stdin.removeListener('keypress', onKeypress)
+        restoreTerminal()
+        if (lastLines > 0) process.stdout.write(`\x1B[${lastLines}A\x1B[J`)
+        resolve(0)
+        return
+      }
+
+      if (key.name === 'up') {
+        selIdx = Math.max(0, selIdx - 1)
+        draw()
+        return
+      }
+
+      if (key.name === 'down') {
+        selIdx = Math.min(filtered.length - 1, selIdx + 1)
+        draw()
+        return
+      }
+
+      if (key.name === 'backspace') {
+        query = query.slice(0, -1)
+        filtered = filterScenarios(query, all)
+        selIdx = 0
+        draw()
+        return
+      }
+
+      if (key.name === 'return') {
+        const scenario = filtered[selIdx]
+        if (!scenario) return
+        process.stdin.removeListener('keypress', onKeypress)
+        restoreTerminal()
+        if (lastLines > 0) process.stdout.write(`\x1B[${lastLines}A\x1B[J`)
+        void runActionMenu(scenario).then(resolve)
+        return
+      }
+
+      if (str && str.length === 1 && !key.ctrl && !key.meta) {
+        query += str
+        filtered = filterScenarios(query, all)
+        selIdx = 0
+        draw()
+      }
+    }
+
+    process.stdin.on('keypress', onKeypress)
+  })
+}
+
 async function main(): Promise<number> {
   const { command, positional, flags } = parseArgs(process.argv.slice(2))
 
-  if (!command || command === 'help' || flags.help) {
+  if (command === 'help' || flags.help) {
     printHelp()
     return 0
+  }
+
+  if (!command) {
+    return commandPick({ noInteractive: Boolean(flags['no-interactive']) })
   }
 
   if (command === 'list') {
