@@ -56,7 +56,7 @@ state every run), so the tests built on top are deterministic too.
    anything from "single staged file" to "three-way nested submodule
    mid-rebase."
 
-> **Status: v1.1.0** — Stable release. 32 curated scenarios, 60+ composable atoms,
+> **Status: v1.1.0** — Stable release. 35 curated scenarios, 60+ composable atoms,
 > 5 framework adapters, `assertRepo()` + `expect` matchers, CLI
 > (`list` · `describe` · `inspect` · `create` · `capture` · `clean`),
 > dual CJS/ESM output.
@@ -484,7 +484,7 @@ git-scenarios/
 
 ## Available scenarios
 
-Run `git-scenarios list` for the live list. Current set (**32 scenarios across 6 kinds**):
+Run `git-scenarios list` for the live list. Current set (**35 scenarios across 6 kinds**):
 
 | Name | Kind | What you get |
 |---|---|---|
