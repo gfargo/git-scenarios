@@ -28,6 +28,9 @@ coverage/
 # npm pack output
 *.tgz
 
+# Benchmark output
+bench-results.json
+
 # Local environment
 .env
 .env.local

@@ -532,6 +532,8 @@ Run `git-scenarios list` for the live list. Current set (**40 scenarios across 6
 `git-scenarios describe <name>` prints the full description and the
 contract assertions for a single scenario.
 
+`large-repo` is also the primary target of the built-in benchmark harness — run `npm run bench` to measure scenario spin-up times and detect performance regressions.
+
 ## The CLI
 
 ```bash
