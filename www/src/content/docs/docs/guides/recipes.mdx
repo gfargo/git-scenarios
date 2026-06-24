@@ -104,6 +104,53 @@ test('is on a clean feature branch', async (t) => {
 
 The rest of this page uses Jest syntax for brevity — swap the import and assertion style per the table above for your runner. See the [Test Runner Adapters guide](/docs/guides/jest-adapter) for the full adapter reference.
 
+## Vitest `test.extend` fixture
+
+`repoFixture` returns a fixture map for Vitest's `test.extend` API. Every test gets a fresh repo; cleanup runs automatically after each test — no `beforeAll` / `afterAll` needed.
+
+```ts
+import { test as base, expect } from 'vitest'
+import { repoFixture } from '@gfargo/git-scenarios/vitest'
+
+const test = base.extend(repoFixture('feature-pr-ready'))
+
+test('on a clean feature branch', async ({ repo }) => {
+  const status = await repo.git.status()
+  expect(status.current).toBe('feat/widget-v2')
+  expect(status.isClean()).toBe(true)
+})
+
+test('4 commits ahead of main', async ({ repo }) => {
+  const ahead = await repo.git.raw(['rev-list', '--count', 'main..HEAD'])
+  expect(ahead.trim()).toBe('4')
+})
+```
+
+With `extraSteps` and a fake remote:
+
+```ts
+import { test as base } from 'vitest'
+import { repoFixture } from '@gfargo/git-scenarios/vitest'
+import { writeFiles, stageFiles } from '@gfargo/git-scenarios'
+
+const test = base.extend(repoFixture('feature-pr-ready', {
+  extraSteps: [
+    writeFiles({ 'HOTFIX.md': '# urgent\n' }),
+    stageFiles('HOTFIX.md'),
+  ],
+  remote: 'git@github.com:org/repo.git',
+}))
+
+test('has the extra staged file', async ({ repo }) => {
+  const status = await repo.git.status()
+  expect(status.staged).toContain('HOTFIX.md')
+})
+```
+
+<Aside type="tip">
+`repoFixture` is a thin factory — the consumer owns the `test` import, so the package has no hard dependency on `vitest`. Compose it with your own fixtures using `base.extend({ ...repoFixture('name'), ...yourOwnFixtures })`.
+</Aside>
+
 ## Assert in one line: `assertRepo` and `expect` matchers
 
 You can always reach for `repo.git.status()` and assert by hand (the rest of this page does, to show what's underneath). But for the common checks there are two higher-level options built on [`repo.snapshot()`](/docs/architecture#reposnapshot).
