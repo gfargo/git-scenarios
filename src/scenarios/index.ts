@@ -12,6 +12,9 @@
  */
 
 import type { Scenario } from './types'
+import { interactiveRebaseMidEditScenario } from './interactive-rebase-mid-edit'
+import { lockedWorktreeScenario } from './locked-worktree'
+import { outOfDateSubmoduleScenario } from './out-of-date-submodule'
 import { branchAheadOfUpstreamScenario } from './branch-ahead-of-upstream'
 import { caseCollisionScenario } from './case-collision'
 import { crlfNormalizationScenario } from './crlf-normalization'
@@ -90,6 +93,7 @@ export const allScenarios: readonly Scenario[] = [
   mergeConflictRenameRenameScenario,
   mergeConflictDeleteModifyScenario,
   mergeConflictAddAddScenario,
+  interactiveRebaseMidEditScenario,
   // history shapes
   mergeNoConflictScenario,
   richHistoryGraphScenario,
@@ -105,8 +109,10 @@ export const allScenarios: readonly Scenario[] = [
   monorepoMultiPackageScenario,
   dirtyManyFilesScenario,
   multipleWorktreesScenario,
+  lockedWorktreeScenario,
   // submodule shapes
   submoduleWithHistoryScenario,
+  outOfDateSubmoduleScenario,
   // encoding / filesystem edge cases
   gitLfsPointerScenario,
   crlfNormalizationScenario,
@@ -145,6 +151,9 @@ export function findScenariosByTag(
 }
 
 export type { Scenario, ScenarioKind } from './types'
+export { interactiveRebaseMidEditScenario } from './interactive-rebase-mid-edit'
+export { lockedWorktreeScenario } from './locked-worktree'
+export { outOfDateSubmoduleScenario } from './out-of-date-submodule'
 export { branchAheadOfUpstreamScenario } from './branch-ahead-of-upstream'
 export { branchBehindUpstreamScenario } from './branch-behind-upstream'
 export { branchDivergedScenario } from './branch-diverged'

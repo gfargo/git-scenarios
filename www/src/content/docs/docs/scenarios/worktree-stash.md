@@ -45,6 +45,16 @@ Primary worktree on `main` + 3 linked worktrees on different branches:
 
 Useful for testing worktree list views and the "branch is checked out in another worktree" error case.
 
+## `locked-worktree`
+
+Primary worktree on `main` + 1 linked worktree locked with a reason. `git worktree list --porcelain` includes a `locked <reason>` line. Attempting to remove the locked worktree without `--force` fails.
+
+**Contracts:**
+- `main` is checked out in the primary worktree
+- 1 linked worktree exists and is locked
+- `git worktree list --porcelain` shows `locked` with the reason
+- `.git/worktrees/<name>/locked` exists
+
 ## `git-lfs-pointer`
 
 A binary asset (`assets/blob.bin`) tracked by Git LFS. The file on disk is the plain-text *pointer stub* — no `git-lfs` binary is required; the pointer is written directly so the scenario works on every platform.

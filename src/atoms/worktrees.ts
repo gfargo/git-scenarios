@@ -81,3 +81,36 @@ export function removeWorktree(path: string, options: { force?: boolean } = {}):
     await repo.git.raw(args)
   }
 }
+
+/**
+ * Lock a linked worktree (`git worktree lock [--reason <r>] <path>`).
+ * A locked worktree resists removal (requires `--force` to override)
+ * and appears with a `locked <reason>` annotation in `git worktree
+ * list --porcelain`. The lock is stored as `.git/worktrees/<n>/locked`.
+ *
+ *   lockWorktree('/path/to/wt', { reason: 'reserved for release' })
+ *     // git worktree lock --reason 'reserved for release' /path/to/wt
+ *
+ * Use `unlockWorktree` to undo before removal, or pass `force: true`
+ * to `removeWorktree`.
+ */
+export function lockWorktree(path: string, options: { reason?: string } = {}): Step {
+  return async (repo) => {
+    const args = ['worktree', 'lock']
+    if (options.reason) {
+      args.push('--reason', options.reason)
+    }
+    args.push(path)
+    await repo.git.raw(args)
+  }
+}
+
+/**
+ * Unlock a previously locked linked worktree (`git worktree unlock
+ * <path>`). No-op if the worktree is not locked.
+ */
+export function unlockWorktree(path: string): Step {
+  return async (repo) => {
+    await repo.git.raw(['worktree', 'unlock', path])
+  }
+}

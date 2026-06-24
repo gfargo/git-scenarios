@@ -13,7 +13,17 @@ Parent repo with 4 commits + `vendor/lib` submodule (clean pin, 4 commits, `bran
 - Submodule has 4 commits
 - Submodule pin is clean (not modified)
 
-### Building out-of-date submodule states
+## `out-of-date-submodule`
+
+Parent repo pinned to an older `vendor/lib` SHA while the submodule has one new commit. `git submodule status` shows `+` — the checked-out submodule HEAD differs from the parent's pin.
+
+**Contracts:**
+- Parent has 3 commits on `main`
+- `vendor/lib` submodule registered in `.gitmodules`
+- `git submodule status` shows `+` for `vendor/lib`
+- `vendor/lib` HEAD is 1 commit ahead of the parent pin
+
+## Building out-of-date submodule states
 
 Use the `insideSubmodule` scope to add commits that don't update the parent's pin:
 

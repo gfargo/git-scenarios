@@ -1,9 +1,9 @@
 ---
 title: Scenarios Overview
-description: All 35 curated scenarios at a glance.
+description: All 38 curated scenarios at a glance.
 ---
 
-The library ships 35 curated scenarios across 6 kinds. Each produces a deterministic git repo state — same setup, same result, every time.
+The library ships 38 curated scenarios across 6 kinds. Each produces a deterministic git repo state — same setup, same result, every time.
 
 :::tip[Looking for something specific?]
 Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, or freeform text and copy snippets straight to your clipboard.
@@ -30,7 +30,7 @@ Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, o
 | `detached-head` | HEAD detached at `main~2`. |
 | `signed-commits-required` | `commit.gpgsign=true` + `user.signingkey` set. |
 
-### Operation (5 scenarios)
+### Operation (6 scenarios)
 
 | Name | What you get |
 |---|---|
@@ -39,6 +39,7 @@ Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, o
 | `mid-rebase-conflict` | In-progress rebase with 1 conflict on `src/config.ts`. |
 | `mid-cherry-pick-conflict` | In-progress cherry-pick with 1 conflict on `src/utils.ts`. |
 | `mid-revert-conflict` | In-progress revert with 1 conflict on `src/service.ts`. |
+| `interactive-rebase-mid-edit` | Interactive rebase paused at an `edit` action; 2 picks remain. |
 
 ### History (5 scenarios)
 
@@ -50,7 +51,7 @@ Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, o
 | `shallow-clone` | 10 commits but only 4 reachable (`.git/shallow` set). |
 | `large-repo` | 115 commits across 3 branches with 3 tags. |
 
-### Worktree (8 scenarios)
+### Worktree (9 scenarios)
 
 | Name | What you get |
 |---|---|
@@ -59,6 +60,7 @@ Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, o
 | `monorepo-multi-package` | Workspaces monorepo: `app` clean, `lib` staged, `cli` unstaged. |
 | `dirty-many-files` | 12 staged + 6 unstaged + 3 untracked files. |
 | `multiple-worktrees` | Primary worktree + 3 linked worktrees. |
+| `locked-worktree` | Primary worktree + 1 linked worktree locked with a reason. |
 | `git-lfs-pointer` | LFS pointer file committed for a binary asset — no `git-lfs` binary required. |
 | `crlf-normalization` | `.gitattributes` with `text=auto eol=lf` normalising all text files. |
 | `case-collision` | git history holds `src/File.ts` and `src/file.ts` — a case-only collision visible on case-insensitive FS. |
@@ -70,11 +72,12 @@ Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, o
 | `stashed-changes` | Clean `main` + 3 stashes (LIFO ordered). |
 | `stash-with-untracked` | One stash containing both modified tracked + untracked new files. |
 
-### Submodule (1 scenario)
+### Submodule (2 scenarios)
 
 | Name | What you get |
 |---|---|
 | `submodule-with-history` | Parent + `vendor/lib` submodule (4 commits, `branch = main`). |
+| `out-of-date-submodule` | Parent pinned to an older submodule SHA; `git submodule status` shows `+`. |
 
 ## Using scenarios
 

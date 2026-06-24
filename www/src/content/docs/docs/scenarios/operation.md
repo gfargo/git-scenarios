@@ -54,6 +54,16 @@ In-progress revert with 1 unresolved conflict on `src/service.ts`. `REVERT_HEAD`
 - HEAD is detached at the midpoint
 - 20 commits in the history
 
+## `interactive-rebase-mid-edit`
+
+Interactive rebase paused at the first `edit` action with 2 remaining picks. No conflict markers — the commit was applied cleanly and the rebase stopped so the user can amend it. `.git/rebase-merge/interactive` is present.
+
+**Contracts:**
+- A rebase is in progress (`.git/rebase-merge/` exists)
+- `.git/rebase-merge/interactive` exists (interactive-rebase marker)
+- HEAD is detached at the applied (editable) commit
+- `.git/rebase-merge/git-rebase-todo` has at least 1 remaining pick
+
 ## Distinguishing conflict types
 
 Each conflict scenario produces different `.git` state files:
@@ -64,5 +74,6 @@ Each conflict scenario produces different `.git` state files:
 | `mid-rebase-conflict` | `.git/rebase-merge/` + `REBASE_HEAD` | `git rebase --continue` |
 | `mid-cherry-pick-conflict` | `.git/CHERRY_PICK_HEAD` | `git cherry-pick --continue` |
 | `mid-revert-conflict` | `.git/REVERT_HEAD` | `git revert --continue` |
+| `interactive-rebase-mid-edit` | `.git/rebase-merge/` + `interactive` | `git rebase --continue` (after amend) |
 
 Tools that display "operation in progress" indicators need to check for each of these.

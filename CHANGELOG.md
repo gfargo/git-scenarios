@@ -8,6 +8,25 @@ versions follow [semver](https://semver.org/).
 
 ### Added
 
+- **Scenario `interactive-rebase-mid-edit`** — `git rebase -i` paused at an
+  `edit` action with 2 remaining picks. No conflict markers; HEAD is detached
+  at the applied commit; `.git/rebase-merge/interactive` marks the interactive
+  state. Rounds out the in-progress operation family with the interactive-rebase
+  edit-pause case (distinct from the conflict-pause in `mid-rebase-conflict`).
+- **Scenario `out-of-date-submodule`** — parent repo pinned to an older
+  `vendor/lib` SHA while the submodule has one newer commit. `git submodule
+  status` shows the `+` (modified) flag. Models the "update submodule pin"
+  workflow.
+- **Scenario `locked-worktree`** — primary worktree on `main` plus one linked
+  worktree locked via `git worktree lock`. `git worktree list --porcelain`
+  shows `locked <reason>`; `.git/worktrees/<n>/locked` exists. Models the
+  "reserved worktree" pattern.
+- **Atom `startInteractiveRebase(onto)`** — starts `git rebase -i <onto>` with
+  a temp `GIT_SEQUENCE_EDITOR` that rewrites the first `pick` to `edit`,
+  pausing the rebase at the first commit for interactive editing. In
+  `src/atoms/rebase.ts`.
+- **Atoms `lockWorktree(path, {reason?})` / `unlockWorktree(path)`** — wrap
+  `git worktree lock` / `unlock`. In `src/atoms/worktrees.ts`.
 - **`dangling-commit` scenario** — an experimental commit is dropped from
   `main` via `git reset --hard HEAD~1`; the object remains in the store,
   reachable only via `HEAD@{1}` in the reflog. For testing reflog-browsing
