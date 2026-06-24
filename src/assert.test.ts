@@ -151,6 +151,20 @@ describe('assertRepo', () => {
       expect(() => assertRepo(plainSource).aheadOf('v0', 1)).toThrow(InvalidArgumentError)
     })
 
+    it('aheadOf wraps an invalid/non-existent ref in InvalidArgumentError', async () => {
+      const err = await assertRepo(repo).aheadOf('no-such-ref', 0).then(() => null, (e) => e)
+      expect(err).toBeInstanceOf(InvalidArgumentError)
+      const iae = err as InvalidArgumentError
+      expect(iae.parameterName).toBe('ref')
+      expect(iae.constraint).toMatch(/"no-such-ref"/)
+    })
+
+    it('behindOf wraps an invalid/non-existent ref in InvalidArgumentError', async () => {
+      const err = await assertRepo(repo).behindOf('no-such-ref', 0).then(() => null, (e) => e)
+      expect(err).toBeInstanceOf(InvalidArgumentError)
+      expect((err as InvalidArgumentError).parameterName).toBe('ref')
+    })
+
     it('can combine aheadOf and behindOf in one chain', async () => {
       await assertRepo(repo).aheadOf('v0', 1).behindOf('v0', 0)
     })

@@ -270,7 +270,15 @@ export class RepoAssertion implements PromiseLike<RepoSnapshot> {
       })
     }
     this.checks.push(async () => {
-      const out = await git.raw(['rev-list', '--count', `${ref}..HEAD`])
+      let out: string
+      try {
+        out = await git.raw(['rev-list', '--count', `${ref}..HEAD`])
+      } catch (err) {
+        throw new InvalidArgumentError({
+          parameterName: 'ref',
+          constraint: `"${ref}" is not a valid ref — ${err instanceof Error ? err.message.trim() : String(err)}`,
+        })
+      }
       const actual = parseInt(out.trim(), 10)
       if (actual !== n) {
         fail('aheadOf', n, actual, `Expected HEAD to be ${n} commit(s) ahead of "${ref}", but found ${actual}.`)
@@ -293,7 +301,15 @@ export class RepoAssertion implements PromiseLike<RepoSnapshot> {
       })
     }
     this.checks.push(async () => {
-      const out = await git.raw(['rev-list', '--count', `HEAD..${ref}`])
+      let out: string
+      try {
+        out = await git.raw(['rev-list', '--count', `HEAD..${ref}`])
+      } catch (err) {
+        throw new InvalidArgumentError({
+          parameterName: 'ref',
+          constraint: `"${ref}" is not a valid ref — ${err instanceof Error ? err.message.trim() : String(err)}`,
+        })
+      }
       const actual = parseInt(out.trim(), 10)
       if (actual !== n) {
         fail('behindOf', n, actual, `Expected HEAD to be ${n} commit(s) behind "${ref}", but found ${actual}.`)
