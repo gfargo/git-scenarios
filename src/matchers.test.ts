@@ -6,7 +6,7 @@
 
 import { matchers } from './matchers'
 import { spinUpScenario } from './spinUpScenario'
-import type { TempGitRepo } from './tempGitRepo'
+import { createTempGitRepo, type TempGitRepo } from './tempGitRepo'
 
 expect.extend(matchers)
 
@@ -114,6 +114,48 @@ describe('expect matchers', () => {
 
     it('matches the presence of a stash', async () => {
       await expect(repo).toHaveStash()
+    })
+  })
+
+  describe('toBeAheadOf / toBeBehindOf', () => {
+    let repo: TempGitRepo
+
+    beforeAll(async () => {
+      repo = await createTempGitRepo()
+      // commit A, tag it as v0, then add commit B — HEAD is 1 ahead of v0
+      await repo.writeFile('a.txt', '1')
+      await repo.commitAll('base commit')
+      await repo.git.raw(['tag', 'v0'])
+      await repo.writeFile('a.txt', '2')
+      await repo.commitAll('extra commit')
+    })
+
+    afterAll(async () => {
+      await repo.cleanup()
+    })
+
+    it('toBeAheadOf passes when ahead count matches', async () => {
+      await expect(repo).toBeAheadOf('v0', 1)
+    })
+
+    it('toBeAheadOf fails with a descriptive message on mismatch', async () => {
+      await expect(expect(repo).toBeAheadOf('v0', 5)).rejects.toThrow(/5.*ahead.*"v0"/)
+    })
+
+    it('.not.toBeAheadOf passes when the count does not match', async () => {
+      await expect(repo).not.toBeAheadOf('v0', 5)
+    })
+
+    it('toBeBehindOf passes when behind count matches (ancestor tag → 0 behind)', async () => {
+      await expect(repo).toBeBehindOf('v0', 0)
+    })
+
+    it('toBeBehindOf fails with a descriptive message on mismatch', async () => {
+      await expect(expect(repo).toBeBehindOf('v0', 3)).rejects.toThrow(/3.*behind.*"v0"/)
+    })
+
+    it('.not.toBeBehindOf passes when the count does not match', async () => {
+      await expect(repo).not.toBeBehindOf('v0', 3)
     })
   })
 })
