@@ -152,12 +152,21 @@ export function startInteractiveRebase(onto: string): Step {
       )
       await chmod(scriptPath, 0o755)
 
+      // On Windows, files with a Unix shebang cannot be executed directly by
+      // git's shell. Use the node executable explicitly so the script runs
+      // cross-platform. Forward-slash paths work for both Unix and Git-for-Windows.
+      const toFwdSlash = (p: string) => p.replace(/\\/g, '/')
+      const seqEditor =
+        process.platform === 'win32'
+          ? `"${toFwdSlash(process.execPath)}" "${toFwdSlash(scriptPath)}"`
+          : scriptPath
+
       try {
         await execFileAsync('git', ['rebase', '-i', onto], {
           cwd: repo.path,
           env: {
             ...process.env,
-            GIT_SEQUENCE_EDITOR: scriptPath,
+            GIT_SEQUENCE_EDITOR: seqEditor,
             GIT_EDITOR: ':',
           },
         })
