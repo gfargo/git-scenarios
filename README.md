@@ -56,7 +56,7 @@ state every run), so the tests built on top are deterministic too.
    anything from "single staged file" to "three-way nested submodule
    mid-rebase."
 
-> **Status: v1.1.0** — Stable release. 32 curated scenarios, 60+ composable atoms,
+> **Status: v1.1.0** — Stable release. 35 curated scenarios, 60+ composable atoms,
 > 5 framework adapters, `assertRepo()` + `expect` matchers, CLI
 > (`list` · `describe` · `inspect` · `create` · `capture` · `clean`),
 > dual CJS/ESM output.
@@ -512,6 +512,9 @@ Run `git-scenarios list` for the live list. Current set (**35 scenarios across 6
 | `mid-rebase-conflict` | operation | in-progress rebase with 1 unresolved conflict on `src/config.ts` |
 | `mid-cherry-pick-conflict` | operation | in-progress cherry-pick with 1 unresolved conflict on `src/utils.ts` |
 | `mid-revert-conflict` | operation | in-progress revert with 1 unresolved conflict on `src/service.ts` |
+| `merge-conflict-rename-rename` | operation | in-progress merge with a rename/rename conflict: `orig.txt` renamed to two different names; both renamed files exist in the worktree with no conflict markers |
+| `merge-conflict-delete-modify` | operation | in-progress merge with a delete/modify conflict: `src/component.ts` deleted on `main`, modified on `feat/x`; modified version left in worktree with no conflict markers |
+| `merge-conflict-add-add` | operation | in-progress merge with an add/add conflict: `src/config.ts` independently added on both branches with different content; has unresolved conflict markers |
 | `merge-no-conflict` | history | a successful `--no-ff` merge of `feat/x` into `main`, fully committed (2-parent commit at HEAD) |
 | `rich-history-graph` | history | 20+ commits across 6 date buckets, 2 `--no-ff` merges, 1 live unmerged `feat/wip` |
 | `chip-rendering-showcase` | history | 6 commits each carrying a different branch-tip-chip kind (HEAD, local, slashy, remote, upstream, tag) |

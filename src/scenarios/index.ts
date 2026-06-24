@@ -29,6 +29,9 @@ import { featurePrReadyScenario } from './feature-pr-ready'
 import { mergeNoConflictScenario } from './merge-no-conflict'
 import { midBisectScenario } from './mid-bisect'
 import { midCherryPickConflictScenario } from './mid-cherry-pick-conflict'
+import { mergeConflictAddAddScenario } from './merge-conflict-add-add'
+import { mergeConflictDeleteModifyScenario } from './merge-conflict-delete-modify'
+import { mergeConflictRenameRenameScenario } from './merge-conflict-rename-rename'
 import { midMergeConflictScenario } from './mid-merge-conflict'
 import { midRebaseConflictScenario } from './mid-rebase-conflict'
 import { midRevertConflictScenario } from './mid-revert-conflict'
@@ -79,6 +82,9 @@ export const allScenarios: readonly Scenario[] = [
   midRebaseConflictScenario,
   midCherryPickConflictScenario,
   midRevertConflictScenario,
+  mergeConflictRenameRenameScenario,
+  mergeConflictDeleteModifyScenario,
+  mergeConflictAddAddScenario,
   // history shapes
   mergeNoConflictScenario,
   richHistoryGraphScenario,
@@ -148,6 +154,9 @@ export { featurePrReadyScenario } from './feature-pr-ready'
 export { mergeNoConflictScenario } from './merge-no-conflict'
 export { midBisectScenario } from './mid-bisect'
 export { midCherryPickConflictScenario } from './mid-cherry-pick-conflict'
+export { mergeConflictAddAddScenario } from './merge-conflict-add-add'
+export { mergeConflictDeleteModifyScenario } from './merge-conflict-delete-modify'
+export { mergeConflictRenameRenameScenario } from './merge-conflict-rename-rename'
 export { midMergeConflictScenario } from './mid-merge-conflict'
 export { midRebaseConflictScenario } from './mid-rebase-conflict'
 export { midRevertConflictScenario } from './mid-revert-conflict'
