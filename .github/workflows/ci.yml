@@ -69,6 +69,31 @@ jobs:
       - name: Run benchmarks
         run: npm run bench
 
+      - name: Initialize gh-pages if absent
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # benchmark-action/github-action-benchmark always fetches gh-pages to
+          # load historical data, even on PRs.  If the branch doesn't exist the
+          # fetch fails and CI breaks.  Create it once with an empty data store
+          # so subsequent fetches succeed and regression tracking can start.
+          if ! git ls-remote --exit-code origin gh-pages > /dev/null 2>&1; then
+            mkdir /tmp/gh-pages-init
+            cd /tmp/gh-pages-init
+            git init
+            git checkout -b gh-pages
+            mkdir -p dev/bench
+            printf 'window.BENCHMARK_DATA = {"lastUpdate":0,"repoUrl":"https://github.com/%s","entries":{}};\n' \
+              "$GITHUB_REPOSITORY" > dev/bench/data.js
+            git add dev/bench/data.js
+            git -c user.name="github-actions[bot]" \
+                -c user.email="github-actions[bot]@users.noreply.github.com" \
+                commit -m "chore: initialize benchmark data store"
+            git remote add origin \
+              "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+            git push origin gh-pages
+          fi
+
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
         with:
