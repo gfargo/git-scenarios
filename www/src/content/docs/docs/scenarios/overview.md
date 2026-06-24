@@ -1,9 +1,9 @@
 ---
 title: Scenarios Overview
-description: All 32 curated scenarios at a glance.
+description: All 35 curated scenarios at a glance.
 ---
 
-The library ships 32 curated scenarios across 6 kinds. Each produces a deterministic git repo state — same setup, same result, every time.
+The library ships 35 curated scenarios across 6 kinds. Each produces a deterministic git repo state — same setup, same result, every time.
 
 :::tip[Looking for something specific?]
 Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, or freeform text and copy snippets straight to your clipboard.
@@ -50,7 +50,7 @@ Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, o
 | `shallow-clone` | 10 commits but only 4 reachable (`.git/shallow` set). |
 | `large-repo` | 115 commits across 3 branches with 3 tags. |
 
-### Worktree (5 scenarios)
+### Worktree (8 scenarios)
 
 | Name | What you get |
 |---|---|
@@ -59,6 +59,9 @@ Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, o
 | `monorepo-multi-package` | Workspaces monorepo: `app` clean, `lib` staged, `cli` unstaged. |
 | `dirty-many-files` | 12 staged + 6 unstaged + 3 untracked files. |
 | `multiple-worktrees` | Primary worktree + 3 linked worktrees. |
+| `git-lfs-pointer` | LFS pointer file committed for a binary asset — no `git-lfs` binary required. |
+| `crlf-normalization` | `.gitattributes` with `text=auto eol=lf` normalising all text files. |
+| `case-collision` | git history holds `src/File.ts` and `src/file.ts` — a case-only collision visible on case-insensitive FS. |
 
 ### Stash (2 scenarios)
 
