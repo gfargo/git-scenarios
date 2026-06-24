@@ -10,12 +10,12 @@ The package ships adapters for every major TypeScript test runner. Each provides
 | Runner | Import | API shape |
 |---|---|---|
 | Jest | `@gfargo/git-scenarios/jest` | `describeWithScenario` + `describeEachScenario` |
-| Vitest | `@gfargo/git-scenarios/vitest` | `describeWithScenario` + `describeEachScenario` |
+| Vitest | `@gfargo/git-scenarios/vitest` | `describeWithScenario` + `describeEachScenario` + `repoFixture` |
 | node:test | `@gfargo/git-scenarios/node-test` | `describeWithScenario` + `describeEachScenario` + `it` |
 | Mocha | `@gfargo/git-scenarios/mocha` | `describeWithScenario` + `describeEachScenario` |
 | AVA | `@gfargo/git-scenarios/ava` | `withScenario` + `withScenarios` |
 
-The first four share the same `describeWithScenario` pattern. AVA uses a different shape because it has no `describe` blocks.
+The first four share the same `describeWithScenario` pattern. AVA uses a different shape because it has no `describe` blocks. Vitest additionally exports `repoFixture` for the idiomatic `test.extend` fixture pattern.
 
 ## Jest / Vitest / node:test / Mocha
 
@@ -76,6 +76,33 @@ describeEachScenario(
   },
 )
 ```
+
+### Vitest: `test.extend` fixture
+
+Vitest users can also use `repoFixture` — a factory that returns a `test.extend`-compatible fixture map. Each test gets a fresh repo; cleanup is automatic after every test.
+
+```ts
+import { test as base, expect } from 'vitest'
+import { repoFixture } from '@gfargo/git-scenarios/vitest'
+
+const test = base.extend(repoFixture('feature-pr-ready'))
+
+test('on feature branch', async ({ repo }) => {
+  const status = await repo.git.status()
+  expect(status.current).toBe('feat/widget-v2')
+})
+```
+
+Compose it with your own fixtures:
+
+```ts
+const test = base.extend({
+  ...repoFixture('feature-pr-ready'),
+  myFixture: [async ({}, use) => { await use('value') }, { auto: false }],
+})
+```
+
+See [Testing Recipes — Vitest `test.extend` fixture](/docs/guides/recipes#vitest-testextend-fixture) for more examples.
 
 ### Runner-specific notes
 

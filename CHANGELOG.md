@@ -27,6 +27,14 @@ versions follow [semver](https://semver.org/).
   `src/atoms/rebase.ts`.
 - **Atoms `lockWorktree(path, {reason?})` / `unlockWorktree(path)`** — wrap
   `git worktree lock` / `unlock`. In `src/atoms/worktrees.ts`.
+- **`dangling-commit` scenario** — an experimental commit is dropped from
+  `main` via `git reset --hard HEAD~1`; the object remains in the store,
+  reachable only via `HEAD@{1}` in the reflog. For testing reflog-browsing
+  UIs and "recover lost commit" affordances.
+- **`reset-recoverable-head` scenario** — `main` is hard-reset 2 commits
+  back; the former tip is not on any branch but is recoverable via
+  `main@{1}` / `HEAD@{1}` in the reflog. For testing "undo reset" /
+  branch-restoration flows.
 
 - **`repo.snapshot()`** — a structured, read-only description of a
   repo's current state: HEAD (branch / detached / short SHA), local

@@ -484,7 +484,7 @@ git-scenarios/
 
 ## Available scenarios
 
-Run `git-scenarios list` for the live list. Current set (**35 scenarios across 6 kinds**):
+Run `git-scenarios list` for the live list. Current set (**40 scenarios across 6 kinds**):
 
 | Name | Kind | What you get |
 |---|---|---|
@@ -500,6 +500,8 @@ Run `git-scenarios list` for the live list. Current set (**35 scenarios across 6
 | `multi-remote-with-tracking` | branch | fork-workflow: `origin` + `upstream` remotes, `main` tracks `upstream/main`, `feat/fork-work` tracks `origin/feat/fork-work` |
 | `branch-sync-showcase` | branch | five local branches in five different upstream sync states (behind, ahead, diverged, synced, no-upstream); HEAD on the behind branch. |
 | `detached-head` | branch | HEAD detached at `main~2`, `main` still at its original tip |
+| `dangling-commit` | branch | experimental commit dropped from `main`; object still in store, reachable only via `HEAD@{1}` reflog |
+| `reset-recoverable-head` | branch | `main` hard-reset 2 commits back; former tip recoverable via `main@{1}` in the reflog |
 | `signed-commits-required` | branch | `commit.gpgsign=true` + `user.signingkey` set — for testing signing-aware UI |
 | `orphan-branch` | branch | `main` + `gh-pages` orphan branch with no shared history |
 | `single-staged-file` | worktree | baseline + 1 staged README — minimum "ready to commit" shape |
