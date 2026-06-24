@@ -44,6 +44,49 @@ jobs:
       - name: Verify pack
         run: npm pack --dry-run
 
+  bench:
+    name: benchmark
+    runs-on: ubuntu-latest
+    # Only run on push to main or pull requests (not on tag pushes etc.)
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    permissions:
+      contents: write
+      deployments: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22.22.2
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.2'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run benchmarks
+        run: npm run bench
+
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: git-scenarios spin-up benchmarks
+          tool: customSmallerIsBetter
+          output-file-path: bench-results.json
+          # Fail CI when a scenario regresses more than 50% vs the stored baseline.
+          # A generous threshold avoids noise from shared runners while still
+          # catching real regressions (like the large-repo Windows timeout in #cache).
+          alert-threshold: '150%'
+          comment-on-alert: true
+          fail-on-alert: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Persist results to gh-pages so comparisons survive across runs.
+          auto-push: ${{ github.ref == 'refs/heads/main' }}
+          gh-pages-branch: gh-pages
+          benchmark-data-dir-path: dev/bench
+
   test-git-compat:
     name: git-compat (${{ matrix.git-version }})
     runs-on: ubuntu-latest
