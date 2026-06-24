@@ -14,8 +14,11 @@
 import type { Scenario } from './types'
 import { branchAheadOfUpstreamScenario } from './branch-ahead-of-upstream'
 import { caseCollisionScenario } from './case-collision'
+import { commitsWithNotesScenario } from './commits-with-notes'
 import { crlfNormalizationScenario } from './crlf-normalization'
 import { gitLfsPointerScenario } from './git-lfs-pointer'
+import { installedHooksScenario } from './installed-hooks'
+import { mixedTagsScenario } from './mixed-tags'
 import { branchBehindUpstreamScenario } from './branch-behind-upstream'
 import { branchDivergedScenario } from './branch-diverged'
 import { branchSyncShowcaseScenario } from './branch-sync-showcase'
@@ -100,6 +103,10 @@ export const allScenarios: readonly Scenario[] = [
   gitLfsPointerScenario,
   crlfNormalizationScenario,
   caseCollisionScenario,
+  // metadata shapes
+  installedHooksScenario,
+  commitsWithNotesScenario,
+  mixedTagsScenario,
 ]
 
 /**
@@ -169,3 +176,6 @@ export { twoCommitFeatureScenario } from './two-commit-feature'
 export { gitLfsPointerScenario } from './git-lfs-pointer'
 export { crlfNormalizationScenario } from './crlf-normalization'
 export { caseCollisionScenario } from './case-collision'
+export { installedHooksScenario } from './installed-hooks'
+export { commitsWithNotesScenario } from './commits-with-notes'
+export { mixedTagsScenario } from './mixed-tags'

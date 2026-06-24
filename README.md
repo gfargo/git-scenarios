@@ -484,7 +484,7 @@ git-scenarios/
 
 ## Available scenarios
 
-Run `git-scenarios list` for the live list. Current set (**35 scenarios across 6 kinds**):
+Run `git-scenarios list` for the live list. Current set (**38 scenarios across 6 kinds**):
 
 | Name | Kind | What you get |
 |---|---|---|
@@ -523,6 +523,9 @@ Run `git-scenarios list` for the live list. Current set (**35 scenarios across 6
 | `git-lfs-pointer` | worktree | repo with a Git LFS pointer file committed for a binary asset — no `git-lfs` binary required; pointer format and `.gitattributes` rules are testable everywhere |
 | `crlf-normalization` | worktree | `.gitattributes` with `* text=auto eol=lf` normalising all text files; documents Windows `core.autocrlf` override and LF-in-object-store behaviour |
 | `case-collision` | worktree | git history holds `src/File.ts` and `src/file.ts` — a case-only collision that silently loses data when checked out on macOS or Windows (case-insensitive FS) |
+| `installed-hooks` | worktree | repo with `pre-commit` and `commit-msg` hooks installed and marked executable — for testing hook detection and `--no-verify` bypass flows |
+| `commits-with-notes` | history | 2 commits each annotated with git notes; first commit also has a note in a second namespace (`refs/notes/ci`) — for testing note-aware log and annotation tools |
+| `mixed-tags` | history | lightweight tag (`v0.1.0`), annotated tag object (`v1.0.0`), and a tag pointing at a tree (`tree-snapshot`) — for testing tag-type detection and non-commit tag handling |
 
 `git-scenarios describe <name>` prints the full description and the
 contract assertions for a single scenario.

@@ -1,9 +1,9 @@
 ---
 title: Scenarios Overview
-description: All 35 curated scenarios at a glance.
+description: All 38 curated scenarios at a glance.
 ---
 
-The library ships 35 curated scenarios across 6 kinds. Each produces a deterministic git repo state — same setup, same result, every time.
+The library ships 38 curated scenarios across 6 kinds. Each produces a deterministic git repo state — same setup, same result, every time.
 
 :::tip[Looking for something specific?]
 Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, or freeform text and copy snippets straight to your clipboard.
@@ -40,7 +40,7 @@ Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, o
 | `mid-cherry-pick-conflict` | In-progress cherry-pick with 1 conflict on `src/utils.ts`. |
 | `mid-revert-conflict` | In-progress revert with 1 conflict on `src/service.ts`. |
 
-### History (5 scenarios)
+### History (7 scenarios)
 
 | Name | What you get |
 |---|---|
@@ -49,8 +49,10 @@ Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, o
 | `chip-rendering-showcase` | 6 commits with different ref-chip kinds (HEAD, local, remote, tag). |
 | `shallow-clone` | 10 commits but only 4 reachable (`.git/shallow` set). |
 | `large-repo` | 115 commits across 3 branches with 3 tags. |
+| `commits-with-notes` | 2 commits with git notes; first commit also has a note in `refs/notes/ci`. |
+| `mixed-tags` | Lightweight (`v0.1.0`), annotated (`v1.0.0`), and tree-pointing (`tree-snapshot`) tags. |
 
-### Worktree (8 scenarios)
+### Worktree (9 scenarios)
 
 | Name | What you get |
 |---|---|
@@ -62,6 +64,7 @@ Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, o
 | `git-lfs-pointer` | LFS pointer file committed for a binary asset — no `git-lfs` binary required. |
 | `crlf-normalization` | `.gitattributes` with `text=auto eol=lf` normalising all text files. |
 | `case-collision` | git history holds `src/File.ts` and `src/file.ts` — a case-only collision visible on case-insensitive FS. |
+| `installed-hooks` | `pre-commit` and `commit-msg` hooks installed and executable — for testing hook detection and `--no-verify` flows. |
 
 ### Stash (2 scenarios)
 
