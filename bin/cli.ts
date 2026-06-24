@@ -44,7 +44,7 @@ import type { RepoSnapshot } from '../src/snapshot'
 import { createTempGitRepo } from '../src/tempGitRepo'
 
 type ParsedArgs = {
-  command?: 'list' | 'describe' | 'inspect' | 'create' | 'capture' | 'clean' | 'diff' | 'help'
+  command?: 'list' | 'describe' | 'inspect' | 'create' | 'capture' | 'clean' | 'diff' | 'doctor' | 'help'
   positional: string[]
   flags: Record<string, string | boolean>
 }
@@ -76,7 +76,7 @@ function parseArgs(argv: string[]): ParsedArgs {
         flags[arg.slice(2)] = true
       }
     } else if (!command) {
-      if (arg === 'list' || arg === 'describe' || arg === 'inspect' || arg === 'create' || arg === 'capture' || arg === 'clean' || arg === 'diff' || arg === 'help') {
+      if (arg === 'list' || arg === 'describe' || arg === 'inspect' || arg === 'create' || arg === 'capture' || arg === 'clean' || arg === 'diff' || arg === 'doctor' || arg === 'help') {
         command = arg
       } else {
         positional.push(arg)
@@ -120,6 +120,7 @@ function printHelp(): void {
     '    git-scenarios capture [path] [options]',
     '    git-scenarios diff <name-a> <name-b> [--json]',
     '    git-scenarios clean [options]',
+    '    git-scenarios doctor [--json]',
     '',
     '  List options:',
     '    --kind <kind>    Filter by kind (branch | worktree | operation |',
@@ -172,6 +173,12 @@ function printHelp(): void {
     '  Clean options:',
     '    --dry-run        List stale scenario dirs without deleting them',
     '    --older-than <h> Only remove dirs older than <h> hours (default: 0 = all)',
+    '',
+    '  Doctor options:',
+    '    Checks git version (≥ 2.25.0), temp-dir writability, leftover',
+    '    scenario dirs, and optional deps (git-lfs). Exits non-zero on',
+    '    hard failures (git missing/below minimum, temp dir not writable).',
+    '    --json           Machine-readable JSON output',
     '',
     `  Available scenarios (${listRegistered().length}):`,
     ...listRegistered().map((s) => `    ${s.name.padEnd(28)} ${s.summary}`),
@@ -1006,6 +1013,102 @@ async function commandPick(options: { noInteractive?: boolean } = {}): Promise<n
   })
 }
 
+type CheckResult = {
+  name: string
+  status: 'pass' | 'warn' | 'fail'
+  message: string
+}
+
+export function parseGitVersion(raw: string): [number, number, number] | null {
+  const m = raw.match(/git version (\d+)\.(\d+)\.(\d+)/)
+  if (!m) return null
+  return [parseInt(m[1], 10), parseInt(m[2], 10), parseInt(m[3], 10)]
+}
+
+async function commandDoctor(options: { json?: boolean }): Promise<number> {
+  const checks: CheckResult[] = []
+
+  // 1. Git version check
+  const gitResult = spawnSync('git', ['--version'], { encoding: 'utf-8' })
+  if (gitResult.status !== 0 || !gitResult.stdout) {
+    checks.push({ name: 'git-version', status: 'fail', message: 'git not found in PATH' })
+  } else {
+    const parsed = parseGitVersion(gitResult.stdout.trim())
+    if (!parsed) {
+      checks.push({ name: 'git-version', status: 'fail', message: `Could not parse git version: "${gitResult.stdout.trim()}"` })
+    } else {
+      const [major, minor] = parsed
+      const isOk = major > 2 || (major === 2 && minor >= 25)
+      if (isOk) {
+        checks.push({ name: 'git-version', status: 'pass', message: `git ${parsed.join('.')} (≥ 2.25.0)` })
+      } else {
+        checks.push({ name: 'git-version', status: 'fail', message: `git ${parsed.join('.')} is below required 2.25.0` })
+      }
+    }
+  }
+
+  // 2. Temp dir writability
+  const tmp = tmpdir()
+  const probeFile = path.join(tmp, `.git-scenarios-doctor-probe-${process.pid}`)
+  try {
+    writeFileSync(probeFile, '')
+    checks.push({ name: 'temp-dir-writable', status: 'pass', message: `${tmp} is writable` })
+  } catch (error) {
+    checks.push({ name: 'temp-dir-writable', status: 'fail', message: `${tmp} is not writable: ${(error as Error).message}` })
+  } finally {
+    try { rmSync(probeFile) } catch { /* best effort */ }
+  }
+
+  // 3. Leftover scenario dirs
+  const CURRENT_PREFIX = 'git-scenarios-'
+  const LEGACY_PREFIX = 'coco-git-test-'
+  let leftovers: string[] = []
+  try {
+    const entries = readdirSync(tmp)
+    leftovers = entries.filter(
+      (name) => name.startsWith(CURRENT_PREFIX) || name.startsWith(LEGACY_PREFIX),
+    )
+  } catch {
+    // readdirSync failure already covered by the writability check
+  }
+
+  if (leftovers.length > 0) {
+    checks.push({
+      name: 'leftover-dirs',
+      status: 'warn',
+      message: `${leftovers.length} leftover scenario dir${leftovers.length === 1 ? '' : 's'} in ${tmp} — run \`git-scenarios clean\` to remove`,
+    })
+  } else {
+    checks.push({ name: 'leftover-dirs', status: 'pass', message: 'No leftover scenario directories' })
+  }
+
+  // 4. Optional git-lfs
+  const lfsResult = spawnSync('git-lfs', ['version'], { encoding: 'utf-8' })
+  if (lfsResult.status === 0 && lfsResult.stdout) {
+    checks.push({ name: 'git-lfs', status: 'pass', message: `git-lfs found: ${lfsResult.stdout.split('\n')[0].trim()}` })
+  } else {
+    checks.push({ name: 'git-lfs', status: 'warn', message: 'git-lfs not found — LFS scenarios will not work (optional)' })
+  }
+
+  if (options.json) {
+    console.log(JSON.stringify({ checks }, null, 2))
+  } else {
+    console.log('')
+    console.log('  git-scenarios doctor')
+    console.log('  --------------------')
+    console.log('')
+    for (const check of checks) {
+      const icon = check.status === 'pass' ? '✓' : check.status === 'warn' ? '⚠' : '✗'
+      const label = check.status.toUpperCase().padEnd(4)
+      console.log(`  ${icon} ${label}  ${check.name}`)
+      console.log(`         ${check.message}`)
+    }
+    console.log('')
+  }
+
+  return checks.some((c) => c.status === 'fail') ? 1 : 0
+}
+
 async function main(): Promise<number> {
   const { command, positional, flags } = parseArgs(process.argv.slice(2))
 
@@ -1072,6 +1175,10 @@ async function main(): Promise<number> {
     })
   }
 
+  if (command === 'doctor') {
+    return commandDoctor({ json: Boolean(flags.json) })
+  }
+
   if (command === 'create') {
     const name = positional[0]
     if (!name) {
@@ -1089,15 +1196,17 @@ async function main(): Promise<number> {
   return 0
 }
 
-main()
-  .then((code) => {
-    // Setting exitCode (instead of calling process.exit) lets Node
-    // drain stdout/stderr buffers naturally before exiting. Calling
-    // process.exit synchronously can truncate piped output —
-    // especially on Linux where the pipe buffer is ~8KB.
-    process.exitCode = code
-  })
-  .catch((error) => {
-    console.error(error)
-    process.exitCode = 1
-  })
+if (require.main === module) {
+  main()
+    .then((code) => {
+      // Setting exitCode (instead of calling process.exit) lets Node
+      // drain stdout/stderr buffers naturally before exiting. Calling
+      // process.exit synchronously can truncate piped output —
+      // especially on Linux where the pipe buffer is ~8KB.
+      process.exitCode = code
+    })
+    .catch((error) => {
+      console.error(error)
+      process.exitCode = 1
+    })
+}
