@@ -93,6 +93,19 @@ export function abortRebase(): Step {
  * test suites, scripted scenarios). The original commit message is
  * preserved, which is what scripted callers want.
  */
+export function continueRebase(): Step {
+  return async (repo) => {
+    // Shell out via child_process so the GIT_EDITOR override is scoped
+    // to this one spawn — no mutation of `process.env` or of the shared
+    // simpleGit instance. simple-git's `.env()` mutates the receiver,
+    // which would leak into subsequent atoms in the chain.
+    await execFileAsync('git', ['rebase', '--continue'], {
+      cwd: repo.path,
+      env: { ...process.env, GIT_EDITOR: ':', GIT_SEQUENCE_EDITOR: ':' },
+    })
+  }
+}
+
 /**
  * Start an interactive rebase (`git rebase -i <onto>`) and pause it at
  * the first `edit` action. A temporary `GIT_SEQUENCE_EDITOR` script
@@ -164,18 +177,5 @@ export function startInteractiveRebase(onto: string): Step {
     } finally {
       await rm(scriptDir, { recursive: true, force: true })
     }
-  }
-}
-
-export function continueRebase(): Step {
-  return async (repo) => {
-    // Shell out via child_process so the GIT_EDITOR override is scoped
-    // to this one spawn — no mutation of `process.env` or of the shared
-    // simpleGit instance. simple-git's `.env()` mutates the receiver,
-    // which would leak into subsequent atoms in the chain.
-    await execFileAsync('git', ['rebase', '--continue'], {
-      cwd: repo.path,
-      env: { ...process.env, GIT_EDITOR: ':', GIT_SEQUENCE_EDITOR: ':' },
-    })
   }
 }
