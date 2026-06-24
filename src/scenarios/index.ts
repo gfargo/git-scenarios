@@ -21,7 +21,9 @@ import { branchDivergedScenario } from './branch-diverged'
 import { branchSyncShowcaseScenario } from './branch-sync-showcase'
 import { branchTrackingUpstreamScenario } from './branch-tracking-upstream'
 import { chipRenderingShowcaseScenario } from './chip-rendering-showcase'
+import { danglingCommitScenario } from './dangling-commit'
 import { detachedHeadScenario } from './detached-head'
+import { resetRecoverableHeadScenario } from './reset-recoverable-head'
 import { dirtyManyFilesScenario } from './dirty-many-files'
 import { emptyRepoScenario } from './empty-repo'
 import { featureBranchOneCommitScenario } from './feature-branch-one-commit'
@@ -76,6 +78,9 @@ export const allScenarios: readonly Scenario[] = [
   // detached / config shapes
   detachedHeadScenario,
   signedCommitsRequiredScenario,
+  // recovery shapes
+  danglingCommitScenario,
+  resetRecoverableHeadScenario,
   // in-progress operations
   midBisectScenario,
   midMergeConflictScenario,
@@ -146,7 +151,9 @@ export { branchDivergedScenario } from './branch-diverged'
 export { branchSyncShowcaseScenario } from './branch-sync-showcase'
 export { branchTrackingUpstreamScenario } from './branch-tracking-upstream'
 export { chipRenderingShowcaseScenario } from './chip-rendering-showcase'
+export { danglingCommitScenario } from './dangling-commit'
 export { detachedHeadScenario } from './detached-head'
+export { resetRecoverableHeadScenario } from './reset-recoverable-head'
 export { dirtyManyFilesScenario } from './dirty-many-files'
 export { emptyRepoScenario } from './empty-repo'
 export { featureBranchOneCommitScenario } from './feature-branch-one-commit'
