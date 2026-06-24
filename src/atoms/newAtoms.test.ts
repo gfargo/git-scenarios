@@ -4,10 +4,13 @@
  * - shallowClone (shallowAt, unshallow)
  * - notes (addNote, appendNote, removeNote)
  * - hooks (installHook, removeHook)
+ * - worktrees (lockWorktree, unlockWorktree)
  */
 
 import { existsSync, readFileSync } from 'fs'
+import { mkdtemp } from 'fs/promises'
 import { join } from 'path'
+import { tmpdir } from 'os'
 
 import { createTempGitRepo, type TempGitRepo } from '../tempGitRepo'
 import { addCommit } from './addCommit'
@@ -16,6 +19,7 @@ import { enableSparseCheckout, disableSparseCheckout } from './sparseCheckout'
 import { shallowAt, unshallow } from './shallowClone'
 import { addNote, appendNote, removeNote } from './notes'
 import { installHook, removeHook } from './hooks'
+import { addWorktree, lockWorktree, unlockWorktree } from './worktrees'
 
 async function withRepo(callback: (repo: TempGitRepo) => Promise<void>): Promise<void> {
   const repo = await createTempGitRepo()
@@ -212,4 +216,45 @@ describe('hooks', () => {
       }
     })
   })
+})
+
+describe('worktrees', () => {
+  it('lockWorktree marks a linked worktree as locked', async () => {
+    const repo = await createTempGitRepo()
+    const wtPath = await mkdtemp(join(tmpdir(), 'git-scenarios-lock-test-'))
+    try {
+      await addCommit({ message: 'init', files: { 'README.md': '# test\n' } })(repo)
+      await addWorktree(wtPath, { branch: 'feat/lock-test' })(repo)
+
+      await lockWorktree(wtPath, { reason: 'reserved for release' })(repo)
+
+      const out = await repo.git.raw(['worktree', 'list', '--porcelain'])
+      expect(out).toMatch(/^locked\b/m)
+      expect(out).toContain('reserved for release')
+    } finally {
+      await repo.git.raw(['worktree', 'remove', '--force', wtPath]).catch(() => {})
+      await repo.cleanup()
+    }
+  }, 30_000)
+
+  it('unlockWorktree removes the lock from a linked worktree', async () => {
+    const repo = await createTempGitRepo()
+    const wtPath = await mkdtemp(join(tmpdir(), 'git-scenarios-unlock-test-'))
+    try {
+      await addCommit({ message: 'init', files: { 'README.md': '# test\n' } })(repo)
+      await addWorktree(wtPath, { branch: 'feat/unlock-test' })(repo)
+      await lockWorktree(wtPath)(repo)
+
+      const beforeUnlock = await repo.git.raw(['worktree', 'list', '--porcelain'])
+      expect(beforeUnlock).toMatch(/^locked\b/m)
+
+      await unlockWorktree(wtPath)(repo)
+
+      const afterUnlock = await repo.git.raw(['worktree', 'list', '--porcelain'])
+      expect(afterUnlock).not.toMatch(/^locked\b/m)
+    } finally {
+      await repo.git.raw(['worktree', 'remove', '--force', wtPath]).catch(() => {})
+      await repo.cleanup()
+    }
+  }, 30_000)
 })
