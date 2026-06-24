@@ -2,7 +2,7 @@ import { access, mkdir, mkdtemp, readFile as readFileFs, rm, writeFile as writeF
 import { constants, rmSync } from 'fs'
 import { tmpdir } from 'os'
 import { dirname, join } from 'path'
-import { simpleGit, SimpleGit } from 'simple-git'
+import { simpleGit, type SimpleGit } from 'simple-git'
 
 import { nextCommitDate, resetCommitClock } from './commitClock'
 import { snapshotRepo, type RepoSnapshot } from './snapshot'
@@ -63,6 +63,18 @@ export type CreateTempGitRepoOptions = {
    * explicitly cleaned up or removed via `git-scenarios clean`).
    */
   autoCleanup?: boolean
+  /**
+   * When true, `spinUpScenario` and `fromScenario` serve this repo
+   * from a content-addressed template cache rather than replaying the
+   * scenario's atoms on every call. Cache hits are near-instant (a
+   * directory copy instead of replaying all commits).
+   *
+   * Cache key: `${scenarioName}@${libraryVersion}`.
+   * Cache root: `$GIT_SCENARIOS_CACHE_DIR` or `<os.tmpdir()>/git-scenarios-cache`.
+   *
+   * Default: false.
+   */
+  cache?: boolean
 }
 
 /**
@@ -91,6 +103,57 @@ function registerExitHook(): void {
 const DEFAULT_USER_NAME = 'Git Scenarios Test'
 const DEFAULT_USER_EMAIL = 'test@git-scenarios.dev'
 
+/** Build a TempGitRepo handle for an already-configured git directory. */
+function makeRepoHandle(
+  repoPath: string,
+  git: SimpleGit,
+  options: CreateTempGitRepoOptions,
+): TempGitRepo {
+  if (options.autoCleanup) {
+    autoCleanupPaths.add(repoPath)
+    registerExitHook()
+  }
+
+  const writeFile = async (filePath: string, content: string) => {
+    const absolutePath = join(repoPath, filePath)
+    await mkdir(dirname(absolutePath), { recursive: true })
+    await writeFileContent(absolutePath, content)
+  }
+
+  const readFile = async (filePath: string) => readFileFs(join(repoPath, filePath), 'utf8')
+
+  const exists = async (filePath: string): Promise<boolean> => {
+    try {
+      await access(join(repoPath, filePath), constants.F_OK)
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  return {
+    path: repoPath,
+    git,
+    writeFile,
+    readFile,
+    exists,
+    commitAll: async (message: string) => {
+      await git.add('.')
+      // Deterministic date so the commit hash is reproducible. An
+      // explicit-date path isn't offered here — callers that need to
+      // pin a date use the `commit`/`addCommit` atoms.
+      const date = nextCommitDate(repoPath)
+      await git.env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date }).commit(message)
+    },
+    snapshot: () => snapshotRepo(git),
+    cleanup: async () => {
+      autoCleanupPaths.delete(repoPath)
+      resetCommitClock(repoPath)
+      await rm(repoPath, { recursive: true, force: true })
+    },
+  }
+}
+
 /**
  * Create a fresh temporary git repository.
  *
@@ -106,8 +169,8 @@ export async function createTempGitRepo(
   options: CreateTempGitRepoOptions = {},
 ): Promise<TempGitRepo> {
   const TEMP_PREFIX = 'git-scenarios-'
-  const path = await mkdtemp(join(tmpdir(), TEMP_PREFIX))
-  const git = simpleGit(path)
+  const repoPath = await mkdtemp(join(tmpdir(), TEMP_PREFIX))
+  const git = simpleGit(repoPath)
 
   await git.init()
   await git.addConfig('user.name', DEFAULT_USER_NAME)
@@ -115,49 +178,22 @@ export async function createTempGitRepo(
   await git.addConfig('commit.gpgsign', 'false')
   await git.raw(['checkout', '-b', 'main'])
 
-  if (options.autoCleanup) {
-    autoCleanupPaths.add(path)
-    registerExitHook()
-  }
+  return makeRepoHandle(repoPath, git, options)
+}
 
-  const writeFile = async (filePath: string, content: string) => {
-    const absolutePath = join(path, filePath)
-    await mkdir(dirname(absolutePath), { recursive: true })
-    await writeFileContent(absolutePath, content)
-  }
-
-  const readFile = async (filePath: string) => {
-    return readFileFs(join(path, filePath), 'utf8')
-  }
-
-  const exists = async (filePath: string): Promise<boolean> => {
-    try {
-      await access(join(path, filePath), constants.F_OK)
-      return true
-    } catch {
-      return false
-    }
-  }
-
-  return {
-    path,
-    git,
-    writeFile,
-    readFile,
-    exists,
-    commitAll: async (message: string) => {
-      await git.add('.')
-      // Deterministic date so the commit hash is reproducible. An
-      // explicit-date path isn't offered here — callers that need to
-      // pin a date use the `commit`/`addCommit` atoms.
-      const date = nextCommitDate(path)
-      await git.env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date }).commit(message)
-    },
-    snapshot: () => snapshotRepo(git),
-    cleanup: async () => {
-      autoCleanupPaths.delete(path)
-      resetCommitClock(path)
-      await rm(path, { recursive: true, force: true })
-    },
-  }
+/**
+ * Wrap an already-initialised on-disk git repo in a TempGitRepo handle.
+ * The directory must already contain a valid `.git` tree — no `git init`
+ * or identity config is applied. Used by the scenario cache layer to wrap
+ * a directory copied from a cached template.
+ *
+ * @param repoPath - Absolute path to an existing git repository
+ * @param options - Configuration options (autoCleanup, etc.)
+ */
+export async function wrapRepoAtPath(
+  repoPath: string,
+  options: CreateTempGitRepoOptions = {},
+): Promise<TempGitRepo> {
+  const git = simpleGit(repoPath)
+  return makeRepoHandle(repoPath, git, options)
 }
