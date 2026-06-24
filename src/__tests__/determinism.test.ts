@@ -93,7 +93,10 @@ const NON_DETERMINISTIC_SCENARIOS = new Set([
   'monorepo-multi-package',
   'dirty-many-files',
   'multiple-worktrees',
+  'locked-worktree',
   'submodule-with-history',
+  'out-of-date-submodule',
+  'interactive-rebase-mid-edit',
 ])
 
 describe('scenario determinism', () => {

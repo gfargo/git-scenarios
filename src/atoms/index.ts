@@ -37,7 +37,8 @@
  *   - **Stash**: `stashChanges`, `applyStash`, `popStash`, `dropStash`
  *   - **Operations**: `startMerge`, `abortMerge`, `startBisect`,
  *     `bisectStep`, `resetBisect`, `resetTo`
- *   - **Rebase**: `startRebase`, `abortRebase`, `continueRebase`
+ *   - **Rebase**: `startRebase`, `abortRebase`, `continueRebase`,
+ *     `startInteractiveRebase`
  *   - **Submodules**: `addSubmodule`, `pinSubmodule`
  *   - **Scoping**: `onBranch`, `insideSubmodule`, `withAuthor`,
  *     `withRemoteTracking`
@@ -75,9 +76,9 @@ export {
   resetBisect,
   resetTo,
 } from './operations'
-export { startRebase, abortRebase, continueRebase } from './rebase'
+export { startRebase, abortRebase, continueRebase, startInteractiveRebase } from './rebase'
 export { addSubmodule, pinSubmodule } from './submodule'
-export { addWorktree, removeWorktree } from './worktrees'
+export { addWorktree, removeWorktree, lockWorktree, unlockWorktree } from './worktrees'
 export { setConfig } from './config'
 export {
   onBranch,
