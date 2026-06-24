@@ -49,3 +49,17 @@ export function nextCommitDate(key: string): string {
 export function resetCommitClock(key: string): void {
   counters.delete(key)
 }
+
+/** Return the current counter value for `key` without advancing it. */
+export function getCommitClockCount(key: string): number {
+  return counters.get(key) ?? 0
+}
+
+/** Set the counter for `key` to `n`. Used by the cache layer to restore state. */
+export function setCommitClockCount(key: string, n: number): void {
+  if (n === 0) {
+    counters.delete(key)
+  } else {
+    counters.set(key, n)
+  }
+}

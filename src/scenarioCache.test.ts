@@ -8,9 +8,12 @@
  *  - materializeCached with autoCleanup works correctly
  *  - spinUpScenario({ cache: true }) end-to-end
  *  - fromScenario({ cache: true }, ...steps) end-to-end
+ *  - worktree/submodule scenarios are declined + fall back to cold replay
+ *  - hash-identity holds for extra steps applied after a cache hit
  */
 
 import { existsSync } from 'fs'
+import { readdir } from 'fs/promises'
 import { tmpdir } from 'os'
 import { join } from 'path'
 
@@ -225,5 +228,66 @@ describe('fromScenario({ cache: true }, ...steps)', () => {
     )
     const subjects = await repo.git.raw(['log', '--format=%s'])
     expect(subjects.trim().split('\n')[0]).toBe('compat')
+  })
+
+  it('extra step hash-identical to cold replay (clock restored after cache hit)', async () => {
+    const step = addCommit({ message: 'extra: clock test', files: { 'clock.ts': 'export const t = 1\n' } })
+
+    // Cold: replay scenario from scratch, then apply extra step
+    const { createTempGitRepo } = await import('./tempGitRepo')
+    const { findRegistered } = await import('./registry')
+    const scenario = findRegistered('feature-pr-ready')!
+    const cold = await createTempGitRepo()
+    await scenario.setup(cold)
+    await step(cold)
+
+    // Warm: materialized from cache, then apply same extra step
+    const warm = await fromScenario('feature-pr-ready', { cache: true }, step)
+    repo = warm
+
+    const coldHashes = await cold.git.raw(['log', '--all', '--format=%H'])
+    const warmHashes = await warm.git.raw(['log', '--all', '--format=%H'])
+
+    await cold.cleanup()
+
+    expect(warmHashes.trim()).toBe(coldHashes.trim())
+    expect(warmHashes.trim().length).toBeGreaterThan(0)
+  })
+})
+
+describe('cache safety: uncacheable scenarios', () => {
+  let repo: TempGitRepo
+
+  afterEach(async () => {
+    await repo?.cleanup()
+  })
+
+  it('declines to cache multiple-worktrees and falls back to cold replay', async () => {
+    const { findRegistered } = await import('./registry')
+    const scenario = findRegistered('multiple-worktrees')!
+    expect(scenario).toBeDefined()
+
+    repo = await materializeCached(scenario)
+    expect(existsSync(repo.path)).toBe(true)
+    expect(existsSync(join(repo.path, '.git'))).toBe(true)
+
+    // No template should exist in the cache for this scenario
+    const cacheEntries = await readdir(cacheRoot()).catch(() => [])
+    const worktreeTemplate = cacheEntries.find((e) => e.startsWith('multiple-worktrees'))
+    expect(worktreeTemplate).toBeUndefined()
+  })
+
+  it('declines to cache submodule-with-history and falls back to cold replay', async () => {
+    const { findRegistered } = await import('./registry')
+    const scenario = findRegistered('submodule-with-history')!
+    expect(scenario).toBeDefined()
+
+    repo = await materializeCached(scenario)
+    expect(existsSync(repo.path)).toBe(true)
+    expect(existsSync(join(repo.path, '.git'))).toBe(true)
+
+    const cacheEntries = await readdir(cacheRoot()).catch(() => [])
+    const submoduleTemplate = cacheEntries.find((e) => e.startsWith('submodule-with-history'))
+    expect(submoduleTemplate).toBeUndefined()
   })
 })
