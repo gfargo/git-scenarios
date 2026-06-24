@@ -484,7 +484,7 @@ git-scenarios/
 
 ## Available scenarios
 
-Run `git-scenarios list` for the live list. Current set (**32 scenarios across 6 kinds**):
+Run `git-scenarios list` for the live list. Current set (**35 scenarios across 6 kinds**):
 
 | Name | Kind | What you get |
 |---|---|---|
@@ -520,6 +520,9 @@ Run `git-scenarios list` for the live list. Current set (**32 scenarios across 6
 | `stashed-changes` | stash | clean `main` + 3 stashes (LIFO ordered, each touching a distinct file) |
 | `stash-with-untracked` | stash | one stash containing both modified tracked + untracked new files |
 | `submodule-with-history` | submodule | parent with 4 commits + `vendor/lib` submodule (clean pin, 4 commits, `branch = main`) |
+| `git-lfs-pointer` | worktree | repo with a Git LFS pointer file committed for a binary asset — no `git-lfs` binary required; pointer format and `.gitattributes` rules are testable everywhere |
+| `crlf-normalization` | worktree | `.gitattributes` with `* text=auto eol=lf` normalising all text files; documents Windows `core.autocrlf` override and LF-in-object-store behaviour |
+| `case-collision` | worktree | git history holds `src/File.ts` and `src/file.ts` — a case-only collision that silently loses data when checked out on macOS or Windows (case-insensitive FS) |
 
 `git-scenarios describe <name>` prints the full description and the
 contract assertions for a single scenario.

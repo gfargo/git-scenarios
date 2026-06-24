@@ -13,6 +13,9 @@
 
 import type { Scenario } from './types'
 import { branchAheadOfUpstreamScenario } from './branch-ahead-of-upstream'
+import { caseCollisionScenario } from './case-collision'
+import { crlfNormalizationScenario } from './crlf-normalization'
+import { gitLfsPointerScenario } from './git-lfs-pointer'
 import { branchBehindUpstreamScenario } from './branch-behind-upstream'
 import { branchDivergedScenario } from './branch-diverged'
 import { branchSyncShowcaseScenario } from './branch-sync-showcase'
@@ -93,6 +96,10 @@ export const allScenarios: readonly Scenario[] = [
   multipleWorktreesScenario,
   // submodule shapes
   submoduleWithHistoryScenario,
+  // encoding / filesystem edge cases
+  gitLfsPointerScenario,
+  crlfNormalizationScenario,
+  caseCollisionScenario,
 ]
 
 /**
@@ -159,3 +166,6 @@ export { stashWithUntrackedScenario } from './stash-with-untracked'
 export { stashedChangesScenario } from './stashed-changes'
 export { submoduleWithHistoryScenario } from './submodule-with-history'
 export { twoCommitFeatureScenario } from './two-commit-feature'
+export { gitLfsPointerScenario } from './git-lfs-pointer'
+export { crlfNormalizationScenario } from './crlf-normalization'
+export { caseCollisionScenario } from './case-collision'

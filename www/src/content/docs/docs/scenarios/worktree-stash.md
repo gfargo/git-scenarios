@@ -45,6 +45,38 @@ Primary worktree on `main` + 3 linked worktrees on different branches:
 
 Useful for testing worktree list views and the "branch is checked out in another worktree" error case.
 
+## `git-lfs-pointer`
+
+A binary asset (`assets/blob.bin`) tracked by Git LFS. The file on disk is the plain-text *pointer stub* — no `git-lfs` binary is required; the pointer is written directly so the scenario works on every platform.
+
+`.gitattributes` marks `*.bin` with `filter=lfs diff=lfs merge=lfs -text`. The `-text` attribute prevents CRLF mangling on Windows.
+
+**Platform notes:** Calling `git lfs checkout` or `git lfs pull` will fail if `git-lfs` is not installed — test only the pointer format and attribute rules, not the resolved binary.
+
+Useful for testing LFS pointer detection, UI badges for LFS-managed paths, and `.gitattributes` rule parsing.
+
+## `crlf-normalization`
+
+A root `.gitattributes` rule (`* text=auto eol=lf`) that tells Git to normalise all text files to LF on commit and write LF on checkout — overriding platform defaults.
+
+**Platform notes:**
+- **Windows** (`core.autocrlf=true` by default): without `.gitattributes`, Git would write CRLF on checkout. The `eol=lf` attribute overrides this to LF.
+- **macOS / Linux**: the rule is a no-op for checkout direction but still normalises stray CRLF on commit.
+
+Useful for testing `.gitattributes` rule parsing, line-ending normalisation in diff views, and CRLF-conversion warnings in commit composers.
+
+## `case-collision`
+
+The git object store contains two paths that differ only by case: `src/File.ts` (PascalCase) and `src/file.ts` (lowercase). Both co-exist in git's history but collide on case-insensitive filesystems.
+
+Both entries are reachable via plumbing (`git show HEAD:src/File.ts`, `git show HEAD:src/file.ts`, `git ls-tree -r HEAD`) and absent from the working tree. `core.ignoreCase=false` is set explicitly so git exposes both on all platforms.
+
+**Platform notes:**
+- **Linux** (case-sensitive FS): `git checkout HEAD -- src/` would create both files without conflict.
+- **macOS / Windows** (case-insensitive FS, the default): checkout silently overwrites one variant with the other, losing data. This is the cross-platform footgun the scenario documents.
+
+Useful for testing case-collision detection, warnings about case-insensitive FS risk, and `git ls-tree` output parsing.
+
 ## `stashed-changes`
 
 Clean `main` + 3 stashes (LIFO ordered, each touching a distinct file). For testing stash list views and pop/apply/drop flows.
