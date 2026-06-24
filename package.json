@@ -79,6 +79,16 @@
       "types": "./dist/ava.d.ts",
       "import": "./dist/ava.js",
       "require": "./dist/ava.cjs"
+    },
+    "./playwright": {
+      "types": "./dist/playwright.d.ts",
+      "import": "./dist/playwright.js",
+      "require": "./dist/playwright.cjs"
+    },
+    "./cypress": {
+      "types": "./dist/cypress.d.ts",
+      "import": "./dist/cypress.js",
+      "require": "./dist/cypress.cjs"
     }
   },
   "bin": {
@@ -120,7 +130,7 @@
     "simple-git": "^3.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.12",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22.10.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
@@ -128,9 +138,9 @@
     "fast-check": "^4.8.0",
     "jest": "^29.7.0",
     "simple-git": "^3.27.0",
-    "ts-jest": "^29.2.5",
+    "ts-jest": "^29.4.11",
     "tsup": "^8.5.1",
-    "typescript": "^5.4.5"
+    "typescript": "^5.9.3"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0"

@@ -174,10 +174,20 @@ await chain(
 // repo is now mid-merge with src/widget.ts conflicted, origin set
 ```
 
-## Framework adapters (Jest, Vitest, node:test, Mocha, AVA)
+## Framework adapters (Jest, Vitest, node:test, Mocha, AVA, Playwright, Cypress)
 
-The library ships adapters for every major TypeScript test runner.
+The library ships adapters for every major TypeScript test runner and E2E framework.
 Each provides zero-boilerplate scenario setup with automatic cleanup.
+
+| Adapter | Import path | API style |
+|---|---|---|
+| Jest | `@gfargo/git-scenarios/jest` | `describeWithScenario` |
+| Vitest | `@gfargo/git-scenarios/vitest` | `describeWithScenario` |
+| node:test | `@gfargo/git-scenarios/node-test` | `describeWithScenario` |
+| Mocha | `@gfargo/git-scenarios/mocha` | `describeWithScenario` |
+| AVA | `@gfargo/git-scenarios/ava` | `withScenario` (no describe) |
+| Playwright | `@gfargo/git-scenarios/playwright` | `test.extend` fixture |
+| Cypress | `@gfargo/git-scenarios/cypress` | `cy.task` registration |
 
 ```ts
 // Jest:
@@ -190,6 +200,10 @@ import { describeWithScenario } from '@gfargo/git-scenarios/node-test'
 import { describeWithScenario } from '@gfargo/git-scenarios/mocha'
 // AVA (different shape — no describe blocks):
 import { withScenario } from '@gfargo/git-scenarios/ava'
+// Playwright (test.extend fixture):
+import { createScenarioTest } from '@gfargo/git-scenarios/playwright'
+// Cypress (cy.task registration):
+import { registerScenarioTasks } from '@gfargo/git-scenarios/cypress'
 ```
 
 The first four share one API — only the import path changes:
@@ -241,6 +255,81 @@ describeWithScenario('single-staged-file', (getRepo) => {
 }, {
   timeout: 60_000,
   extraSteps: [writeFiles({ 'extra.ts': 'uncommitted\n' })],
+})
+```
+
+### Playwright (`test.extend` fixture)
+
+```ts
+// fixtures.ts
+import { test as base } from '@playwright/test'
+import { createScenarioTest } from '@gfargo/git-scenarios/playwright'
+
+export const test = createScenarioTest(base)
+export { expect } from '@playwright/test'
+```
+
+```ts
+// my.spec.ts
+import { test, expect } from './fixtures'
+
+test.use({ scenarioName: 'feature-pr-ready' })
+
+test('is on a feature branch', async ({ repo }) => {
+  const status = await repo.git.status()
+  expect(status.current).not.toBe('main')
+})
+```
+
+Add extra atoms via `scenarioOptions`:
+
+```ts
+test.use({
+  scenarioName: 'single-staged-file',
+  scenarioOptions: { extraSteps: [writeFiles({ 'extra.ts': 'extra\n' })] },
+})
+```
+
+### Cypress (`cy.task` registration)
+
+```ts
+// cypress.config.ts
+import { defineConfig } from 'cypress'
+import { registerScenarioTasks } from '@gfargo/git-scenarios/cypress'
+
+export default defineConfig({
+  e2e: {
+    setupNodeEvents(on, config) {
+      registerScenarioTasks(on)
+      return config
+    },
+  },
+})
+```
+
+```ts
+// my.cy.ts
+describe('git tool E2E', () => {
+  let repoPath: string
+
+  beforeEach(() => {
+    cy.task('gitScenario:spinUp', { name: 'feature-pr-ready' }).then((result) => {
+      repoPath = (result as { path: string }).path
+    })
+  })
+
+  afterEach(() => {
+    cy.task('gitScenario:cleanup', { path: repoPath })
+  })
+
+  // Safety net — drain any repos that afterEach missed
+  after(() => cy.task('gitScenario:cleanupAll'))
+
+  it('launches the git tool against the scenario repo', () => {
+    cy.exec(`my-git-tool status --repo ${repoPath}`)
+      .its('stdout')
+      .should('contain', 'feat/widget-v2')
+  })
 })
 ```
 
