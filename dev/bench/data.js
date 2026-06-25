@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782355317796,
+  "lastUpdate": 1782417105148,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -77,6 +77,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7191.6,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "distinct": true,
+          "id": "36349b06b7e97ffcdd19959dabec3135b7710c67",
+          "message": "style(www): rework hero headline layout and light theme palette\n\n- Light theme: replace warm manila cream with cool parchment (blue-grey\n  off-white #f5f7f9). Same blueprint aesthetic, less antique shop.\n- Hero headline: replace eyebrow + 01 callout with compact badge pill,\n  tighten vertical rhythm, vertically center content, reduce padding.\n- Fix h2 padding-left leak: global 3.2rem balloon offset was applying\n  to the hero display heading. Added explicit reset.\n- Reorder hero content: badge → heading → lede → install → CTAs.\n- Shorten tagline: 'One line of code' → 'One line' (punchier).",
+          "timestamp": "2026-06-25T15:50:12-04:00",
+          "tree_id": "dcf1df0fd3d25f38d56c5afb0e38b9712c6032f5",
+          "url": "https://github.com/gfargo/git-scenarios/commit/36349b06b7e97ffcdd19959dabec3135b7710c67"
+        },
+        "date": 1782417104831,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 169.12,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 938.92,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7234.05,
             "unit": "ms"
           }
         ]
