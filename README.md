@@ -56,7 +56,7 @@ state every run), so the tests built on top are deterministic too.
    anything from "single staged file" to "three-way nested submodule
    mid-rebase."
 
-> **Status: v1.1.0** — Stable release. 32 curated scenarios, 60+ composable atoms,
+> **Status: v1.1.0** — Stable release. 35 curated scenarios, 60+ composable atoms,
 > 5 framework adapters, `assertRepo()` + `expect` matchers, CLI
 > (`list` · `describe` · `inspect` · `create` · `capture` · `clean`),
 > dual CJS/ESM output.
@@ -484,7 +484,7 @@ git-scenarios/
 
 ## Available scenarios
 
-Run `git-scenarios list` for the live list. Current set (**38 scenarios across 6 kinds**):
+Run `git-scenarios list` for the live list. Current set (**46 scenarios across 6 kinds**):
 
 | Name | Kind | What you get |
 |---|---|---|
@@ -500,6 +500,8 @@ Run `git-scenarios list` for the live list. Current set (**38 scenarios across 6
 | `multi-remote-with-tracking` | branch | fork-workflow: `origin` + `upstream` remotes, `main` tracks `upstream/main`, `feat/fork-work` tracks `origin/feat/fork-work` |
 | `branch-sync-showcase` | branch | five local branches in five different upstream sync states (behind, ahead, diverged, synced, no-upstream); HEAD on the behind branch. |
 | `detached-head` | branch | HEAD detached at `main~2`, `main` still at its original tip |
+| `dangling-commit` | branch | experimental commit dropped from `main`; object still in store, reachable only via `HEAD@{1}` reflog |
+| `reset-recoverable-head` | branch | `main` hard-reset 2 commits back; former tip recoverable via `main@{1}` in the reflog |
 | `signed-commits-required` | branch | `commit.gpgsign=true` + `user.signingkey` set — for testing signing-aware UI |
 | `orphan-branch` | branch | `main` + `gh-pages` orphan branch with no shared history |
 | `single-staged-file` | worktree | baseline + 1 staged README — minimum "ready to commit" shape |
@@ -507,11 +509,16 @@ Run `git-scenarios list` for the live list. Current set (**38 scenarios across 6
 | `monorepo-multi-package` | worktree | workspaces monorepo: app (clean), lib (staged), cli (unstaged) |
 | `dirty-many-files` | worktree | 12 staged + 6 unstaged + 3 untracked files across `src/`, `tests/`, `docs/` |
 | `multiple-worktrees` | worktree | primary worktree on `main` + 3 linked worktrees on `feat/alpha`, `feat/beta`, `hotfix/urgent` |
+| `locked-worktree` | worktree | one linked worktree locked via `git worktree lock` — appears in `git worktree list` with a `locked` annotation and resists removal without `--force` |
 | `mid-bisect` | operation | 20 commits + active `git bisect`, HEAD at midpoint |
 | `mid-merge-conflict` | operation | in-progress merge with 1 unresolved conflict on `src/widget.ts` |
 | `mid-rebase-conflict` | operation | in-progress rebase with 1 unresolved conflict on `src/config.ts` |
 | `mid-cherry-pick-conflict` | operation | in-progress cherry-pick with 1 unresolved conflict on `src/utils.ts` |
 | `mid-revert-conflict` | operation | in-progress revert with 1 unresolved conflict on `src/service.ts` |
+| `merge-conflict-rename-rename` | operation | in-progress merge with a rename/rename conflict: `orig.txt` renamed to two different names; both renamed files exist in the worktree with no conflict markers |
+| `merge-conflict-delete-modify` | operation | in-progress merge with a delete/modify conflict: `src/component.ts` deleted on `main`, modified on `feat/x`; modified version left in worktree with no conflict markers |
+| `merge-conflict-add-add` | operation | in-progress merge with an add/add conflict: `src/config.ts` independently added on both branches with different content; has unresolved conflict markers |
+| `interactive-rebase-mid-edit` | operation | mid-interactive-rebase stopped at the first commit marked `edit`; two picks remain in `.git/rebase-merge/git-rebase-todo` |
 | `merge-no-conflict` | history | a successful `--no-ff` merge of `feat/x` into `main`, fully committed (2-parent commit at HEAD) |
 | `rich-history-graph` | history | 20+ commits across 6 date buckets, 2 `--no-ff` merges, 1 live unmerged `feat/wip` |
 | `chip-rendering-showcase` | history | 6 commits each carrying a different branch-tip-chip kind (HEAD, local, slashy, remote, upstream, tag) |
@@ -520,6 +527,7 @@ Run `git-scenarios list` for the live list. Current set (**38 scenarios across 6
 | `stashed-changes` | stash | clean `main` + 3 stashes (LIFO ordered, each touching a distinct file) |
 | `stash-with-untracked` | stash | one stash containing both modified tracked + untracked new files |
 | `submodule-with-history` | submodule | parent with 4 commits + `vendor/lib` submodule (clean pin, 4 commits, `branch = main`) |
+| `out-of-date-submodule` | submodule | parent repo whose pinned submodule SHA (`vendor/lib`) is one commit behind the submodule's HEAD — `git submodule status` shows `+` for `vendor/lib` |
 | `git-lfs-pointer` | worktree | repo with a Git LFS pointer file committed for a binary asset — no `git-lfs` binary required; pointer format and `.gitattributes` rules are testable everywhere |
 | `crlf-normalization` | worktree | `.gitattributes` with `* text=auto eol=lf` normalising all text files; documents Windows `core.autocrlf` override and LF-in-object-store behaviour |
 | `case-collision` | worktree | git history holds `src/File.ts` and `src/file.ts` — a case-only collision that silently loses data when checked out on macOS or Windows (case-insensitive FS) |
@@ -529,6 +537,8 @@ Run `git-scenarios list` for the live list. Current set (**38 scenarios across 6
 
 `git-scenarios describe <name>` prints the full description and the
 contract assertions for a single scenario.
+
+`large-repo` is also the primary target of the built-in benchmark harness — run `npm run bench` to measure scenario spin-up times and detect performance regressions.
 
 ## The CLI
 

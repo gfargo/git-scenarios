@@ -114,12 +114,15 @@ export {
   startRebase,
   abortRebase,
   continueRebase,
+  startInteractiveRebase,
   // Submodules
   addSubmodule,
   pinSubmodule,
   // Linked worktrees
   addWorktree,
   removeWorktree,
+  lockWorktree,
+  unlockWorktree,
   // Config
   setConfig,
   // Scoping
@@ -168,7 +171,9 @@ export {
   branchSyncShowcaseScenario,
   branchTrackingUpstreamScenario,
   chipRenderingShowcaseScenario,
+  danglingCommitScenario,
   detachedHeadScenario,
+  resetRecoverableHeadScenario,
   dirtyManyFilesScenario,
   emptyRepoScenario,
   featureBranchOneCommitScenario,
@@ -183,6 +188,7 @@ export {
   multiCommitBranchScenario,
   multiRemoteWithTrackingScenario,
   multipleWorktreesScenario,
+  lockedWorktreeScenario,
   largeRepoScenario,
   orphanBranchScenario,
   partialStageScenario,
@@ -193,5 +199,7 @@ export {
   stashWithUntrackedScenario,
   stashedChangesScenario,
   submoduleWithHistoryScenario,
+  outOfDateSubmoduleScenario,
+  interactiveRebaseMidEditScenario,
   twoCommitFeatureScenario,
 } from './scenarios'

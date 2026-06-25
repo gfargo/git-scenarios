@@ -44,6 +44,74 @@ jobs:
       - name: Verify pack
         run: npm pack --dry-run
 
+  bench:
+    name: benchmark
+    runs-on: ubuntu-latest
+    # Only run on push to main or pull requests (not on tag pushes etc.)
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    permissions:
+      contents: write
+      deployments: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22.22.2
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.2'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run benchmarks
+        run: npm run bench
+
+      - name: Initialize gh-pages if absent
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # benchmark-action/github-action-benchmark always fetches gh-pages to
+          # load historical data, even on PRs.  If the branch doesn't exist the
+          # fetch fails and CI breaks.  Create it once with an empty data store
+          # so subsequent fetches succeed and regression tracking can start.
+          if ! git ls-remote --exit-code origin gh-pages > /dev/null 2>&1; then
+            mkdir /tmp/gh-pages-init
+            cd /tmp/gh-pages-init
+            git init
+            git checkout -b gh-pages
+            mkdir -p dev/bench
+            printf 'window.BENCHMARK_DATA = {"lastUpdate":0,"repoUrl":"https://github.com/%s","entries":{}};\n' \
+              "$GITHUB_REPOSITORY" > dev/bench/data.js
+            git add dev/bench/data.js
+            git -c user.name="github-actions[bot]" \
+                -c user.email="github-actions[bot]@users.noreply.github.com" \
+                commit -m "chore: initialize benchmark data store"
+            git remote add origin \
+              "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+            git push origin gh-pages
+          fi
+
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: git-scenarios spin-up benchmarks
+          tool: customSmallerIsBetter
+          output-file-path: bench-results.json
+          # Fail CI when a scenario regresses more than 50% vs the stored baseline.
+          # A generous threshold avoids noise from shared runners while still
+          # catching real regressions (like the large-repo Windows timeout in #cache).
+          alert-threshold: '150%'
+          comment-on-alert: true
+          fail-on-alert: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Persist results to gh-pages so comparisons survive across runs.
+          auto-push: ${{ github.ref == 'refs/heads/main' }}
+          gh-pages-branch: gh-pages
+          benchmark-data-dir-path: dev/bench
+
   test-git-compat:
     name: git-compat (${{ matrix.git-version }})
     runs-on: ubuntu-latest

@@ -30,7 +30,7 @@ Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, o
 | `detached-head` | HEAD detached at `main~2`. |
 | `signed-commits-required` | `commit.gpgsign=true` + `user.signingkey` set. |
 
-### Operation (5 scenarios)
+### Operation (6 scenarios)
 
 | Name | What you get |
 |---|---|
@@ -39,6 +39,7 @@ Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, o
 | `mid-rebase-conflict` | In-progress rebase with 1 conflict on `src/config.ts`. |
 | `mid-cherry-pick-conflict` | In-progress cherry-pick with 1 conflict on `src/utils.ts`. |
 | `mid-revert-conflict` | In-progress revert with 1 conflict on `src/service.ts`. |
+| `interactive-rebase-mid-edit` | Interactive rebase paused at an `edit` action; 2 picks remain. |
 
 ### History (7 scenarios)
 
@@ -61,6 +62,7 @@ Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, o
 | `monorepo-multi-package` | Workspaces monorepo: `app` clean, `lib` staged, `cli` unstaged. |
 | `dirty-many-files` | 12 staged + 6 unstaged + 3 untracked files. |
 | `multiple-worktrees` | Primary worktree + 3 linked worktrees. |
+| `locked-worktree` | Primary worktree + 1 linked worktree locked with a reason. |
 | `git-lfs-pointer` | LFS pointer file committed for a binary asset — no `git-lfs` binary required. |
 | `crlf-normalization` | `.gitattributes` with `text=auto eol=lf` normalising all text files. |
 | `case-collision` | git history holds `src/File.ts` and `src/file.ts` — a case-only collision visible on case-insensitive FS. |
@@ -73,11 +75,12 @@ Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, o
 | `stashed-changes` | Clean `main` + 3 stashes (LIFO ordered). |
 | `stash-with-untracked` | One stash containing both modified tracked + untracked new files. |
 
-### Submodule (1 scenario)
+### Submodule (2 scenarios)
 
 | Name | What you get |
 |---|---|
 | `submodule-with-history` | Parent + `vendor/lib` submodule (4 commits, `branch = main`). |
+| `out-of-date-submodule` | Parent pinned to an older submodule SHA; `git submodule status` shows `+`. |
 
 ## Using scenarios
 

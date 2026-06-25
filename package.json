@@ -99,6 +99,7 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
+    "bench": "npm run build && node bench/index.mjs",
     "prepublishOnly": "npm run clean && npm run build && npm test && npm run lint"
   },
   "keywords": [

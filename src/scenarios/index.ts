@@ -12,6 +12,9 @@
  */
 
 import type { Scenario } from './types'
+import { interactiveRebaseMidEditScenario } from './interactive-rebase-mid-edit'
+import { lockedWorktreeScenario } from './locked-worktree'
+import { outOfDateSubmoduleScenario } from './out-of-date-submodule'
 import { branchAheadOfUpstreamScenario } from './branch-ahead-of-upstream'
 import { caseCollisionScenario } from './case-collision'
 import { commitsWithNotesScenario } from './commits-with-notes'
@@ -24,7 +27,9 @@ import { branchDivergedScenario } from './branch-diverged'
 import { branchSyncShowcaseScenario } from './branch-sync-showcase'
 import { branchTrackingUpstreamScenario } from './branch-tracking-upstream'
 import { chipRenderingShowcaseScenario } from './chip-rendering-showcase'
+import { danglingCommitScenario } from './dangling-commit'
 import { detachedHeadScenario } from './detached-head'
+import { resetRecoverableHeadScenario } from './reset-recoverable-head'
 import { dirtyManyFilesScenario } from './dirty-many-files'
 import { emptyRepoScenario } from './empty-repo'
 import { featureBranchOneCommitScenario } from './feature-branch-one-commit'
@@ -32,6 +37,9 @@ import { featurePrReadyScenario } from './feature-pr-ready'
 import { mergeNoConflictScenario } from './merge-no-conflict'
 import { midBisectScenario } from './mid-bisect'
 import { midCherryPickConflictScenario } from './mid-cherry-pick-conflict'
+import { mergeConflictAddAddScenario } from './merge-conflict-add-add'
+import { mergeConflictDeleteModifyScenario } from './merge-conflict-delete-modify'
+import { mergeConflictRenameRenameScenario } from './merge-conflict-rename-rename'
 import { midMergeConflictScenario } from './mid-merge-conflict'
 import { midRebaseConflictScenario } from './mid-rebase-conflict'
 import { midRevertConflictScenario } from './mid-revert-conflict'
@@ -76,12 +84,19 @@ export const allScenarios: readonly Scenario[] = [
   // detached / config shapes
   detachedHeadScenario,
   signedCommitsRequiredScenario,
+  // recovery shapes
+  danglingCommitScenario,
+  resetRecoverableHeadScenario,
   // in-progress operations
   midBisectScenario,
   midMergeConflictScenario,
   midRebaseConflictScenario,
   midCherryPickConflictScenario,
   midRevertConflictScenario,
+  mergeConflictRenameRenameScenario,
+  mergeConflictDeleteModifyScenario,
+  mergeConflictAddAddScenario,
+  interactiveRebaseMidEditScenario,
   // history shapes
   mergeNoConflictScenario,
   richHistoryGraphScenario,
@@ -97,8 +112,10 @@ export const allScenarios: readonly Scenario[] = [
   monorepoMultiPackageScenario,
   dirtyManyFilesScenario,
   multipleWorktreesScenario,
+  lockedWorktreeScenario,
   // submodule shapes
   submoduleWithHistoryScenario,
+  outOfDateSubmoduleScenario,
   // encoding / filesystem edge cases
   gitLfsPointerScenario,
   crlfNormalizationScenario,
@@ -141,13 +158,18 @@ export function findScenariosByTag(
 }
 
 export type { Scenario, ScenarioKind } from './types'
+export { interactiveRebaseMidEditScenario } from './interactive-rebase-mid-edit'
+export { lockedWorktreeScenario } from './locked-worktree'
+export { outOfDateSubmoduleScenario } from './out-of-date-submodule'
 export { branchAheadOfUpstreamScenario } from './branch-ahead-of-upstream'
 export { branchBehindUpstreamScenario } from './branch-behind-upstream'
 export { branchDivergedScenario } from './branch-diverged'
 export { branchSyncShowcaseScenario } from './branch-sync-showcase'
 export { branchTrackingUpstreamScenario } from './branch-tracking-upstream'
 export { chipRenderingShowcaseScenario } from './chip-rendering-showcase'
+export { danglingCommitScenario } from './dangling-commit'
 export { detachedHeadScenario } from './detached-head'
+export { resetRecoverableHeadScenario } from './reset-recoverable-head'
 export { dirtyManyFilesScenario } from './dirty-many-files'
 export { emptyRepoScenario } from './empty-repo'
 export { featureBranchOneCommitScenario } from './feature-branch-one-commit'
@@ -155,6 +177,9 @@ export { featurePrReadyScenario } from './feature-pr-ready'
 export { mergeNoConflictScenario } from './merge-no-conflict'
 export { midBisectScenario } from './mid-bisect'
 export { midCherryPickConflictScenario } from './mid-cherry-pick-conflict'
+export { mergeConflictAddAddScenario } from './merge-conflict-add-add'
+export { mergeConflictDeleteModifyScenario } from './merge-conflict-delete-modify'
+export { mergeConflictRenameRenameScenario } from './merge-conflict-rename-rename'
 export { midMergeConflictScenario } from './mid-merge-conflict'
 export { midRebaseConflictScenario } from './mid-rebase-conflict'
 export { midRevertConflictScenario } from './mid-revert-conflict'

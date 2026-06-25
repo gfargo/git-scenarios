@@ -87,6 +87,12 @@ export const matchers = {
   toBeBehindBy(received: unknown, n: number) {
     return evaluate(received, (a) => a.behind(n), `to be ${n} behind upstream`)
   },
+  toBeAheadOf(received: unknown, ref: string, n: number) {
+    return evaluate(received, (a) => a.aheadOf(ref, n), `to be ${n} commit(s) ahead of "${ref}"`)
+  },
+  toBeBehindOf(received: unknown, ref: string, n: number) {
+    return evaluate(received, (a) => a.behindOf(ref, n), `to be ${n} commit(s) behind "${ref}"`)
+  },
   toBeInSyncWithUpstream(received: unknown) {
     return evaluate(received, (a) => a.inSyncWithUpstream(), 'to be in sync with upstream')
   },
@@ -147,6 +153,8 @@ export interface GitScenariosMatchers<R> {
   toHaveUntrackedFile(path?: string): R
   toBeAheadBy(n: number): R
   toBeBehindBy(n: number): R
+  toBeAheadOf(ref: string, n: number): R
+  toBeBehindOf(ref: string, n: number): R
   toBeInSyncWithUpstream(): R
   toHaveCommitCount(n: number): R
   toBeMidOperation(op: InProgressOperation): R
