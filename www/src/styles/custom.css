@@ -13,7 +13,7 @@
  *
  * Palette:
  *   Dark theme  — drafting board: deep navy ink on graphite paper
- *   Light theme — diazo print:    blueprint cyan ink on manila paper
+ *   Light theme — cool parchment: blueprint ink on clean architectural vellum
  *
  * Vermilion redline accent — the color of editor's marks on a print.
  */
@@ -89,56 +89,56 @@
   color-scheme: dark;
 }
 
-/* ─── Light theme — diazo print on manila paper ─── */
+/* ─── Light theme — cool parchment / architectural vellum ─── */
 :root[data-theme='light'] {
-  /* Manila paper warm cream */
-  --sl-color-black:   #f4ead8;          /* manila page */
-  --sl-color-gray-7:  #f4ead8;
-  --sl-color-gray-6:  #ecdfc4;
-  --sl-color-gray-5:  #e0cfa5;
-  --sl-color-gray-4:  #a48f5f;
-  --sl-color-gray-3:  #5e5333;
-  --sl-color-gray-2:  #3a3320;
-  --sl-color-gray-1:  #221e12;
-  --sl-color-white:   #181408;          /* dark india ink */
+  /* Cool off-white parchment — faint blue-grey undertone */
+  --sl-color-black:   #f5f7f9;          /* vellum page */
+  --sl-color-gray-7:  #f5f7f9;
+  --sl-color-gray-6:  #eaecf1;
+  --sl-color-gray-5:  #dde0e7;
+  --sl-color-gray-4:  #8b92a3;
+  --sl-color-gray-3:  #505869;
+  --sl-color-gray-2:  #2f3645;
+  --sl-color-gray-1:  #1c2130;
+  --sl-color-white:   #0f1219;          /* deep technical ink */
 
-  --sl-color-accent-low:  #c7e6f6;
-  --sl-color-accent:      #075985;       /* deep cyanotype */
+  --sl-color-accent-low:  #dbeaf5;
+  --sl-color-accent:      #0369a1;       /* deep blueprint line */
   --sl-color-accent-high: #0c4a6e;
 
-  --sl-color-bg-nav:     rgba(244, 234, 216, 0.9);
-  --sl-color-bg-sidebar: #f0e2c5;
+  --sl-color-bg-nav:     rgba(245, 247, 249, 0.92);
+  --sl-color-bg-sidebar: #f0f2f6;
 
   /* Active sidebar link — deep blueprint cyan bg + paper text */
   --sl-color-text-accent: var(--gs-cyan);
   --sl-color-text-invert: var(--gs-paper);
 
-  --sl-color-hairline-light: #e0cfa5;
-  --sl-color-hairline-shade: #ecdfc4;
+  --sl-color-hairline-light: #dde0e7;
+  --sl-color-hairline-shade: #eaecf1;
 
-  --gs-cyan:        #075985;
-  --gs-cyan-dim:    #0c4a6e;
-  --gs-cyan-low:    rgba(7, 89, 133, 0.06);
-  --gs-cyan-mid:    rgba(7, 89, 133, 0.14);
-  --gs-cyan-glow:   rgba(7, 89, 133, 0.18);
+  --gs-cyan:        #0369a1;
+  --gs-cyan-dim:    #075985;
+  --gs-cyan-low:    rgba(3, 105, 161, 0.05);
+  --gs-cyan-mid:    rgba(3, 105, 161, 0.12);
+  --gs-cyan-glow:   rgba(3, 105, 161, 0.16);
 
-  --gs-vermilion:   #b91c1c;
-  --gs-vermilion-dim: #7f1d1d;
-  --gs-vermilion-low: rgba(185, 28, 28, 0.05);
+  --gs-vermilion:   #be123c;
+  --gs-vermilion-dim: #881337;
+  --gs-vermilion-low: rgba(190, 18, 60, 0.04);
 
-  --gs-graphite:    #6e6347;
+  --gs-graphite:    #6b7280;
   --gs-amber:       #b45309;
   --gs-emerald:     #047857;
 
-  --gs-paper:       #f4ead8;
-  --gs-ink:         #181408;
-  --gs-rule:        #e0cfa5;
-  --gs-rule-strong: #c8b888;
-  --gs-surface:     #ede0c0;
-  --gs-surface-raised: #f4ead8;
+  --gs-paper:       #f5f7f9;
+  --gs-ink:         #0f1219;
+  --gs-rule:        #dde0e7;
+  --gs-rule-strong: #c4c9d4;
+  --gs-surface:     #eef0f4;
+  --gs-surface-raised: #f5f7f9;
 
-  --gs-grid-line: rgba(7, 89, 133, 0.05);
-  --gs-grid-major: rgba(7, 89, 133, 0.12);
+  --gs-grid-line: rgba(3, 105, 161, 0.04);
+  --gs-grid-major: rgba(3, 105, 161, 0.09);
 
   color-scheme: light;
 }
@@ -215,9 +215,9 @@ body::after {
 }
 
 :root[data-theme='light'] body::after {
-  opacity: 0.55;
+  opacity: 0.35;
   mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.45  0 0 0 0 0.32  0 0 0 0 0.16  0 0 0 0.07 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.38  0 0 0 0 0.40  0 0 0 0 0.46  0 0 0 0.05 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 
 /* ─── Typography hierarchy ─── */
@@ -352,6 +352,13 @@ header.header {
   padding-left: 3.2rem;
 }
 
+/* Hero h2 (.dr-display) — reset the balloon padding since the hero
+   uses its own layout and doesn't need the numbered callout offset. */
+.dr-hero .dr-display {
+  padding-left: 0 !important;
+  margin-top: 0 !important;
+}
+
 /* Numbered callout circle — like a balloon mark on a drawing.
    Scope to html:not([data-has-hero]) so the splash never gets it.
    The bare :not([data-has-hero]) form matched every ancestor that
@@ -388,7 +395,7 @@ html:not([data-has-hero]) .sl-markdown-content h2::before {
 .sl-markdown-content h2::after {
   content: '';
   position: absolute;
-  left: 3.2rem;
+  left: 0;
   right: 0;
   bottom: -0.6rem;
   height: 1px;

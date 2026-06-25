@@ -65,29 +65,23 @@ const version = rootPkg.version;
 
     <!-- ═══ Drawing area ═══ -->
     <div class="dr-drawing">
-      <!-- Left column: the actual headline lockup -->
+      <!-- Left column: headline lockup -->
       <div class="dr-headline">
-        <p class="dr-eyebrow">A composable kit for git‑state fixtures.</p>
+        <div class="dr-headline__top">
+          <span class="dr-badge">composable git fixtures</span>
+        </div>
+
         <h2 class="dr-display">
           <span class="dr-display__line">Real git repos.</span>
           <span class="dr-display__line"><em>Any state.</em></span>
-          <span class="dr-display__line">One line of code.</span>
+          <span class="dr-display__line">One&nbsp;line.</span>
         </h2>
-        <p class="dr-lede">
-          A typed atom library and CLI for spinning up deterministic
-          git fixtures &mdash; merge conflicts, submodules, multiple
-          remotes, in&#8209;progress operations, monorepos, orphan
-          branches. For tests, demos, and tool development.
-        </p>
 
-        <div class="dr-actions">
-          <a class="dr-action dr-action--primary" href="/docs/quick-start">
-            Get started <span aria-hidden="true">→</span>
-          </a>
-          <a class="dr-action dr-action--ghost" href="https://github.com/gfargo/git-scenarios">
-            View source <span aria-hidden="true">↗</span>
-          </a>
-        </div>
+        <p class="dr-lede">
+          Deterministic fixtures for merge conflicts, submodules,
+          multiple remotes, in&#8209;progress operations, monorepos,
+          and&nbsp;more. For tests, demos, and tool&nbsp;development.
+        </p>
 
         <div class="dr-install">
           <span class="dr-install__prompt">$</span>
@@ -98,6 +92,15 @@ const version = rootPkg.version;
               <path d="M3 11V3.5A1.5 1.5 0 0 1 4.5 2H11"/>
             </svg>
           </button>
+        </div>
+
+        <div class="dr-actions">
+          <a class="dr-action dr-action--primary" href="/docs/quick-start">
+            Get started <span aria-hidden="true">→</span>
+          </a>
+          <a class="dr-action dr-action--ghost" href="https://github.com/gfargo/git-scenarios">
+            View source <span aria-hidden="true">↗</span>
+          </a>
         </div>
       </div>
 
@@ -433,55 +436,42 @@ const version = rootPkg.version;
   }
 
   .dr-headline {
-    padding: 3rem 2rem 3rem 2.5rem;
+    padding: 2.5rem 2rem 2.5rem 1.75rem;
     border-right: 1px solid var(--gs-rule);
     position: relative;
-    /* Grid lives on body::before — no need for another one here */
-  }
-
-  /* "01" callout in the top-left of the headline area */
-  .dr-headline::before {
-    content: '01';
-    position: absolute;
-    top: 1.25rem;
-    left: 1.25rem;
-    width: 2.4rem;
-    height: 2.4rem;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
-    border: 1.5px solid var(--gs-vermilion);
-    border-radius: 999px;
-    background: var(--gs-paper);
-    color: var(--gs-vermilion);
-    font-family: var(--gs-mono);
-    font-size: 0.72rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
   }
 
-  .dr-eyebrow {
+  /* Top row: compact badge replaces the old eyebrow + callout */
+  .dr-headline__top {
+    margin-bottom: 1.25rem;
+  }
+
+  .dr-badge {
     font-family: var(--gs-mono);
-    font-size: 0.66rem;
+    font-size: 0.68rem;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.14em;
     color: var(--gs-cyan);
-    margin: 0 0 1.5rem;
-    padding-left: 4rem;          /* clear of the 01 callout */
-    line-height: 1.6;
+    background: var(--gs-cyan-low);
+    border: 1px solid var(--gs-cyan-mid);
+    border-radius: 2px;
+    padding: 0.35rem 0.7rem;
+    display: inline-block;
   }
 
   .dr-display {
     font-family: var(--gs-display);
     font-variation-settings: 'opsz' 96, 'wdth' 88, 'wght' 700;
-    font-size: clamp(2.4rem, 5.5vw, 3.8rem);
-    line-height: 0.98;
-    letter-spacing: -0.045em;
-    margin: 0 0 1.75rem;
+    font-size: clamp(2.2rem, 4.8vw, 3.4rem);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    margin: 0 0 1.25rem;
+    margin-left: -0.04em; /* optical alignment — compensate for letter-spacing indent */
     color: var(--gs-ink);
-    display: flex;
-    flex-direction: column;
-    gap: 0.05em;
   }
 
   .dr-display__line {
@@ -497,11 +487,11 @@ const version = rootPkg.version;
   .dr-lede {
     font-family: var(--gs-body);
     font-variation-settings: 'opsz' 24;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     line-height: 1.6;
     color: var(--sl-color-gray-2);
-    max-width: 36rem;
-    margin: 0 0 2rem;
+    max-width: 34rem;
+    margin: 0 0 1.5rem;
   }
 
   /* ─── Actions — high contrast, no inversion legibility issues ─── */
@@ -754,6 +744,7 @@ const version = rootPkg.version;
 
   /* ─── Specifications strip (bottom of drawing) ─── */
   .dr-specs {
+    margin-top:0!important;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 0;
@@ -814,12 +805,12 @@ const version = rootPkg.version;
   }
 
   .dr-titleblock          { animation-delay: 0.0s; }
-  .dr-eyebrow             { animation-delay: 0.08s; }
-  .dr-display             { animation-delay: 0.16s; }
-  .dr-lede                { animation-delay: 0.32s; }
-  .dr-actions             { animation-delay: 0.42s; }
-  .dr-install             { animation-delay: 0.5s; }
-  .dr-specs               { animation-delay: 0.7s; }
+  .dr-headline__top       { animation-delay: 0.08s; }
+  .dr-display             { animation-delay: 0.14s; }
+  .dr-lede                { animation-delay: 0.26s; }
+  .dr-install             { animation-delay: 0.36s; }
+  .dr-actions             { animation-delay: 0.44s; }
+  .dr-specs               { animation-delay: 0.6s; }
 
   @media (prefers-reduced-motion: reduce) {
     .dr-titleblock,
