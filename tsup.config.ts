@@ -22,6 +22,9 @@ export default defineConfig([
     clean: true,
     outDir: 'dist',
     splitting: false,
+    // Shims __dirname/__filename for ESM output (used by scenarioCache.ts to
+    // locate package.json at runtime without hand-syncing a version literal).
+    shims: true,
     // Externalize peer deps and node builtins
     external: ['simple-git'],
   },

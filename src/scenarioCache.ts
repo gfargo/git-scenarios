@@ -18,6 +18,7 @@
  * directory copy — they are silently declined and served via cold replay.
  */
 
+import { readFileSync } from 'fs'
 import { cp, mkdir, mkdtemp, readdir, readFile, rename, rm, stat, writeFile } from 'fs/promises'
 import { tmpdir } from 'os'
 import { dirname, join } from 'path'
@@ -31,9 +32,11 @@ import {
   type TempGitRepo,
 } from './tempGitRepo'
 
-// Must stay in sync with the `version` field in package.json.
-// Bumping this string invalidates all existing cached templates.
-const LIBRARY_VERSION = '1.1.0'
+// __dirname: in CJS (jest, CJS build output) it is native; in ESM build output
+// tsup shims it via fileURLToPath(import.meta.url).  No hand-sync needed.
+const { version: LIBRARY_VERSION } = JSON.parse(
+  readFileSync(join(__dirname, '..', 'package.json'), 'utf8'),
+) as { version: string }
 
 const CACHE_ROOT_NAME = 'git-scenarios-cache'
 
@@ -81,24 +84,32 @@ async function isUncacheable(stagingPath: string): Promise<boolean> {
 
 /**
  * Replay `scenario` into a fresh temp repo and atomically promote the
- * result to `dest` as the permanent template.  Returns `true` on success
- * and `false` when the scenario cannot be safely cached (linked worktrees
- * or submodules).
+ * result to `dest` as the permanent template.
+ *
+ * Returns `true` when the template was stored (cacheable), or the
+ * already-built `TempGitRepo` when the scenario cannot be safely cached
+ * (linked worktrees or submodules) — so the caller can reuse it directly
+ * rather than replaying the scenario a second time.
  *
  * If a concurrent builder already wrote `dest` (rename throws), the
  * staging copy is discarded — both results are byte-identical.
  */
-async function buildTemplate(scenario: Scenario, dest: string): Promise<boolean> {
+async function buildTemplate(
+  scenario: Scenario,
+  dest: string,
+  options: CreateTempGitRepoOptions,
+): Promise<true | TempGitRepo> {
   await mkdir(dirname(dest), { recursive: true })
 
   const repo = await createTempGitRepo()
   await scenario.setup(repo)
   const staging = repo.path
 
-  // Decline scenarios that a directory copy cannot faithfully reproduce
+  // Decline scenarios that a directory copy cannot faithfully reproduce.
+  // Return the already-built repo so the caller can use it directly
+  // without a second cold replay.
   if (await isUncacheable(staging)) {
-    await rm(staging, { recursive: true, force: true }).catch(() => undefined)
-    return false
+    return wrapRepoAtPath(staging, options)
   }
 
   // Persist the commit-clock counter so copies start the clock at the
@@ -126,10 +137,13 @@ async function buildTemplate(scenario: Scenario, dest: string): Promise<boolean>
 /**
  * Ensure the template for `scenario` exists.
  *
- * Returns the template path on success, or `null` when the scenario
- * cannot be safely cached (linked worktrees / submodules).
+ * Returns the template path on success, or the already-built `TempGitRepo`
+ * when the scenario cannot be safely cached (linked worktrees / submodules).
  */
-async function ensureTemplate(scenario: Scenario): Promise<string | null> {
+async function ensureTemplate(
+  scenario: Scenario,
+  options: CreateTempGitRepoOptions,
+): Promise<string | TempGitRepo> {
   const dest = templatePath(scenario.name)
   try {
     await stat(dest)
@@ -137,8 +151,8 @@ async function ensureTemplate(scenario: Scenario): Promise<string | null> {
   } catch {
     // cache miss — build the template
   }
-  const built = await buildTemplate(scenario, dest)
-  return built ? dest : null
+  const result = await buildTemplate(scenario, dest, options)
+  return result === true ? dest : result
 }
 
 /** Read the saved commit-clock count from a template directory. */
@@ -175,15 +189,15 @@ export async function materializeCached(
   scenario: Scenario,
   options: CreateTempGitRepoOptions = {},
 ): Promise<TempGitRepo> {
-  const template = await ensureTemplate(scenario)
+  const templateOrRepo = await ensureTemplate(scenario, options)
 
-  // Scenario cannot be cached (linked worktrees / submodules) — cold replay
-  if (template === null) {
-    const repo = await createTempGitRepo(options)
-    await scenario.setup(repo)
-    return repo
+  // Scenario cannot be cached (linked worktrees / submodules) — reuse the
+  // already-built repo returned by ensureTemplate instead of rebuilding.
+  if (typeof templateOrRepo !== 'string') {
+    return templateOrRepo
   }
 
+  const template = templateOrRepo
   const clockCount = await readClockCount(template)
 
   // mkdtemp creates an empty placeholder; remove it so fs.cp can write
