@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782417105148,
+  "lastUpdate": 1782444591281,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -116,6 +116,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7234.05,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "distinct": true,
+          "id": "0969e40985a925b09ca1e6fe3801a23e10cad718",
+          "message": "style(www): rework hero title block with meaningful metadata\n\nReplace decorative engineering-drawing fields (Sheet, Scale, Drawn by,\nDate) with real package info (Version, Output format, Runtime, Peer dep,\nAuthor). Remove MIT license cell to avoid duplicating the footer.",
+          "timestamp": "2026-06-25T23:28:22-04:00",
+          "tree_id": "d5e9d36eb433bd04fa6bf6b2c33968510792cccf",
+          "url": "https://github.com/gfargo/git-scenarios/commit/0969e40985a925b09ca1e6fe3801a23e10cad718"
+        },
+        "date": 1782444590811,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 169.76,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 945.42,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7210.45,
             "unit": "ms"
           }
         ]
