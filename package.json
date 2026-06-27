@@ -79,6 +79,16 @@
       "types": "./dist/ava.d.ts",
       "import": "./dist/ava.js",
       "require": "./dist/ava.cjs"
+    },
+    "./playwright": {
+      "types": "./dist/playwright.d.ts",
+      "import": "./dist/playwright.js",
+      "require": "./dist/playwright.cjs"
+    },
+    "./cypress": {
+      "types": "./dist/cypress.d.ts",
+      "import": "./dist/cypress.js",
+      "require": "./dist/cypress.cjs"
     }
   },
   "bin": {

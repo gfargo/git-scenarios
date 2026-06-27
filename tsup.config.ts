@@ -15,6 +15,8 @@ export default defineConfig([
       'node-test': 'src/node-test.ts',
       'mocha': 'src/mocha.ts',
       'ava': 'src/ava.ts',
+      'playwright': 'src/playwright.ts',
+      'cypress': 'src/cypress.ts',
     },
     format: ['cjs', 'esm'],
     dts: true,
