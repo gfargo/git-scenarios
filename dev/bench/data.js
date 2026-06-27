@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782444591281,
+  "lastUpdate": 1782573505720,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -155,6 +155,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7210.45,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c86e6c71ee0777f2d4025eefc519550cf5537376",
+          "message": "feat(cli): add diff command for side-by-side scenario comparison (#80)\n\nCloses #50\nPlane: [OSS-63](https://compass.tailb82ead.ts.net:3443/gfargo/browse/OSS-63/)\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>\nCo-authored-by: Claude Sonnet 4.6 <noreply@anthropic.com>",
+          "timestamp": "2026-06-27T15:17:00Z",
+          "tree_id": "ddc1cc5a8e232623a9528b9b9a37b243d60566f1",
+          "url": "https://github.com/gfargo/git-scenarios/commit/c86e6c71ee0777f2d4025eefc519550cf5537376"
+        },
+        "date": 1782573504947,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 167.59,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 930.35,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7126.95,
             "unit": "ms"
           }
         ]
