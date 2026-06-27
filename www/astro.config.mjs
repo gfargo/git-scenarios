@@ -181,6 +181,7 @@ export default defineConfig({
             { label: 'Custom Scenarios', slug: 'docs/guides/custom-scenarios' },
             { label: 'CLI Reference', slug: 'docs/guides/cli' },
             { label: 'Contributing', slug: 'docs/guides/contributing' },
+            { label: 'MCP Server', slug: 'docs/guides/mcp' },
           ],
         },
         {

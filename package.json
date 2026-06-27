@@ -89,10 +89,16 @@
       "types": "./dist/cypress.d.ts",
       "import": "./dist/cypress.js",
       "require": "./dist/cypress.cjs"
+    },
+    "./mcp": {
+      "types": "./dist/mcp.d.ts",
+      "import": "./dist/mcp.js",
+      "require": "./dist/mcp.cjs"
     }
   },
   "bin": {
-    "git-scenarios": "./dist/bin/cli.cjs"
+    "git-scenarios": "./dist/bin/cli.cjs",
+    "git-scenarios-mcp": "./dist/bin/mcp.cjs"
   },
   "files": [
     "dist",
@@ -145,5 +151,8 @@
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.29.0"
   }
 }
