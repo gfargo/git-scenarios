@@ -17,9 +17,12 @@ See the full [CONTRIBUTING.md](https://github.com/gfargo/git-scenarios/blob/main
 ## Adding a scenario
 
 1. Create `src/scenarios/<kebab-name>.ts` using `defineScenario`
+   (copy `templates/scenario.template.ts` from the repo root as your starting point)
 2. Create `src/scenarios/<kebab-name>.test.ts` verifying all contracts
+   (copy `templates/scenario.test.template.ts` as your starting point)
 3. Register in `src/scenarios/index.ts`
 4. Re-export from `src/index.ts`
+5. **Regenerate the website data**: run `npm run build && cd www && npm run gen:scenarios`, then commit `www/src/data/scenarios.json`
 
 ### Determinism requirement
 
@@ -48,6 +51,7 @@ npm run lint      # eslint
 - [ ] New atoms have JSDoc with examples
 - [ ] New scenarios have co-located tests verifying every contract
 - [ ] New scenarios are deterministic (no wall-clock / random; determinism property test passes)
+- [ ] `www/src/data/scenarios.json` regenerated and committed (`npm run build && cd www && npm run gen:scenarios`)
 - [ ] Exports added to barrel files
 - [ ] `npm run build` passes
 - [ ] `npm test` passes

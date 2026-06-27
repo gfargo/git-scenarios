@@ -8,6 +8,14 @@ versions follow [semver](https://semver.org/).
 
 ### Added
 
+- **Contribution template + checklist** — `templates/scenario.template.ts` and
+  `templates/scenario.test.template.ts` provide copy-paste starting points for
+  new built-in scenarios. `CONTRIBUTING.md` now has a step-by-step guide covering
+  template usage, registration, the automatic determinism property test (Property 9),
+  and `www/src/data/scenarios.json` regeneration. The PR checklist in both
+  `CONTRIBUTING.md` and `www/src/content/docs/docs/guides/contributing.md` is
+  updated to include these two new required steps.
+
 - **Scenario `interactive-rebase-mid-edit`** — `git rebase -i` paused at an
   `edit` action with 2 remaining picks. No conflict markers; HEAD is detached
   at the applied commit; `.git/rebase-merge/interactive` marks the interactive
