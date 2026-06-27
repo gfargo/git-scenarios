@@ -38,6 +38,10 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: API surface check
+        if: matrix.os == 'ubuntu-latest'
+        run: npm run api:check
+
       - name: Test
         run: npm test -- --coverage
 

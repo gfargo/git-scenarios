@@ -189,6 +189,8 @@
     "check:exports": "attw --pack . --ignore-rules no-resolution",
     "check:publint": "publint --strict",
     "check:package": "npm run check:exports && npm run check:publint",
+    "api:update": "npm run build && node bin/api-report.mjs --local",
+    "api:check": "node bin/api-report.mjs",
     "prepublishOnly": "npm run clean && npm run build && npm test && npm run lint"
   },
   "keywords": [
@@ -211,6 +213,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.4",
+    "@microsoft/api-extractor": "7.58.9",
     "@types/jest": "^29.5.12",
     "@types/node": "^22.10.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
