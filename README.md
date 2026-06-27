@@ -623,6 +623,29 @@ contract assertions for a single scenario.
 
 `large-repo` is also the primary target of the built-in benchmark harness — run `npm run bench` to measure scenario spin-up times and detect performance regressions.
 
+## GitHub Action
+
+Use the `gfargo/git-scenarios` composite action to spin up a scenario inside
+any GitHub Actions workflow:
+
+```yaml
+- name: Materialize scenario
+  id: scenario
+  uses: gfargo/git-scenarios@v1
+  with:
+    scenario: mid-merge-conflict       # any scenario name
+    path: test-repos/conflict          # workspace-relative path (optional)
+    # remote: git@github.com:org/repo.git  # optional origin URL
+
+- name: Run tool against it
+  run: my-git-tool status --repo "${{ steps.scenario.outputs.path }}"
+```
+
+**Inputs**: `scenario` (required), `path` (default: `git-scenario`), `remote`, `version`.
+**Output**: `path` — absolute path to the materialized repository.
+
+Supported on Linux and macOS runners. See the [GitHub Action guide →](https://git-scenarios.griffen.codes/docs/guides/github-action)
+
 ## The CLI
 
 ```bash

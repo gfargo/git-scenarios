@@ -1,0 +1,70 @@
+name: 'git-scenarios'
+description: 'Materialize a named git-scenarios scenario into a workspace directory for CI integration tests'
+author: 'gfargo'
+
+branding:
+  icon: 'git-branch'
+  color: 'purple'
+
+inputs:
+  scenario:
+    description: 'Name of the scenario to materialize (e.g. feature-pr-ready, mid-merge-conflict)'
+    required: true
+  path:
+    description: 'Directory to materialize the scenario into (workspace-relative or absolute). Defaults to git-scenario in the workspace root.'
+    required: false
+    default: 'git-scenario'
+  remote:
+    description: 'Optional URL to register as the origin remote (e.g. git@github.com:org/repo.git)'
+    required: false
+    default: ''
+  version:
+    description: 'Version of @gfargo/git-scenarios to use when falling back to npx (e.g. latest, 1.1.0)'
+    required: false
+    default: 'latest'
+
+outputs:
+  path:
+    description: 'Absolute path to the materialized scenario directory'
+    value: ${{ steps.materialize.outputs.path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Materialize scenario
+      id: materialize
+      shell: bash
+      env:
+        SCENARIO: ${{ inputs.scenario }}
+        INPUT_PATH: ${{ inputs.path }}
+        REMOTE: ${{ inputs.remote }}
+        VERSION: ${{ inputs.version }}
+        WORKSPACE: ${{ github.workspace }}
+      run: |
+        # Resolve target path (absolute or workspace-relative)
+        case "$INPUT_PATH" in
+          /*) TARGET="$INPUT_PATH" ;;
+          *)  TARGET="${WORKSPACE}/${INPUT_PATH}" ;;
+        esac
+
+        # Guard: fail fast if the target already exists
+        if [ -e "$TARGET" ]; then
+          echo "::error::Target path already exists: $TARGET"
+          exit 1
+        fi
+
+        # Build optional --remote flag
+        REMOTE_ARGS=()
+        if [ -n "$REMOTE" ]; then
+          REMOTE_ARGS=(--remote "$REMOTE")
+        fi
+
+        # Prefer an already-installed binary (e.g. from npm i -g in the caller's
+        # workflow), fall back to npx so downstream consumers need no extra step.
+        if command -v git-scenarios >/dev/null 2>&1; then
+          git-scenarios create "$SCENARIO" --path "$TARGET" "${REMOTE_ARGS[@]}"
+        else
+          npx --yes "@gfargo/git-scenarios@${VERSION}" create "$SCENARIO" --path "$TARGET" "${REMOTE_ARGS[@]}"
+        fi
+
+        echo "path=$TARGET" >> "$GITHUB_OUTPUT"
