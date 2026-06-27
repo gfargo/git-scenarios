@@ -36,5 +36,9 @@ bench-results.json
 .env.local
 .docs/
 
+# Stryker mutation testing
+reports/
+.stryker-tmp/
+
 .kiro
 .claude

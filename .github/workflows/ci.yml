@@ -130,6 +130,36 @@ jobs:
       - run: npm run check:exports
       - run: npm run check:publint
 
+  mutation:
+    name: mutation testing (informational)
+    runs-on: ubuntu-latest
+    # Informational only — non-blocking until baseline is stable
+    continue-on-error: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22.22.2
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.2'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --include=dev
+
+      - name: Run mutation tests
+        run: npm run test:mutation
+
+      - name: Upload mutation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-report
+          path: reports/mutation/
+          retention-days: 30
+
   test-git-compat:
     name: git-compat (${{ matrix.git-version }})
     runs-on: ubuntu-latest
