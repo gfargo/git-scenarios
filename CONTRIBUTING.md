@@ -73,11 +73,45 @@ export function myNewAtom(arg: string): Step {
 
 ## Adding a new scenario
 
-1. **Create the file**: `src/scenarios/<kebab-name>.ts`
-2. **Use `defineScenario`**: Validates name, kind, and required fields at import time
-3. **Create the test**: `src/scenarios/<kebab-name>.test.ts`
-4. **Register in the index**: Import + add to `allScenarios` array + add named export
-5. **Re-export from `src/index.ts`**
+A copy-paste starting point lives in `templates/` at the repo root:
+
+- `templates/scenario.template.ts` — scenario skeleton
+- `templates/scenario.test.template.ts` — co-located test skeleton
+
+Follow these steps:
+
+1. **Copy the template**: `cp templates/scenario.template.ts src/scenarios/<kebab-name>.ts`
+   - The import path in the template (`'../atoms'`) is already correct for `src/scenarios/`.
+   - Fill in `name` (kebab-case), `summary`, `description`, `kind`, `tags`, `contracts`, and `setup`.
+
+2. **Copy the test template**: `cp templates/scenario.test.template.ts src/scenarios/<kebab-name>.test.ts`
+   - Update the import to point to your new file.
+   - Write one `it()` per contract line — these become the acceptance checks.
+
+3. **Register in `src/scenarios/index.ts`**:
+   - Add an import at the top (in the appropriate kind group).
+   - Add the scenario to the `allScenarios` array.
+   - Add a named export at the bottom.
+
+4. **Re-export from `src/index.ts`**: add your named export alongside the others.
+
+5. **Determinism** — registering in `allScenarios` automatically enrolls your
+   scenario in the property test at `src/__tests__/determinism.properties.test.ts`
+   (Property 9), which runs every registered scenario twice and asserts identical
+   commit hashes. `npm test` will catch any drift. To stay deterministic:
+   - Never use `new Date()` or `Math.random()` in setup.
+   - Let commit atoms pin dates via the monotonic commit clock automatically.
+   - Use `seededFiles({ seed, files })` for generated file content.
+   - Use `daysAgo(n)` or an explicit `date` only when a specific timeline is required.
+
+6. **Regenerate website data** — the docs site (`www/`) renders a `scenarios.json`
+   from the live registry. After your scenario is registered, regenerate it:
+   ```bash
+   npm run build              # build the parent package first (generator reads dist/)
+   cd www && npm install && npm run gen:scenarios
+   git add www/src/data/scenarios.json
+   ```
+   Commit the updated JSON alongside your scenario files.
 
 ### Scenario design rules
 
@@ -160,6 +194,8 @@ npx jest path/to/file       # single file
 - [ ] New atoms have JSDoc with usage examples
 - [ ] New scenarios have co-located tests verifying all contracts
 - [ ] New exports added to barrel files (`atoms/index.ts`, `src/index.ts`)
+- [ ] Determinism property test passes (`npm test` — Property 9 covers all registered scenarios automatically)
+- [ ] `www/src/data/scenarios.json` regenerated and committed (`npm run build && cd www && npm run gen:scenarios`)
 - [ ] `npm run build` passes
 - [ ] `npm test` passes
 - [ ] `npm run lint` passes
