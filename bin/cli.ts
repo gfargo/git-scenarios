@@ -40,10 +40,11 @@ import {
 } from '../src/capture'
 import { filterScenarios, renderPreview } from '../src/interactive'
 import { findRegistered, listRegistered } from '../src/registry'
+import type { RepoSnapshot } from '../src/snapshot'
 import { createTempGitRepo } from '../src/tempGitRepo'
 
 type ParsedArgs = {
-  command?: 'list' | 'describe' | 'inspect' | 'create' | 'capture' | 'clean' | 'help'
+  command?: 'list' | 'describe' | 'inspect' | 'create' | 'capture' | 'clean' | 'diff' | 'help'
   positional: string[]
   flags: Record<string, string | boolean>
 }
@@ -75,7 +76,7 @@ function parseArgs(argv: string[]): ParsedArgs {
         flags[arg.slice(2)] = true
       }
     } else if (!command) {
-      if (arg === 'list' || arg === 'describe' || arg === 'inspect' || arg === 'create' || arg === 'capture' || arg === 'clean' || arg === 'help') {
+      if (arg === 'list' || arg === 'describe' || arg === 'inspect' || arg === 'create' || arg === 'capture' || arg === 'clean' || arg === 'diff' || arg === 'help') {
         command = arg
       } else {
         positional.push(arg)
@@ -117,6 +118,7 @@ function printHelp(): void {
     '    git-scenarios inspect <name> [--json]',
     '    git-scenarios create <name> [options]',
     '    git-scenarios capture [path] [options]',
+    '    git-scenarios diff <name-a> <name-b> [--json]',
     '    git-scenarios clean [options]',
     '',
     '  List options:',
@@ -133,6 +135,13 @@ function printHelp(): void {
     '    commit graph, branches, and working-tree status, then cleans up.',
     '    Use it to see a scenario\'s shape without keeping anything on disk.',
     '    --json           Machine-readable JSON (graph / branches / status)',
+    '',
+    '  Diff options:',
+    '    Materializes two scenarios in throwaway temp dirs, captures their',
+    '    shape (HEAD, branches, status, in-progress operation, contracts),',
+    '    and prints a structured side-by-side comparison. SHA values and',
+    '    raw commit graphs are excluded from the differences summary.',
+    '    --json           Machine-readable JSON ({ a, b, same, differences })',
     '',
     '  Create options:',
     '    --path <dir>     Materialize the scenario at <dir> instead of /tmp',
@@ -361,6 +370,189 @@ async function commandInspect(name: string, options: { json?: boolean } = {}): P
     }
   }
   console.log('')
+  return 0
+}
+
+/**
+ * Materialize two scenarios into throwaway temp repos, capture each repo's
+ * shape via `repo.snapshot()`, compare the structural fields, and print a
+ * side-by-side diff. SHA values and raw commit graphs are excluded from the
+ * differences summary — those change for nearly any two distinct scenarios
+ * and would make the summary noisy without revealing anything about shape.
+ */
+async function commandDiff(
+  nameA: string,
+  nameB: string,
+  options: { json?: boolean } = {},
+): Promise<number> {
+  const scenarioA = findRegistered(nameA)
+  if (!scenarioA) {
+    if (options.json) {
+      console.error(JSON.stringify({ error: `Unknown scenario "${nameA}"` }))
+    } else {
+      console.error(`Unknown scenario "${nameA}". Try \`git-scenarios list\`.`)
+    }
+    return 2
+  }
+  const scenarioB = findRegistered(nameB)
+  if (!scenarioB) {
+    if (options.json) {
+      console.error(JSON.stringify({ error: `Unknown scenario "${nameB}"` }))
+    } else {
+      console.error(`Unknown scenario "${nameB}". Try \`git-scenarios list\`.`)
+    }
+    return 2
+  }
+
+  async function materialize(scenario: Scenario): Promise<{ snapshot: RepoSnapshot; contracts: string[] }> {
+    const repo = await createTempGitRepo()
+    try {
+      await scenario.setup(repo)
+      const snapshot = await repo.snapshot()
+      return { snapshot, contracts: scenario.contracts ?? [] }
+    } finally {
+      await repo.cleanup()
+    }
+  }
+
+  const resultA = await materialize(scenarioA).catch((error: Error) => {
+    if (options.json) {
+      console.error(JSON.stringify({ error: `Scenario setup failed for "${nameA}": ${error.message}` }))
+    } else {
+      console.error(`Scenario setup failed for "${nameA}": ${error.message}`)
+    }
+    return null
+  })
+  if (!resultA) return 1
+
+  const resultB = await materialize(scenarioB).catch((error: Error) => {
+    if (options.json) {
+      console.error(JSON.stringify({ error: `Scenario setup failed for "${nameB}": ${error.message}` }))
+    } else {
+      console.error(`Scenario setup failed for "${nameB}": ${error.message}`)
+    }
+    return null
+  })
+  if (!resultB) return 1
+
+  const { snapshot: snapA, contracts: contractsA } = resultA
+  const { snapshot: snapB, contracts: contractsB } = resultB
+
+  // Compare shape fields. head.sha and graph are intentionally excluded — they
+  // differ for nearly any two scenarios and would swamp the structural signal.
+  const differences: string[] = []
+  if (snapA.head.branch !== snapB.head.branch) differences.push('head.branch')
+  if (snapA.head.detached !== snapB.head.detached) differences.push('head.detached')
+  if (snapA.commitCount !== snapB.commitCount) differences.push('commitCount')
+  if (JSON.stringify([...snapA.branches].sort()) !== JSON.stringify([...snapB.branches].sort()))
+    differences.push('branches')
+  if (snapA.status.clean !== snapB.status.clean) differences.push('status.clean')
+  if (snapA.status.staged.length !== snapB.status.staged.length) differences.push('status.staged')
+  if (snapA.status.modified.length !== snapB.status.modified.length) differences.push('status.modified')
+  if (snapA.status.untracked.length !== snapB.status.untracked.length)
+    differences.push('status.untracked')
+  if (snapA.status.ahead !== snapB.status.ahead) differences.push('status.ahead')
+  if (snapA.status.behind !== snapB.status.behind) differences.push('status.behind')
+  if (snapA.operation !== snapB.operation) differences.push('operation')
+  if (snapA.conflicts.length !== snapB.conflicts.length) differences.push('conflicts')
+  if (snapA.stashes !== snapB.stashes) differences.push('stashes')
+  if (JSON.stringify(contractsA) !== JSON.stringify(contractsB)) differences.push('contracts')
+
+  const same = differences.length === 0
+
+  if (options.json) {
+    console.log(
+      JSON.stringify(
+        {
+          a: { name: nameA, kind: scenarioA.kind, contracts: contractsA, snapshot: snapA },
+          b: { name: nameB, kind: scenarioB.kind, contracts: contractsB, snapshot: snapB },
+          same,
+          differences,
+        },
+        null,
+        2,
+      ),
+    )
+    return 0
+  }
+
+  // Human-readable side-by-side comparison
+  const LABEL_W = 12
+  const VAL_W = 32
+
+  const row = (label: string, valA: string, valB: string, differs: boolean): void => {
+    const g = differs ? '≠' : '='
+    console.log(
+      `  ${label.padEnd(LABEL_W)} ${valA.slice(0, VAL_W).padEnd(VAL_W)}  ${g}  ${valB.slice(0, VAL_W)}`,
+    )
+  }
+
+  console.log('')
+  console.log(`  a: ${nameA}  (${scenarioA.kind})`)
+  console.log(`  b: ${nameB}  (${scenarioB.kind})`)
+  console.log('')
+  console.log(`  ${'Field'.padEnd(LABEL_W)} ${'a'.padEnd(VAL_W)}     ${'b'}`)
+  console.log(`  ${'-'.repeat(LABEL_W + VAL_W + 7)}`)
+
+  const headDiffers = differences.includes('head.branch') || differences.includes('head.detached')
+  row(
+    'Branch',
+    snapA.head.detached ? '(detached)' : (snapA.head.branch ?? '(none)'),
+    snapB.head.detached ? '(detached)' : (snapB.head.branch ?? '(none)'),
+    headDiffers,
+  )
+  row('Commits', String(snapA.commitCount), String(snapB.commitCount), differences.includes('commitCount'))
+  row(
+    'Branches',
+    snapA.branches.join(', ') || '(none)',
+    snapB.branches.join(', ') || '(none)',
+    differences.includes('branches'),
+  )
+
+  const statusA = snapA.status.clean
+    ? 'clean'
+    : `dirty (s:${snapA.status.staged.length} m:${snapA.status.modified.length} u:${snapA.status.untracked.length})`
+  const statusB = snapB.status.clean
+    ? 'clean'
+    : `dirty (s:${snapB.status.staged.length} m:${snapB.status.modified.length} u:${snapB.status.untracked.length})`
+  const statusDiffers = ['status.clean', 'status.staged', 'status.modified', 'status.untracked'].some(
+    (d) => differences.includes(d),
+  )
+  row('Status', statusA, statusB, statusDiffers)
+
+  row(
+    'Operation',
+    snapA.operation ?? '(none)',
+    snapB.operation ?? '(none)',
+    differences.includes('operation'),
+  )
+  row(
+    'Conflicts',
+    String(snapA.conflicts.length),
+    String(snapB.conflicts.length),
+    differences.includes('conflicts'),
+  )
+  row('Stashes', String(snapA.stashes), String(snapB.stashes), differences.includes('stashes'))
+
+  if (contractsA.length > 0 || contractsB.length > 0) {
+    console.log('')
+    console.log('  Contracts:')
+    const maxLen = Math.max(contractsA.length, contractsB.length)
+    for (let i = 0; i < maxLen; i++) {
+      const ca = contractsA[i] ?? ''
+      const cb = contractsB[i] ?? ''
+      row(`  [${i}]`, ca, cb, ca !== cb)
+    }
+  }
+
+  console.log('')
+  if (same) {
+    console.log('  Scenarios are structurally identical.')
+  } else {
+    console.log(`  Differences: ${differences.join(', ')}`)
+  }
+  console.log('')
+
   return 0
 }
 
@@ -850,6 +1042,16 @@ async function main(): Promise<number> {
       return 2
     }
     return commandInspect(name, { json: Boolean(flags.json) })
+  }
+
+  if (command === 'diff') {
+    const nameA = positional[0]
+    const nameB = positional[1]
+    if (!nameA || !nameB) {
+      console.error('Missing scenario names. Usage: git-scenarios diff <name-a> <name-b>')
+      return 2
+    }
+    return commandDiff(nameA, nameB, { json: Boolean(flags.json) })
   }
 
   if (command === 'capture') {
