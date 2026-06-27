@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782573506750,
+  "lastUpdate": 1782573514746,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -233,6 +233,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7150.93,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d363b732991f368dcddaed23d5e3ffd771429baf",
+          "message": "feat(adapters): add Playwright fixture and Cypress task adapters (#77)\n\n* feat(adapters): add Playwright fixture and Cypress task adapters\n\nImplements OSS-59: E2E framework adapters so web-based git GUIs and IDE\nextensions can spin up git scenarios inside Playwright and Cypress test suites.\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\n\n* fix(adapters): apply remote option in Playwright and Cypress adapters\n\nBoth adapters passed options (including `remote`) directly to\n`createTempGitRepo`, which only accepts `autoCleanup`. The `remote`\nfield was silently dropped instead of being applied via\n`repo.git.addRemote('origin', remote)` after scenario setup.\n\nFix mirrors `spinUpScenario.ts`: destructure `remote` out of the\noptions object, pass the remainder to `createTempGitRepo`, then call\n`addRemote` when the field is present.\n\nTests added for both adapters asserting the origin remote is reachable\nafter `spinUp` / the repo fixture resolves.\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\n\n* chore: revert unrelated devDependency bumps to main versions\n\nReverts @types/jest, ts-jest, and typescript version spec bumps that\nwere not needed for the Playwright/Cypress adapter work. Also restores\nthe bench script that was accidentally removed. Scope now matches only\nthe adapter additions and remote-option fix.\n\n---------\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>\nCo-authored-by: Claude Sonnet 4.6 <noreply@anthropic.com>",
+          "timestamp": "2026-06-27T15:17:10Z",
+          "tree_id": "7cbc2f6a3b48af829a25f68d719772fb1c247bf1",
+          "url": "https://github.com/gfargo/git-scenarios/commit/d363b732991f368dcddaed23d5e3ffd771429baf"
+        },
+        "date": 1782573513838,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 166.2,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 931.97,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7119.19,
             "unit": "ms"
           }
         ]
