@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782573505720,
+  "lastUpdate": 1782573506750,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -194,6 +194,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7126.95,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0e8023f5b7df30de4b134481473baa7e96be1d28",
+          "message": "docs(contributing): add scenario template + step-by-step guide and checklist (#81)\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>",
+          "timestamp": "2026-06-27T15:17:02Z",
+          "tree_id": "5e3183a7d7dcf0bf11b4e1106ac1c83d6aea3817",
+          "url": "https://github.com/gfargo/git-scenarios/commit/0e8023f5b7df30de4b134481473baa7e96be1d28"
+        },
+        "date": 1782573506326,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 167.87,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 934.75,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7150.93,
             "unit": "ms"
           }
         ]
