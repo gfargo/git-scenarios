@@ -1,0 +1,142 @@
+---
+title: vs. Alternatives
+description: An honest comparison of git-scenarios against hand-rolled fixtures, checked-in .git directories, mocking git, and Docker containers.
+---
+
+import { Card, CardGrid, Aside } from '@astrojs/starlight/components';
+
+Before adopting any library, the reasonable question is: "why not just do what I'm already doing?" This page answers that honestly for each common alternative — noting where each approach still makes sense, and where it breaks down.
+
+## Hand-rolled `git init` + `writeFile` + `commit`
+
+### What people do today
+
+Write a `beforeAll` block that:
+1. Creates a temp directory
+2. Runs `git init`
+3. Writes files
+4. Calls `git add . && git commit`
+5. Repeats this for every test that needs a different state
+
+This is fine for a handful of tests. It stops scaling well around the point where you have five different repo shapes and each needs 40–80 lines of setup.
+
+### Where it breaks down
+
+**Drift.** Two tests that both need "a feature branch with a conflict" diverge over time because each has its own copy of the setup logic. Fixing one doesn't fix the other.
+
+**Boilerplate obscures intent.** The test setup takes more lines than the assertion. A reviewer reading the test has to parse the setup to understand what state is being tested.
+
+**Non-determinism.** Commit timestamps are wall-clock. Commit hashes differ between runs. Snapshot tests of git output are flaky, or require careful `GIT_AUTHOR_DATE` plumbing that's easy to get wrong.
+
+**Hard to share.** Inline setup can't be shared between repos or across a monorepo without copy-paste.
+
+### What git-scenarios does instead
+
+Each scenario replaces the setup block with a single call:
+
+```ts
+const repo = await spinUpScenario('mid-merge-conflict')
+```
+
+The setup is authored once, tested (each curated scenario ships a contract test), and produces byte-identical state on every run. If your own project has a recurring setup shape, `defineScenario` + `registerScenario` gives it a name and makes it available everywhere.
+
+---
+
+## Checked-in `.git` directories
+
+### What people do today
+
+Commit a real `.git` directory — or a tarball of one — into the test tree. Tests unpack it, point their tool at it, and assert against it.
+
+### Where it breaks down
+
+**Tree bloat.** `.git` directories contain the full object store. A repo with even moderate history adds megabytes to `git clone` times for everyone who checks out the project.
+
+**Breaks on updates.** The fixture captures one moment in time. When the scenario needs to change (a new file, a new commit, a different conflict), you re-bake the fixture by hand and commit another blob.
+
+**No programmatic access.** The unpacked repo is a static artifact. Tests can't write a file, stage it, and assert on the result without adding more shell scripting around the fixture.
+
+**Portability issues.** Executable bits, LF/CRLF, and platform-specific git objects can cause a `.git` directory that works on the machine it was created on to fail on a different OS or git version.
+
+### What git-scenarios does instead
+
+Scenarios are code, not binary blobs. They're re-materialized on demand from the same atoms every run. No binary checked in; no size impact on the repo; fully composable after spin-up.
+
+---
+
+## Mocking git
+
+### What people do today
+
+Replace git calls with stubs — intercept `exec('git status')` (or a library wrapper) and return a hand-crafted string. The test passes as long as the code calls the right command with the right arguments.
+
+### Where it breaks down
+
+**Tests verify the wrong thing.** A mock-based test tells you "the code issued `git merge --no-ff feat/x`". It doesn't tell you whether the code behaves correctly when that command leaves the repo mid-merge-conflict.
+
+**Mocks drift from reality.** git output formats differ between versions. Edge cases — rename conflicts, delete/modify conflicts, the `+` prefix in `git submodule status` — are easy to misrepresent in a hand-crafted stub.
+
+**False confidence.** A tool can pass a full mock-based suite and still crash against a real repo in an unusual state, because the mock never tested that state.
+
+### What git-scenarios does instead
+
+Tests run against real git. The repo is a genuine `git init` + real commits + real merge operations. When `git status` reports a conflict, it's because the repo is actually mid-merge — not because a mock returned a fixture string. The behavior under test is the actual behavior.
+
+<Aside type="note">
+Mocking still has a role: when a test needs to isolate a network call, an LLM response, or an external service, mock that layer separately. The standard pattern is to use scenario-based setup for git state and your test framework's mock utilities for everything else.
+</Aside>
+
+---
+
+## Docker containers with pre-baked git state
+
+### What people do today
+
+Build a Docker image containing a repo in a specific state. Tests spin up the container, run a command against it, and assert on the output.
+
+### Where it breaks down
+
+**Slow.** Container start-up adds seconds (sometimes tens of seconds) to each test. In a suite with many repo-state variants, this becomes the dominant cost.
+
+**CI-only.** Spinning up containers locally requires Docker running, credentials for the registry, and the right platform architecture. "Just run `npm test`" stops being simple.
+
+**Not interactive.** You can't `cd` into a Docker container and poke around with your TUI the same way you'd poke around in a temp directory. The inner feedback loop for development is longer.
+
+**Stale images.** When the desired state changes, someone has to rebuild and repush the image. The image tag in CI config must be bumped. It's a separate publish step with its own pipeline concerns.
+
+### What git-scenarios does instead
+
+Scenarios materialise in `/tmp` in milliseconds — a `git init` + a few commits is fast. They're plain directories on disk, so any tool can be pointed at them directly. The CLI's `--run` flag handles the "launch your tool against this state" workflow in one command:
+
+```bash
+npx git-scenarios create mid-merge-conflict --run "lazygit"
+```
+
+<Aside type="tip">
+Docker is still appropriate when you need a full-system integration test — for example, testing that your git hook shell script works on a specific Linux distribution. For unit and integration tests of the git-aware logic in your tool, scenarios are faster and more composable.
+</Aside>
+
+---
+
+## Summary
+
+| | Hand-rolled | Checked-in `.git` | Mocking git | Docker | git-scenarios |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Real git state | ✅ | ✅ | ❌ | ✅ | ✅ |
+| Deterministic | ⚠️ | ✅ | ✅ | ✅ | ✅ |
+| Fast (ms spin-up) | ✅ | ⚠️ | ✅ | ❌ | ✅ |
+| No binary in repo | ✅ | ❌ | ✅ | ⚠️ | ✅ |
+| Composable / reusable | ❌ | ❌ | ⚠️ | ❌ | ✅ |
+| Interactive-friendly | ✅ | ⚠️ | ❌ | ❌ | ✅ |
+| Scales across many states | ❌ | ❌ | ⚠️ | ⚠️ | ✅ |
+
+⚠️ = possible with extra effort; ❌ = not well-suited; ✅ = good fit
+
+---
+
+## See also
+
+- [Choosing a Scenario →](/docs/guides/choosing-a-scenario) — pick the right scenario for your use case
+- [Quick Start →](/docs/quick-start) — up and running in five minutes
+- [Custom Scenarios →](/docs/guides/custom-scenarios) — define your own reusable states
+- [Atom reference →](/docs/atoms/overview) — composable building blocks

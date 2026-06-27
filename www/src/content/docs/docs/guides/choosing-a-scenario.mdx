@@ -1,0 +1,151 @@
+---
+title: Choosing a Scenario
+description: A decision guide for picking the right scenario — or building your own — based on the git state your tool needs to handle.
+---
+
+import { Card, CardGrid, Steps, Aside } from '@astrojs/starlight/components';
+
+Not sure which scenario to reach for? Start here. The guide walks you from "what does my tool need?" to a concrete scenario name in a few steps.
+
+If you already know you want to browse the full catalogue interactively, jump straight to [Browse & Filter →](/docs/scenarios/browse).
+
+## Step 1 — What git state does your tool need?
+
+The catalogue is organised by **kind**. Each kind maps to a class of git state:
+
+```
+What state does your tool need to handle?
+│
+├── Branch shape / history
+│   (feature branches, ahead/behind upstream, diverged, detached HEAD, orphan)
+│   → kind: branch  →  See "Branch scenarios" below
+│
+├── Working tree / index
+│   (staged files, unstaged changes, untracked files, multiple worktrees)
+│   → kind: worktree  →  See "Worktree & stash scenarios" below
+│
+├── In-progress git operation
+│   (merge conflict, rebase conflict, cherry-pick, revert, bisect)
+│   → kind: operation  →  See "Operation scenarios" below
+│
+├── Commit history shape
+│   (long logs, merge commits, tags, shallow clone, large repo)
+│   → kind: history  →  See "History scenarios" below
+│
+├── Stashed changes
+│   (stash list, stash with untracked)
+│   → kind: stash  →  See "Worktree & stash scenarios" below
+│
+└── Submodules
+    (pinned submodule, out-of-date submodule)
+    → kind: submodule  →  See "Submodule scenarios" below
+```
+
+Once you know the kind, use the goal table below to find the scenario name.
+
+## Step 2 — Match your goal to a scenario
+
+### Branch scenarios
+
+| Goal | Scenario |
+|---|---|
+| Minimal baseline with a feature branch | `feature-branch-one-commit` |
+| Feature branch ready to PR (4 commits ahead, clean) | `feature-pr-ready` |
+| Multiple varied commits to navigate / filter | `multi-commit-branch` |
+| Changelog / log / review smoke test | `two-commit-feature` |
+| Branch synced with its upstream ("up to date") | `branch-tracking-upstream` |
+| Branch with unpushed commits (N ahead) | `branch-ahead-of-upstream` |
+| Branch that needs a pull (N behind, fast-forwardable) | `branch-behind-upstream` |
+| Branch that has diverged (ahead AND behind) | `branch-diverged` |
+| Fork workflow: `origin` + `upstream`, tracking both | `multi-remote-with-tracking` |
+| Five branches in five different upstream states at once | `branch-sync-showcase` |
+| HEAD detached (no branch) | `detached-head` |
+| Orphan branch with no shared history | `orphan-branch` |
+| Commit in the reflog only (dropped from history) | `dangling-commit` |
+| Branch hard-reset, old tip recoverable via reflog | `reset-recoverable-head` |
+| Signing-aware UI (gpgsign config set) | `signed-commits-required` |
+| Freshly initialised, no commits yet | `empty-repo` |
+
+### Worktree & stash scenarios
+
+| Goal | Scenario |
+|---|---|
+| Single staged file, ready to commit | `single-staged-file` |
+| Mixed: some staged, some unstaged, some untracked | `partial-stage` |
+| Many files across multiple dirs (12 staged, 6 unstaged, 3 untracked) | `dirty-many-files` |
+| Monorepo with packages in different states | `monorepo-multi-package` |
+| Multiple linked worktrees | `multiple-worktrees` |
+| Clean `main` plus several stashes | `stashed-changes` |
+| One stash that includes untracked files | `stash-with-untracked` |
+| Git LFS pointer file (no `git-lfs` binary required) | `git-lfs-pointer` |
+| `.gitattributes` CRLF normalisation | `crlf-normalization` |
+| Case-only filename collision | `case-collision` |
+
+### Operation scenarios
+
+| Goal | Scenario |
+|---|---|
+| In-progress merge with a conflict | `mid-merge-conflict` |
+| In-progress rebase with a conflict | `mid-rebase-conflict` |
+| In-progress cherry-pick with a conflict | `mid-cherry-pick-conflict` |
+| In-progress revert with a conflict | `mid-revert-conflict` |
+| Merge with a rename/rename conflict | `merge-conflict-rename-rename` |
+| Merge with a delete/modify conflict | `merge-conflict-delete-modify` |
+| Merge with an add/add conflict | `merge-conflict-add-add` |
+| Completed `--no-ff` merge (2-parent commit at HEAD) | `merge-no-conflict` |
+| Active `git bisect` in progress | `mid-bisect` |
+
+### History scenarios
+
+| Goal | Scenario |
+|---|---|
+| Rich graph: many commits, merges, live unmerged branch | `rich-history-graph` |
+| Large repo for pagination/performance testing | `large-repo` |
+| Shallow clone (`.git/shallow` set) | `shallow-clone` |
+| Commits with different branch-tip chip kinds | `chip-rendering-showcase` |
+
+### Submodule scenarios
+
+| Goal | Scenario |
+|---|---|
+| Parent with a cleanly pinned submodule | `submodule-with-history` |
+
+## Step 3 — Nothing fits?
+
+<Aside type="tip">
+Before building from scratch, check whether `fromScenario` gets you there with a couple of extra atoms — it's almost always faster than starting from `createTempGitRepo()`.
+</Aside>
+
+If no curated scenario matches your case exactly, you have two options:
+
+**Extend an existing scenario** with `fromScenario`:
+
+```ts
+import { fromScenario, addCommit, writeFiles } from '@gfargo/git-scenarios'
+
+const repo = await fromScenario('feature-pr-ready',
+  addCommit({ message: 'extra commit', files: { 'extra.ts': 'x\n' } }),
+  writeFiles({ 'dirty.ts': 'uncommitted\n' }),
+)
+```
+
+**Compose from atoms** if you need full control:
+
+```ts
+import { createTempGitRepo, chain, addCommit, startMerge } from '@gfargo/git-scenarios'
+
+const repo = await createTempGitRepo()
+await chain(
+  addCommit({ message: 'base', files: { 'x.ts': 'base\n' } }),
+  // ... your atoms here
+)(repo)
+```
+
+For reusable custom states, see [Custom Scenarios →](/docs/guides/custom-scenarios) and the [Atom reference →](/docs/atoms/overview).
+
+## See also
+
+- [Browse & Filter →](/docs/scenarios/browse) — interactive catalogue with kind/tag filters
+- [Scenarios Overview →](/docs/scenarios/overview) — all scenarios described in one page
+- [Atom reference →](/docs/atoms/overview) — the full composable building-block catalogue
+- [Testing Recipes →](/docs/guides/recipes) — copy-paste patterns for common test shapes
