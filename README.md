@@ -653,6 +653,26 @@ npx git-scenarios capture . --json                                      # struct
 npx git-scenarios clean                                                 # remove stale scenario dirs in /tmp
 npx git-scenarios clean --dry-run                                       # preview without removing
 npx git-scenarios clean --older-than 24                                 # only dirs older than 24 hours
+npx git-scenarios completions bash                                      # print bash completion script
+npx git-scenarios completions zsh                                       # print zsh completion script
+npx git-scenarios completions fish                                      # print fish completion script
+```
+
+### Shell completions
+
+Enable TAB-completion for scenario names and flags. Scenario names are resolved dynamically at TAB time so newly added scenarios complete without regenerating.
+
+> Requires a global install: `npm install -g @gfargo/git-scenarios`
+
+```bash
+# bash — add to ~/.bashrc
+eval "$(git-scenarios completions bash)"
+
+# zsh — add to ~/.zshrc
+eval "$(git-scenarios completions zsh)"
+
+# fish — save to fish completions
+git-scenarios completions fish > ~/.config/fish/completions/git-scenarios.fish
 ```
 
 ### Flags
@@ -664,6 +684,7 @@ npx git-scenarios clean --older-than 24                                 # only d
 | `--remote <url>` | Add `origin` pointing at `<url>` so gh-aware tools detect a remote on launch. Pass any gh-shaped URL. Use a real one to render the tool's views with live data; use a fake one to render against an empty / unauthenticated remote (no risk of accidental destructive actions). Without this flag the scenario repo is a bare `git init` with no remote. |
 | `--ephemeral` | Auto-clean the temp dir on CLI exit. Skip for normal use — without `--ephemeral`, the dir persists so you can re-inspect after the launched tool quits. |
 | `--tag <t>` | (`list` only) Filter by tag inclusion. Combine with `--kind` (AND semantics). Example: `git-scenarios list --kind stash --tag untracked`. |
+| `--names` | (`list` only) Print scenario names only, one per line — used by shell completion scripts to resolve names dynamically. Respects `--kind` and `--tag`. |
 | `--name <name>` | (`capture` only) Scenario name (kebab-cased). Defaults to the captured repo's directory name. |
 | `--summary <s>` | (`capture` only) One-line summary for the generated scenario. |
 | `--out <file>` | (`capture` only) Write the generated module to `<file>` instead of stdout. |

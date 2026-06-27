@@ -337,4 +337,56 @@ function runCLI(args: string[]): { stdout: string; stderr: string; status: numbe
       }
     })
   })
+
+  describe('completions', () => {
+    it('bash — emits a valid bash completion script', () => {
+      const { stdout, status } = runCLI(['completions', 'bash'])
+      expect(status).toBe(0)
+      expect(stdout).toContain('complete -F _git_scenarios git-scenarios')
+      expect(stdout).toContain('list --names')
+    })
+
+    it('zsh — emits a valid zsh completion script', () => {
+      const { stdout, status } = runCLI(['completions', 'zsh'])
+      expect(status).toBe(0)
+      expect(stdout).toContain('#compdef git-scenarios')
+      expect(stdout).toContain('list --names')
+    })
+
+    it('fish — emits a valid fish completion script', () => {
+      const { stdout, status } = runCLI(['completions', 'fish'])
+      expect(status).toBe(0)
+      expect(stdout).toContain('complete -c git-scenarios')
+      expect(stdout).toContain('list --names')
+    })
+
+    it('missing shell arg — exits 2 with error', () => {
+      const { status, stderr } = runCLI(['completions'])
+      expect(status).toBe(2)
+      expect(stderr).toMatch(/Missing shell argument/)
+    })
+
+    it('unknown shell — exits 2 with error', () => {
+      const { status, stderr } = runCLI(['completions', 'tcsh'])
+      expect(status).toBe(2)
+      expect(stderr).toMatch(/Unknown shell/)
+    })
+  })
+
+  describe('list --names', () => {
+    it('prints scenario names one per line, no JSON braces', () => {
+      const { stdout, status } = runCLI(['list', '--names'])
+      expect(status).toBe(0)
+      expect(stdout).toContain('feature-pr-ready')
+      expect(stdout).not.toContain('{')
+      expect(stdout).not.toContain('[')
+    })
+
+    it('--names respects --kind filter', () => {
+      const { stdout, status } = runCLI(['list', '--names', '--kind', 'stash'])
+      expect(status).toBe(0)
+      expect(stdout).toContain('stashed-changes')
+      expect(stdout).not.toContain('feature-pr-ready')
+    })
+  })
 })

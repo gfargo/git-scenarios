@@ -129,6 +129,50 @@ npx git-scenarios clean --dry-run
 npx git-scenarios clean --older-than 24
 ```
 
+### `git-scenarios completions <shell>`
+
+Print a shell completion script for `bash`, `zsh`, or `fish`. Scenario names are completed dynamically at TAB time by calling `git-scenarios list --names`, so newly added scenarios complete without regenerating the script.
+
+:::note
+Completions work best when `git-scenarios` is installed globally (`npm install -g @gfargo/git-scenarios`). `npx git-scenarios` won't be completed because `npx` is a different command.
+:::
+
+**bash**
+
+```bash
+# Temporary (current session):
+eval "$(git-scenarios completions bash)"
+
+# Permanent — add to ~/.bashrc or ~/.bash_profile:
+echo 'eval "$(git-scenarios completions bash)"' >> ~/.bashrc
+
+# Or save to a completions directory:
+git-scenarios completions bash > ~/.bash_completion.d/git-scenarios
+```
+
+**zsh**
+
+```bash
+# Temporary (current session):
+eval "$(git-scenarios completions zsh)"
+
+# Permanent — add to ~/.zshrc:
+echo 'eval "$(git-scenarios completions zsh)"' >> ~/.zshrc
+
+# Or save to a directory on your $fpath:
+git-scenarios completions zsh > "${fpath[1]}/_git-scenarios"
+```
+
+**fish**
+
+```fish
+# Temporary (current session):
+git-scenarios completions fish | source
+
+# Permanent — save to fish's completions directory:
+git-scenarios completions fish > ~/.config/fish/completions/git-scenarios.fish
+```
+
 ## Flags
 
 ### List flags
@@ -176,6 +220,12 @@ npx git-scenarios clean --older-than 24
 |---|---|
 | `--dry-run` | List stale dirs without deleting them. |
 | `--older-than <hours>` | Only remove dirs older than N hours (default: 0 = all). |
+
+### List `--names` flag
+
+| Flag | Behavior |
+|---|---|
+| `--names` | Print scenario names only, one per line (no headers, no JSON). Used internally by shell completion scripts to resolve scenario names dynamically. Respects `--kind` and `--tag` filters. |
 
 ## Examples
 

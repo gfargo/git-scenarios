@@ -38,13 +38,14 @@ import {
   normalizeName,
   renderScenarioModule,
 } from '../src/capture'
+import { SUPPORTED_SHELLS, generateCompletion, type CompletionShell } from '../src/completions'
 import { filterScenarios, renderPreview } from '../src/interactive'
 import { findRegistered, listRegistered } from '../src/registry'
 import type { RepoSnapshot } from '../src/snapshot'
 import { createTempGitRepo } from '../src/tempGitRepo'
 
 type ParsedArgs = {
-  command?: 'list' | 'describe' | 'inspect' | 'create' | 'capture' | 'clean' | 'diff' | 'doctor' | 'help'
+  command?: 'list' | 'describe' | 'inspect' | 'create' | 'capture' | 'clean' | 'diff' | 'doctor' | 'completions' | 'help'
   positional: string[]
   flags: Record<string, string | boolean>
 }
@@ -76,7 +77,7 @@ function parseArgs(argv: string[]): ParsedArgs {
         flags[arg.slice(2)] = true
       }
     } else if (!command) {
-      if (arg === 'list' || arg === 'describe' || arg === 'inspect' || arg === 'create' || arg === 'capture' || arg === 'clean' || arg === 'diff' || arg === 'doctor' || arg === 'help') {
+      if (arg === 'list' || arg === 'describe' || arg === 'inspect' || arg === 'create' || arg === 'capture' || arg === 'clean' || arg === 'diff' || arg === 'doctor' || arg === 'completions' || arg === 'help') {
         command = arg
       } else {
         positional.push(arg)
@@ -113,7 +114,7 @@ function printHelp(): void {
     '  Run without arguments (TTY) to open the interactive scenario picker.',
     '',
     '  Usage:',
-    '    git-scenarios list [--kind <k>] [--tag <t>] [--json]',
+    '    git-scenarios list [--kind <k>] [--tag <t>] [--json] [--names]',
     '    git-scenarios describe <name> [--json]',
     '    git-scenarios inspect <name> [--json]',
     '    git-scenarios create <name> [options]',
@@ -121,12 +122,15 @@ function printHelp(): void {
     '    git-scenarios diff <name-a> <name-b> [--json]',
     '    git-scenarios clean [options]',
     '    git-scenarios doctor [--json]',
+    '    git-scenarios completions <bash|zsh|fish>',
     '',
     '  List options:',
     '    --kind <kind>    Filter by kind (branch | worktree | operation |',
     '                     history | stash | submodule)',
     '    --tag <tag>      Filter by tag (e.g. conflict, dirty, upstream)',
     '    --json           Machine-readable JSON output',
+    '    --names          Print scenario names only, one per line (for',
+    '                     shell completion scripts)',
     '',
     '  Describe options:',
     '    --json           Machine-readable JSON output',
@@ -180,14 +184,26 @@ function printHelp(): void {
     '    hard failures (git missing/below minimum, temp dir not writable).',
     '    --json           Machine-readable JSON output',
     '',
+    '  Completions:',
+    '    Print a shell completion script to stdout. Pipe into your shell\'s',
+    '    eval or save to a completions directory:',
+    '      bash:  eval "$(git-scenarios completions bash)"',
+    '      zsh:   eval "$(git-scenarios completions zsh)"',
+    '      fish:  git-scenarios completions fish | source',
+    '',
     `  Available scenarios (${listRegistered().length}):`,
     ...listRegistered().map((s) => `    ${s.name.padEnd(28)} ${s.summary}`),
     '',
   ].join('\n'))
 }
 
-function commandList(options: { kind?: string; tag?: string; json?: boolean }): number {
+function commandList(options: { kind?: string; tag?: string; json?: boolean; names?: boolean }): number {
   const scenarios = applyFilters(listRegistered(), options)
+
+  if (options.names) {
+    console.log(scenarios.map((s) => s.name).join('\n'))
+    return 0
+  }
 
   if (options.json) {
     const payload = scenarios.map((s) => ({
@@ -732,6 +748,17 @@ async function commandCapture(
   return 0
 }
 
+function commandCompletions(shell: string): number {
+  if (!(SUPPORTED_SHELLS as readonly string[]).includes(shell)) {
+    console.error(
+      `Unknown shell "${shell}". Expected one of: ${SUPPORTED_SHELLS.join(', ')}.`,
+    )
+    return 2
+  }
+  console.log(generateCompletion(shell as CompletionShell))
+  return 0
+}
+
 /**
  * Find and remove stale git-scenarios temp directories AND cached
  * scenario templates.
@@ -1159,6 +1186,7 @@ async function main(): Promise<number> {
       kind: typeof flags.kind === 'string' ? flags.kind : undefined,
       tag: typeof flags.tag === 'string' ? flags.tag : undefined,
       json: Boolean(flags.json),
+      names: Boolean(flags.names),
     })
   }
 
@@ -1210,6 +1238,15 @@ async function main(): Promise<number> {
 
   if (command === 'doctor') {
     return commandDoctor({ json: Boolean(flags.json) })
+  }
+
+  if (command === 'completions') {
+    const shell = positional[0]
+    if (!shell) {
+      console.error(`Missing shell argument. Expected one of: ${SUPPORTED_SHELLS.join(', ')}.`)
+      return 2
+    }
+    return commandCompletions(shell)
   }
 
   if (command === 'create') {
