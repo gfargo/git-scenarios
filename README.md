@@ -545,6 +545,8 @@ npx git-scenarios describe feature-pr-ready                             # one-sc
 npx git-scenarios describe feature-pr-ready --json                      # machine-readable
 npx git-scenarios inspect feature-pr-ready                              # graph + branches + status, no files kept
 npx git-scenarios inspect feature-pr-ready --json                      # machine-readable
+npx git-scenarios diff feature-pr-ready mid-merge-conflict              # compare two scenarios' shapes
+npx git-scenarios diff feature-pr-ready mid-merge-conflict --json       # machine-readable comparison
 npx git-scenarios create feature-pr-ready                               # materialize in /tmp
 npx git-scenarios create feature-pr-ready --path ~/sandbox/widget       # custom location
 npx git-scenarios create feature-pr-ready --run "lazygit"               # launch any tool against it
@@ -571,7 +573,7 @@ npx git-scenarios clean --older-than 24                                 # only d
 | `--summary <s>` | (`capture` only) One-line summary for the generated scenario. |
 | `--out <file>` | (`capture` only) Write the generated module to `<file>` instead of stdout. |
 | `--kind <k>` | (`list` and `capture`) `list`: filter by scenario kind (`branch`, `worktree`, `operation`, `history`, `stash`, `submodule`). `capture`: override the inferred kind. |
-| `--json` | (`list`, `describe`, `inspect`, `capture`) Emit machine-readable JSON. List → `name`/`summary`/`kind`/`tags`/`contracts`; `inspect` → `graph`/`branches`/`status`; `capture` → the structured shape (file contents omitted). |
+| `--json` | (`list`, `describe`, `inspect`, `diff`, `capture`) Emit machine-readable JSON. List → `name`/`summary`/`kind`/`tags`/`contracts`; `inspect` → `graph`/`branches`/`status`; `diff` → `{ a, b, same, differences }`; `capture` → the structured shape (file contents omitted). |
 
 ### Capturing a real repo
 

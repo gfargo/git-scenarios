@@ -171,6 +171,48 @@ function runCLI(args: string[]): { stdout: string; stderr: string; status: numbe
     })
   })
 
+  describe('diff', () => {
+    it('compares two scenarios in human-readable format', () => {
+      const { stdout, status } = runCLI(['diff', 'feature-pr-ready', 'mid-merge-conflict'])
+      expect(status).toBe(0)
+      expect(stdout).toContain('feature-pr-ready')
+      expect(stdout).toContain('mid-merge-conflict')
+      expect(stdout).toContain('Branch')
+      expect(stdout).toContain('Commits')
+    }, 30_000)
+
+    it('--json emits structured side-by-side comparison', () => {
+      const { stdout, status } = runCLI(['diff', 'feature-pr-ready', 'merge-no-conflict', '--json'])
+      expect(status).toBe(0)
+      const data = JSON.parse(stdout)
+      expect(data.a.name).toBe('feature-pr-ready')
+      expect(data.b.name).toBe('merge-no-conflict')
+      expect(Array.isArray(data.differences)).toBe(true)
+      expect(typeof data.same).toBe('boolean')
+      expect(data.same).toBe(false)
+    }, 30_000)
+
+    it('same scenario twice reports no differences', () => {
+      const { stdout, status } = runCLI(['diff', 'empty-repo', 'empty-repo', '--json'])
+      expect(status).toBe(0)
+      const data = JSON.parse(stdout)
+      expect(data.same).toBe(true)
+      expect(data.differences).toHaveLength(0)
+    }, 30_000)
+
+    it('errors on unknown scenario', () => {
+      const { status, stderr } = runCLI(['diff', 'feature-pr-ready', 'totally-fake-xyz'])
+      expect(status).toBe(2)
+      expect(stderr).toMatch(/Unknown scenario/)
+    })
+
+    it('errors on missing second argument', () => {
+      const { status, stderr } = runCLI(['diff', 'feature-pr-ready'])
+      expect(status).toBe(2)
+      expect(stderr).toContain('Missing scenario')
+    })
+  })
+
   describe('capture', () => {
     it('emits a defineScenario module for a real repo', () => {
       const dir = makeRepo()
