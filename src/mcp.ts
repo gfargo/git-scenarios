@@ -16,8 +16,6 @@
  */
 
 import { rmSync } from 'fs'
-import { tmpdir } from 'os'
-import { join } from 'path'
 import { simpleGit } from 'simple-git'
 import { z } from 'zod'
 
@@ -51,9 +49,11 @@ process.on('exit', () => {
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
 function isTempScenarioPath(p: string): boolean {
-  // Only clean paths that look like our temp dirs.
-  const base = tmpdir()
-  return p.startsWith(join(base, 'git-scenarios-'))
+  // Accept paths whose last segment starts with 'git-scenarios-'.
+  // This covers /tmp/git-scenarios-XXXX (macOS /tmp symlink) and
+  // /var/folders/.../git-scenarios-XXXX (macOS os.tmpdir) alike.
+  const segment = p.split('/').filter(Boolean).pop() ?? ''
+  return segment.startsWith('git-scenarios-')
 }
 
 // ── Server factory ──────────────────────────────────────────────────────────
