@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782573514746,
+  "lastUpdate": 1782690860626,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -272,6 +272,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7119.19,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2057a549fa9fd53a05debf0c8306977f96d94ed7",
+          "message": "feat(scenarios): add installed-hooks, commits-with-notes, and mixed-tags scenarios (#73)\n\n* feat(scenarios): add installed-hooks, commits-with-notes, and mixed-tags scenarios\n\nThree new deterministic metadata scenarios with co-located contract tests:\n\n- installed-hooks (worktree): pre-commit and commit-msg hooks installed\n  and executable; hooks added after setup commits to avoid blocking setup\n- commits-with-notes (history): two commits with git notes in\n  refs/notes/commits; first commit also annotated in refs/notes/ci\n- mixed-tags (history): lightweight tag (v0.1.0), annotated tag object\n  (v1.0.0), and a tree-pointing tag (tree-snapshot)\n\nAll registered in the scenario index; README and docs updated (35 → 38).\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\n\n* docs(scenarios): add missing detail sections for commits-with-notes, mixed-tags, installed-hooks\n\nAdd per-scenario detail page entries that were skipped in the initial PR:\n- history.md: commits-with-notes and mixed-tags sections\n- worktree-stash.md: installed-hooks section\n\nEach entry follows the existing concise format: one-line description,\nContracts list, and a usefulness note.\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>\nCo-authored-by: Claude Sonnet 4.6 <noreply@anthropic.com>",
+          "timestamp": "2026-06-28T16:53:01-07:00",
+          "tree_id": "7a2e2be7044a79bf4f47e7a0905c042e4c9ee770",
+          "url": "https://github.com/gfargo/git-scenarios/commit/2057a549fa9fd53a05debf0c8306977f96d94ed7"
+        },
+        "date": 1782690860364,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 166.14,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 930.9,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7054.53,
             "unit": "ms"
           }
         ]
