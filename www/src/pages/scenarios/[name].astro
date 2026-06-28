@@ -1,0 +1,428 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import scenarios from '../../data/scenarios.json'
+
+export function getStaticPaths() {
+  return scenarios.map((s) => ({
+    params: { name: s.name },
+    props: { scenario: s },
+  }))
+}
+
+type Scenario = (typeof scenarios)[number]
+const { scenario: s } = Astro.props as { scenario: Scenario }
+
+const libSnippet = `import { spinUpScenario } from '@gfargo/git-scenarios'
+
+const repo = await spinUpScenario('${s.name}')`
+
+const cliSnippet = `npx git-scenarios create ${s.name}`
+
+const jestSnippet = `import { describeWithScenario } from '@gfargo/git-scenarios/jest'
+
+describeWithScenario('${s.name}', (getRepo) => {
+  it('should have the expected state', async () => {
+    const repo = getRepo()
+    // your assertions here
+  })
+})`
+---
+
+<StarlightPage
+  frontmatter={{
+    title: s.name,
+    description: s.summary,
+    tableOfContents: false,
+  }}
+>
+  <div class="sp-header">
+    <span class={`sp-kind kind-${s.kind}`}>{s.kind}</span>
+    <p class="sp-summary">{s.summary}</p>
+  </div>
+
+  {s.description && (
+    <section class="sp-section">
+      <h2 class="sp-section-label">Description</h2>
+      <pre class="sp-description">{s.description}</pre>
+    </section>
+  )}
+
+  {(s.contracts ?? []).length > 0 && (
+    <section class="sp-section">
+      <h2 class="sp-section-label">Contracts</h2>
+      <ul class="sp-contracts">
+        {(s.contracts ?? []).map((c) => <li>{c}</li>)}
+      </ul>
+    </section>
+  )}
+
+  {(s.tags ?? []).length > 0 && (
+    <section class="sp-section">
+      <h2 class="sp-section-label">Tags</h2>
+      <div class="sp-tags">
+        {(s.tags ?? []).map((t) => <span class="sp-tag">{t}</span>)}
+      </div>
+    </section>
+  )}
+
+  {(s.branches ?? []).length > 0 && (
+    <section class="sp-section">
+      <h2 class="sp-section-label">Branches</h2>
+      <div class="sp-branches">
+        {(s.branches ?? []).map((b) => <code class="sp-branch">{b}</code>)}
+      </div>
+    </section>
+  )}
+
+  <section class="sp-section">
+    <h2 class="sp-section-label">Use it</h2>
+    <div class="sp-tabs" role="tablist">
+      <button class="sp-tab active" data-tab="lib" role="tab" aria-selected="true">Library</button>
+      <button class="sp-tab" data-tab="cli" role="tab" aria-selected="false">CLI</button>
+      <button class="sp-tab" data-tab="jest" role="tab" aria-selected="false">Jest</button>
+    </div>
+    <div class="sp-tab-panels">
+      <div class="sp-tab-panel" data-panel="lib">
+        <pre class="sp-code"><code>{libSnippet}</code></pre>
+        <button class="sp-copy" data-copy={libSnippet}>Copy</button>
+      </div>
+      <div class="sp-tab-panel" data-panel="cli" hidden>
+        <pre class="sp-code"><code>{cliSnippet}</code></pre>
+        <button class="sp-copy" data-copy={cliSnippet}>Copy</button>
+      </div>
+      <div class="sp-tab-panel" data-panel="jest" hidden>
+        <pre class="sp-code"><code>{jestSnippet}</code></pre>
+        <button class="sp-copy" data-copy={jestSnippet}>Copy</button>
+      </div>
+    </div>
+  </section>
+
+  {(s.graph ?? []).length > 0 ? (
+    <section class="sp-section">
+      <h2 class="sp-section-label">Commit graph</h2>
+      <pre class="sp-graph"><code>{(s.graph ?? []).join('\n')}</code></pre>
+    </section>
+  ) : (
+    <section class="sp-section">
+      <h2 class="sp-section-label">Commit graph</h2>
+      <p class="sp-empty-graph">No commits — this scenario starts with an unborn HEAD.</p>
+    </section>
+  )}
+
+  <p class="sp-back">
+    ← <a href="/docs/scenarios/browse">Back to Scenario Browser</a>
+  </p>
+</StarlightPage>
+
+<style>
+  .sp-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .sp-kind {
+    font-family: var(--gs-mono);
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    padding: 0.2rem 0.55rem;
+    border-radius: 2px;
+    border: 1px solid currentColor;
+    line-height: 1.4;
+    display: inline-block;
+    align-self: flex-start;
+  }
+
+  .kind-branch    { color: var(--gs-cyan);      }
+  .kind-worktree  { color: var(--gs-cyan-dim);  }
+  .kind-operation { color: var(--gs-vermilion); }
+  .kind-history   { color: var(--gs-amber);     }
+  .kind-stash     { color: var(--gs-graphite);  }
+  .kind-submodule { color: var(--gs-graphite);  }
+
+  .sp-summary {
+    font-family: var(--gs-body);
+    font-size: 1.05rem;
+    color: var(--sl-color-gray-2);
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  .sp-section {
+    margin: 2rem 0;
+  }
+
+  .sp-section-label {
+    font-family: var(--gs-mono) !important;
+    font-size: 0.62rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--gs-cyan) !important;
+    margin: 0 0 0.75rem !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  /* override the numbered-circle h2 style from custom.css */
+  .sp-section-label::before {
+    display: none !important;
+  }
+
+  .sp-description {
+    font-family: var(--gs-mono);
+    font-size: 0.84rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    color: var(--sl-color-gray-2);
+    margin: 0;
+    padding: 1rem 1.1rem;
+    background: var(--gs-surface);
+    border: 1px solid var(--gs-rule);
+    border-left: 2px solid var(--gs-cyan);
+    border-radius: 2px;
+  }
+
+  .sp-contracts {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .sp-contracts li {
+    font-family: var(--gs-mono);
+    font-size: 0.84rem;
+    color: var(--sl-color-gray-2);
+    padding-left: 1.4rem !important;
+    position: relative;
+    margin: 0 !important;
+  }
+
+  .sp-contracts li::before {
+    content: '✓' !important;
+    position: absolute;
+    left: 0;
+    color: var(--gs-cyan) !important;
+    font-size: 0.85em !important;
+    opacity: 0.8;
+  }
+
+  .sp-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .sp-tag {
+    font-family: var(--gs-mono);
+    font-size: 0.74rem;
+    color: var(--sl-color-gray-3);
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    border: 1px solid var(--gs-rule);
+  }
+
+  .sp-tag::before {
+    content: '#';
+    opacity: 0.55;
+    margin-right: 0.1ch;
+  }
+
+  .sp-branches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .sp-branch {
+    font-family: var(--gs-mono);
+    font-size: 0.8rem;
+    padding: 0.2rem 0.55rem;
+    background: var(--gs-surface);
+    border: 1px solid var(--gs-rule);
+    border-radius: 2px;
+    color: var(--gs-amber);
+  }
+
+  /* ─── Snippet tabs ─── */
+  .sp-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--gs-rule);
+    margin-bottom: 0;
+  }
+
+  .sp-tab {
+    appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    border-bottom: none;
+    color: var(--sl-color-gray-3);
+    font-family: var(--gs-mono);
+    font-size: 0.74rem;
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+    border-radius: 2px 2px 0 0;
+    transition: color 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+    position: relative;
+    bottom: -1px;
+  }
+
+  .sp-tab:hover {
+    color: var(--gs-cyan);
+  }
+
+  .sp-tab.active {
+    color: var(--gs-cyan);
+    border-color: var(--gs-rule);
+    border-bottom-color: var(--gs-surface);
+    background: var(--gs-surface);
+  }
+
+  .sp-tab-panels {
+    border: 1px solid var(--gs-rule);
+    border-top: none;
+    border-radius: 0 0 2px 2px;
+    padding: 1rem 1.1rem 0.75rem;
+    background: var(--gs-surface);
+    position: relative;
+  }
+
+  .sp-code {
+    margin: 0 0 0.75rem !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    font-family: var(--gs-mono);
+    font-size: 0.82rem;
+    line-height: 1.55;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .sp-code code {
+    font-family: var(--gs-mono);
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: var(--sl-color-gray-1);
+    white-space: pre;
+  }
+
+  .sp-copy {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--gs-rule);
+    color: var(--sl-color-gray-3);
+    font-family: var(--gs-mono);
+    font-size: 0.68rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: color 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+  }
+
+  .sp-copy::before {
+    content: '⌘ ';
+    opacity: 0.7;
+  }
+
+  .sp-copy:hover {
+    color: var(--gs-cyan);
+    border-color: var(--gs-cyan);
+    background: var(--gs-cyan-low);
+  }
+
+  .sp-copy.copied {
+    color: var(--gs-paper);
+    background: var(--gs-cyan);
+    border-color: var(--gs-cyan);
+  }
+
+  /* ─── Git graph ─── */
+  .sp-graph {
+    margin: 0 !important;
+    padding: 0.8rem 1rem !important;
+    background: var(--gs-paper) !important;
+    border: 1px solid var(--gs-rule) !important;
+    border-left: 2px solid var(--gs-amber) !important;
+    border-radius: 2px;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .sp-graph code {
+    font-family: var(--gs-mono);
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: var(--sl-color-gray-1);
+    background: transparent;
+    border: none;
+    padding: 0;
+    white-space: pre;
+  }
+
+  .sp-empty-graph {
+    font-family: var(--gs-mono);
+    font-size: 0.82rem;
+    color: var(--sl-color-gray-3);
+    font-style: italic;
+    margin: 0;
+    padding: 0.6rem 0;
+  }
+
+  .sp-back {
+    margin-top: 2.5rem;
+    font-family: var(--gs-mono);
+    font-size: 0.8rem;
+    color: var(--sl-color-gray-3);
+  }
+
+  .sp-back a {
+    color: var(--gs-cyan);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>
+
+<script>
+  // ─── Tab switching ───
+  const tabBtns = document.querySelectorAll<HTMLButtonElement>('.sp-tab')
+  const tabPanels = document.querySelectorAll<HTMLElement>('.sp-tab-panel')
+
+  for (const btn of tabBtns) {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab
+      for (const b of tabBtns) {
+        b.classList.toggle('active', b === btn)
+        b.setAttribute('aria-selected', String(b === btn))
+      }
+      for (const panel of tabPanels) {
+        panel.hidden = panel.dataset.panel !== target
+      }
+    })
+  }
+
+  // ─── Copy buttons ───
+  for (const btn of document.querySelectorAll<HTMLButtonElement>('.sp-copy')) {
+    btn.addEventListener('click', async () => {
+      const payload = btn.dataset.copy ?? ''
+      try {
+        await navigator.clipboard.writeText(payload)
+        const orig = btn.textContent
+        btn.textContent = 'Copied!'
+        btn.classList.add('copied')
+        setTimeout(() => {
+          btn.textContent = orig
+          btn.classList.remove('copied')
+        }, 1200)
+      } catch {
+        // clipboard unavailable — silent fail
+      }
+    })
+  }
+</script>
