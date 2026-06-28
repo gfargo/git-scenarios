@@ -87,6 +87,19 @@ Both entries are reachable via plumbing (`git show HEAD:src/File.ts`, `git show 
 
 Useful for testing case-collision detection, warnings about case-insensitive FS risk, and `git ls-tree` output parsing.
 
+## `installed-hooks`
+
+A clean repo with `pre-commit` and `commit-msg` hooks installed in `.git/hooks/` and marked executable. Both scripts exit 0, keeping the repo committable; the scenario covers hook *presence* and *permissions*, not enforcement behaviour.
+
+**Contracts:**
+- `main` is checked out
+- `main` has 2 commits
+- `.git/hooks/pre-commit` exists and is executable
+- `.git/hooks/commit-msg` exists and is executable
+- Worktree is clean
+
+Useful for testing hook detection, UI indicators showing hooks are active, and tools that offer to bypass hooks with `--no-verify`.
+
 ## `stashed-changes`
 
 Clean `main` + 3 stashes (LIFO ordered, each touching a distinct file). For testing stash list views and pop/apply/drop flows.

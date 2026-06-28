@@ -573,7 +573,7 @@ git-scenarios/
 
 ## Available scenarios
 
-Run `git-scenarios list` for the live list. Current set (**40 scenarios across 6 kinds**):
+Run `git-scenarios list` for the live list. Current set (**46 scenarios across 6 kinds**):
 
 | Name | Kind | What you get |
 |---|---|---|
@@ -598,6 +598,7 @@ Run `git-scenarios list` for the live list. Current set (**40 scenarios across 6
 | `monorepo-multi-package` | worktree | workspaces monorepo: app (clean), lib (staged), cli (unstaged) |
 | `dirty-many-files` | worktree | 12 staged + 6 unstaged + 3 untracked files across `src/`, `tests/`, `docs/` |
 | `multiple-worktrees` | worktree | primary worktree on `main` + 3 linked worktrees on `feat/alpha`, `feat/beta`, `hotfix/urgent` |
+| `locked-worktree` | worktree | one linked worktree locked via `git worktree lock` — appears in `git worktree list` with a `locked` annotation and resists removal without `--force` |
 | `mid-bisect` | operation | 20 commits + active `git bisect`, HEAD at midpoint |
 | `mid-merge-conflict` | operation | in-progress merge with 1 unresolved conflict on `src/widget.ts` |
 | `mid-rebase-conflict` | operation | in-progress rebase with 1 unresolved conflict on `src/config.ts` |
@@ -606,6 +607,7 @@ Run `git-scenarios list` for the live list. Current set (**40 scenarios across 6
 | `merge-conflict-rename-rename` | operation | in-progress merge with a rename/rename conflict: `orig.txt` renamed to two different names; both renamed files exist in the worktree with no conflict markers |
 | `merge-conflict-delete-modify` | operation | in-progress merge with a delete/modify conflict: `src/component.ts` deleted on `main`, modified on `feat/x`; modified version left in worktree with no conflict markers |
 | `merge-conflict-add-add` | operation | in-progress merge with an add/add conflict: `src/config.ts` independently added on both branches with different content; has unresolved conflict markers |
+| `interactive-rebase-mid-edit` | operation | mid-interactive-rebase stopped at the first commit marked `edit`; two picks remain in `.git/rebase-merge/git-rebase-todo` |
 | `merge-no-conflict` | history | a successful `--no-ff` merge of `feat/x` into `main`, fully committed (2-parent commit at HEAD) |
 | `rich-history-graph` | history | 20+ commits across 6 date buckets, 2 `--no-ff` merges, 1 live unmerged `feat/wip` |
 | `chip-rendering-showcase` | history | 6 commits each carrying a different branch-tip-chip kind (HEAD, local, slashy, remote, upstream, tag) |
@@ -614,9 +616,13 @@ Run `git-scenarios list` for the live list. Current set (**40 scenarios across 6
 | `stashed-changes` | stash | clean `main` + 3 stashes (LIFO ordered, each touching a distinct file) |
 | `stash-with-untracked` | stash | one stash containing both modified tracked + untracked new files |
 | `submodule-with-history` | submodule | parent with 4 commits + `vendor/lib` submodule (clean pin, 4 commits, `branch = main`) |
+| `out-of-date-submodule` | submodule | parent repo whose pinned submodule SHA (`vendor/lib`) is one commit behind the submodule's HEAD — `git submodule status` shows `+` for `vendor/lib` |
 | `git-lfs-pointer` | worktree | repo with a Git LFS pointer file committed for a binary asset — no `git-lfs` binary required; pointer format and `.gitattributes` rules are testable everywhere |
 | `crlf-normalization` | worktree | `.gitattributes` with `* text=auto eol=lf` normalising all text files; documents Windows `core.autocrlf` override and LF-in-object-store behaviour |
 | `case-collision` | worktree | git history holds `src/File.ts` and `src/file.ts` — a case-only collision that silently loses data when checked out on macOS or Windows (case-insensitive FS) |
+| `installed-hooks` | worktree | repo with `pre-commit` and `commit-msg` hooks installed and marked executable — for testing hook detection and `--no-verify` bypass flows |
+| `commits-with-notes` | history | 2 commits each annotated with git notes; first commit also has a note in a second namespace (`refs/notes/ci`) — for testing note-aware log and annotation tools |
+| `mixed-tags` | history | lightweight tag (`v0.1.0`), annotated tag object (`v1.0.0`), and a tag pointing at a tree (`tree-snapshot`) — for testing tag-type detection and non-commit tag handling |
 
 `git-scenarios describe <name>` prints the full description and the
 contract assertions for a single scenario.

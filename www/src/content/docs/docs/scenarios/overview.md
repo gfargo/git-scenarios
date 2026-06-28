@@ -41,7 +41,7 @@ Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, o
 | `mid-revert-conflict` | In-progress revert with 1 conflict on `src/service.ts`. |
 | `interactive-rebase-mid-edit` | Interactive rebase paused at an `edit` action; 2 picks remain. |
 
-### History (5 scenarios)
+### History (7 scenarios)
 
 | Name | What you get |
 |---|---|
@@ -50,6 +50,8 @@ Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, o
 | `chip-rendering-showcase` | 6 commits with different ref-chip kinds (HEAD, local, remote, tag). |
 | `shallow-clone` | 10 commits but only 4 reachable (`.git/shallow` set). |
 | `large-repo` | 115 commits across 3 branches with 3 tags. |
+| `commits-with-notes` | 2 commits with git notes; first commit also has a note in `refs/notes/ci`. |
+| `mixed-tags` | Lightweight (`v0.1.0`), annotated (`v1.0.0`), and tree-pointing (`tree-snapshot`) tags. |
 
 ### Worktree (9 scenarios)
 
@@ -64,6 +66,7 @@ Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, o
 | `git-lfs-pointer` | LFS pointer file committed for a binary asset — no `git-lfs` binary required. |
 | `crlf-normalization` | `.gitattributes` with `text=auto eol=lf` normalising all text files. |
 | `case-collision` | git history holds `src/File.ts` and `src/file.ts` — a case-only collision visible on case-insensitive FS. |
+| `installed-hooks` | `pre-commit` and `commit-msg` hooks installed and executable — for testing hook detection and `--no-verify` flows. |
 
 ### Stash (2 scenarios)
 
