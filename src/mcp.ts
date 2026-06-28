@@ -16,6 +16,7 @@
  */
 
 import { rmSync } from 'fs'
+import { basename } from 'path'
 import { simpleGit } from 'simple-git'
 import { z } from 'zod'
 
@@ -52,7 +53,7 @@ function isTempScenarioPath(p: string): boolean {
   // Accept paths whose last segment starts with 'git-scenarios-'.
   // This covers /tmp/git-scenarios-XXXX (macOS /tmp symlink) and
   // /var/folders/.../git-scenarios-XXXX (macOS os.tmpdir) alike.
-  const segment = p.split('/').filter(Boolean).pop() ?? ''
+  const segment = basename(p)
   return segment.startsWith('git-scenarios-')
 }
 
@@ -287,7 +288,7 @@ export function createMcpServer(): McpServer {
         }
       }
 
-      const defaultName = repoPath.split('/').filter(Boolean).pop() ?? 'captured'
+      const defaultName = basename(repoPath) || 'captured'
       const scenarioName = name ?? defaultName
 
       const state = await gatherRepoState(git, repoPath)
