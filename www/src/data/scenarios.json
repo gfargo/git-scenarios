@@ -18,7 +18,8 @@
       "no stashes"
     ],
     "graph": [],
-    "branches": []
+    "branches": [],
+    "commits": []
   },
   {
     "name": "feature-pr-ready",
@@ -49,6 +50,83 @@
     "branches": [
       "feat/widget-v2",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "0d92e8f06ea29711d41b600f124e228b9e2a08b9",
+        "short": "0d92e8f",
+        "parents": [
+          "7e06c32b61ab90d187cdb63e3a18b1ffa1ac9b6e"
+        ],
+        "refs": "HEAD -> feat/widget-v2",
+        "subject": "docs: document widget-v2 API and migration path",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:06:00Z"
+      },
+      {
+        "hash": "7e06c32b61ab90d187cdb63e3a18b1ffa1ac9b6e",
+        "short": "7e06c32",
+        "parents": [
+          "4a4ba62014055bd99851661fa7c7f032f046f361"
+        ],
+        "refs": "",
+        "subject": "test: cover widget-v2 happy path and edge cases",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:05:00Z"
+      },
+      {
+        "hash": "4a4ba62014055bd99851661fa7c7f032f046f361",
+        "short": "4a4ba62",
+        "parents": [
+          "7ef2a30563e4d0d50197d355f32a940f358d9776"
+        ],
+        "refs": "",
+        "subject": "feat: expose widget-v2 from public index",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:04:00Z"
+      },
+      {
+        "hash": "7ef2a30563e4d0d50197d355f32a940f358d9776",
+        "short": "7ef2a30",
+        "parents": [
+          "8f8c1d3fcc19b37e4e204ad0bdc7a19487f00c1c"
+        ],
+        "refs": "",
+        "subject": "feat: add widget-v2 entry point and types",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:03:00Z"
+      },
+      {
+        "hash": "8f8c1d3fcc19b37e4e204ad0bdc7a19487f00c1c",
+        "short": "8f8c1d3",
+        "parents": [
+          "337797845ca856bde87fe41eac619c8129c19a8e"
+        ],
+        "refs": "main",
+        "subject": "test: add baseline widget tests",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "337797845ca856bde87fe41eac619c8129c19a8e",
+        "short": "3377978",
+        "parents": [
+          "51d305ea771ce702e02d9fe93d7af69f43963786"
+        ],
+        "refs": "",
+        "subject": "feat: scaffold widget module",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "51d305ea771ce702e02d9fe93d7af69f43963786",
+        "short": "51d305e",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial commit",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -75,6 +153,28 @@
     "branches": [
       "feat/x",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "7d4e915006c61bd22fd6d40113d7b3523e13f8e8",
+        "short": "7d4e915",
+        "parents": [
+          "26c2b1edb232a538ee12c33944346e53448a2fb5"
+        ],
+        "refs": "HEAD -> feat/x",
+        "subject": "feat: add feature module",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "26c2b1edb232a538ee12c33944346e53448a2fb5",
+        "short": "26c2b1e",
+        "parents": [],
+        "refs": "main",
+        "subject": "chore: initial commit",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -108,6 +208,116 @@
     "branches": [
       "feat/dashboard",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "7e70f15d1d413b0edbed1f377fdf30da57bf7c14",
+        "short": "7e70f15",
+        "parents": [
+          "8dc878e63e3630eca87f575b5886d317c73f9437"
+        ],
+        "refs": "HEAD -> feat/dashboard",
+        "subject": "feat: add dashboard export-to-csv action",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:09:00Z"
+      },
+      {
+        "hash": "8dc878e63e3630eca87f575b5886d317c73f9437",
+        "short": "8dc878e",
+        "parents": [
+          "e65142a06d608c7cc3a746b617c7efaf43d09681"
+        ],
+        "refs": "",
+        "subject": "chore: bump dev dependencies",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:08:00Z"
+      },
+      {
+        "hash": "e65142a06d608c7cc3a746b617c7efaf43d09681",
+        "short": "e65142a",
+        "parents": [
+          "a1f5fd4edaa8acf390dfbc553699ec1290559d6e"
+        ],
+        "refs": "",
+        "subject": "docs: document dashboard configuration",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:07:00Z"
+      },
+      {
+        "hash": "a1f5fd4edaa8acf390dfbc553699ec1290559d6e",
+        "short": "a1f5fd4",
+        "parents": [
+          "d1545d76800ad58bae0aad550984c355cf1801ee"
+        ],
+        "refs": "",
+        "subject": "refactor: extract dashboard data-fetch into hook",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:06:00Z"
+      },
+      {
+        "hash": "d1545d76800ad58bae0aad550984c355cf1801ee",
+        "short": "d1545d7",
+        "parents": [
+          "0448e2b791eac3203dd49888b3a8f4c7df6752bd"
+        ],
+        "refs": "",
+        "subject": "fix: dashboard refresh interval respects user setting",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:05:00Z"
+      },
+      {
+        "hash": "0448e2b791eac3203dd49888b3a8f4c7df6752bd",
+        "short": "0448e2b",
+        "parents": [
+          "60ff18b8c8edbd7ccbd124ad1094f78efd6e3d84"
+        ],
+        "refs": "",
+        "subject": "test: cover dashboard reducer",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:04:00Z"
+      },
+      {
+        "hash": "60ff18b8c8edbd7ccbd124ad1094f78efd6e3d84",
+        "short": "60ff18b",
+        "parents": [
+          "a6e44d1edb4411b8554d6ed8c2755d8484540812"
+        ],
+        "refs": "",
+        "subject": "feat: wire dashboard to data source",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:03:00Z"
+      },
+      {
+        "hash": "a6e44d1edb4411b8554d6ed8c2755d8484540812",
+        "short": "a6e44d1",
+        "parents": [
+          "5c57eab768ae7a37a68f54e777244e9439c9a865"
+        ],
+        "refs": "",
+        "subject": "feat: add dashboard layout",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "5c57eab768ae7a37a68f54e777244e9439c9a865",
+        "short": "5c57eab",
+        "parents": [
+          "36b092a68754fb8ac897a40d66c8f467b85a6559"
+        ],
+        "refs": "main",
+        "subject": "chore: baseline app shell",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "36b092a68754fb8ac897a40d66c8f467b85a6559",
+        "short": "36b092a",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial scaffold",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -132,6 +342,28 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "7d4e915006c61bd22fd6d40113d7b3523e13f8e8",
+        "short": "7d4e915",
+        "parents": [
+          "26c2b1edb232a538ee12c33944346e53448a2fb5"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "feat: add feature module",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "26c2b1edb232a538ee12c33944346e53448a2fb5",
+        "short": "26c2b1e",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial commit",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -158,6 +390,37 @@
     "branches": [
       "gh-pages",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "089593555bf4f6bf49a05c78aaeee9927c7658cc",
+        "short": "0895935",
+        "parents": [],
+        "refs": "HEAD -> gh-pages",
+        "subject": "docs: scaffold gh-pages site",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "d0a705b5e71dbbd1471b581262110e94bb4eb14d",
+        "short": "d0a705b",
+        "parents": [
+          "3e7cbf7715d2b0c1bf05e7b000fe24292c91ecfd"
+        ],
+        "refs": "main",
+        "subject": "feat: add module",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "3e7cbf7715d2b0c1bf05e7b000fe24292c91ecfd",
+        "short": "3e7cbf7",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial commit",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -186,6 +449,39 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "6e30e6b910e10f31351dc46ec9cd49a54abce685",
+        "short": "6e30e6b",
+        "parents": [
+          "c9e8aeaf0260c09fd11d8c5aa60e46606fb83418"
+        ],
+        "refs": "HEAD -> main, origin/main",
+        "subject": "feat: two",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "c9e8aeaf0260c09fd11d8c5aa60e46606fb83418",
+        "short": "c9e8aea",
+        "parents": [
+          "7520170eb4e1af452c3e0a887787823c59e67920"
+        ],
+        "refs": "",
+        "subject": "feat: one",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "7520170eb4e1af452c3e0a887787823c59e67920",
+        "short": "7520170",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -216,6 +512,72 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "e27a9c8ebd6d75a063260ee318312aae66ade879",
+        "short": "e27a9c8",
+        "parents": [
+          "afb7f7169e7ffabfa505768ec96685524ef0c5c1"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "feat: ahead three",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:05:00Z"
+      },
+      {
+        "hash": "afb7f7169e7ffabfa505768ec96685524ef0c5c1",
+        "short": "afb7f71",
+        "parents": [
+          "a2b606681186d94d9d613bda7602d58c4aa11bf4"
+        ],
+        "refs": "",
+        "subject": "feat: ahead two",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:04:00Z"
+      },
+      {
+        "hash": "a2b606681186d94d9d613bda7602d58c4aa11bf4",
+        "short": "a2b6066",
+        "parents": [
+          "0d8eaf9df298b48c7506a44afe6d7c114e05ff7e"
+        ],
+        "refs": "",
+        "subject": "feat: ahead one",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:03:00Z"
+      },
+      {
+        "hash": "0d8eaf9df298b48c7506a44afe6d7c114e05ff7e",
+        "short": "0d8eaf9",
+        "parents": [
+          "f2690692fe96f66898c8f04cc16b18e98bd9ca5f"
+        ],
+        "refs": "origin/main",
+        "subject": "feat: baseline two",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "f2690692fe96f66898c8f04cc16b18e98bd9ca5f",
+        "short": "f269069",
+        "parents": [
+          "7520170eb4e1af452c3e0a887787823c59e67920"
+        ],
+        "refs": "",
+        "subject": "feat: baseline one",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "7520170eb4e1af452c3e0a887787823c59e67920",
+        "short": "7520170",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -246,6 +608,61 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "2237af0bc74f39d4faf1ed7068a2ee55fc982ef0",
+        "short": "2237af0",
+        "parents": [
+          "0890736b2e64e9b24eecba56e40d12a30133d0e7"
+        ],
+        "refs": "origin/main",
+        "subject": "upstream feat three",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "0890736b2e64e9b24eecba56e40d12a30133d0e7",
+        "short": "0890736",
+        "parents": [
+          "4fe142e1ddda15da1bdf2df4b0b52f287ff395c1"
+        ],
+        "refs": "",
+        "subject": "upstream feat two",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "4fe142e1ddda15da1bdf2df4b0b52f287ff395c1",
+        "short": "4fe142e",
+        "parents": [
+          "e657666dd93064ea57ef6577c179b5889a02a805"
+        ],
+        "refs": "",
+        "subject": "upstream feat one",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      },
+      {
+        "hash": "e657666dd93064ea57ef6577c179b5889a02a805",
+        "short": "e657666",
+        "parents": [
+          "7520170eb4e1af452c3e0a887787823c59e67920"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "feat: shared baseline",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "7520170eb4e1af452c3e0a887787823c59e67920",
+        "short": "7520170",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -277,6 +694,72 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "a64cf51e8fc0b7217d4a3e2bb4cca10e1b2c46f4",
+        "short": "a64cf51",
+        "parents": [
+          "3d6bc88d89792840c0eee4010c2ce9665b2c140f"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "local N",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:03:00Z"
+      },
+      {
+        "hash": "3d6bc88d89792840c0eee4010c2ce9665b2c140f",
+        "short": "3d6bc88",
+        "parents": [
+          "e657666dd93064ea57ef6577c179b5889a02a805"
+        ],
+        "refs": "",
+        "subject": "local M",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "6b28d74199cb1e82ead9189176f83fbd7fe59063",
+        "short": "6b28d74",
+        "parents": [
+          "2b2b35691370326e020d9d09a26528381b57f81a"
+        ],
+        "refs": "origin/main",
+        "subject": "upstream Y",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "2b2b35691370326e020d9d09a26528381b57f81a",
+        "short": "2b2b356",
+        "parents": [
+          "e657666dd93064ea57ef6577c179b5889a02a805"
+        ],
+        "refs": "",
+        "subject": "upstream X",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      },
+      {
+        "hash": "e657666dd93064ea57ef6577c179b5889a02a805",
+        "short": "e657666",
+        "parents": [
+          "7520170eb4e1af452c3e0a887787823c59e67920"
+        ],
+        "refs": "",
+        "subject": "feat: shared baseline",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "7520170eb4e1af452c3e0a887787823c59e67920",
+        "short": "7520170",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -326,6 +809,149 @@
       "feat/synced",
       "local-only",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "f5f2e63db5baf66caf85b147c3ee3cc71256ed8d",
+        "short": "f5f2e63",
+        "parents": [
+          "7443f6e4644e494eb536e4a6d126a33af2b4666b"
+        ],
+        "refs": "local-only",
+        "subject": "wip: local-only experiment",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:08:00Z"
+      },
+      {
+        "hash": "a0d340ec0d8c4b2c6a7b56007b01fae74d396a8c",
+        "short": "a0d340e",
+        "parents": [
+          "a3e16ed021073ba2ad5abc7929285a70c632dab0"
+        ],
+        "refs": "feat/diverged",
+        "subject": "local: diverged 2",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:07:00Z"
+      },
+      {
+        "hash": "a3e16ed021073ba2ad5abc7929285a70c632dab0",
+        "short": "a3e16ed",
+        "parents": [
+          "7443f6e4644e494eb536e4a6d126a33af2b4666b"
+        ],
+        "refs": "",
+        "subject": "local: diverged 1",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:06:00Z"
+      },
+      {
+        "hash": "9899a934739179d8436bfaf6516ad24d648e07ae",
+        "short": "9899a93",
+        "parents": [
+          "1fb5f8ecbbc93ce5a532cb70af2d0e57aa76a2c8"
+        ],
+        "refs": "feat/ahead-only",
+        "subject": "feat: ahead three",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:05:00Z"
+      },
+      {
+        "hash": "1fb5f8ecbbc93ce5a532cb70af2d0e57aa76a2c8",
+        "short": "1fb5f8e",
+        "parents": [
+          "9f3f5cc6408f46abd422da6d84eebd02f19b03ee"
+        ],
+        "refs": "",
+        "subject": "feat: ahead two",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:04:00Z"
+      },
+      {
+        "hash": "c7736d0d988bc4ef72692dcc5b5d256650e68cea",
+        "short": "c7736d0",
+        "parents": [
+          "867156f2dbd608ee1b556a66568aa57cdce6976f"
+        ],
+        "refs": "origin/main",
+        "subject": "upstream: main 2",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:03:00Z"
+      },
+      {
+        "hash": "9f3f5cc6408f46abd422da6d84eebd02f19b03ee",
+        "short": "9f3f5cc",
+        "parents": [
+          "7443f6e4644e494eb536e4a6d126a33af2b4666b"
+        ],
+        "refs": "",
+        "subject": "feat: ahead one",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:03:00Z"
+      },
+      {
+        "hash": "e334429d84affb19c0896a6200b291eba4261799",
+        "short": "e334429",
+        "parents": [
+          "7443f6e4644e494eb536e4a6d126a33af2b4666b"
+        ],
+        "refs": "origin/feat/synced, feat/synced",
+        "subject": "feat: synced-branch work",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "867156f2dbd608ee1b556a66568aa57cdce6976f",
+        "short": "867156f",
+        "parents": [
+          "7443f6e4644e494eb536e4a6d126a33af2b4666b"
+        ],
+        "refs": "",
+        "subject": "upstream: main 1",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "bd9cfd50f594062c0dee2718e831e1b536991e57",
+        "short": "bd9cfd5",
+        "parents": [
+          "6a8b3926f6e073aa19dd02220bcb962057954aae"
+        ],
+        "refs": "origin/feat/diverged",
+        "subject": "upstream: diverged 2",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "6a8b3926f6e073aa19dd02220bcb962057954aae",
+        "short": "6a8b392",
+        "parents": [
+          "7443f6e4644e494eb536e4a6d126a33af2b4666b"
+        ],
+        "refs": "",
+        "subject": "upstream: diverged 1",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      },
+      {
+        "hash": "7443f6e4644e494eb536e4a6d126a33af2b4666b",
+        "short": "7443f6e",
+        "parents": [
+          "3657d811c244c685eaf1f6d01411873a76d8d938"
+        ],
+        "refs": "HEAD -> main, origin/feat/ahead-only",
+        "subject": "feat: shared baseline module",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "3657d811c244c685eaf1f6d01411873a76d8d938",
+        "short": "3657d81",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial commit",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -358,6 +984,61 @@
     "branches": [
       "feat/fork-work",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "ad1e759632cff84216705a03331a476c33a728f2",
+        "short": "ad1e759",
+        "parents": [
+          "6ba3e46afc27d406155483c193e91fad7e344800"
+        ],
+        "refs": "HEAD -> feat/fork-work",
+        "subject": "feat: fork work two",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:04:00Z"
+      },
+      {
+        "hash": "6ba3e46afc27d406155483c193e91fad7e344800",
+        "short": "6ba3e46",
+        "parents": [
+          "59f2ca6b138b24240b6fa7273e975d4658ff89b3"
+        ],
+        "refs": "",
+        "subject": "feat: fork work one",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:03:00Z"
+      },
+      {
+        "hash": "59f2ca6b138b24240b6fa7273e975d4658ff89b3",
+        "short": "59f2ca6",
+        "parents": [
+          "a0dbf3bf0e4055dbcd1c89cee6384f21547c1479"
+        ],
+        "refs": "origin/feat/fork-work",
+        "subject": "feat: scaffold fork work",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "a0dbf3bf0e4055dbcd1c89cee6384f21547c1479",
+        "short": "a0dbf3b",
+        "parents": [
+          "5eb70f18f8d739e534311933bf0e58772f0da5f1"
+        ],
+        "refs": "upstream/main, main",
+        "subject": "feat: baseline",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "5eb70f18f8d739e534311933bf0e58772f0da5f1",
+        "short": "5eb70f1",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -385,6 +1066,50 @@
     "branches": [
       "(HEAD detached at 1ab1c9c)",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "34c4535c959fcefce378ff5d6bb79ad342ab217f",
+        "short": "34c4535",
+        "parents": [
+          "3c9536f4a38c5ba594900897dadc9c95779cfd92"
+        ],
+        "refs": "main",
+        "subject": "feat: three",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:03:00Z"
+      },
+      {
+        "hash": "3c9536f4a38c5ba594900897dadc9c95779cfd92",
+        "short": "3c9536f",
+        "parents": [
+          "1ab1c9c1283ce4bf855b9d09328e40941b849169"
+        ],
+        "refs": "",
+        "subject": "feat: two",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "1ab1c9c1283ce4bf855b9d09328e40941b849169",
+        "short": "1ab1c9c",
+        "parents": [
+          "7520170eb4e1af452c3e0a887787823c59e67920"
+        ],
+        "refs": "HEAD",
+        "subject": "feat: one",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "7520170eb4e1af452c3e0a887787823c59e67920",
+        "short": "7520170",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -411,6 +1136,39 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "3c9536f4a38c5ba594900897dadc9c95779cfd92",
+        "short": "3c9536f",
+        "parents": [
+          "1ab1c9c1283ce4bf855b9d09328e40941b849169"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "feat: two",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "1ab1c9c1283ce4bf855b9d09328e40941b849169",
+        "short": "1ab1c9c",
+        "parents": [
+          "7520170eb4e1af452c3e0a887787823c59e67920"
+        ],
+        "refs": "",
+        "subject": "feat: one",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "7520170eb4e1af452c3e0a887787823c59e67920",
+        "short": "7520170",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -435,6 +1193,28 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "dca4ab1928ec45b9dce5c6ef7aa14e46216b9cd7",
+        "short": "dca4ab1",
+        "parents": [
+          "7520170eb4e1af452c3e0a887787823c59e67920"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "feat: keep this",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "7520170eb4e1af452c3e0a887787823c59e67920",
+        "short": "7520170",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -459,6 +1239,28 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "1ab1c9c1283ce4bf855b9d09328e40941b849169",
+        "short": "1ab1c9c",
+        "parents": [
+          "7520170eb4e1af452c3e0a887787823c59e67920"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "feat: one",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "7520170eb4e1af452c3e0a887787823c59e67920",
+        "short": "7520170",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -501,6 +1303,226 @@
     "branches": [
       "(no branch, bisect started on main)",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "15b968b2600750bc82e32f64b6ee7a6932c2b36c",
+        "short": "15b968b",
+        "parents": [
+          "776dd30708576c4ad3fdfd37e3c1bfda1a429d69"
+        ],
+        "refs": "main",
+        "subject": "feat: step 19",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:19:00Z"
+      },
+      {
+        "hash": "776dd30708576c4ad3fdfd37e3c1bfda1a429d69",
+        "short": "776dd30",
+        "parents": [
+          "a99fde75263806a76008be56f11e230859a08ba4"
+        ],
+        "refs": "",
+        "subject": "feat: step 18",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:18:00Z"
+      },
+      {
+        "hash": "a99fde75263806a76008be56f11e230859a08ba4",
+        "short": "a99fde7",
+        "parents": [
+          "8bd95f67cd818a0d6df20a20e688764d2faf0aca"
+        ],
+        "refs": "",
+        "subject": "feat: step 17",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:17:00Z"
+      },
+      {
+        "hash": "8bd95f67cd818a0d6df20a20e688764d2faf0aca",
+        "short": "8bd95f6",
+        "parents": [
+          "0355588eca37b75594f49e38265387a63342fca7"
+        ],
+        "refs": "",
+        "subject": "feat: step 16",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:16:00Z"
+      },
+      {
+        "hash": "0355588eca37b75594f49e38265387a63342fca7",
+        "short": "0355588",
+        "parents": [
+          "9158a8dd69c5adfc7f4fbddfe0bd1dacf4169f88"
+        ],
+        "refs": "",
+        "subject": "feat: step 15",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:15:00Z"
+      },
+      {
+        "hash": "9158a8dd69c5adfc7f4fbddfe0bd1dacf4169f88",
+        "short": "9158a8d",
+        "parents": [
+          "4f6883e6464cde1facd78d8d5164f3d7ac598d78"
+        ],
+        "refs": "",
+        "subject": "feat: step 14",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:14:00Z"
+      },
+      {
+        "hash": "4f6883e6464cde1facd78d8d5164f3d7ac598d78",
+        "short": "4f6883e",
+        "parents": [
+          "a47e02bbc605bcc56d84e3c5b5b5c53628f176f1"
+        ],
+        "refs": "",
+        "subject": "feat: step 13",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:13:00Z"
+      },
+      {
+        "hash": "a47e02bbc605bcc56d84e3c5b5b5c53628f176f1",
+        "short": "a47e02b",
+        "parents": [
+          "254b819e13057297d2188e780133379d7ed287e1"
+        ],
+        "refs": "",
+        "subject": "feat: step 12",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:12:00Z"
+      },
+      {
+        "hash": "254b819e13057297d2188e780133379d7ed287e1",
+        "short": "254b819",
+        "parents": [
+          "5bc0d0506eb4c84b3a392111abd43b85558e427a"
+        ],
+        "refs": "",
+        "subject": "feat: step 11",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:11:00Z"
+      },
+      {
+        "hash": "5bc0d0506eb4c84b3a392111abd43b85558e427a",
+        "short": "5bc0d05",
+        "parents": [
+          "7f298e075f9d4ba1afb81e8ee23c0f4e28b22ffc"
+        ],
+        "refs": "",
+        "subject": "feat: step 10",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:10:00Z"
+      },
+      {
+        "hash": "7f298e075f9d4ba1afb81e8ee23c0f4e28b22ffc",
+        "short": "7f298e0",
+        "parents": [
+          "b3adf88eab5f1a2b816c07fe9aeac1cfb138d0e6"
+        ],
+        "refs": "HEAD",
+        "subject": "feat: step 9",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:09:00Z"
+      },
+      {
+        "hash": "b3adf88eab5f1a2b816c07fe9aeac1cfb138d0e6",
+        "short": "b3adf88",
+        "parents": [
+          "feb4808c271c016ba74f571b3e8814ead7c3ac3c"
+        ],
+        "refs": "",
+        "subject": "feat: step 8",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:08:00Z"
+      },
+      {
+        "hash": "feb4808c271c016ba74f571b3e8814ead7c3ac3c",
+        "short": "feb4808",
+        "parents": [
+          "6bdf65e4e3978e503883fa36877c29d394caa85b"
+        ],
+        "refs": "",
+        "subject": "feat: step 7",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:07:00Z"
+      },
+      {
+        "hash": "6bdf65e4e3978e503883fa36877c29d394caa85b",
+        "short": "6bdf65e",
+        "parents": [
+          "533991da8b2beff4cecbb1ecf1a38ab7f0c5b9c0"
+        ],
+        "refs": "",
+        "subject": "feat: step 6",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:06:00Z"
+      },
+      {
+        "hash": "533991da8b2beff4cecbb1ecf1a38ab7f0c5b9c0",
+        "short": "533991d",
+        "parents": [
+          "7f97f0cd584e4227366158c579509c55f83247b1"
+        ],
+        "refs": "",
+        "subject": "feat: step 5",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:05:00Z"
+      },
+      {
+        "hash": "7f97f0cd584e4227366158c579509c55f83247b1",
+        "short": "7f97f0c",
+        "parents": [
+          "e368ff3ec21a39b0eabc5cb0498b517a00bf8a66"
+        ],
+        "refs": "",
+        "subject": "feat: step 4",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:04:00Z"
+      },
+      {
+        "hash": "e368ff3ec21a39b0eabc5cb0498b517a00bf8a66",
+        "short": "e368ff3",
+        "parents": [
+          "de6b63bec4e508f522ac073eeef308fb85a9dffd"
+        ],
+        "refs": "",
+        "subject": "feat: step 3",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:03:00Z"
+      },
+      {
+        "hash": "de6b63bec4e508f522ac073eeef308fb85a9dffd",
+        "short": "de6b63b",
+        "parents": [
+          "92f90a25dc17d78ce9d7045957e11528ab773d27"
+        ],
+        "refs": "",
+        "subject": "feat: step 2",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "92f90a25dc17d78ce9d7045957e11528ab773d27",
+        "short": "92f90a2",
+        "parents": [
+          "06a10b743a7af6a10953ba916724b8f78aa97de7"
+        ],
+        "refs": "",
+        "subject": "feat: step 1",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "06a10b743a7af6a10953ba916724b8f78aa97de7",
+        "short": "06a10b7",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial scaffold",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -528,6 +1550,50 @@
     "branches": [
       "feat/x",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "a9cd5e15ab865f36a4223b3481dff44b7665ec33",
+        "short": "a9cd5e1",
+        "parents": [
+          "43bb961797b7e78b55bbca746e33c0d99a93cda6"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "feat: rename widget on main",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:03:00Z"
+      },
+      {
+        "hash": "4be74e362b8480b2d4ad683d74927c89df6e97fb",
+        "short": "4be74e3",
+        "parents": [
+          "43bb961797b7e78b55bbca746e33c0d99a93cda6"
+        ],
+        "refs": "feat/x",
+        "subject": "feat: rename widget on feat/x",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "43bb961797b7e78b55bbca746e33c0d99a93cda6",
+        "short": "43bb961",
+        "parents": [
+          "f1f17934f033b1df75056fb86c4f9d040160c8b7"
+        ],
+        "refs": "",
+        "subject": "feat: baseline widget",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "f1f17934f033b1df75056fb86c4f9d040160c8b7",
+        "short": "f1f1793",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial scaffold",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -556,6 +1622,50 @@
       "(no branch, rebasing feat/refactor)",
       "feat/refactor",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "36f0bb6ea224a1557a1987eec5fd2d1a06cc11c1",
+        "short": "36f0bb6",
+        "parents": [
+          "2de6c56524d7ec72a32c8b4b3537de8da3489d9d"
+        ],
+        "refs": "HEAD, main",
+        "subject": "feat: switch to production env",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:03:00Z"
+      },
+      {
+        "hash": "fb0615bf82090150a85f9e96c663619c2a922d93",
+        "short": "fb0615b",
+        "parents": [
+          "2de6c56524d7ec72a32c8b4b3537de8da3489d9d"
+        ],
+        "refs": "feat/refactor",
+        "subject": "refactor: use staging env",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "2de6c56524d7ec72a32c8b4b3537de8da3489d9d",
+        "short": "2de6c56",
+        "parents": [
+          "8b3fa173b957bb481a24f99e67cca714e9c40e9a"
+        ],
+        "refs": "",
+        "subject": "feat: baseline config",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "8b3fa173b957bb481a24f99e67cca714e9c40e9a",
+        "short": "8b3fa17",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial scaffold",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -583,6 +1693,50 @@
     "branches": [
       "feat/hotfix",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "9668eb604b0150d8be020085b381246bda49f118",
+        "short": "9668eb6",
+        "parents": [
+          "ebd06d33c972a1863c8b63f7d406f381be7978fd"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "feat: use UTC string for dates",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:03:00Z"
+      },
+      {
+        "hash": "04126d9fffdb44289236e8c3d4be92a147fde536",
+        "short": "04126d9",
+        "parents": [
+          "ebd06d33c972a1863c8b63f7d406f381be7978fd"
+        ],
+        "refs": "feat/hotfix",
+        "subject": "fix: use locale string for dates",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "ebd06d33c972a1863c8b63f7d406f381be7978fd",
+        "short": "ebd06d3",
+        "parents": [
+          "1e9b280e623c56b8ef2556d1e3bd36dd74c93385"
+        ],
+        "refs": "",
+        "subject": "feat: baseline utils",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "1e9b280e623c56b8ef2556d1e3bd36dd74c93385",
+        "short": "1e9b280",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial scaffold",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -607,6 +1761,39 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "26066aff98aae72741b8b07ed1c84cd44e27b596",
+        "short": "26066af",
+        "parents": [
+          "16aeb7fd2f6c751acdcc99c9bb6da3b21ea2761f"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "feat: add role field and deleteUser method",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "16aeb7fd2f6c751acdcc99c9bb6da3b21ea2761f",
+        "short": "16aeb7f",
+        "parents": [
+          "44eebf1b48ea2f0e2072f3cbe3c1dc6b896f6850"
+        ],
+        "refs": "",
+        "subject": "feat: add email field and listUsers method",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "44eebf1b48ea2f0e2072f3cbe3c1dc6b896f6850",
+        "short": "44eebf1",
+        "parents": [],
+        "refs": "",
+        "subject": "feat: add user service",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -637,6 +1824,50 @@
     "branches": [
       "feat/x",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "5ef56bdb5238eecf13f62c9d118e962258e5520d",
+        "short": "5ef56bd",
+        "parents": [
+          "740a739afb2765ad6a77b714551812a4fb2c8a4f"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "refactor: rename orig.txt to main-name.txt",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "78644df5e38193db5987cd45aaec729fc6a3973f",
+        "short": "78644df",
+        "parents": [
+          "740a739afb2765ad6a77b714551812a4fb2c8a4f"
+        ],
+        "refs": "feat/x",
+        "subject": "refactor: rename orig.txt to feat-name.txt",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      },
+      {
+        "hash": "740a739afb2765ad6a77b714551812a4fb2c8a4f",
+        "short": "740a739",
+        "parents": [
+          "f4ee0a95f2ebbabe7158248b6083cf26d2d9443b"
+        ],
+        "refs": "",
+        "subject": "chore: add shared file",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "f4ee0a95f2ebbabe7158248b6083cf26d2d9443b",
+        "short": "f4ee0a9",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial scaffold",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -666,6 +1897,50 @@
     "branches": [
       "feat/x",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "36855037543ee453aa9896277bde7afd933c8eff",
+        "short": "3685503",
+        "parents": [
+          "6626e4211d6b02c1727ae4e466af256b8225498e"
+        ],
+        "refs": "feat/x",
+        "subject": "feat: update component to v2",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "da99c48232fb4c2bbe5a5ea0b757f5cf6f6d34cc",
+        "short": "da99c48",
+        "parents": [
+          "6626e4211d6b02c1727ae4e466af256b8225498e"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "refactor: remove component",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      },
+      {
+        "hash": "6626e4211d6b02c1727ae4e466af256b8225498e",
+        "short": "6626e42",
+        "parents": [
+          "f4ee0a95f2ebbabe7158248b6083cf26d2d9443b"
+        ],
+        "refs": "",
+        "subject": "feat: add component",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "f4ee0a95f2ebbabe7158248b6083cf26d2d9443b",
+        "short": "f4ee0a9",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial scaffold",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -694,6 +1969,39 @@
     "branches": [
       "feat/x",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "3c5fcfdf631d8c0aa2e910a4c4f733ec611c2019",
+        "short": "3c5fcfd",
+        "parents": [
+          "f4ee0a95f2ebbabe7158248b6083cf26d2d9443b"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "feat: add config for production",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "d9e1e2e30b6b85d53af15cb97e4aec0c65aaa5ca",
+        "short": "d9e1e2e",
+        "parents": [
+          "f4ee0a95f2ebbabe7158248b6083cf26d2d9443b"
+        ],
+        "refs": "feat/x",
+        "subject": "feat: add config for development",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "f4ee0a95f2ebbabe7158248b6083cf26d2d9443b",
+        "short": "f4ee0a9",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial scaffold",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -721,6 +2029,50 @@
     "branches": [
       "(no branch, rebasing main)",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "a0afc604e3b93c9ba8bc2474592c9d21432f9806",
+        "short": "a0afc60",
+        "parents": [
+          "895b0266e2965c240f9e8d278c7a9e3c068c97c7"
+        ],
+        "refs": "main",
+        "subject": "feat: add module c",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:03:00Z"
+      },
+      {
+        "hash": "895b0266e2965c240f9e8d278c7a9e3c068c97c7",
+        "short": "895b026",
+        "parents": [
+          "8c990003c76c0c305047320f6cd7d9331fea5a63"
+        ],
+        "refs": "",
+        "subject": "feat: add module b",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "8c990003c76c0c305047320f6cd7d9331fea5a63",
+        "short": "8c99000",
+        "parents": [
+          "f4ee0a95f2ebbabe7158248b6083cf26d2d9443b"
+        ],
+        "refs": "HEAD",
+        "subject": "feat: add module a",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "f4ee0a95f2ebbabe7158248b6083cf26d2d9443b",
+        "short": "f4ee0a9",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial scaffold",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -751,6 +2103,51 @@
     "branches": [
       "feat/x",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "34a658761035d5fc8a434d2e8591eb58baabb7cf",
+        "short": "34a6587",
+        "parents": [
+          "d37e34b82f846630d850aa3eb8f3fdb2bb1cf235",
+          "ad8c9b143078fa2144970ce9a748a30e5ece2497"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "Merge branch feat/x",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      },
+      {
+        "hash": "ad8c9b143078fa2144970ce9a748a30e5ece2497",
+        "short": "ad8c9b1",
+        "parents": [
+          "d37e34b82f846630d850aa3eb8f3fdb2bb1cf235"
+        ],
+        "refs": "feat/x",
+        "subject": "feat: add x",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "d37e34b82f846630d850aa3eb8f3fdb2bb1cf235",
+        "short": "d37e34b",
+        "parents": [
+          "7520170eb4e1af452c3e0a887787823c59e67920"
+        ],
+        "refs": "",
+        "subject": "feat: baseline a",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "7520170eb4e1af452c3e0a887787823c59e67920",
+        "short": "7520170",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -773,40 +2170,295 @@
       "commit messages cover feat / fix / chore / docs / refactor / test / perf / revert and a breaking-change `!:`"
     ],
     "graph": [
-      "* 451a33f (HEAD -> main) feat(search): trigram-based subject filter",
-      "* ee71820 revert: temporary rollback of v1-shim removal",
-      "* 5398d0e chore: tidy imports",
-      "* 7ee1e0b fix!: drop deprecated v1 endpoints",
-      "| * 8ec5b1b (feat/wip) chore(search): prototype lookup cache",
-      "| * 17c4bcd feat(search): experimental trigram backend",
+      "* fbf5fa3 (HEAD -> main) feat(search): trigram-based subject filter",
+      "* 4c2be23 revert: temporary rollback of v1-shim removal",
+      "* 901855f chore: tidy imports",
+      "* 6c5bd64 fix!: drop deprecated v1 endpoints",
+      "| * 8a60805 (feat/wip) chore(search): prototype lookup cache",
+      "| * 22a0139 feat(search): experimental trigram backend",
       "|/  ",
-      "* 1ec5a59 perf(db): index user_id on sessions",
-      "* 3006ca8 fix(db): retry on transient timeout",
-      "* 244b15a perf(api): cache compiled route matcher",
-      "*   40b98ed Merge branch 'feat/payments'",
+      "* 1b096ce perf(db): index user_id on sessions",
+      "* f3cbc4e fix(db): retry on transient timeout",
+      "* d4d15db perf(api): cache compiled route matcher",
+      "*   0e88ac2 Merge branch 'feat/payments'",
       "|\\  ",
-      "| * ba28fb6 (feat/payments) test: cover stripe checkout flow",
-      "| * 45785df fix(payments): handle 3D-secure redirect",
-      "| * 0f487f5 feat(payments): stripe checkout adapter",
+      "| * 5a6d3dd (feat/payments) test: cover stripe checkout flow",
+      "| * a3febf6 fix(payments): handle 3D-secure redirect",
+      "| * 5d4547b feat(payments): stripe checkout adapter",
       "|/  ",
-      "* 46c7770 docs: contributor guide",
-      "* 2f9deea chore(deps): bump simple-git to 4.x",
-      "* 1531ca9 fix(api): route precedence for catch-all",
-      "* d69ea35 refactor(api): centralise error shapes",
-      "*   943ca7e Merge branch 'feat/auth'",
+      "* 9b82ab9 docs: contributor guide",
+      "* 9d3e3f6 chore(deps): bump simple-git to 4.x",
+      "* fe7126a fix(api): route precedence for catch-all",
+      "* 5dfd594 refactor(api): centralise error shapes",
+      "*   2fc862c Merge branch 'feat/auth'",
       "|\\  ",
-      "| * 9cbc28b (feat/auth) test: cover session edge cases",
-      "| * edec78d feat(auth): session middleware",
+      "| * 1e0921b (feat/auth) test: cover session edge cases",
+      "| * 2bd9d4d feat(auth): session middleware",
       "|/  ",
-      "* 36a75fd docs: project README and contributor guide",
-      "* 4aeaeb7 feat(api): public router skeleton",
-      "* 73ab827 Initial scaffold"
+      "* ad7d898 docs: project README and contributor guide",
+      "* cf85f9d feat(api): public router skeleton",
+      "* 7d8be06 Initial scaffold"
     ],
     "branches": [
       "feat/auth",
       "feat/payments",
       "feat/wip",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "fbf5fa3a500ea426dbd75772cace3f946ad29e74",
+        "short": "fbf5fa3",
+        "parents": [
+          "4c2be231c40246d01984fca7b7007be9e099c6b4"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "feat(search): trigram-based subject filter",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-29T12:00:00Z"
+      },
+      {
+        "hash": "4c2be231c40246d01984fca7b7007be9e099c6b4",
+        "short": "4c2be23",
+        "parents": [
+          "901855f2eb90fc37faeb162a6ef25514c4bb39e8"
+        ],
+        "refs": "",
+        "subject": "revert: temporary rollback of v1-shim removal",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-29T12:00:00Z"
+      },
+      {
+        "hash": "901855f2eb90fc37faeb162a6ef25514c4bb39e8",
+        "short": "901855f",
+        "parents": [
+          "6c5bd649384dafb998c5906f8e38bc629a2ff649"
+        ],
+        "refs": "",
+        "subject": "chore: tidy imports",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-29T12:00:00Z"
+      },
+      {
+        "hash": "6c5bd649384dafb998c5906f8e38bc629a2ff649",
+        "short": "6c5bd64",
+        "parents": [
+          "1b096ce1546b1e2a8d99ca7f9ab582671be84395"
+        ],
+        "refs": "",
+        "subject": "fix!: drop deprecated v1 endpoints",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-28T12:00:00Z"
+      },
+      {
+        "hash": "8a6080568a2294d6a26c85f417a7b2a20bf09383",
+        "short": "8a60805",
+        "parents": [
+          "22a013998f679620e327f378094fdf6ef69989b0"
+        ],
+        "refs": "feat/wip",
+        "subject": "chore(search): prototype lookup cache",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-27T12:00:00Z"
+      },
+      {
+        "hash": "22a013998f679620e327f378094fdf6ef69989b0",
+        "short": "22a0139",
+        "parents": [
+          "1b096ce1546b1e2a8d99ca7f9ab582671be84395"
+        ],
+        "refs": "",
+        "subject": "feat(search): experimental trigram backend",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-26T12:00:00Z"
+      },
+      {
+        "hash": "1b096ce1546b1e2a8d99ca7f9ab582671be84395",
+        "short": "1b096ce",
+        "parents": [
+          "f3cbc4e696bb860ce59154a09b41127ffa313a3b"
+        ],
+        "refs": "",
+        "subject": "perf(db): index user_id on sessions",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-25T12:00:00Z"
+      },
+      {
+        "hash": "f3cbc4e696bb860ce59154a09b41127ffa313a3b",
+        "short": "f3cbc4e",
+        "parents": [
+          "d4d15db7230fa5a1904ae54e5db760b172a3f295"
+        ],
+        "refs": "",
+        "subject": "fix(db): retry on transient timeout",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-24T12:00:00Z"
+      },
+      {
+        "hash": "d4d15db7230fa5a1904ae54e5db760b172a3f295",
+        "short": "d4d15db",
+        "parents": [
+          "0e88ac2b11882a6775b16d1f6b5c69dfc9f4bd28"
+        ],
+        "refs": "",
+        "subject": "perf(api): cache compiled route matcher",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-23T12:00:00Z"
+      },
+      {
+        "hash": "0e88ac2b11882a6775b16d1f6b5c69dfc9f4bd28",
+        "short": "0e88ac2",
+        "parents": [
+          "9b82ab966c6ae7d440bd49fd9963e5a0d4bd0af1",
+          "5a6d3ddcbabee6461351eca43cd5167f23f96279"
+        ],
+        "refs": "",
+        "subject": "Merge branch 'feat/payments'",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-22T12:00:00Z"
+      },
+      {
+        "hash": "5a6d3ddcbabee6461351eca43cd5167f23f96279",
+        "short": "5a6d3dd",
+        "parents": [
+          "a3febf6823148aa2baf8eafa8ba0c3c3bb69572e"
+        ],
+        "refs": "feat/payments",
+        "subject": "test: cover stripe checkout flow",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-20T12:00:00Z"
+      },
+      {
+        "hash": "a3febf6823148aa2baf8eafa8ba0c3c3bb69572e",
+        "short": "a3febf6",
+        "parents": [
+          "5d4547bfa8d0f8d388edb95ba1ae06ce9e7483a2"
+        ],
+        "refs": "",
+        "subject": "fix(payments): handle 3D-secure redirect",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-19T12:00:00Z"
+      },
+      {
+        "hash": "5d4547bfa8d0f8d388edb95ba1ae06ce9e7483a2",
+        "short": "5d4547b",
+        "parents": [
+          "9b82ab966c6ae7d440bd49fd9963e5a0d4bd0af1"
+        ],
+        "refs": "",
+        "subject": "feat(payments): stripe checkout adapter",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-18T12:00:00Z"
+      },
+      {
+        "hash": "9b82ab966c6ae7d440bd49fd9963e5a0d4bd0af1",
+        "short": "9b82ab9",
+        "parents": [
+          "9d3e3f628be9ddfb53f7e04590f39584d0f6455a"
+        ],
+        "refs": "",
+        "subject": "docs: contributor guide",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-17T12:00:00Z"
+      },
+      {
+        "hash": "9d3e3f628be9ddfb53f7e04590f39584d0f6455a",
+        "short": "9d3e3f6",
+        "parents": [
+          "fe7126a2f8e5d8f680bfef5c0f05efe451363fd4"
+        ],
+        "refs": "",
+        "subject": "chore(deps): bump simple-git to 4.x",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-16T12:00:00Z"
+      },
+      {
+        "hash": "fe7126a2f8e5d8f680bfef5c0f05efe451363fd4",
+        "short": "fe7126a",
+        "parents": [
+          "5dfd594367312c974284cf936cb1281adec789bc"
+        ],
+        "refs": "",
+        "subject": "fix(api): route precedence for catch-all",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-13T12:00:00Z"
+      },
+      {
+        "hash": "5dfd594367312c974284cf936cb1281adec789bc",
+        "short": "5dfd594",
+        "parents": [
+          "2fc862c4f936d81e7af41f10543bcc6e0fc764ed"
+        ],
+        "refs": "",
+        "subject": "refactor(api): centralise error shapes",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-09T12:00:00Z"
+      },
+      {
+        "hash": "2fc862c4f936d81e7af41f10543bcc6e0fc764ed",
+        "short": "2fc862c",
+        "parents": [
+          "ad7d898516f27ed67b808214b648830d721abaaf",
+          "1e0921b6853bfeb0554c92205bae91119bec9cdb"
+        ],
+        "refs": "",
+        "subject": "Merge branch 'feat/auth'",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-07T12:00:00Z"
+      },
+      {
+        "hash": "1e0921b6853bfeb0554c92205bae91119bec9cdb",
+        "short": "1e0921b",
+        "parents": [
+          "2bd9d4df81dcf0e8d663d1a014b192da27f41f6f"
+        ],
+        "refs": "feat/auth",
+        "subject": "test: cover session edge cases",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-06T12:00:00Z"
+      },
+      {
+        "hash": "2bd9d4df81dcf0e8d663d1a014b192da27f41f6f",
+        "short": "2bd9d4d",
+        "parents": [
+          "ad7d898516f27ed67b808214b648830d721abaaf"
+        ],
+        "refs": "",
+        "subject": "feat(auth): session middleware",
+        "author": "Git Scenarios Test",
+        "date": "2026-06-04T12:00:00Z"
+      },
+      {
+        "hash": "ad7d898516f27ed67b808214b648830d721abaaf",
+        "short": "ad7d898",
+        "parents": [
+          "cf85f9d3d4afd8c7c05b70f19a0d4f10bafca4a2"
+        ],
+        "refs": "",
+        "subject": "docs: project README and contributor guide",
+        "author": "Git Scenarios Test",
+        "date": "2026-05-30T12:00:00Z"
+      },
+      {
+        "hash": "cf85f9d3d4afd8c7c05b70f19a0d4f10bafca4a2",
+        "short": "cf85f9d",
+        "parents": [
+          "7d8be064e29ecfedc3ea9d6db72a681ec44da7c9"
+        ],
+        "refs": "",
+        "subject": "feat(api): public router skeleton",
+        "author": "Git Scenarios Test",
+        "date": "2026-05-15T12:00:00Z"
+      },
+      {
+        "hash": "7d8be064e29ecfedc3ea9d6db72a681ec44da7c9",
+        "short": "7d8be06",
+        "parents": [],
+        "refs": "",
+        "subject": "Initial scaffold",
+        "author": "Git Scenarios Test",
+        "date": "2026-04-30T12:00:00Z"
+      }
     ]
   },
   {
@@ -844,6 +2496,72 @@
       "develop",
       "feat/widgets",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "7476241e3cb371fc609cb5d2b5dfeaa6435eb326",
+        "short": "7476241",
+        "parents": [
+          "0ca3242fe74d671d83a991dae7bbaf5f22e51479"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "feat: widget tests",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:05:00Z"
+      },
+      {
+        "hash": "0ca3242fe74d671d83a991dae7bbaf5f22e51479",
+        "short": "0ca3242",
+        "parents": [
+          "7f6d04de567252820d69222bc500ee2ad6243461"
+        ],
+        "refs": "origin/main",
+        "subject": "feat: widget interactions",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:04:00Z"
+      },
+      {
+        "hash": "7f6d04de567252820d69222bc500ee2ad6243461",
+        "short": "7f6d04d",
+        "parents": [
+          "c4e9179493ac59ba6694af1c96b277b70a8d8ddf"
+        ],
+        "refs": "feat/widgets",
+        "subject": "feat: add widget module",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:03:00Z"
+      },
+      {
+        "hash": "c4e9179493ac59ba6694af1c96b277b70a8d8ddf",
+        "short": "c4e9179",
+        "parents": [
+          "af22682741c71cab2ad39f33b4dd4da18e078db8"
+        ],
+        "refs": "upstream/main",
+        "subject": "refactor: extract helpers",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "af22682741c71cab2ad39f33b4dd4da18e078db8",
+        "short": "af22682",
+        "parents": [
+          "2cbc8575ca34417060effa6a98a02c4d3f53c4d1"
+        ],
+        "refs": "develop",
+        "subject": "feat: scaffold core module",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "2cbc8575ca34417060effa6a98a02c4d3f53c4d1",
+        "short": "2cbc857",
+        "parents": [],
+        "refs": "tag: v0.1.0",
+        "subject": "chore: initial commit",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -869,6 +2587,50 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "e5dcc921d72602d874cf70e521aca1ca0751dd0b",
+        "short": "e5dcc92",
+        "parents": [
+          "c6d192fba1cda512fb2c97c0d93ecb8bb0c042a7"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "chore: release v1.0.0",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:09:00Z"
+      },
+      {
+        "hash": "c6d192fba1cda512fb2c97c0d93ecb8bb0c042a7",
+        "short": "c6d192f",
+        "parents": [
+          "5059bebb05de39f23ec8750e8b153a6788ac78d8"
+        ],
+        "refs": "",
+        "subject": "docs: update readme",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:08:00Z"
+      },
+      {
+        "hash": "5059bebb05de39f23ec8750e8b153a6788ac78d8",
+        "short": "5059beb",
+        "parents": [
+          "8d9bff2b959e95de5374f7be068350560d15bc54"
+        ],
+        "refs": "",
+        "subject": "test: add test suite",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:07:00Z"
+      },
+      {
+        "hash": "8d9bff2b959e95de5374f7be068350560d15bc54",
+        "short": "8d9bff2",
+        "parents": [],
+        "refs": "grafted",
+        "subject": "feat: add auth",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:06:00Z"
+      }
     ]
   },
   {
@@ -1013,6 +2775,1271 @@
       "develop",
       "feat/large-feature",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "b1c089046b4b517ae1b3111ce5a25db1b23332f8",
+        "short": "b1c0890",
+        "parents": [
+          "0a045ef0824ca3bcdc80f557e9175db50bd92125"
+        ],
+        "refs": "HEAD -> main, tag: v1.0.0",
+        "subject": "ci: implement module 79",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:54:00Z"
+      },
+      {
+        "hash": "0a045ef0824ca3bcdc80f557e9175db50bd92125",
+        "short": "0a045ef",
+        "parents": [
+          "65cbaf4179927feca0a7957a33e922ce4cec609a"
+        ],
+        "refs": "",
+        "subject": "perf: implement module 78",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:53:00Z"
+      },
+      {
+        "hash": "65cbaf4179927feca0a7957a33e922ce4cec609a",
+        "short": "65cbaf4",
+        "parents": [
+          "710e670a8921502f05686791d6e693c75a542100"
+        ],
+        "refs": "",
+        "subject": "test: implement module 77",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:52:00Z"
+      },
+      {
+        "hash": "710e670a8921502f05686791d6e693c75a542100",
+        "short": "710e670",
+        "parents": [
+          "fe8e254429fdeb2b0962901a5b64e358d4dbb9a0"
+        ],
+        "refs": "",
+        "subject": "refactor: implement module 76",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:51:00Z"
+      },
+      {
+        "hash": "fe8e254429fdeb2b0962901a5b64e358d4dbb9a0",
+        "short": "fe8e254",
+        "parents": [
+          "7190ec940d07c4e62e3b4fdf439032e414607267"
+        ],
+        "refs": "",
+        "subject": "docs: implement module 75",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:50:00Z"
+      },
+      {
+        "hash": "7190ec940d07c4e62e3b4fdf439032e414607267",
+        "short": "7190ec9",
+        "parents": [
+          "e206feeac7464dce516bbc819122bafded3a93c5"
+        ],
+        "refs": "",
+        "subject": "chore: implement module 74",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:49:00Z"
+      },
+      {
+        "hash": "e206feeac7464dce516bbc819122bafded3a93c5",
+        "short": "e206fee",
+        "parents": [
+          "35f598ff5d6b51720074d9dbd3731c93fbd6b026"
+        ],
+        "refs": "",
+        "subject": "fix: implement module 73",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:48:00Z"
+      },
+      {
+        "hash": "35f598ff5d6b51720074d9dbd3731c93fbd6b026",
+        "short": "35f598f",
+        "parents": [
+          "436f9bc891a0cf652f2c20287416a47f79e43357"
+        ],
+        "refs": "",
+        "subject": "feat: implement module 72",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:47:00Z"
+      },
+      {
+        "hash": "436f9bc891a0cf652f2c20287416a47f79e43357",
+        "short": "436f9bc",
+        "parents": [
+          "f4c3f31f3e761da1e68da6cf0ba629942e5b6a58"
+        ],
+        "refs": "",
+        "subject": "ci: implement module 71",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:46:00Z"
+      },
+      {
+        "hash": "f4c3f31f3e761da1e68da6cf0ba629942e5b6a58",
+        "short": "f4c3f31",
+        "parents": [
+          "27f4ceaccbe3cba38ad668f500f5a22aed960f98"
+        ],
+        "refs": "",
+        "subject": "perf: implement module 70",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:45:00Z"
+      },
+      {
+        "hash": "27f4ceaccbe3cba38ad668f500f5a22aed960f98",
+        "short": "27f4cea",
+        "parents": [
+          "0af78ce93157ec89c1590df027af2fdba41a7701"
+        ],
+        "refs": "",
+        "subject": "test: implement module 69",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:44:00Z"
+      },
+      {
+        "hash": "0af78ce93157ec89c1590df027af2fdba41a7701",
+        "short": "0af78ce",
+        "parents": [
+          "11dfb38f8e819c361b28c42dfce4a8f589049747"
+        ],
+        "refs": "",
+        "subject": "refactor: implement module 68",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:43:00Z"
+      },
+      {
+        "hash": "11dfb38f8e819c361b28c42dfce4a8f589049747",
+        "short": "11dfb38",
+        "parents": [
+          "a7310db603a0f77f241011bda8d6e693c65d5ed6"
+        ],
+        "refs": "",
+        "subject": "docs: implement module 67",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:42:00Z"
+      },
+      {
+        "hash": "a7310db603a0f77f241011bda8d6e693c65d5ed6",
+        "short": "a7310db",
+        "parents": [
+          "ea5d4a703e3d46fcebadca7671a9890c47f0802a"
+        ],
+        "refs": "",
+        "subject": "chore: implement module 66",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:41:00Z"
+      },
+      {
+        "hash": "ea5d4a703e3d46fcebadca7671a9890c47f0802a",
+        "short": "ea5d4a7",
+        "parents": [
+          "14ee0bd3db21fe6e2b34d8f0a79e5da30ab4ac21"
+        ],
+        "refs": "",
+        "subject": "fix: implement module 65",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:40:00Z"
+      },
+      {
+        "hash": "14ee0bd3db21fe6e2b34d8f0a79e5da30ab4ac21",
+        "short": "14ee0bd",
+        "parents": [
+          "6eca2276fcb75e1035f7fce6e006e9c87c6614f7"
+        ],
+        "refs": "",
+        "subject": "feat: implement module 64",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:39:00Z"
+      },
+      {
+        "hash": "6eca2276fcb75e1035f7fce6e006e9c87c6614f7",
+        "short": "6eca227",
+        "parents": [
+          "56748dea9821abd1200492ada2bffc40db7e00d7"
+        ],
+        "refs": "",
+        "subject": "ci: implement module 63",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:38:00Z"
+      },
+      {
+        "hash": "56748dea9821abd1200492ada2bffc40db7e00d7",
+        "short": "56748de",
+        "parents": [
+          "3da726d3e578bbea1a742dc274ef47c91a28cd78"
+        ],
+        "refs": "",
+        "subject": "perf: implement module 62",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:37:00Z"
+      },
+      {
+        "hash": "3da726d3e578bbea1a742dc274ef47c91a28cd78",
+        "short": "3da726d",
+        "parents": [
+          "1c5c8faa77c53156f7fd3e78b267c658c0b1f18a"
+        ],
+        "refs": "",
+        "subject": "test: implement module 61",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:36:00Z"
+      },
+      {
+        "hash": "1c5c8faa77c53156f7fd3e78b267c658c0b1f18a",
+        "short": "1c5c8fa",
+        "parents": [
+          "12af7f3801b7e73846204f518f3d307b34a53c86"
+        ],
+        "refs": "",
+        "subject": "refactor: implement module 60",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:35:00Z"
+      },
+      {
+        "hash": "989beb1823541e224585c681625b3b30ac999afb",
+        "short": "989beb1",
+        "parents": [
+          "5bad9909fb457859b290bec844febc290d51eef9"
+        ],
+        "refs": "develop",
+        "subject": "feat: develop iteration 10",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:34:00Z"
+      },
+      {
+        "hash": "5bad9909fb457859b290bec844febc290d51eef9",
+        "short": "5bad990",
+        "parents": [
+          "5736a010ef2c552eb19088e71e5d823c9ee08f5c"
+        ],
+        "refs": "",
+        "subject": "feat: develop iteration 9",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:33:00Z"
+      },
+      {
+        "hash": "5736a010ef2c552eb19088e71e5d823c9ee08f5c",
+        "short": "5736a01",
+        "parents": [
+          "e24278adc6111133bdb89c3e23165771fd92f4bb"
+        ],
+        "refs": "",
+        "subject": "feat: develop iteration 8",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:32:00Z"
+      },
+      {
+        "hash": "e24278adc6111133bdb89c3e23165771fd92f4bb",
+        "short": "e24278a",
+        "parents": [
+          "4372311bc9a9427ba9d1f4cce20a7429c6014430"
+        ],
+        "refs": "",
+        "subject": "feat: develop iteration 7",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:31:00Z"
+      },
+      {
+        "hash": "4372311bc9a9427ba9d1f4cce20a7429c6014430",
+        "short": "4372311",
+        "parents": [
+          "c06bc453d7aa25d491bb0b9e67c59b861d26b847"
+        ],
+        "refs": "",
+        "subject": "feat: develop iteration 6",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:30:00Z"
+      },
+      {
+        "hash": "c06bc453d7aa25d491bb0b9e67c59b861d26b847",
+        "short": "c06bc45",
+        "parents": [
+          "82afcfa1102886b9e7b11101708b04ba1c330952"
+        ],
+        "refs": "",
+        "subject": "feat: develop iteration 5",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:29:00Z"
+      },
+      {
+        "hash": "82afcfa1102886b9e7b11101708b04ba1c330952",
+        "short": "82afcfa",
+        "parents": [
+          "be220236ce70f57ca7b59547f0ad7d3b1fafe76a"
+        ],
+        "refs": "",
+        "subject": "feat: develop iteration 4",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:28:00Z"
+      },
+      {
+        "hash": "be220236ce70f57ca7b59547f0ad7d3b1fafe76a",
+        "short": "be22023",
+        "parents": [
+          "bf49971d477b4f71331b73f2bb6e80b81dbbdac3"
+        ],
+        "refs": "",
+        "subject": "feat: develop iteration 3",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:27:00Z"
+      },
+      {
+        "hash": "bf49971d477b4f71331b73f2bb6e80b81dbbdac3",
+        "short": "bf49971",
+        "parents": [
+          "15c32b68acfd3627210380bcfe4f9414fdd40d6b"
+        ],
+        "refs": "",
+        "subject": "feat: develop iteration 2",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:26:00Z"
+      },
+      {
+        "hash": "15c32b68acfd3627210380bcfe4f9414fdd40d6b",
+        "short": "15c32b6",
+        "parents": [
+          "12af7f3801b7e73846204f518f3d307b34a53c86"
+        ],
+        "refs": "",
+        "subject": "feat: develop iteration 1",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:25:00Z"
+      },
+      {
+        "hash": "12af7f3801b7e73846204f518f3d307b34a53c86",
+        "short": "12af7f3",
+        "parents": [
+          "89d507ec1c5c48b4ae124eadb773705b7ccd5612"
+        ],
+        "refs": "tag: v0.5.0",
+        "subject": "docs: implement module 59",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:24:00Z"
+      },
+      {
+        "hash": "89d507ec1c5c48b4ae124eadb773705b7ccd5612",
+        "short": "89d507e",
+        "parents": [
+          "08770c7a90af81ca1bc5207a4b8bf2f96e043cd3"
+        ],
+        "refs": "",
+        "subject": "chore: implement module 58",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:23:00Z"
+      },
+      {
+        "hash": "08770c7a90af81ca1bc5207a4b8bf2f96e043cd3",
+        "short": "08770c7",
+        "parents": [
+          "077215c9a283a47ec9676564b736675a303c9ad8"
+        ],
+        "refs": "",
+        "subject": "fix: implement module 57",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:22:00Z"
+      },
+      {
+        "hash": "077215c9a283a47ec9676564b736675a303c9ad8",
+        "short": "077215c",
+        "parents": [
+          "bef04c91249396d93cd3028e3e2e224ab42094ca"
+        ],
+        "refs": "",
+        "subject": "feat: implement module 56",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:21:00Z"
+      },
+      {
+        "hash": "bef04c91249396d93cd3028e3e2e224ab42094ca",
+        "short": "bef04c9",
+        "parents": [
+          "4209dfdacf0d31c53508c51638f090955e2befb9"
+        ],
+        "refs": "",
+        "subject": "ci: implement module 55",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:20:00Z"
+      },
+      {
+        "hash": "4209dfdacf0d31c53508c51638f090955e2befb9",
+        "short": "4209dfd",
+        "parents": [
+          "1302551f1875c42d639d00929fcf629674339e4f"
+        ],
+        "refs": "",
+        "subject": "perf: implement module 54",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:19:00Z"
+      },
+      {
+        "hash": "1302551f1875c42d639d00929fcf629674339e4f",
+        "short": "1302551",
+        "parents": [
+          "7db0e6124208649824aed7278cb8fd77db58795a"
+        ],
+        "refs": "",
+        "subject": "test: implement module 53",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:18:00Z"
+      },
+      {
+        "hash": "7db0e6124208649824aed7278cb8fd77db58795a",
+        "short": "7db0e61",
+        "parents": [
+          "67fc474567ea4a166c4a06c8297eb6a15989cbeb"
+        ],
+        "refs": "",
+        "subject": "refactor: implement module 52",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:17:00Z"
+      },
+      {
+        "hash": "67fc474567ea4a166c4a06c8297eb6a15989cbeb",
+        "short": "67fc474",
+        "parents": [
+          "cfc9e79c439058372c6ea6034bc5dfc2631e0aae"
+        ],
+        "refs": "",
+        "subject": "docs: implement module 51",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:16:00Z"
+      },
+      {
+        "hash": "cfc9e79c439058372c6ea6034bc5dfc2631e0aae",
+        "short": "cfc9e79",
+        "parents": [
+          "07a9deeb8a9b05ac92575b4eb06fda5882d477eb"
+        ],
+        "refs": "",
+        "subject": "chore: implement module 50",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:15:00Z"
+      },
+      {
+        "hash": "07a9deeb8a9b05ac92575b4eb06fda5882d477eb",
+        "short": "07a9dee",
+        "parents": [
+          "f8b9d89261dd677e34e046dba6a188fb4019e826"
+        ],
+        "refs": "",
+        "subject": "fix: implement module 49",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:14:00Z"
+      },
+      {
+        "hash": "f8b9d89261dd677e34e046dba6a188fb4019e826",
+        "short": "f8b9d89",
+        "parents": [
+          "5b72539102c8bdcaf2999b863c30c8029978c3f1"
+        ],
+        "refs": "",
+        "subject": "feat: implement module 48",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:13:00Z"
+      },
+      {
+        "hash": "5b72539102c8bdcaf2999b863c30c8029978c3f1",
+        "short": "5b72539",
+        "parents": [
+          "bf0572ba0dbf17cff93e54ce6a2a6171fb6c5c2f"
+        ],
+        "refs": "",
+        "subject": "ci: implement module 47",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:12:00Z"
+      },
+      {
+        "hash": "bf0572ba0dbf17cff93e54ce6a2a6171fb6c5c2f",
+        "short": "bf0572b",
+        "parents": [
+          "d3855301cb94d9611d22c10ace972b9fc27d739e"
+        ],
+        "refs": "",
+        "subject": "perf: implement module 46",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:11:00Z"
+      },
+      {
+        "hash": "d3855301cb94d9611d22c10ace972b9fc27d739e",
+        "short": "d385530",
+        "parents": [
+          "271ca4d5e971d9c08e7d9258c183aa0118b12b30"
+        ],
+        "refs": "",
+        "subject": "test: implement module 45",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:10:00Z"
+      },
+      {
+        "hash": "271ca4d5e971d9c08e7d9258c183aa0118b12b30",
+        "short": "271ca4d",
+        "parents": [
+          "4ec6208cbf68b89f4b7d4af103a7c58843183ca6"
+        ],
+        "refs": "",
+        "subject": "refactor: implement module 44",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:09:00Z"
+      },
+      {
+        "hash": "4ec6208cbf68b89f4b7d4af103a7c58843183ca6",
+        "short": "4ec6208",
+        "parents": [
+          "81ebee357e810d98ac46801af032c6e0368ab1f0"
+        ],
+        "refs": "",
+        "subject": "docs: implement module 43",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:08:00Z"
+      },
+      {
+        "hash": "81ebee357e810d98ac46801af032c6e0368ab1f0",
+        "short": "81ebee3",
+        "parents": [
+          "e63534367e5aa01217b5a077cfe1cecf5fb5393f"
+        ],
+        "refs": "",
+        "subject": "chore: implement module 42",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:07:00Z"
+      },
+      {
+        "hash": "e63534367e5aa01217b5a077cfe1cecf5fb5393f",
+        "short": "e635343",
+        "parents": [
+          "9334e2e6f5025ca2d63f1eb05fdfa4c6a368b6f0"
+        ],
+        "refs": "",
+        "subject": "fix: implement module 41",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:06:00Z"
+      },
+      {
+        "hash": "9334e2e6f5025ca2d63f1eb05fdfa4c6a368b6f0",
+        "short": "9334e2e",
+        "parents": [
+          "6b01f40b08a29c7a0e86c8c048e7cee7dc74db43"
+        ],
+        "refs": "",
+        "subject": "feat: implement module 40",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:05:00Z"
+      },
+      {
+        "hash": "ef7c08d876157b9844c0bcfb0056a620a1c7404a",
+        "short": "ef7c08d",
+        "parents": [
+          "3887a6f6b5d170f9f0304a07a74cfe5a0c4e5ae3"
+        ],
+        "refs": "feat/large-feature",
+        "subject": "feat: large-feature step 25",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:04:00Z"
+      },
+      {
+        "hash": "3887a6f6b5d170f9f0304a07a74cfe5a0c4e5ae3",
+        "short": "3887a6f",
+        "parents": [
+          "96a6efdd80e50da38da135e8151666a1466c4a9c"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 24",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:03:00Z"
+      },
+      {
+        "hash": "96a6efdd80e50da38da135e8151666a1466c4a9c",
+        "short": "96a6efd",
+        "parents": [
+          "ab42f781b85c2bf4cce1eac45c842a570c141870"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 23",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:02:00Z"
+      },
+      {
+        "hash": "ab42f781b85c2bf4cce1eac45c842a570c141870",
+        "short": "ab42f78",
+        "parents": [
+          "2effada399211403aa7b9df71c05ebd661fcb191"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 22",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:01:00Z"
+      },
+      {
+        "hash": "2effada399211403aa7b9df71c05ebd661fcb191",
+        "short": "2effada",
+        "parents": [
+          "6f41315a26db5a56f3b6dd5346fa47612c3d97cf"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 21",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T01:00:00Z"
+      },
+      {
+        "hash": "6f41315a26db5a56f3b6dd5346fa47612c3d97cf",
+        "short": "6f41315",
+        "parents": [
+          "d44eadf09563f7360882828de58b4dfff28048e2"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 20",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:59:00Z"
+      },
+      {
+        "hash": "d44eadf09563f7360882828de58b4dfff28048e2",
+        "short": "d44eadf",
+        "parents": [
+          "4a31dd7ab06b9acb9329f5c5b9c9faecce61c9f5"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 19",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:58:00Z"
+      },
+      {
+        "hash": "4a31dd7ab06b9acb9329f5c5b9c9faecce61c9f5",
+        "short": "4a31dd7",
+        "parents": [
+          "9464e9e88157fd48b1cf7086584af22053f1c0ef"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 18",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:57:00Z"
+      },
+      {
+        "hash": "9464e9e88157fd48b1cf7086584af22053f1c0ef",
+        "short": "9464e9e",
+        "parents": [
+          "72e8580bca31852bebc5f14df353b6c1af43ffff"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 17",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:56:00Z"
+      },
+      {
+        "hash": "72e8580bca31852bebc5f14df353b6c1af43ffff",
+        "short": "72e8580",
+        "parents": [
+          "893b0470ce7492f319dc87236c1335324439fe25"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 16",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:55:00Z"
+      },
+      {
+        "hash": "893b0470ce7492f319dc87236c1335324439fe25",
+        "short": "893b047",
+        "parents": [
+          "1443724e491fbc51c5d8c5d59aa3ce1da679af92"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 15",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:54:00Z"
+      },
+      {
+        "hash": "1443724e491fbc51c5d8c5d59aa3ce1da679af92",
+        "short": "1443724",
+        "parents": [
+          "39f4d4ddf244910cc6e7e6230bb313d845fe8817"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 14",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:53:00Z"
+      },
+      {
+        "hash": "39f4d4ddf244910cc6e7e6230bb313d845fe8817",
+        "short": "39f4d4d",
+        "parents": [
+          "ad4cb6b1c5cc2a52779ed9f0268407597323421f"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 13",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:52:00Z"
+      },
+      {
+        "hash": "ad4cb6b1c5cc2a52779ed9f0268407597323421f",
+        "short": "ad4cb6b",
+        "parents": [
+          "9ebefc15d130e813f8488ba140bb678a0b2a33a2"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 12",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:51:00Z"
+      },
+      {
+        "hash": "9ebefc15d130e813f8488ba140bb678a0b2a33a2",
+        "short": "9ebefc1",
+        "parents": [
+          "db1b9fdf746f5e7436d12a5d8337b867bd3a704d"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 11",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:50:00Z"
+      },
+      {
+        "hash": "db1b9fdf746f5e7436d12a5d8337b867bd3a704d",
+        "short": "db1b9fd",
+        "parents": [
+          "6b2c4a52239ce10ebe73f7dcb1e26f99bc1b3924"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 10",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:49:00Z"
+      },
+      {
+        "hash": "6b2c4a52239ce10ebe73f7dcb1e26f99bc1b3924",
+        "short": "6b2c4a5",
+        "parents": [
+          "578b5193a94c038520816b08525fccc8316369b9"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 9",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:48:00Z"
+      },
+      {
+        "hash": "578b5193a94c038520816b08525fccc8316369b9",
+        "short": "578b519",
+        "parents": [
+          "ce39f33b6ae5f703ff0493693b9c35a59efc0134"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 8",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:47:00Z"
+      },
+      {
+        "hash": "ce39f33b6ae5f703ff0493693b9c35a59efc0134",
+        "short": "ce39f33",
+        "parents": [
+          "55c6a20ca58efb81659232efe8584ad1b32e2250"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 7",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:46:00Z"
+      },
+      {
+        "hash": "55c6a20ca58efb81659232efe8584ad1b32e2250",
+        "short": "55c6a20",
+        "parents": [
+          "5309d8fa5519a017540bb7dd8aa3f2e1667e3efa"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 6",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:45:00Z"
+      },
+      {
+        "hash": "5309d8fa5519a017540bb7dd8aa3f2e1667e3efa",
+        "short": "5309d8f",
+        "parents": [
+          "e1aa4b4b38e3e165da12a962409be60ef730661c"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 5",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:44:00Z"
+      },
+      {
+        "hash": "e1aa4b4b38e3e165da12a962409be60ef730661c",
+        "short": "e1aa4b4",
+        "parents": [
+          "55d72de76ab4b1e84ce93f57b05e4a46dd210636"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 4",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:43:00Z"
+      },
+      {
+        "hash": "55d72de76ab4b1e84ce93f57b05e4a46dd210636",
+        "short": "55d72de",
+        "parents": [
+          "6e481543f0f5b30967bbac1f67cff9fa6717e437"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 3",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:42:00Z"
+      },
+      {
+        "hash": "6e481543f0f5b30967bbac1f67cff9fa6717e437",
+        "short": "6e48154",
+        "parents": [
+          "2e10cea018ffd7cb60469d85db1d0f63c7d4cea0"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 2",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:41:00Z"
+      },
+      {
+        "hash": "2e10cea018ffd7cb60469d85db1d0f63c7d4cea0",
+        "short": "2e10cea",
+        "parents": [
+          "6b01f40b08a29c7a0e86c8c048e7cee7dc74db43"
+        ],
+        "refs": "",
+        "subject": "feat: large-feature step 1",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:40:00Z"
+      },
+      {
+        "hash": "6b01f40b08a29c7a0e86c8c048e7cee7dc74db43",
+        "short": "6b01f40",
+        "parents": [
+          "e3652b47afdef30364d9b22dde6e6d09943f2117"
+        ],
+        "refs": "",
+        "subject": "ci: implement module 39",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:39:00Z"
+      },
+      {
+        "hash": "e3652b47afdef30364d9b22dde6e6d09943f2117",
+        "short": "e3652b4",
+        "parents": [
+          "3e99867c0a5eafb903b72d5bd1113f2f3fb59a3b"
+        ],
+        "refs": "",
+        "subject": "perf: implement module 38",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:38:00Z"
+      },
+      {
+        "hash": "3e99867c0a5eafb903b72d5bd1113f2f3fb59a3b",
+        "short": "3e99867",
+        "parents": [
+          "aacd17638f9267bffd696cdff15b1b61dbe8d8e6"
+        ],
+        "refs": "",
+        "subject": "test: implement module 37",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:37:00Z"
+      },
+      {
+        "hash": "aacd17638f9267bffd696cdff15b1b61dbe8d8e6",
+        "short": "aacd176",
+        "parents": [
+          "02dd835cf8f692eb2d2ab8993dc87f2ad5f3b877"
+        ],
+        "refs": "",
+        "subject": "refactor: implement module 36",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:36:00Z"
+      },
+      {
+        "hash": "02dd835cf8f692eb2d2ab8993dc87f2ad5f3b877",
+        "short": "02dd835",
+        "parents": [
+          "e501176482ff44ca5330ce1fddcded9826c46cec"
+        ],
+        "refs": "",
+        "subject": "docs: implement module 35",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:35:00Z"
+      },
+      {
+        "hash": "e501176482ff44ca5330ce1fddcded9826c46cec",
+        "short": "e501176",
+        "parents": [
+          "925d604f54c21ee04da02308ac07d38a0cc43652"
+        ],
+        "refs": "",
+        "subject": "chore: implement module 34",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:34:00Z"
+      },
+      {
+        "hash": "925d604f54c21ee04da02308ac07d38a0cc43652",
+        "short": "925d604",
+        "parents": [
+          "263311b71285fabb9cb9d76a1d9cddabebfe534d"
+        ],
+        "refs": "",
+        "subject": "fix: implement module 33",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:33:00Z"
+      },
+      {
+        "hash": "263311b71285fabb9cb9d76a1d9cddabebfe534d",
+        "short": "263311b",
+        "parents": [
+          "e3c596c2905795346f6e20a485be53733630b2a3"
+        ],
+        "refs": "",
+        "subject": "feat: implement module 32",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:32:00Z"
+      },
+      {
+        "hash": "e3c596c2905795346f6e20a485be53733630b2a3",
+        "short": "e3c596c",
+        "parents": [
+          "e8d31aa177dfd1fe797dc02d8211cba7c9776c18"
+        ],
+        "refs": "",
+        "subject": "ci: implement module 31",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:31:00Z"
+      },
+      {
+        "hash": "e8d31aa177dfd1fe797dc02d8211cba7c9776c18",
+        "short": "e8d31aa",
+        "parents": [
+          "76101c222cdd26065bb22ee495b86dc858cb0989"
+        ],
+        "refs": "",
+        "subject": "perf: implement module 30",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:30:00Z"
+      },
+      {
+        "hash": "76101c222cdd26065bb22ee495b86dc858cb0989",
+        "short": "76101c2",
+        "parents": [
+          "5e2b2fae4193df7b30994c66ab9b46808c760690"
+        ],
+        "refs": "",
+        "subject": "test: implement module 29",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:29:00Z"
+      },
+      {
+        "hash": "5e2b2fae4193df7b30994c66ab9b46808c760690",
+        "short": "5e2b2fa",
+        "parents": [
+          "66b050f03d2d02f9d16fe6235ff975ef63af6cb2"
+        ],
+        "refs": "",
+        "subject": "refactor: implement module 28",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:28:00Z"
+      },
+      {
+        "hash": "66b050f03d2d02f9d16fe6235ff975ef63af6cb2",
+        "short": "66b050f",
+        "parents": [
+          "6a0a86d1d21a9230f7c179d69c0670c5b838c4d0"
+        ],
+        "refs": "",
+        "subject": "docs: implement module 27",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:27:00Z"
+      },
+      {
+        "hash": "6a0a86d1d21a9230f7c179d69c0670c5b838c4d0",
+        "short": "6a0a86d",
+        "parents": [
+          "c5001c34620d3c3842413b33ccedbe24210438d5"
+        ],
+        "refs": "",
+        "subject": "chore: implement module 26",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:26:00Z"
+      },
+      {
+        "hash": "c5001c34620d3c3842413b33ccedbe24210438d5",
+        "short": "c5001c3",
+        "parents": [
+          "bd2f59a4f7defedb099f227eaa1464c88bc0e48e"
+        ],
+        "refs": "",
+        "subject": "fix: implement module 25",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:25:00Z"
+      },
+      {
+        "hash": "bd2f59a4f7defedb099f227eaa1464c88bc0e48e",
+        "short": "bd2f59a",
+        "parents": [
+          "1bdf060ee321a2511beb1ab0efa05c3a56c04880"
+        ],
+        "refs": "",
+        "subject": "feat: implement module 24",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:24:00Z"
+      },
+      {
+        "hash": "1bdf060ee321a2511beb1ab0efa05c3a56c04880",
+        "short": "1bdf060",
+        "parents": [
+          "8c97a7bc0db58e9e93721a18e6be602baad88d92"
+        ],
+        "refs": "",
+        "subject": "ci: implement module 23",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:23:00Z"
+      },
+      {
+        "hash": "8c97a7bc0db58e9e93721a18e6be602baad88d92",
+        "short": "8c97a7b",
+        "parents": [
+          "fdc5804026e6cfb4d5e5829affb1f470c4083361"
+        ],
+        "refs": "",
+        "subject": "perf: implement module 22",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:22:00Z"
+      },
+      {
+        "hash": "fdc5804026e6cfb4d5e5829affb1f470c4083361",
+        "short": "fdc5804",
+        "parents": [
+          "1b7985c25ef6c010b6af2c247a3355abcb866380"
+        ],
+        "refs": "",
+        "subject": "test: implement module 21",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:21:00Z"
+      },
+      {
+        "hash": "1b7985c25ef6c010b6af2c247a3355abcb866380",
+        "short": "1b7985c",
+        "parents": [
+          "4b36a8e0d11822449398de7aa5c03e2de858fc1e"
+        ],
+        "refs": "",
+        "subject": "refactor: implement module 20",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:20:00Z"
+      },
+      {
+        "hash": "4b36a8e0d11822449398de7aa5c03e2de858fc1e",
+        "short": "4b36a8e",
+        "parents": [
+          "c12dcec8bedef76fec40c6de9db75a1eca6f65cd"
+        ],
+        "refs": "tag: v0.1.0",
+        "subject": "docs: implement module 19",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:19:00Z"
+      },
+      {
+        "hash": "c12dcec8bedef76fec40c6de9db75a1eca6f65cd",
+        "short": "c12dcec",
+        "parents": [
+          "52532173c1ea37b2cd85832078370f64dd443164"
+        ],
+        "refs": "",
+        "subject": "chore: implement module 18",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:18:00Z"
+      },
+      {
+        "hash": "52532173c1ea37b2cd85832078370f64dd443164",
+        "short": "5253217",
+        "parents": [
+          "08bfd342bd10c2dcc1ef1cc8a42108082ea935a1"
+        ],
+        "refs": "",
+        "subject": "fix: implement module 17",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:17:00Z"
+      },
+      {
+        "hash": "08bfd342bd10c2dcc1ef1cc8a42108082ea935a1",
+        "short": "08bfd34",
+        "parents": [
+          "8457df20fc3226b923122fd48d556265295e7323"
+        ],
+        "refs": "",
+        "subject": "feat: implement module 16",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:16:00Z"
+      },
+      {
+        "hash": "8457df20fc3226b923122fd48d556265295e7323",
+        "short": "8457df2",
+        "parents": [
+          "0ecda09b3f2abd1404f4d618a1697e44ae0f8aec"
+        ],
+        "refs": "",
+        "subject": "ci: implement module 15",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:15:00Z"
+      },
+      {
+        "hash": "0ecda09b3f2abd1404f4d618a1697e44ae0f8aec",
+        "short": "0ecda09",
+        "parents": [
+          "344f85be5482448f7281c8b72be3a1f472fbacf2"
+        ],
+        "refs": "",
+        "subject": "perf: implement module 14",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:14:00Z"
+      },
+      {
+        "hash": "344f85be5482448f7281c8b72be3a1f472fbacf2",
+        "short": "344f85b",
+        "parents": [
+          "496ee349fde860f4ad6c52e639f807c8a54bcad5"
+        ],
+        "refs": "",
+        "subject": "test: implement module 13",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:13:00Z"
+      },
+      {
+        "hash": "496ee349fde860f4ad6c52e639f807c8a54bcad5",
+        "short": "496ee34",
+        "parents": [
+          "72566f59469c649b243d5d2a1dceb6b65f2eea86"
+        ],
+        "refs": "",
+        "subject": "refactor: implement module 12",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:12:00Z"
+      },
+      {
+        "hash": "72566f59469c649b243d5d2a1dceb6b65f2eea86",
+        "short": "72566f5",
+        "parents": [
+          "da6326cc1d291558cd18964f2804c69b71151008"
+        ],
+        "refs": "",
+        "subject": "docs: implement module 11",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:11:00Z"
+      },
+      {
+        "hash": "da6326cc1d291558cd18964f2804c69b71151008",
+        "short": "da6326c",
+        "parents": [
+          "789d4526783376f77bf67297cff53e53a5e93dbf"
+        ],
+        "refs": "",
+        "subject": "chore: implement module 10",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:10:00Z"
+      },
+      {
+        "hash": "789d4526783376f77bf67297cff53e53a5e93dbf",
+        "short": "789d452",
+        "parents": [
+          "724ee9544e4540bf5accfc1fcd13294aea73eb02"
+        ],
+        "refs": "",
+        "subject": "fix: implement module 9",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:09:00Z"
+      },
+      {
+        "hash": "724ee9544e4540bf5accfc1fcd13294aea73eb02",
+        "short": "724ee95",
+        "parents": [
+          "c56f9a163782490e35d0c5c0fc6a7d2056bc92a4"
+        ],
+        "refs": "",
+        "subject": "feat: implement module 8",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:08:00Z"
+      },
+      {
+        "hash": "c56f9a163782490e35d0c5c0fc6a7d2056bc92a4",
+        "short": "c56f9a1",
+        "parents": [
+          "1a435dc5cd10a3bf513d5c06d299790b1550aaed"
+        ],
+        "refs": "",
+        "subject": "ci: implement module 7",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:07:00Z"
+      },
+      {
+        "hash": "1a435dc5cd10a3bf513d5c06d299790b1550aaed",
+        "short": "1a435dc",
+        "parents": [
+          "29a23954917c695ffafcd193a8b70505b7fee963"
+        ],
+        "refs": "",
+        "subject": "perf: implement module 6",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:06:00Z"
+      },
+      {
+        "hash": "29a23954917c695ffafcd193a8b70505b7fee963",
+        "short": "29a2395",
+        "parents": [
+          "79ec15881791015b26f106b6b534e37b7e841957"
+        ],
+        "refs": "",
+        "subject": "test: implement module 5",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:05:00Z"
+      },
+      {
+        "hash": "79ec15881791015b26f106b6b534e37b7e841957",
+        "short": "79ec158",
+        "parents": [
+          "1e49b449466ebf03b6df96ae2a649abacb4a2182"
+        ],
+        "refs": "",
+        "subject": "refactor: implement module 4",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:04:00Z"
+      },
+      {
+        "hash": "1e49b449466ebf03b6df96ae2a649abacb4a2182",
+        "short": "1e49b44",
+        "parents": [
+          "cf4ca599f95617550d1fb27947f143ce98fcb2f6"
+        ],
+        "refs": "",
+        "subject": "docs: implement module 3",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:03:00Z"
+      },
+      {
+        "hash": "cf4ca599f95617550d1fb27947f143ce98fcb2f6",
+        "short": "cf4ca59",
+        "parents": [
+          "08354724ebbf842a821eb8b119ead9049c8b2882"
+        ],
+        "refs": "",
+        "subject": "chore: implement module 2",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "08354724ebbf842a821eb8b119ead9049c8b2882",
+        "short": "0835472",
+        "parents": [
+          "2fdb4798464115e3656dac2f87f0d3cd742f5a61"
+        ],
+        "refs": "",
+        "subject": "fix: implement module 1",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "2fdb4798464115e3656dac2f87f0d3cd742f5a61",
+        "short": "2fdb479",
+        "parents": [],
+        "refs": "",
+        "subject": "feat: implement module 0",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -1042,6 +4069,61 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "79423b50a4c2bd6d7f0127e4c853495dfb63657c",
+        "short": "79423b5",
+        "parents": [
+          "0e3655b145b2d95ab232925b58712ad40ca800c7",
+          "ec8f6a321db447e0ae0bf4b3e4a95004a7e6fd89",
+          "69a216538e6724e6b89f0765662bfdf79b565ff2"
+        ],
+        "refs": "refs/stash",
+        "subject": "On main: WIP: experiment-c",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "ec8f6a321db447e0ae0bf4b3e4a95004a7e6fd89",
+        "short": "ec8f6a3",
+        "parents": [
+          "0e3655b145b2d95ab232925b58712ad40ca800c7"
+        ],
+        "refs": "",
+        "subject": "index on main: 0e3655b chore: baseline content for stashing",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "69a216538e6724e6b89f0765662bfdf79b565ff2",
+        "short": "69a2165",
+        "parents": [],
+        "refs": "",
+        "subject": "untracked files on main: 0e3655b chore: baseline content for stashing",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "0e3655b145b2d95ab232925b58712ad40ca800c7",
+        "short": "0e3655b",
+        "parents": [
+          "257b4b9ab0207895114667f07ede36603e8f9d93"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "chore: baseline content for stashing",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "257b4b9ab0207895114667f07ede36603e8f9d93",
+        "short": "257b4b9",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial scaffold",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -1071,6 +4153,61 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "5b6e7ccf9c1aab54ab6afd004d593ea8d62d468c",
+        "short": "5b6e7cc",
+        "parents": [
+          "44f2eafdbe9be721eadf857f3449b00cb5f93de9",
+          "8c191734a048c72df9268686385aec1cbb719803",
+          "b27d53a24017d8b8a2b1b5b6a259d2315318407e"
+        ],
+        "refs": "refs/stash",
+        "subject": "On main: WIP: feature v2 + new-feature scaffolding",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "8c191734a048c72df9268686385aec1cbb719803",
+        "short": "8c19173",
+        "parents": [
+          "44f2eafdbe9be721eadf857f3449b00cb5f93de9"
+        ],
+        "refs": "",
+        "subject": "index on main: 44f2eaf feat: baseline feature",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "b27d53a24017d8b8a2b1b5b6a259d2315318407e",
+        "short": "b27d53a",
+        "parents": [],
+        "refs": "",
+        "subject": "untracked files on main: 44f2eaf feat: baseline feature",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "44f2eafdbe9be721eadf857f3449b00cb5f93de9",
+        "short": "44f2eaf",
+        "parents": [
+          "c3cfc31a9774b1c2923decc7c73886a1d588e2f6"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "feat: baseline feature",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "c3cfc31a9774b1c2923decc7c73886a1d588e2f6",
+        "short": "c3cfc31",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial scaffold",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -1093,6 +4230,17 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "bdc267ea21ec1d69857a6fb8324aff4475b911c7",
+        "short": "bdc267e",
+        "parents": [],
+        "refs": "HEAD -> main",
+        "subject": "chore: initial commit",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -1119,6 +4267,28 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "0ab8fc892fe2920ea220ae6822a0e1dfa20b4479",
+        "short": "0ab8fc8",
+        "parents": [
+          "ff79513da47e113d125d38f59ef89851ae65a9db"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "chore: baseline content",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "ff79513da47e113d125d38f59ef89851ae65a9db",
+        "short": "ff79513",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial commit",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -1146,6 +4316,39 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "821231a741a99fffbbf1fb3196573f53e9a50bd2",
+        "short": "821231a",
+        "parents": [
+          "698a4218a0caf7bd777fc600eb3b0e7da0b22aab"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "feat(lib,cli): scaffold lib + cli packages",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "698a4218a0caf7bd777fc600eb3b0e7da0b22aab",
+        "short": "698a421",
+        "parents": [
+          "5bf487d3709842db83b9bdc31d47ab2a367a5c86"
+        ],
+        "refs": "",
+        "subject": "feat(app): scaffold app package",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "5bf487d3709842db83b9bdc31d47ab2a367a5c86",
+        "short": "5bf487d",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: scaffold workspace root",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -1173,6 +4376,28 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "b963a11899170e7bd3f439669950d426beb591cd",
+        "short": "b963a11",
+        "parents": [
+          "15d9042246260a6de3cac99628acd8f59f9ffbec"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "chore: baseline app scaffold",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "15d9042246260a6de3cac99628acd8f59f9ffbec",
+        "short": "15d9042",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial commit",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -1205,6 +4430,61 @@
       "feat/beta",
       "hotfix/urgent",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "c4f2fe01731ca16f105d4787d7ea5193d4acc258",
+        "short": "c4f2fe0",
+        "parents": [
+          "f53cf2e5580f957f71c015795a09bc3c4539afb3"
+        ],
+        "refs": "hotfix/urgent",
+        "subject": "fix: critical hotfix",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:03:00Z"
+      },
+      {
+        "hash": "9c0177302d081fc45fa23f95521488c67c624a7c",
+        "short": "9c01773",
+        "parents": [
+          "afd85cf83e0116223e223f15e4d6e417d0a90f37"
+        ],
+        "refs": "feat/beta",
+        "subject": "feat: beta part 2",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "afd85cf83e0116223e223f15e4d6e417d0a90f37",
+        "short": "afd85cf",
+        "parents": [
+          "f53cf2e5580f957f71c015795a09bc3c4539afb3"
+        ],
+        "refs": "",
+        "subject": "feat: beta part 1",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "e586e91694179f491194761b2f3342840340088a",
+        "short": "e586e91",
+        "parents": [
+          "f53cf2e5580f957f71c015795a09bc3c4539afb3"
+        ],
+        "refs": "feat/alpha",
+        "subject": "feat: alpha feature",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      },
+      {
+        "hash": "f53cf2e5580f957f71c015795a09bc3c4539afb3",
+        "short": "f53cf2e",
+        "parents": [],
+        "refs": "HEAD -> main",
+        "subject": "chore: initial scaffold",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -1229,6 +4509,17 @@
     "branches": [
       "hotfix/reserved",
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "c949dcc27b341001c0a5a5c24582a605b1e9d846",
+        "short": "c949dcc",
+        "parents": [],
+        "refs": "HEAD -> main, hotfix/reserved",
+        "subject": "chore: initial scaffold",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -1257,6 +4548,50 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "8554d0b5d14599df805594cba09d4c1dd1436013",
+        "short": "8554d0b",
+        "parents": [
+          "1660bc7b2f6f7b9d105b6a8330b3aa426b25a3c7"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "feat: integrate vendor/lib into entry point",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:03:00Z"
+      },
+      {
+        "hash": "1660bc7b2f6f7b9d105b6a8330b3aa426b25a3c7",
+        "short": "1660bc7",
+        "parents": [
+          "9326672f25b8ed6c27b313b3ec990b51449dcbe2"
+        ],
+        "refs": "",
+        "subject": "chore: add vendor/lib submodule",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "9326672f25b8ed6c27b313b3ec990b51449dcbe2",
+        "short": "9326672",
+        "parents": [
+          "5f49d93da6eb649a63af8b0ccd96f0036bd6611b"
+        ],
+        "refs": "",
+        "subject": "feat: app shell",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "5f49d93da6eb649a63af8b0ccd96f0036bd6611b",
+        "short": "5f49d93",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial scaffold",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -1281,6 +4616,28 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "c4d8ca478a2820a525eeb40733e9b0c8cbf3e593",
+        "short": "c4d8ca4",
+        "parents": [
+          "c428bd93a7873708b29f191c5ee044369c967e99"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "chore: add vendor/lib submodule",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "c428bd93a7873708b29f191c5ee044369c967e99",
+        "short": "c428bd9",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial scaffold",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -1307,6 +4664,28 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "b7b31223340a612738939f5109ede878dff91de7",
+        "short": "b7b3122",
+        "parents": [
+          "7520170eb4e1af452c3e0a887787823c59e67920"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "feat: add lfs-tracked binary asset",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "7520170eb4e1af452c3e0a887787823c59e67920",
+        "short": "7520170",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -1333,6 +4712,28 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "9afdcd6e9c742f74cda3786f800b9b352b75f5e7",
+        "short": "9afdcd6",
+        "parents": [
+          "7520170eb4e1af452c3e0a887787823c59e67920"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "chore: enforce LF line endings via .gitattributes",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "7520170eb4e1af452c3e0a887787823c59e67920",
+        "short": "7520170",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   },
   {
@@ -1359,6 +4760,223 @@
     ],
     "branches": [
       "main"
+    ],
+    "commits": [
+      {
+        "hash": "ad7c59bd2f028cd4114f2865f33a53d87b3cd054",
+        "short": "ad7c59b",
+        "parents": [
+          "7520170eb4e1af452c3e0a887787823c59e67920"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "feat: add case-colliding sources",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      },
+      {
+        "hash": "7520170eb4e1af452c3e0a887787823c59e67920",
+        "short": "7520170",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "name": "installed-hooks",
+    "summary": "repo with pre-commit and commit-msg hooks installed and marked executable",
+    "description": "Two passing hook scripts are installed in `.git/hooks/`.\n\n  - `pre-commit`: runs before every commit; a non-zero exit aborts the\n    commit. Useful for linters, formatters, or secret-scanners.\n  - `commit-msg`: receives the path to the commit-message file; used to\n    enforce message format (e.g. Conventional Commits, ticket prefixes).\n\nBoth scripts exit 0 so the repo stays in a clean, committable state. The\nscenario documents *presence* and *permissions* of hooks, not enforcement.\n\nPlatform notes:\n  - Hooks are installed after the setup commits so a blocking hook cannot\n    interrupt the scenario construction itself.\n  - On Windows (native cmd.exe), git hooks require a POSIX shell such as\n    Git Bash or WSL. Test hook presence on all platforms; skip invocation\n    tests on native Windows.\n\nUseful for testing:\n  - Hook detection (\"does this repo have a pre-commit hook?\")\n  - UI indicators showing hooks are active\n  - Tools that offer to bypass hooks (--no-verify flows)\n  - Permission checks (hooks must be executable to be invoked by git)",
+    "kind": "worktree",
+    "tags": [
+      "hooks",
+      "metadata"
+    ],
+    "contracts": [
+      "main is checked out",
+      "main has 2 commits",
+      ".git/hooks/pre-commit exists and is executable",
+      ".git/hooks/commit-msg exists and is executable",
+      "worktree is clean"
+    ],
+    "graph": [
+      "* 39669d4 (HEAD -> main) feat: add source",
+      "* 7520170 chore: initial"
+    ],
+    "branches": [
+      "main"
+    ],
+    "commits": [
+      {
+        "hash": "39669d42e48b6842e3b40f18290e33d011b5a474",
+        "short": "39669d4",
+        "parents": [
+          "7520170eb4e1af452c3e0a887787823c59e67920"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "feat: add source",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "7520170eb4e1af452c3e0a887787823c59e67920",
+        "short": "7520170",
+        "parents": [],
+        "refs": "",
+        "subject": "chore: initial",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "name": "commits-with-notes",
+    "summary": "two commits annotated with git notes; first commit also carries a note in a second namespace (refs/notes/ci)",
+    "description": "Notes are metadata attached to commits *outside* the commit object itself:\nthey can be added, updated, or removed without rewriting history.\n\nLayout:\n  HEAD~1 (`feat: initial widget`):\n    refs/notes/commits → \"Reviewed-by: Alice <alice@example.com>\"\n    refs/notes/ci      → \"CI: passed\"\n  HEAD (`fix: widget alignment`):\n    refs/notes/commits → \"Reviewed-by: Bob <bob@example.com>\\nCoverage: 92%\"\n\nThe HEAD note is built with `git notes add` followed by `git notes append`,\nproducing a multi-line note without rewriting the first entry.\n\nUseful for testing:\n  - `git log --show-notes` display and note content parsing\n  - `git notes list` output across namespaces\n  - Note-aware diff and annotation tools\n  - Multi-namespace enumeration (`git notes --ref=refs/notes/ci list`)",
+    "kind": "history",
+    "tags": [
+      "notes",
+      "metadata"
+    ],
+    "contracts": [
+      "main is checked out",
+      "main has 2 commits",
+      "HEAD~1 has a note in refs/notes/commits containing \"Reviewed-by: Alice\"",
+      "HEAD~1 has a note in refs/notes/ci containing \"CI: passed\"",
+      "HEAD has a note in refs/notes/commits containing \"Reviewed-by: Bob\" and \"Coverage: 92%\""
+    ],
+    "graph": [
+      "* c8df691 (HEAD -> main) fix: widget alignment",
+      "* f42f25b feat: initial widget",
+      "* 465151c Notes added by 'git notes append'",
+      "* fbc9631 Notes added by 'git notes add'",
+      "* 3ce2336 Notes added by 'git notes add'",
+      "* 552cc08 Notes added by 'git notes add'"
+    ],
+    "branches": [
+      "main"
+    ],
+    "commits": [
+      {
+        "hash": "c8df6914a4e6d2f526b53ad47dfb2e08b430c86c",
+        "short": "c8df691",
+        "parents": [
+          "f42f25bc3313c93bb49869b0ed77a5b005253afb"
+        ],
+        "refs": "HEAD -> main",
+        "subject": "fix: widget alignment",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "465151cf3eded3b33972d604814daa879d207ef6",
+        "short": "465151c",
+        "parents": [
+          "fbc9631b25e16836fb33f3c22e84ab9753cdc726"
+        ],
+        "refs": "",
+        "subject": "Notes added by 'git notes append'",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "fbc9631b25e16836fb33f3c22e84ab9753cdc726",
+        "short": "fbc9631",
+        "parents": [
+          "3ce23369d8565005b836ae2c933afdd43d7d71bc"
+        ],
+        "refs": "",
+        "subject": "Notes added by 'git notes add'",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "552cc08c2e467a2da5a1a3d255c59c0d684ec640",
+        "short": "552cc08",
+        "parents": [],
+        "refs": "",
+        "subject": "Notes added by 'git notes add'",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      },
+      {
+        "hash": "f42f25bc3313c93bb49869b0ed77a5b005253afb",
+        "short": "f42f25b",
+        "parents": [],
+        "refs": "",
+        "subject": "feat: initial widget",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      },
+      {
+        "hash": "3ce23369d8565005b836ae2c933afdd43d7d71bc",
+        "short": "3ce2336",
+        "parents": [],
+        "refs": "",
+        "subject": "Notes added by 'git notes add'",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "name": "mixed-tags",
+    "summary": "lightweight tag (v0.1.0), annotated tag (v1.0.0), and a tag pointing at a tree object (tree-snapshot)",
+    "description": "Three commits carry three tag shapes:\n\n  v0.1.0        lightweight tag — a named ref pointing directly at the\n                first commit; no tag object is created.\n  v1.0.0        annotated tag — a full tag object that stores the tagger\n                identity, timestamp, and release message. This is what\n                `git describe` resolves and what release tooling signs.\n  tree-snapshot lightweight tag — points at the tree object of HEAD rather\n                than a commit. Uncommon but valid; some tag-parsing tools\n                handle this case incorrectly.\n\nDetecting the tag type:\n  git cat-file -t v0.1.0        → commit   (lightweight: resolves to commit)\n  git cat-file -t v1.0.0        → tag      (annotated: is a tag object)\n  git cat-file -t tree-snapshot → tree     (unusual: points at a tree)\n\nUseful for testing:\n  - Distinguishing annotated vs lightweight tags (`git cat-file -t`)\n  - `git describe` behaviour (only annotated tags by default)\n  - Tag-listing and sorting (by date, semver, name)\n  - Edge-case handling for tags that point at non-commit objects",
+    "kind": "history",
+    "tags": [
+      "tags",
+      "metadata"
+    ],
+    "contracts": [
+      "main is checked out",
+      "main has 3 commits",
+      "v0.1.0 is a lightweight tag pointing at HEAD~2 (git cat-file -t → commit)",
+      "v1.0.0 is an annotated tag object pointing at HEAD (git cat-file -t → tag)",
+      "tree-snapshot is a lightweight tag pointing at a tree object (git cat-file -t → tree)",
+      "worktree is clean"
+    ],
+    "graph": [
+      "* bbd015e (HEAD -> main, tag: v1.0.0) feat: stable release",
+      "* f207e93 feat: v0.1.0 content",
+      "* 7520170 (tag: v0.1.0) chore: initial"
+    ],
+    "branches": [
+      "main"
+    ],
+    "commits": [
+      {
+        "hash": "bbd015e24508e01d2b8ef1380b036edcb8d75441",
+        "short": "bbd015e",
+        "parents": [
+          "f207e93cde89d17aa0653ed439419bf41eec4fff"
+        ],
+        "refs": "HEAD -> main, tag: v1.0.0",
+        "subject": "feat: stable release",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:02:00Z"
+      },
+      {
+        "hash": "f207e93cde89d17aa0653ed439419bf41eec4fff",
+        "short": "f207e93",
+        "parents": [
+          "7520170eb4e1af452c3e0a887787823c59e67920"
+        ],
+        "refs": "",
+        "subject": "feat: v0.1.0 content",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:01:00Z"
+      },
+      {
+        "hash": "7520170eb4e1af452c3e0a887787823c59e67920",
+        "short": "7520170",
+        "parents": [],
+        "refs": "tag: v0.1.0",
+        "subject": "chore: initial",
+        "author": "Git Scenarios Test",
+        "date": "2020-01-01T00:00:00Z"
+      }
     ]
   }
 ]

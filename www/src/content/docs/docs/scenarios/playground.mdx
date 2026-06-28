@@ -1,0 +1,33 @@
+---
+title: Scenario Playground
+description: Explore every scenario's commit graph interactively — no install required.
+---
+
+import ScenarioPlayground from '../../../../components/ScenarioPlayground.astro'
+
+Try any scenario's commit graph right here in the browser — no `npm install` needed.
+The graphs are built from real hashes captured at build time: every short hash you see
+is exactly the one you'll get locally when you call `spinUpScenario('name')`.
+
+<ScenarioPlayground />
+
+## How it works
+
+Each scenario's `setup()` function is run at build time in a temporary git repository.
+The resulting `git log --all --date-order` output is captured as structured data and
+stored in `scenarios.json` alongside the existing ASCII graph. The playground reads that
+data in the browser and renders the DAG with a lane-layout algorithm.
+
+## Tips
+
+- **Search** the sidebar to filter by name, kind, or tag.
+- **Kind pills** narrow the list to a single scenario family.
+- **Hover a commit node** to see its full hash, refs, subject, author, and parents.
+- **Click a commit node** to copy the full hash to your clipboard.
+- **Deep-link** to any scenario with `#scenario=<name>` in the URL — bookmarkable and shareable.
+
+## See also
+
+- [Browse & Filter](/docs/scenarios/browse) — filter-chip UI with copy-paste snippets for every scenario
+- [Scenarios overview](/docs/scenarios/overview) — flat reference of all 32 scenarios grouped by kind
+- [Custom scenarios](/docs/guides/custom-scenarios) — register your own scenarios in the library

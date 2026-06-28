@@ -1,0 +1,975 @@
+---
+/**
+ * Interactive scenario playground — renders each scenario's stored commit
+ * graph as a live, hover-able SVG DAG. No install required.
+ *
+ * - Sidebar: searchable list of all scenarios with kind badges.
+ * - Graph: SVG commit graph computed from the structured `commits` field
+ *   captured at build time by generate-scenarios-json.mjs.
+ * - Detail panel: hover a commit node to see hash, refs, subject, author.
+ * - Deep-link: URL hash `#scenario=<name>` is honored on load and updated
+ *   on selection change so specific graphs are shareable.
+ *
+ * Pure HTML + CSS + inline ES-module script — no framework runtime.
+ * Graph layout uses computeLanes() from src/lib/graph-layout.mjs (bundled
+ * by Vite alongside the scenarios JSON import).
+ */
+import scenarios from '../data/scenarios.json'
+
+const kindOrder = ['branch', 'worktree', 'operation', 'history', 'stash', 'submodule']
+const kinds = [...new Set(scenarios.map((s) => s.kind))]
+const orderedKinds = [
+  ...kindOrder.filter((k) => kinds.includes(k)),
+  ...kinds.filter((k) => !kindOrder.includes(k)),
+]
+---
+
+<div class="pg" id="pg-root">
+  <!-- Sidebar: searchable scenario list -->
+  <aside class="pg-sidebar">
+    <div class="pg-search-wrap">
+      <input
+        type="search"
+        id="pg-search"
+        placeholder="Filter scenarios…"
+        autocomplete="off"
+        spellcheck="false"
+      />
+    </div>
+
+    <div class="pg-kind-pills" id="pg-kind-pills">
+      <button class="pg-kind-pill active" data-kind="" type="button">all</button>
+      {orderedKinds.map((k) => (
+        <button class={`pg-kind-pill`} data-kind={k} type="button">{k}</button>
+      ))}
+    </div>
+
+    <ul class="pg-list" id="pg-list" role="listbox" aria-label="Scenarios">
+      {scenarios.map((s) => (
+        <li
+          class="pg-list-item"
+          role="option"
+          aria-selected="false"
+          data-name={s.name}
+          data-kind={s.kind}
+          data-search={[s.name, s.kind, ...(s.tags ?? [])].join(' ').toLowerCase()}
+        >
+          <button class="pg-list-btn" data-select={s.name} type="button" tabindex="-1">
+            <code class="pg-item-name">{s.name}</code>
+            <span class={`pg-item-kind kind-${s.kind}`}>{s.kind}</span>
+          </button>
+        </li>
+      ))}
+    </ul>
+
+    <div class="pg-list-count">
+      <span id="pg-list-count">{scenarios.length}</span> of {scenarios.length} scenarios
+    </div>
+  </aside>
+
+  <!-- Main area: scenario info + graph -->
+  <div class="pg-content">
+    <div class="pg-welcome" id="pg-welcome">
+      <div class="pg-welcome-inner">
+        <span class="pg-welcome-label">playground</span>
+        <p class="pg-welcome-text">Select a scenario from the list to see its commit graph.</p>
+        <p class="pg-welcome-hint">
+          Hover a commit node to inspect its details. Copy the short hash with a click.
+          Deep-link to any graph via <code>#scenario=&lt;name&gt;</code> in the URL.
+        </p>
+      </div>
+    </div>
+
+    <div class="pg-scenario-view" id="pg-view" hidden>
+      <div class="pg-view-header" id="pg-view-header">
+        <!-- populated by JS: name, kind badge, tags, summary -->
+      </div>
+
+      <div class="pg-graph-wrap">
+        <div class="pg-graph-scroll" id="pg-graph-scroll">
+          <svg
+            id="pg-svg"
+            xmlns="http://www.w3.org/2000/svg"
+            class="pg-svg"
+            aria-label="Commit graph"
+          ></svg>
+        </div>
+
+        <div class="pg-detail" id="pg-detail" hidden>
+          <!-- populated by JS on commit hover/click -->
+        </div>
+      </div>
+
+      <div class="pg-empty-graph" id="pg-empty-graph" hidden>
+        <span class="pg-empty-label">empty repository</span>
+        <p>This scenario has no commits — HEAD is unborn.</p>
+        <p class="pg-empty-hint">
+          Useful for testing empty-state UI: branch views, log views, the
+          "create your first commit" affordance, etc.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* ── Layout ── */
+  .pg {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 0;
+    border: 1px solid var(--gs-rule);
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--gs-paper);
+    font-family: var(--gs-mono);
+    min-height: 540px;
+    margin: 1.5rem 0 0;
+  }
+
+  @media (max-width: 720px) {
+    .pg {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+    }
+  }
+
+  /* ── Sidebar ── */
+  .pg-sidebar {
+    border-right: 1px solid var(--gs-rule);
+    display: flex;
+    flex-direction: column;
+    background: var(--gs-surface);
+    overflow: hidden;
+  }
+
+  @media (max-width: 720px) {
+    .pg-sidebar {
+      border-right: none;
+      border-bottom: 1px solid var(--gs-rule);
+      max-height: 200px;
+    }
+  }
+
+  .pg-search-wrap {
+    padding: 0.75rem 0.75rem 0.5rem;
+    flex-shrink: 0;
+  }
+
+  #pg-search {
+    appearance: none;
+    width: 100%;
+    padding: 0.45rem 0.6rem 0.45rem 2rem;
+    border: 1px solid var(--gs-rule-strong);
+    border-radius: 2px;
+    background: var(--gs-paper);
+    color: var(--sl-color-white);
+    font-family: var(--gs-mono);
+    font-size: 0.78rem;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>");
+    background-repeat: no-repeat;
+    background-position: 0.5rem 50%;
+  }
+
+  #pg-search:focus {
+    outline: 1px solid var(--gs-cyan);
+    border-color: var(--gs-cyan);
+  }
+
+  .pg-kind-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    padding: 0 0.75rem 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .pg-kind-pill {
+    appearance: none;
+    border: 1px solid var(--gs-rule);
+    background: transparent;
+    color: var(--sl-color-gray-3);
+    font-family: var(--gs-mono);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.15rem 0.45rem;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: color 0.12s, border-color 0.12s, background 0.12s;
+  }
+
+  .pg-kind-pill:hover,
+  .pg-kind-pill.active {
+    color: var(--gs-cyan);
+    border-color: var(--gs-cyan);
+  }
+
+  .pg-kind-pill.active {
+    background: var(--gs-cyan-low, rgba(56,189,248,0.08));
+  }
+
+  .pg-list {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .pg-list > li::before {
+    content: none !important;
+  }
+
+  .pg-list-item {
+    list-style: none;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .pg-list-item[data-hidden] {
+    display: none;
+  }
+
+  .pg-list-btn {
+    appearance: none;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--gs-rule);
+    width: 100%;
+    text-align: left;
+    padding: 0.55rem 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.4rem;
+    transition: background 0.1s;
+    color: var(--sl-color-gray-2);
+  }
+
+  .pg-list-btn:hover {
+    background: var(--gs-cyan-low, rgba(56,189,248,0.06));
+  }
+
+  .pg-list-item[aria-selected="true"] .pg-list-btn {
+    background: var(--gs-cyan-low, rgba(56,189,248,0.1));
+    border-left: 2px solid var(--gs-cyan);
+    padding-left: calc(0.75rem - 2px);
+  }
+
+  .pg-item-name {
+    font-family: var(--gs-mono);
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: var(--gs-ink);
+    background: transparent;
+    border: none;
+    padding: 0;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .pg-item-kind {
+    font-family: var(--gs-mono);
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    flex-shrink: 0;
+    opacity: 0.75;
+  }
+
+  .kind-branch    { color: var(--gs-cyan); }
+  .kind-worktree  { color: var(--gs-cyan-dim, #0ea5e9); }
+  .kind-operation { color: var(--gs-vermilion); }
+  .kind-history   { color: var(--gs-amber); }
+  .kind-stash     { color: var(--sl-color-gray-3); }
+  .kind-submodule { color: var(--sl-color-gray-3); }
+
+  .pg-list-count {
+    font-size: 0.65rem;
+    color: var(--sl-color-gray-3);
+    padding: 0.4rem 0.75rem;
+    border-top: 1px dashed var(--gs-rule);
+    flex-shrink: 0;
+  }
+
+  /* ── Main content ── */
+  .pg-content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  /* Welcome state */
+  .pg-welcome {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .pg-welcome-inner {
+    max-width: 340px;
+    text-align: center;
+  }
+
+  .pg-welcome-label {
+    display: block;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--gs-cyan);
+    margin-bottom: 0.75rem;
+  }
+
+  .pg-welcome-text {
+    margin: 0 0 0.5rem;
+    color: var(--sl-color-gray-2);
+    font-size: 0.9rem;
+    font-family: var(--gs-body);
+  }
+
+  .pg-welcome-hint {
+    margin: 0;
+    color: var(--sl-color-gray-3);
+    font-size: 0.75rem;
+    line-height: 1.55;
+    font-family: var(--gs-mono);
+  }
+
+  .pg-welcome-hint code {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: var(--gs-amber);
+    font-family: var(--gs-mono);
+    font-size: inherit;
+  }
+
+  /* Scenario view */
+  .pg-scenario-view {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .pg-view-header {
+    padding: 0.85rem 1.1rem 0.7rem;
+    border-bottom: 1px solid var(--gs-rule);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  /* ── Graph area ── */
+  .pg-graph-wrap {
+    flex: 1;
+    display: grid;
+    grid-template-rows: 1fr;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .pg-graph-scroll {
+    overflow: auto;
+    padding: 0.5rem 0;
+  }
+
+  .pg-svg {
+    display: block;
+    min-width: 100%;
+  }
+
+  /* Commit nodes + labels in the SVG */
+  :global(.pg-node-group) {
+    cursor: pointer;
+  }
+
+  :global(.pg-node-group:hover .pg-node-circle) {
+    filter: brightness(1.3);
+  }
+
+  :global(.pg-node-group.selected .pg-node-circle) {
+    stroke-width: 2;
+    stroke: white;
+  }
+
+  :global(.pg-node-label) {
+    fill: #94a3b8;
+    font-family: var(--gs-mono, "DM Mono", monospace);
+    font-size: 11px;
+    pointer-events: none;
+    dominant-baseline: middle;
+  }
+
+  :global(.pg-node-hash) {
+    font-weight: 500;
+  }
+
+  /* Commit detail panel */
+  .pg-detail {
+    border-top: 1px solid var(--gs-rule);
+    padding: 0.75rem 1rem;
+    background: var(--gs-surface);
+    font-size: 0.78rem;
+    flex-shrink: 0;
+    max-height: 160px;
+    overflow-y: auto;
+  }
+
+  /* Empty graph state */
+  .pg-empty-graph {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+    color: var(--sl-color-gray-2);
+  }
+
+  .pg-empty-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--gs-amber);
+  }
+
+  .pg-empty-graph p {
+    margin: 0;
+    font-size: 0.85rem;
+    font-family: var(--gs-body);
+  }
+
+  .pg-empty-hint {
+    color: var(--sl-color-gray-3) !important;
+    font-size: 0.75rem !important;
+    font-family: var(--gs-mono) !important;
+    max-width: 380px;
+    line-height: 1.55;
+  }
+
+  /* ── Detail panel internals (generated by JS) ── */
+  :global(.pg-detail-row) {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 0.25rem 0.6rem;
+    margin-bottom: 0.2rem;
+    align-items: baseline;
+  }
+
+  :global(.pg-detail-label) {
+    color: var(--sl-color-gray-3);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: right;
+  }
+
+  :global(.pg-detail-value) {
+    color: var(--sl-color-gray-2);
+    font-family: var(--gs-mono);
+    font-size: 0.75rem;
+    word-break: break-all;
+    cursor: pointer;
+  }
+
+  :global(.pg-detail-value:hover) {
+    color: var(--gs-cyan);
+  }
+
+  :global(.pg-ref-badge) {
+    display: inline-block;
+    padding: 0.05rem 0.35rem;
+    border-radius: 2px;
+    border: 1px solid currentColor;
+    font-size: 0.65rem;
+    margin-right: 0.25rem;
+    line-height: 1.5;
+  }
+
+  :global(.pg-ref-head)   { color: #38bdf8; }
+  :global(.pg-ref-branch) { color: #4ade80; }
+  :global(.pg-ref-remote) { color: #a78bfa; }
+  :global(.pg-ref-tag)    { color: #f59e0b; }
+
+  /* ── Header content generated by JS ── */
+  :global(.pg-header-name) {
+    font-family: var(--gs-mono);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--gs-ink);
+  }
+
+  :global(.pg-header-meta) {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  :global(.pg-header-kind) {
+    font-family: var(--gs-mono);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 2px;
+    border: 1px solid currentColor;
+  }
+
+  :global(.pg-header-summary) {
+    font-family: var(--gs-body);
+    font-size: 0.85rem;
+    color: var(--sl-color-gray-2);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  :global(.pg-header-tag) {
+    font-family: var(--gs-mono);
+    font-size: 0.62rem;
+    color: var(--sl-color-gray-3);
+    padding: 0.05rem 0.3rem;
+    border: 1px solid var(--gs-rule);
+    border-radius: 2px;
+  }
+
+  :global(.pg-header-tag::before) {
+    content: '#';
+    opacity: 0.6;
+  }
+</style>
+
+<script>
+  import { computeLanes } from '../lib/graph-layout.mjs'
+  import scenariosRaw from '../data/scenarios.json'
+
+  // ── Constants ──────────────────────────────────────────────────────────────
+
+  const LANE_COLORS = ['#38bdf8', '#4ade80', '#f59e0b', '#a78bfa', '#fb7185', '#34d399', '#818cf8']
+  const REF_COLORS = { head: '#38bdf8', branch: '#4ade80', remote: '#a78bfa', tag: '#f59e0b', detached: '#f97316' }
+  const CELL_H = 40
+  const CELL_W = 22
+  const NODE_R = 5
+  const L_PAD = 14
+  const T_PAD = 18
+  const LABEL_GAP = 14
+  const SVG_NS = 'http://www.w3.org/2000/svg'
+
+  // ── Helpers ─────────────────────────────────────────────────────────────────
+
+  function svgEl(tag, attrs = {}) {
+    const el = document.createElementNS(SVG_NS, tag)
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, String(v))
+    return el
+  }
+
+  function parseRefs(refs) {
+    if (!refs) return []
+    return refs.split(', ').filter(Boolean).flatMap((r) => {
+      r = r.trim()
+      if (!r) return []
+      if (r.startsWith('HEAD -> ')) {
+        return [
+          { type: 'head', name: 'HEAD' },
+          { type: 'branch', name: r.slice(8) },
+        ]
+      }
+      if (r === 'HEAD') return [{ type: 'detached', name: 'HEAD' }]
+      if (r.startsWith('tag: ')) return [{ type: 'tag', name: r.slice(5) }]
+      if (r.includes('/')) return [{ type: 'remote', name: r }]
+      return [{ type: 'branch', name: r }]
+    })
+  }
+
+  function laneColor(lane) {
+    return LANE_COLORS[lane % LANE_COLORS.length]
+  }
+
+  // ── SVG rendering ──────────────────────────────────────────────────────────
+
+  function renderSVG(svgRoot, nodes, edges, onHover, onClick) {
+    svgRoot.innerHTML = ''
+    if (nodes.length === 0) return
+
+    const maxLane = nodes.reduce((m, n) => Math.max(m, n.lane), 0)
+    const labelX = L_PAD + (maxLane + 1) * CELL_W + LABEL_GAP
+    const svgW = Math.max(480, labelX + 380)
+    const svgH = T_PAD + nodes.length * CELL_H + T_PAD
+
+    svgRoot.setAttribute('width', svgW)
+    svgRoot.setAttribute('height', svgH)
+    svgRoot.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`)
+
+    // node position helpers
+    const cx = (lane) => L_PAD + lane * CELL_W + CELL_W / 2
+    const cy = (row) => T_PAD + row * CELL_H + CELL_H / 2
+
+    const nodeMap = new Map(nodes.map((n) => [n.hash, n]))
+
+    // ── Pass-through vertical lines (for lanes that are active but have no
+    //    node in the current row). We skip this for simplicity and just draw
+    //    direct parent edges, which covers the common cases.
+
+    // ── Edges ──
+    const edgeGroup = svgEl('g', { class: 'pg-edges' })
+    for (const edge of edges) {
+      const from = nodeMap.get(edge.from)
+      const to = nodeMap.get(edge.to)
+      if (!from || !to) continue
+
+      const x1 = cx(from.lane)
+      const y1 = cy(from.row) + NODE_R
+      const x2 = cx(to.lane)
+      const y2 = cy(to.row) - NODE_R
+      const dy = y2 - y1
+      const color = laneColor(edge.fromLane)
+
+      let d
+      if (from.lane === to.lane) {
+        d = `M ${x1} ${y1} L ${x2} ${y2}`
+      } else {
+        const c1y = y1 + dy * 0.6
+        const c2y = y2 - dy * 0.4
+        d = `M ${x1} ${y1} C ${x1} ${c1y} ${x2} ${c2y} ${x2} ${y2}`
+      }
+
+      edgeGroup.appendChild(
+        svgEl('path', { d, stroke: color, 'stroke-width': 1.5, fill: 'none', opacity: 0.55 }),
+      )
+    }
+    svgRoot.appendChild(edgeGroup)
+
+    // ── Nodes ──
+    const nodeGroup = svgEl('g', { class: 'pg-nodes' })
+    for (const node of nodes) {
+      const x = cx(node.lane)
+      const y = cy(node.row)
+      const color = laneColor(node.lane)
+
+      const g = svgEl('g', {
+        class: 'pg-node-group',
+        'data-hash': node.hash,
+        transform: `translate(${x},${y})`,
+      })
+
+      // Circle
+      g.appendChild(svgEl('circle', { r: NODE_R, fill: color, class: 'pg-node-circle' }))
+
+      // Label: hash + refs + subject
+      const text = svgEl('text', { x: labelX - x, y: 0, class: 'pg-node-label' })
+
+      // Short hash (colored)
+      const hashSpan = svgEl('tspan', { fill: color, class: 'pg-node-hash' })
+      hashSpan.textContent = node.short
+      text.appendChild(hashSpan)
+
+      // Refs (if any)
+      const refs = parseRefs(node.refs)
+      if (refs.length > 0) {
+        const open = svgEl('tspan', { fill: '#64748b' })
+        open.textContent = ' ('
+        text.appendChild(open)
+        refs.forEach((ref, i) => {
+          if (i > 0) {
+            const sep = svgEl('tspan', { fill: '#64748b' })
+            sep.textContent = ', '
+            text.appendChild(sep)
+          }
+          const rs = svgEl('tspan', { fill: REF_COLORS[ref.type] || '#64748b' })
+          if (ref.type === 'head') rs.setAttribute('font-weight', '600')
+          rs.textContent = ref.name
+          text.appendChild(rs)
+        })
+        const close = svgEl('tspan', { fill: '#64748b' })
+        close.textContent = ')'
+        text.appendChild(close)
+      }
+
+      // Subject
+      const subj = svgEl('tspan', { fill: '#94a3b8' })
+      subj.textContent = ' ' + (node.subject || '').slice(0, 58)
+      text.appendChild(subj)
+
+      g.appendChild(text)
+
+      // Hit area for hover/click (wider than the circle)
+      const hit = svgEl('rect', {
+        x: -NODE_R - 1,
+        y: -CELL_H / 2,
+        width: svgW - x + NODE_R,
+        height: CELL_H,
+        fill: 'transparent',
+        class: 'pg-node-hit',
+      })
+      g.appendChild(hit)
+
+      g.addEventListener('mouseenter', () => onHover(node))
+      g.addEventListener('mouseleave', () => onHover(null))
+      g.addEventListener('click', () => onClick(node))
+
+      nodeGroup.appendChild(g)
+    }
+    svgRoot.appendChild(nodeGroup)
+  }
+
+  // ── Detail panel ───────────────────────────────────────────────────────────
+
+  function renderDetail(detailEl, node, laneIdx) {
+    const color = laneColor(laneIdx)
+    const refs = parseRefs(node.refs)
+
+    const row = (label, value, cls = 'pg-detail-value') => {
+      const div = document.createElement('div')
+      div.className = 'pg-detail-row'
+      const l = document.createElement('span')
+      l.className = 'pg-detail-label'
+      l.textContent = label
+      const v = document.createElement('span')
+      v.className = cls
+      v.innerHTML = value
+      div.appendChild(l)
+      div.appendChild(v)
+      return div
+    }
+
+    detailEl.innerHTML = ''
+
+    const hashEl = document.createElement('span')
+    hashEl.className = 'pg-detail-value'
+    hashEl.style.color = color
+    hashEl.style.fontFamily = 'var(--gs-mono)'
+    hashEl.textContent = node.hash
+    hashEl.title = 'Click to copy'
+    hashEl.style.cursor = 'pointer'
+    hashEl.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(node.hash)
+        hashEl.textContent = 'copied!'
+        setTimeout(() => { hashEl.textContent = node.hash }, 1200)
+      } catch { /* ignore */ }
+    })
+    const hashRow = document.createElement('div')
+    hashRow.className = 'pg-detail-row'
+    const hashLabel = document.createElement('span')
+    hashLabel.className = 'pg-detail-label'
+    hashLabel.textContent = 'hash'
+    hashRow.appendChild(hashLabel)
+    hashRow.appendChild(hashEl)
+    detailEl.appendChild(hashRow)
+
+    if (refs.length > 0) {
+      const refsHtml = refs.map((r) => `<span class="pg-ref-badge pg-ref-${r.type}">${r.name}</span>`).join('')
+      detailEl.appendChild(row('refs', refsHtml))
+    }
+
+    if (node.subject) detailEl.appendChild(row('subject', escapeHtml(node.subject)))
+    if (node.author) detailEl.appendChild(row('author', escapeHtml(node.author)))
+    if (node.date) detailEl.appendChild(row('date', escapeHtml(node.date.slice(0, 19).replace('T', ' '))))
+    if (node.parents && node.parents.length > 0) {
+      detailEl.appendChild(row('parents', node.parents.map((p) => `<code>${p.slice(0, 9)}</code>`).join(' ')))
+    }
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  }
+
+  // ── Header rendering ───────────────────────────────────────────────────────
+
+  function renderHeader(headerEl, scenario) {
+    headerEl.innerHTML = ''
+
+    const nameEl = document.createElement('code')
+    nameEl.className = 'pg-header-name'
+    nameEl.textContent = scenario.name
+    headerEl.appendChild(nameEl)
+
+    const meta = document.createElement('div')
+    meta.className = 'pg-header-meta'
+
+    const kindEl = document.createElement('span')
+    kindEl.className = `pg-header-kind kind-${scenario.kind}`
+    kindEl.textContent = scenario.kind
+    meta.appendChild(kindEl)
+
+    const commits = scenario.commits ?? []
+    const cntEl = document.createElement('span')
+    cntEl.style.cssText = 'font-size:0.65rem;color:var(--sl-color-gray-3);font-family:var(--gs-mono)'
+    cntEl.textContent = `${commits.length} commit${commits.length === 1 ? '' : 's'}`
+    meta.appendChild(cntEl)
+
+    ;(scenario.tags ?? []).forEach((t) => {
+      const tag = document.createElement('span')
+      tag.className = 'pg-header-tag'
+      tag.textContent = t
+      meta.appendChild(tag)
+    })
+    headerEl.appendChild(meta)
+
+    if (scenario.summary) {
+      const sum = document.createElement('p')
+      sum.className = 'pg-header-summary'
+      sum.textContent = scenario.summary
+      headerEl.appendChild(sum)
+    }
+  }
+
+  // ── Selection + graph rendering ────────────────────────────────────────────
+
+  const scenarios = scenariosRaw
+  const scenarioMap = new Map(scenarios.map((s) => [s.name, s]))
+
+  const svg = document.getElementById('pg-svg')
+  const welcome = document.getElementById('pg-welcome')
+  const view = document.getElementById('pg-view')
+  const header = document.getElementById('pg-view-header')
+  const detail = document.getElementById('pg-detail')
+  const emptyGraph = document.getElementById('pg-empty-graph')
+  const listEl = document.getElementById('pg-list')
+  const countEl = document.getElementById('pg-list-count')
+  const searchEl = document.getElementById('pg-search')
+
+  let currentScenario = null
+
+  function selectScenario(name) {
+    const scenario = scenarioMap.get(name)
+    if (!scenario) return
+
+    currentScenario = scenario
+
+    // Sidebar highlight
+    for (const item of listEl.querySelectorAll('.pg-list-item')) {
+      const active = item.dataset.name === name
+      item.setAttribute('aria-selected', String(active))
+    }
+
+    // Show view, hide welcome
+    welcome.hidden = true
+    view.hidden = false
+
+    // Header
+    renderHeader(header, scenario)
+
+    const commits = scenario.commits ?? []
+
+    if (commits.length === 0) {
+      svg.parentElement.style.display = 'none'
+      emptyGraph.hidden = false
+      detail.hidden = true
+    } else {
+      svg.parentElement.style.display = ''
+      emptyGraph.hidden = true
+      detail.hidden = true
+
+      const { nodes, edges } = computeLanes(commits)
+      renderSVG(
+        svg,
+        nodes,
+        edges,
+        (node) => {
+          if (!node) {
+            detail.hidden = true
+            // Remove selected state from all nodes
+            for (const g of svg.querySelectorAll('.pg-node-group.selected')) {
+              g.classList.remove('selected')
+            }
+            return
+          }
+          detail.hidden = false
+          renderDetail(detail, node, node.lane)
+          // Highlight node
+          for (const g of svg.querySelectorAll('.pg-node-group')) {
+            g.classList.toggle('selected', g.dataset.hash === node.hash)
+          }
+        },
+        (node) => {
+          try {
+            navigator.clipboard.writeText(node.hash)
+          } catch { /* ignore */ }
+        },
+      )
+    }
+
+    // Update URL hash
+    history.replaceState(null, '', '#scenario=' + encodeURIComponent(name))
+
+    // Scroll selected item into view in the sidebar
+    const selectedItem = listEl.querySelector(`[data-name="${CSS.escape(name)}"]`)
+    if (selectedItem) selectedItem.scrollIntoView({ block: 'nearest' })
+  }
+
+  // ── Sidebar list events ────────────────────────────────────────────────────
+
+  listEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-select]')
+    if (!btn) return
+    selectScenario(btn.dataset.select)
+  })
+
+  // ── Search filter ──────────────────────────────────────────────────────────
+
+  let kindFilter = ''
+  let searchTimer = null
+
+  function applyFilters() {
+    const q = (searchEl ? searchEl.value : '').trim().toLowerCase()
+    let visible = 0
+    for (const item of listEl.querySelectorAll('.pg-list-item')) {
+      const matchKind = !kindFilter || item.dataset.kind === kindFilter
+      const matchSearch = !q || (item.dataset.search ?? '').includes(q)
+      if (matchKind && matchSearch) {
+        delete item.dataset.hidden
+        visible++
+      } else {
+        item.dataset.hidden = ''
+      }
+    }
+    if (countEl) countEl.textContent = String(visible)
+  }
+
+  if (searchEl) {
+    searchEl.addEventListener('input', () => {
+      if (searchTimer) clearTimeout(searchTimer)
+      searchTimer = setTimeout(applyFilters, 80)
+    })
+  }
+
+  // ── Kind filter pills ──────────────────────────────────────────────────────
+
+  const pillContainer = document.getElementById('pg-kind-pills')
+  if (pillContainer) {
+    pillContainer.addEventListener('click', (e) => {
+      const pill = e.target.closest('.pg-kind-pill')
+      if (!pill) return
+      kindFilter = pill.dataset.kind ?? ''
+      for (const p of pillContainer.querySelectorAll('.pg-kind-pill')) {
+        p.classList.toggle('active', p === pill)
+      }
+      applyFilters()
+    })
+  }
+
+  // ── Deep-link: read URL hash on load ──────────────────────────────────────
+
+  const params = new URLSearchParams(location.hash.slice(1))
+  const hashScenario = params.get('scenario')
+  if (hashScenario && scenarioMap.has(hashScenario)) {
+    selectScenario(hashScenario)
+  } else if (scenarios.length > 0) {
+    // Default: select first scenario so the playground isn't empty
+    selectScenario(scenarios[0].name)
+  }
+</script>

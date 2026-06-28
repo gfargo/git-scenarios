@@ -115,10 +115,34 @@ async function regenerate() {
       } catch {
         /* ignore */
       }
-      return { graph, branches }
+      let commits = []
+      try {
+        const SEP = '\x1f'
+        const raw = await repo.git.raw([
+          'log',
+          '--all',
+          '--date-order',
+          `--pretty=format:%H${SEP}%h${SEP}%P${SEP}%D${SEP}%s${SEP}%an${SEP}%aI`,
+        ])
+        commits = raw.trimEnd().split('\n').filter(Boolean).map((line) => {
+          const [hash, short, parentsRaw, refsRaw, subject, author, date] = line.split(SEP)
+          return {
+            hash,
+            short,
+            parents: parentsRaw ? parentsRaw.split(' ').filter(Boolean) : [],
+            refs: refsRaw || '',
+            subject: subject || '',
+            author: author || '',
+            date: date || '',
+          }
+        })
+      } catch {
+        // Empty repo — leave [].
+      }
+      return { graph, branches, commits }
     } catch (err) {
       console.warn(`  ⚠ could not capture graph for "${scenario.name}": ${err.message}`)
-      return { graph: [], branches: [] }
+      return { graph: [], branches: [], commits: [] }
     } finally {
       await repo.cleanup()
     }
@@ -126,7 +150,7 @@ async function regenerate() {
 
   const payload = []
   for (const s of allScenarios) {
-    const { graph, branches } = await captureGraph(s)
+    const { graph, branches, commits } = await captureGraph(s)
     // Strip the runtime-only `setup` function — it's not serializable
     // and the browser doesn't need it. Everything else is plain data.
     payload.push({
@@ -138,6 +162,7 @@ async function regenerate() {
       contracts: s.contracts ?? [],
       graph,
       branches,
+      commits,
     })
   }
 

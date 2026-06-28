@@ -152,6 +152,7 @@ export default defineConfig({
           items: [
             { label: 'Overview', slug: 'docs/scenarios/overview' },
             { label: 'Browse & Filter', slug: 'docs/scenarios/browse' },
+            { label: 'Playground', slug: 'docs/scenarios/playground' },
             { label: 'Branch Scenarios', slug: 'docs/scenarios/branch' },
             { label: 'Operation Scenarios', slug: 'docs/scenarios/operation' },
             { label: 'History Scenarios', slug: 'docs/scenarios/history' },
