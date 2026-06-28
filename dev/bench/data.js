@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782690860626,
+  "lastUpdate": 1782690867527,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -311,6 +311,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7054.53,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f75a5adcb4d14671e8250a2644a325ce762d621a",
+          "message": "feat(cache): content-addressed scenario cache via directory copy (#75)\n\n* feat(cache): content-addressed scenario cache via directory copy\n\nAdds a cache layer (`src/scenarioCache.ts`) that materialises each\nscenario once into a template directory keyed by\n`${scenarioName}@${libraryVersion}`, then serves subsequent calls by\ncopying that template rather than replaying every git atom.\n\nChanges:\n- `src/scenarioCache.ts` — new module: `materializeCached()`,\n  `clearScenarioCache()`, `cacheRoot()` with `GIT_SCENARIOS_CACHE_DIR`\n  env override. Atomic rename for concurrent-builder safety.\n- `src/tempGitRepo.ts` — extracts `makeRepoHandle()` helper; exports\n  `wrapRepoAtPath()` so the cache can wrap a copied directory;\n  adds `cache?: boolean` to `CreateTempGitRepoOptions`.\n- `src/spinUpScenario.ts` — routes through `materializeCached()` when\n  `{ cache: true }`.\n- `src/fromScenario.ts` — adds optional leading options object overload\n  (`fromScenario(name, { cache: true }, ...steps)`) while keeping all\n  existing call-sites working.\n- `src/index.ts` — exports `clearScenarioCache`, `cacheRoot`,\n  `FromScenarioOptions`.\n- `bin/cli.ts` (`commandClean`) — also scans `git-scenarios-cache/`\n  for template dirs and surfaces them in the listing with a `(cache)`\n  label.\n- `src/scenarioCache.test.ts` — 14 new tests covering cache miss/hit,\n  hash-identity (including a scenario with real commits), `autoCleanup`,\n  `clearScenarioCache`, `spinUpScenario`/`fromScenario` integration.\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\n\n* chore: sync package-lock.json version to 1.1.0\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\n\n* fix(cache): safety gate for worktrees/submodules + restore commit clock on cache hit\n\nTwo bugs addressed:\n\n1. materializeCached() now detects scenarios that cannot be faithfully\n   reproduced by directory copy (linked worktrees with absolute gitdir\n   back-pointers, submodules) and declines the cache for them, falling\n   back to cold replay. Detection checks .git/worktrees/ (non-empty) and\n   .gitmodules (present).\n\n2. The commit-clock counter is now persisted to .git/GIT_SCENARIOS_CLOCK\n   inside the template, then restored for the copied repo. Without this,\n   extra steps applied after a cache hit started the clock at 0 rather\n   than at the post-scenario position, producing different commit hashes\n   than a cold fromScenario() call.\n\nNew exports on commitClock: getCommitClockCount / setCommitClockCount.\n\nTests added:\n- declines to cache multiple-worktrees (no template written, returns cold-replay repo)\n- declines to cache submodule-with-history (same)\n- fromScenario({ cache: true }, extraStep) is hash-identical to cold replay\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\n\n* fix(cache): avoid double build for uncacheable scenarios; read version from package.json\n\n- buildTemplate now returns the already-built TempGitRepo on the uncacheable path\n  (worktrees / submodules) instead of discarding it and returning false.\n  materializeCached reuses that repo directly, eliminating the second cold replay.\n- LIBRARY_VERSION is no longer a hand-synced literal: scenarioCache.ts reads it\n  from package.json at runtime via readFileSync + __dirname.\n- tsup.config.ts: shims: true added to the library build so __dirname is available\n  in ESM output (the CJS build and jest/ts-jest already have it natively).\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>\nCo-authored-by: Claude Sonnet 4.6 <noreply@anthropic.com>",
+          "timestamp": "2026-06-28T16:53:05-07:00",
+          "tree_id": "0e8c6ae0c7a0e96cb107603bde9b2f1ad32b2ae2",
+          "url": "https://github.com/gfargo/git-scenarios/commit/f75a5adcb4d14671e8250a2644a325ce762d621a"
+        },
+        "date": 1782690867271,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 168.27,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 943.59,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7280.67,
             "unit": "ms"
           }
         ]
