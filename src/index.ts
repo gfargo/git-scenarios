@@ -34,8 +34,9 @@ export {
 export { assertRepo, RepoAssertion, type SnapshotSource } from './assert'
 
 export { spinUpScenario, type SpinUpScenarioOptions } from './spinUpScenario'
-export { fromScenario } from './fromScenario'
+export { fromScenario, type FromScenarioOptions } from './fromScenario'
 export { createTempGitRepo, type TempGitRepo, type CreateTempGitRepoOptions } from './tempGitRepo'
+export { clearScenarioCache, cacheRoot } from './scenarioCache'
 export {
   snapshotRepo,
   type RepoSnapshot,

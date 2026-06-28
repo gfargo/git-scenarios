@@ -21,6 +21,7 @@
  * point consumers will import.
  */
 
+import { materializeCached } from './scenarioCache'
 import { createTempGitRepo, type CreateTempGitRepoOptions, type TempGitRepo } from './tempGitRepo'
 import { resolveScenario } from './resolveScenario'
 
@@ -48,7 +49,7 @@ export type SpinUpScenarioOptions = CreateTempGitRepoOptions & {
  * Searches both built-in and custom-registered scenarios.
  *
  * @param name - Registered scenario name (kebab-case)
- * @param options - Optional config (autoCleanup, remote)
+ * @param options - Optional config (autoCleanup, cache, remote)
  *
  * @throws if the scenario name is unknown — error message lists the
  *   available names so the typo is easy to spot.
@@ -57,6 +58,9 @@ export type SpinUpScenarioOptions = CreateTempGitRepoOptions & {
  * ```ts
  * // Standard usage:
  * const repo = await spinUpScenario('feature-pr-ready')
+ *
+ * // Cache subsequent spin-ups of the same scenario:
+ * const repo = await spinUpScenario('large-repo', { cache: true })
  *
  * // Auto-cleanup safety net for crashy tests:
  * const repo = await spinUpScenario('feature-pr-ready', { autoCleanup: true })
@@ -72,10 +76,15 @@ export async function spinUpScenario(
   options: SpinUpScenarioOptions = {},
 ): Promise<TempGitRepo> {
   const scenario = resolveScenario(name, 'spinUpScenario')
-  const { remote, ...createOptions } = options
+  const { remote, cache, ...repoOptions } = options
 
-  const repo = await createTempGitRepo(createOptions)
-  await scenario.setup(repo)
+  let repo: TempGitRepo
+  if (cache) {
+    repo = await materializeCached(scenario, repoOptions)
+  } else {
+    repo = await createTempGitRepo(repoOptions)
+    await scenario.setup(repo)
+  }
 
   if (remote) {
     await repo.git.addRemote('origin', remote)

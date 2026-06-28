@@ -726,9 +726,14 @@ async function commandCapture(
 }
 
 /**
- * Find and remove stale git-scenarios temp directories.
- * Looks for directories matching both `git-scenarios-*` (current) and
- * `coco-git-test-*` (legacy) patterns in the system temp directory.
+ * Find and remove stale git-scenarios temp directories AND cached
+ * scenario templates.
+ *
+ * Temp dirs: `git-scenarios-*` (current) and `coco-git-test-*` (legacy)
+ * in the system temp directory.
+ *
+ * Cache templates: individual `<name>@<version>` dirs inside
+ * `<tmpdir>/git-scenarios-cache` (or `$GIT_SCENARIOS_CACHE_DIR`).
  */
 async function commandClean(options: {
   dryRun?: boolean
@@ -737,6 +742,7 @@ async function commandClean(options: {
   const tmp = tmpdir()
   const CURRENT_PREFIX = 'git-scenarios-'
   const LEGACY_PREFIX = 'coco-git-test-'
+  const CACHE_DIR_NAME = 'git-scenarios-cache'
   const nowMs = Date.now()
   const maxAgeMs = (options.olderThanHours || 0) * 60 * 60 * 1000
 
@@ -748,14 +754,20 @@ async function commandClean(options: {
     return 1
   }
 
-  const scenarioDirs = entries
-    .filter((name) => name.startsWith(CURRENT_PREFIX) || name.startsWith(LEGACY_PREFIX))
+  type DirEntry = { path: string; mtime: number; isDir: boolean; label: string }
+
+  const scenarioDirs: DirEntry[] = entries
+    .filter(
+      (name) =>
+        (name.startsWith(CURRENT_PREFIX) || name.startsWith(LEGACY_PREFIX)) &&
+        name !== CACHE_DIR_NAME,
+    )
     .map((name) => {
       const fullPath = path.join(tmp, name)
-      const isLegacy = name.startsWith(LEGACY_PREFIX)
+      const label = name.startsWith(LEGACY_PREFIX) ? ' (legacy)' : ''
       try {
-        const stat = statSync(fullPath)
-        return { path: fullPath, mtime: stat.mtimeMs, isDir: stat.isDirectory(), isLegacy }
+        const st = statSync(fullPath)
+        return { path: fullPath, mtime: st.mtimeMs, isDir: st.isDirectory(), label }
       } catch {
         return null
       }
@@ -766,7 +778,30 @@ async function commandClean(options: {
       return (nowMs - entry.mtime) > maxAgeMs
     })
 
-  if (scenarioDirs.length === 0) {
+  // Also scan inside the cache root for individual template dirs
+  const cacheRootPath =
+    process.env['GIT_SCENARIOS_CACHE_DIR'] ?? path.join(tmp, CACHE_DIR_NAME)
+  const cacheDirs: DirEntry[] = []
+  try {
+    const cacheEntries = readdirSync(cacheRootPath)
+    for (const name of cacheEntries) {
+      const fullPath = path.join(cacheRootPath, name)
+      try {
+        const st = statSync(fullPath)
+        if (st.isDirectory() && (maxAgeMs === 0 || (nowMs - st.mtimeMs) > maxAgeMs)) {
+          cacheDirs.push({ path: fullPath, mtime: st.mtimeMs, isDir: true, label: ' (cache)' })
+        }
+      } catch {
+        // skip unreadable entries
+      }
+    }
+  } catch {
+    // cache root doesn't exist — normal when cache has never been populated
+  }
+
+  const allDirs = [...scenarioDirs, ...cacheDirs]
+
+  if (allDirs.length === 0) {
     console.log('')
     console.log('  No stale scenario directories found.')
     console.log('')
@@ -774,13 +809,12 @@ async function commandClean(options: {
   }
 
   console.log('')
-  console.log(`  Found ${scenarioDirs.length} scenario director${scenarioDirs.length === 1 ? 'y' : 'ies'}:`)
+  console.log(`  Found ${allDirs.length} director${allDirs.length === 1 ? 'y' : 'ies'}:`)
   console.log('')
 
-  for (const dir of scenarioDirs) {
+  for (const dir of allDirs) {
     const age = Math.round((nowMs - dir.mtime) / (60 * 60 * 1000))
-    const label = dir.isLegacy ? ' (legacy)' : ''
-    console.log(`    ${dir.path}${label}  (${age}h old)`)
+    console.log(`    ${dir.path}${dir.label}  (${age}h old)`)
   }
 
   if (options.dryRun) {
@@ -792,12 +826,11 @@ async function commandClean(options: {
 
   console.log('')
   let removed = 0
-  for (const dir of scenarioDirs) {
-    const label = dir.isLegacy ? ' (legacy)' : ''
+  for (const dir of allDirs) {
     try {
       rmSync(dir.path, { recursive: true, force: true })
       removed += 1
-      console.log(`  removing: ${path.basename(dir.path)}${label}`)
+      console.log(`  removing: ${path.basename(dir.path)}${dir.label}`)
     } catch (error) {
       console.error(`  Failed to remove: ${dir.path} — ${(error as Error).message}`)
     }
