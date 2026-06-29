@@ -17,6 +17,7 @@ export default defineConfig([
       'ava': 'src/ava.ts',
       'playwright': 'src/playwright.ts',
       'cypress': 'src/cypress.ts',
+      'mcp': 'src/mcp.ts',
     },
     format: ['cjs', 'esm'],
     dts: true,
@@ -28,14 +29,14 @@ export default defineConfig([
     // locate package.json at runtime without hand-syncing a version literal).
     shims: true,
     // Externalize peer deps and node builtins
-    external: ['simple-git'],
+    external: ['simple-git', '@modelcontextprotocol/sdk'],
   },
   // CLI binary (CJS only — Node scripts don't need ESM)
   {
-    entry: { 'bin/cli': 'bin/cli.ts' },
+    entry: { 'bin/cli': 'bin/cli.ts', 'bin/mcp': 'bin/mcp.ts' },
     format: ['cjs'],
     sourcemap: true,
     outDir: 'dist',
-    external: ['simple-git'],
+    external: ['simple-git', '@modelcontextprotocol/sdk'],
   },
 ])
