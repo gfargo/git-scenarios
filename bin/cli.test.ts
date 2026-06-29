@@ -12,6 +12,7 @@ import { join } from 'path'
 
 import { findRegistered, listRegistered, registerScenario, resetRegistry } from '../src/registry'
 import { defineScenario, chain, addCommit } from '../src/atoms'
+import { parseGitVersion } from '../bin/cli'
 
 describe('CLI — scenario registry (lookup path used by CLI)', () => {
   afterEach(() => {
@@ -94,6 +95,30 @@ describe('CLI — create flow (smoke)', () => {
     } finally {
       await repo.cleanup()
     }
+  })
+})
+
+describe('parseGitVersion', () => {
+  it('parses a standard version string', () => {
+    expect(parseGitVersion('git version 2.39.0')).toEqual([2, 39, 0])
+  })
+
+  it('parses the minimum required version', () => {
+    expect(parseGitVersion('git version 2.25.0')).toEqual([2, 25, 0])
+  })
+
+  it('parses a version below the minimum', () => {
+    expect(parseGitVersion('git version 2.24.9')).toEqual([2, 24, 9])
+  })
+
+  it('parses a Windows extended version string', () => {
+    expect(parseGitVersion('git version 2.40.1.windows.1')).toEqual([2, 40, 1])
+  })
+
+  it('returns null for garbage input', () => {
+    expect(parseGitVersion('not a git version')).toBeNull()
+    expect(parseGitVersion('')).toBeNull()
+    expect(parseGitVersion('version 2.39.0')).toBeNull()
   })
 })
 

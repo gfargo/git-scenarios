@@ -292,6 +292,36 @@ function runCLI(args: string[]): { stdout: string; stderr: string; status: numbe
     }, 30_000)
   })
 
+  describe('doctor', () => {
+    it('exits 0 and prints per-check status lines', () => {
+      const { stdout, status } = runCLI(['doctor'])
+      expect(status).toBe(0)
+      expect(stdout).toContain('git-version')
+      expect(stdout).toContain('temp-dir-writable')
+      expect(stdout).toContain('git-lfs')
+    })
+
+    it('--json emits a checks array with name/status/message per entry', () => {
+      const { stdout, status } = runCLI(['doctor', '--json'])
+      expect(status).toBe(0)
+      const data = JSON.parse(stdout)
+      expect(Array.isArray(data.checks)).toBe(true)
+      expect(data.checks.length).toBeGreaterThan(0)
+      for (const check of data.checks) {
+        expect(check).toHaveProperty('name')
+        expect(check).toHaveProperty('status')
+        expect(['pass', 'warn', 'fail']).toContain(check.status)
+        expect(check).toHaveProperty('message')
+      }
+    })
+
+    it('doctor appears in help output', () => {
+      const { stdout, status } = runCLI(['--help'])
+      expect(status).toBe(0)
+      expect(stdout).toContain('doctor')
+    })
+  })
+
   describe('clean', () => {
     it('--dry-run reports without removing', () => {
       // Create a fake stale dir to ensure clean has something to find
