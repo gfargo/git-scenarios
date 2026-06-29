@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782741724824,
+  "lastUpdate": 1782772062539,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -935,6 +935,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7077.3,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "distinct": true,
+          "id": "bb8386cb93ed0b216c04525d7b9d804eab9174c7",
+          "message": "ci: run mutation testing only on main, add job summary + timeout\n\n- Mutation job now only triggers on push to main (not PRs)\n  Saves ~37 min of CI per PR while keeping the data on every merge.\n\n- Added timeout-minutes: 45 to cap runaway jobs\n\n- Added a Summary step that writes mutation results to the GitHub\n  Actions run summary (the Overview tab). This makes the score\n  visible without downloading artifacts — harder to forget about.\n\n- Mutated files and score excerpt appear in the run summary markdown\n  so you see the results at a glance when reviewing the CI run.",
+          "timestamp": "2026-06-29T18:26:15-04:00",
+          "tree_id": "fd2ed64e819a31058d8ec2c039fbf82dc8e9aceb",
+          "url": "https://github.com/gfargo/git-scenarios/commit/bb8386cb93ed0b216c04525d7b9d804eab9174c7"
+        },
+        "date": 1782772061813,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 161.88,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 994.2,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7408.49,
             "unit": "ms"
           }
         ]
