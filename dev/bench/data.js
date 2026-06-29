@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782691908233,
+  "lastUpdate": 1782692695856,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -389,6 +389,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7091.92,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e2e7fc341b15ace535c51b5e0682b81ef4ddc68d",
+          "message": "feat(cli): add completions command and list --names flag (#79)\n\n- Add src/completions.ts with generateCompletion(shell) for bash/zsh/fish\n- Scenario names are resolved dynamically at TAB time via list --names\n- Add commandCompletions to bin/cli.ts; wire into parseArgs, main, printHelp\n- Add --names flag to commandList for newline-separated name output\n- Add src/completions.test.ts (15 unit tests)\n- Add e2e tests to bin/cli.e2e.test.ts (completions + list --names)\n- Update README.md and www CLI guide with install instructions\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>",
+          "timestamp": "2026-06-28T17:23:29-07:00",
+          "tree_id": "de7b54832d42a42685cc17dc7d678ae0d14e8eb0",
+          "url": "https://github.com/gfargo/git-scenarios/commit/e2e7fc341b15ace535c51b5e0682b81ef4ddc68d"
+        },
+        "date": 1782692695098,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 167.01,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 931.57,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7040.96,
             "unit": "ms"
           }
         ]
