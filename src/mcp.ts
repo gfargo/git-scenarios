@@ -15,7 +15,7 @@
  * stdio transport — run via `git-scenarios-mcp` (see bin/mcp.ts).
  */
 
-import { rmSync } from 'fs'
+import { existsSync, rmSync } from 'fs'
 import { basename } from 'path'
 import { simpleGit } from 'simple-git'
 import { z } from 'zod'
@@ -258,34 +258,30 @@ export function createMcpServer(): McpServer {
         .describe('Override the inferred scenario kind.'),
     },
     async ({ path: repoPath, name, kind }) => {
-      const git = simpleGit(repoPath)
-
-      try {
-        await git.checkIsRepo()
-      } catch {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify({ error: `Not a git repository: ${repoPath}` }),
-            },
-          ],
-          isError: true,
-        }
+      // simple-git's constructor throws synchronously on a non-existent
+      // directory (e.g. Windows has no `/tmp`), so guard before constructing.
+      const notARepo = {
+        content: [
+          {
+            type: 'text' as const,
+            text: JSON.stringify({ error: `Not a git repository: ${repoPath}` }),
+          },
+        ],
+        isError: true,
+      }
+      if (!existsSync(repoPath)) {
+        return notARepo
       }
 
-      // Verify it actually is a git repo (checkIsRepo can return false)
-      const isRepo = await git.checkIsRepo()
+      const git = simpleGit(repoPath)
+      let isRepo = false
+      try {
+        isRepo = await git.checkIsRepo()
+      } catch {
+        isRepo = false
+      }
       if (!isRepo) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify({ error: `Not a git repository: ${repoPath}` }),
-            },
-          ],
-          isError: true,
-        }
+        return notARepo
       }
 
       const defaultName = basename(repoPath) || 'captured'
