@@ -1,9 +1,9 @@
 ---
 title: Scenarios Overview
-description: All 38 curated scenarios at a glance.
+description: All 46 curated scenarios at a glance.
 ---
 
-The library ships 38 curated scenarios across 6 kinds. Each produces a deterministic git repo state — same setup, same result, every time.
+The library ships 46 curated scenarios across 6 kinds. Each produces a deterministic git repo state — same setup, same result, every time.
 
 :::tip[Looking for something specific?]
 Try the [interactive browser](/docs/scenarios/browse) — filter by kind, tag, or freeform text and copy snippets straight to your clipboard.

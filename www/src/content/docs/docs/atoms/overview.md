@@ -73,6 +73,7 @@ type TempGitRepo = {
   readFile: (path: string) => Promise<string>           // utf-8
   exists: (path: string) => Promise<boolean>            // file or dir
   commitAll: (message: string) => Promise<void>
+  snapshot: () => Promise<RepoSnapshot>                 // structured state
   cleanup: () => Promise<void>
 }
 ```

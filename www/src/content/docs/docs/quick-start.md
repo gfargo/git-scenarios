@@ -146,6 +146,6 @@ npx git-scenarios create feature-pr-ready
 
 ## Next steps
 
-- [Browse all 32 scenarios →](/docs/scenarios/browse)
+- [Browse all 46 scenarios →](/docs/scenarios/browse)
 - [Learn the atom API →](/docs/atoms/overview)
 - [Set up the Jest adapter →](/docs/guides/jest-adapter)
