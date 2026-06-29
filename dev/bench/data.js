@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782694399498,
+  "lastUpdate": 1782695155870,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -701,6 +701,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7240.84,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5bd7267ea7cb97d6b00b18bea056f5e421ddec86",
+          "message": "feat(test): add Stryker mutation testing on the core (#84)\n\nInstalls @stryker-mutator/core + @stryker-mutator/jest-runner and wires\nmutation testing scoped to the deterministic core: commitClock.ts,\ncapture.ts, atoms/seededFiles.ts, and atoms/chain.ts.\n\n- stryker.config.mjs: Jest runner, perTest coverage analysis, low concurrency\n  (git subprocess contention), generous timeoutMS for shelling tests\n- package.json: test:mutation script + two Stryker devDeps\n- .gitignore: exclude reports/ and .stryker-tmp/\n- ci.yml: non-blocking mutation job (continue-on-error: true) with HTML\n  artifact upload; thresholds.break stays null until baseline is stable\n- MUTATION.md: scope rationale, thresholds, baseline instructions\n\nCloses #63\nPlane: [OSS-50](https://compass.tailb82ead.ts.net:3443/gfargo/browse/OSS-50/)\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>\nCo-authored-by: Claude Sonnet 4.6 <noreply@anthropic.com>",
+          "timestamp": "2026-06-28T18:04:27-07:00",
+          "tree_id": "92775c49c021dec53ad829f239a92316f0e17407",
+          "url": "https://github.com/gfargo/git-scenarios/commit/5bd7267ea7cb97d6b00b18bea056f5e421ddec86"
+        },
+        "date": 1782695155475,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 171.6,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 950.92,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7364.35,
             "unit": "ms"
           }
         ]
