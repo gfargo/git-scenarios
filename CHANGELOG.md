@@ -6,7 +6,31 @@ versions follow [semver](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.2.0] — 2026-06-28
+
 ### Added
+
+- **MCP server** (`@gfargo/git-scenarios/mcp`, plus a `git-scenarios-mcp` bin) —
+  a Model Context Protocol server that exposes the scenario catalogue and
+  materialization to AI coding agents: `list_scenarios`, `describe_scenario`,
+  `inspect_scenario`, `materialize_scenario`, `capture_repo`, `cleanup_scenario`.
+- **`doctor` command** — `git-scenarios doctor [--json]` environment health
+  check: git version (≥ 2.25.0), temp-dir writability, leftover scenario dirs,
+  and optional `git-lfs`. Non-zero exit on hard failures.
+- **Shell completions** — `git-scenarios completions <bash|zsh|fish>` with
+  dynamic scenario-name completion backed by a new `list --names` flag.
+- **GitHub Action** — a composite action that materializes a named scenario
+  into the workspace for downstream CI (inputs: scenario, path, optional remote).
+- **Content-addressed scenario cache** — materialize each scenario once into a
+  template `.git`, then serve later spin-ups via `git clone --local` (hardlinked
+  objects, near-instant). Hash-identical to a cold replay; removes the large-repo
+  replay-timeout class of problems. Worktree/submodule scenarios fall back to
+  cold replay automatically.
+- **Metadata scenarios** — `installed-hooks`, `commits-with-notes`, and
+  `mixed-tags` (annotated + lightweight, including a tag pointing at a tree).
+- **Marketing site** — an in-browser scenario playground with an interactive
+  commit graph, per-scenario permalink pages (snippets + rendered graph), and a
+  "choosing a scenario" decision guide plus a vs-alternatives comparison.
 
 - **Contribution template + checklist** — `templates/scenario.template.ts` and
   `templates/scenario.test.template.ts` provide copy-paste starting points for
@@ -79,6 +103,23 @@ versions follow [semver](https://semver.org/).
   `GitScenariosMatchers` interface (4 lines, no `vitest` dependency
   required of this package). The other three runners (node:test, Mocha,
   AVA) use `assertRepo` directly — same checks, same messages.
+
+### Changed
+
+- **`exports` map** rewritten to nested `import` / `require` conditions with
+  distinct `.d.ts` / `.d.cts` type entries, fixing CJS type resolution
+  (FalseESM) across every subpath export.
+
+### Tooling
+
+- **Package-publishing checks** in CI — `attw` (are-the-types-wrong) and
+  `publint --strict` run against the packed tarball to catch dual CJS/ESM and
+  types-resolution regressions before publish.
+- **API-surface drift gate** — committed `etc/*.api.md` baselines (api-extractor)
+  with a CI check that flags undocumented public-API changes.
+- **Mutation testing** — Stryker on the core modules (commit clock, capture,
+  seeded files, chain), running as an informational, non-blocking CI job until
+  the baseline score stabilizes.
 
 ## [1.1.0] — 2026-06-23
 
