@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782740958666,
+  "lastUpdate": 1782741368316,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -818,6 +818,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7368.84,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "distinct": true,
+          "id": "f67c401f42ed46ab3d64599d41df4fd6ff0aff2a",
+          "message": "docs(www): audit and fix stale content for v1.1.0\n\n- Fix coco-git-test- → git-scenarios- in DiagramPipeline SVG\n- Update scenario count 32 → 46 across all pages (hero, specs strip,\n  SVG schematic, browse, overview, quick-start, index cards, tip block,\n  playground cross-refs, changelog, ScenarioBrowser comment)\n- Add snapshot() to TempGitRepo type in atoms/overview\n- Remove hardcoded '32' from changelog prose (use 'all' instead)",
+          "timestamp": "2026-06-29T09:54:34-04:00",
+          "tree_id": "ce5d4dd0974a21d3243fe27b1f4fa51c08a1ce18",
+          "url": "https://github.com/gfargo/git-scenarios/commit/f67c401f42ed46ab3d64599d41df4fd6ff0aff2a"
+        },
+        "date": 1782741368043,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 168.89,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 943.89,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7245.43,
             "unit": "ms"
           }
         ]
