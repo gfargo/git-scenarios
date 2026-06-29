@@ -1,0 +1,110 @@
+name: Action self-test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  action-test:
+    name: action self-test (${{ matrix.scenario }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario:
+          - feature-pr-ready
+          - mid-merge-conflict
+          - single-staged-file
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.2'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Pack and install CLI globally
+        run: |
+          npm pack
+          npm install -g ./gfargo-git-scenarios-*.tgz
+
+      - name: Materialize scenario
+        id: scenario
+        uses: ./
+        with:
+          scenario: ${{ matrix.scenario }}
+          path: test-scenario-${{ matrix.scenario }}
+
+      - name: Assert output path is set
+        run: |
+          if [ -z "${{ steps.scenario.outputs.path }}" ]; then
+            echo "::error::output 'path' is empty"
+            exit 1
+          fi
+
+      - name: Assert scenario directory is a git repo
+        run: |
+          git -C "${{ steps.scenario.outputs.path }}" rev-parse --is-inside-work-tree
+
+      - name: Assert scenario directory matches expected branch (feature-pr-ready)
+        if: matrix.scenario == 'feature-pr-ready'
+        run: |
+          branch=$(git -C "${{ steps.scenario.outputs.path }}" branch --show-current)
+          if [ "$branch" != "feat/widget-v2" ]; then
+            echo "::error::expected branch 'feat/widget-v2', got '$branch'"
+            exit 1
+          fi
+
+  action-test-with-remote:
+    name: action self-test with remote
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.2'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Pack and install CLI globally
+        run: |
+          npm pack
+          npm install -g ./gfargo-git-scenarios-*.tgz
+
+      - name: Materialize scenario with remote
+        id: scenario
+        uses: ./
+        with:
+          scenario: feature-pr-ready
+          path: test-scenario-with-remote
+          remote: git@github.com:org/repo.git
+
+      - name: Assert remote is set
+        run: |
+          url=$(git -C "${{ steps.scenario.outputs.path }}" remote get-url origin)
+          if [ "$url" != "git@github.com:org/repo.git" ]; then
+            echo "::error::expected remote 'git@github.com:org/repo.git', got '$url'"
+            exit 1
+          fi
