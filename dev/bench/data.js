@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782693463031,
+  "lastUpdate": 1782693465188,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -506,6 +506,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7273.23,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e3a628e552103fcf476646eb6484cf7d0ca6ce25",
+          "message": "docs(www): add scenario decision guide and alternatives comparison (#85)\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>",
+          "timestamp": "2026-06-28T17:36:18-07:00",
+          "tree_id": "0f3890ddd002f57bb4a4cac14d23c71f4e43d956",
+          "url": "https://github.com/gfargo/git-scenarios/commit/e3a628e552103fcf476646eb6484cf7d0ca6ce25"
+        },
+        "date": 1782693462808,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 166.56,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 930.24,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7099.34,
             "unit": "ms"
           }
         ]
