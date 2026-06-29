@@ -112,6 +112,20 @@ jobs:
           gh-pages-branch: gh-pages
           benchmark-data-dir-path: dev/bench
 
+  package-checks:
+    name: package-checks (attw + publint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.2'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run check:exports
+      - run: npm run check:publint
+
   test-git-compat:
     name: git-compat (${{ matrix.git-version }})
     runs-on: ubuntu-latest

@@ -26,74 +26,144 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     },
     "./scenarios": {
-      "types": "./dist/scenarios/index.d.ts",
-      "import": "./dist/scenarios/index.js",
-      "require": "./dist/scenarios/index.cjs"
+      "import": {
+        "types": "./dist/scenarios/index.d.ts",
+        "default": "./dist/scenarios/index.js"
+      },
+      "require": {
+        "types": "./dist/scenarios/index.d.cts",
+        "default": "./dist/scenarios/index.cjs"
+      }
     },
     "./tempGitRepo": {
-      "types": "./dist/tempGitRepo.d.ts",
-      "import": "./dist/tempGitRepo.js",
-      "require": "./dist/tempGitRepo.cjs"
+      "import": {
+        "types": "./dist/tempGitRepo.d.ts",
+        "default": "./dist/tempGitRepo.js"
+      },
+      "require": {
+        "types": "./dist/tempGitRepo.d.cts",
+        "default": "./dist/tempGitRepo.cjs"
+      }
     },
     "./capture": {
-      "types": "./dist/capture.d.ts",
-      "import": "./dist/capture.js",
-      "require": "./dist/capture.cjs"
+      "import": {
+        "types": "./dist/capture.d.ts",
+        "default": "./dist/capture.js"
+      },
+      "require": {
+        "types": "./dist/capture.d.cts",
+        "default": "./dist/capture.cjs"
+      }
     },
     "./matchers": {
-      "types": "./dist/matchers.d.ts",
-      "import": "./dist/matchers.js",
-      "require": "./dist/matchers.cjs"
+      "import": {
+        "types": "./dist/matchers.d.ts",
+        "default": "./dist/matchers.js"
+      },
+      "require": {
+        "types": "./dist/matchers.d.cts",
+        "default": "./dist/matchers.cjs"
+      }
     },
     "./atoms": {
-      "types": "./dist/atoms/index.d.ts",
-      "import": "./dist/atoms/index.js",
-      "require": "./dist/atoms/index.cjs"
+      "import": {
+        "types": "./dist/atoms/index.d.ts",
+        "default": "./dist/atoms/index.js"
+      },
+      "require": {
+        "types": "./dist/atoms/index.d.cts",
+        "default": "./dist/atoms/index.cjs"
+      }
     },
     "./jest": {
-      "types": "./dist/jest.d.ts",
-      "import": "./dist/jest.js",
-      "require": "./dist/jest.cjs"
+      "import": {
+        "types": "./dist/jest.d.ts",
+        "default": "./dist/jest.js"
+      },
+      "require": {
+        "types": "./dist/jest.d.cts",
+        "default": "./dist/jest.cjs"
+      }
     },
     "./vitest": {
-      "types": "./dist/vitest.d.ts",
-      "import": "./dist/vitest.js",
-      "require": "./dist/vitest.cjs"
+      "import": {
+        "types": "./dist/vitest.d.ts",
+        "default": "./dist/vitest.js"
+      },
+      "require": {
+        "types": "./dist/vitest.d.cts",
+        "default": "./dist/vitest.cjs"
+      }
     },
     "./node-test": {
-      "types": "./dist/node-test.d.ts",
-      "import": "./dist/node-test.js",
-      "require": "./dist/node-test.cjs"
+      "import": {
+        "types": "./dist/node-test.d.ts",
+        "default": "./dist/node-test.js"
+      },
+      "require": {
+        "types": "./dist/node-test.d.cts",
+        "default": "./dist/node-test.cjs"
+      }
     },
     "./mocha": {
-      "types": "./dist/mocha.d.ts",
-      "import": "./dist/mocha.js",
-      "require": "./dist/mocha.cjs"
+      "import": {
+        "types": "./dist/mocha.d.ts",
+        "default": "./dist/mocha.js"
+      },
+      "require": {
+        "types": "./dist/mocha.d.cts",
+        "default": "./dist/mocha.cjs"
+      }
     },
     "./ava": {
-      "types": "./dist/ava.d.ts",
-      "import": "./dist/ava.js",
-      "require": "./dist/ava.cjs"
+      "import": {
+        "types": "./dist/ava.d.ts",
+        "default": "./dist/ava.js"
+      },
+      "require": {
+        "types": "./dist/ava.d.cts",
+        "default": "./dist/ava.cjs"
+      }
     },
     "./playwright": {
-      "types": "./dist/playwright.d.ts",
-      "import": "./dist/playwright.js",
-      "require": "./dist/playwright.cjs"
+      "import": {
+        "types": "./dist/playwright.d.ts",
+        "default": "./dist/playwright.js"
+      },
+      "require": {
+        "types": "./dist/playwright.d.cts",
+        "default": "./dist/playwright.cjs"
+      }
     },
     "./cypress": {
-      "types": "./dist/cypress.d.ts",
-      "import": "./dist/cypress.js",
-      "require": "./dist/cypress.cjs"
+      "import": {
+        "types": "./dist/cypress.d.ts",
+        "default": "./dist/cypress.js"
+      },
+      "require": {
+        "types": "./dist/cypress.d.cts",
+        "default": "./dist/cypress.cjs"
+      }
     },
     "./mcp": {
-      "types": "./dist/mcp.d.ts",
-      "import": "./dist/mcp.js",
-      "require": "./dist/mcp.cjs"
+      "import": {
+        "types": "./dist/mcp.d.ts",
+        "default": "./dist/mcp.js"
+      },
+      "require": {
+        "types": "./dist/mcp.d.cts",
+        "default": "./dist/mcp.cjs"
+      }
     }
   },
   "bin": {
@@ -116,6 +186,9 @@
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
     "bench": "npm run build && node bench/index.mjs",
+    "check:exports": "attw --pack . --ignore-rules no-resolution",
+    "check:publint": "publint --strict",
+    "check:package": "npm run check:exports && npm run check:publint",
     "prepublishOnly": "npm run clean && npm run build && npm test && npm run lint"
   },
   "keywords": [
@@ -137,6 +210,7 @@
     "simple-git": "^3.0.0"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.4",
     "@types/jest": "^29.5.12",
     "@types/node": "^22.10.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
@@ -144,6 +218,7 @@
     "eslint": "^8.57.0",
     "fast-check": "^4.8.0",
     "jest": "^29.7.0",
+    "publint": "^0.3.21",
     "simple-git": "^3.27.0",
     "ts-jest": "^29.2.5",
     "tsup": "^8.5.1",
