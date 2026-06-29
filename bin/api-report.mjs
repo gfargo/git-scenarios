@@ -32,6 +32,9 @@ const ENTRIES = [
   'node-test',
   'mocha',
   'ava',
+  'playwright',
+  'cypress',
+  'mcp',
 ]
 
 const etcDir = resolve(rootDir, 'etc')
