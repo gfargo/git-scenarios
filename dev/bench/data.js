@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782693499930,
+  "lastUpdate": 1782693676139,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -584,6 +584,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7195.1,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "47632b2ad441f0db3337c0ad5e77e252355ac4f0",
+          "message": "feat(www): add per-scenario permalink pages with snippets and git graph (#88)\n\nGenerates a static page at /scenarios/<name> for every entry in\nscenarios.json. Each page shows the scenario's description, contracts,\ntags, branches, three copy-paste snippets (library / CLI / Jest adapter),\nand the captured ASCII git log --graph output. Empty-graph scenarios\n(empty-repo) degrade gracefully with an explanatory message.\n\nScenarioBrowser cards now link scenario names to their permalink for\nshareable entry points. browse.mdx updated with tips and cross-links.\n\nCloses #58\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>\nCo-authored-by: Claude Sonnet 4.6 <noreply@anthropic.com>",
+          "timestamp": "2026-06-28T17:39:48-07:00",
+          "tree_id": "11b25e224bef39f42f10c9447def44ce3218a2c0",
+          "url": "https://github.com/gfargo/git-scenarios/commit/47632b2ad441f0db3337c0ad5e77e252355ac4f0"
+        },
+        "date": 1782693675197,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 167.25,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 941.46,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7211.11,
             "unit": "ms"
           }
         ]
