@@ -1,0 +1,2 @@
+# Ensure API reports are byte-identical across OSes (prevents CRLF-driven false diffs on Windows CI)
+etc/*.api.md text eol=lf
