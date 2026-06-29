@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782694398008,
+  "lastUpdate": 1782694399498,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -662,6 +662,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7221.15,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8618111c55497660e377d958918e3388766113fa",
+          "message": "ci: add API surface snapshot + drift gate (#82)\n\n- Add bin/api-report.mjs: loops all 11 published entry points and runs\n  api-extractor programmatically, generating etc/<slug>.api.md per entry\n- Add etc/*.api.md: committed baseline reports for all entry points\n- Add .gitattributes: normalise API report line endings to LF across OSes\n- Add api:update / api:check scripts to package.json\n- Add @microsoft/api-extractor 7.58.9 as pinned devDependency\n- Add API surface check CI step (ubuntu-latest only, after Build)\n\nCI fails when a public export signature changes without the committed\nreport being updated. Run npm run api:update to regenerate.\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>",
+          "timestamp": "2026-06-28T17:51:47-07:00",
+          "tree_id": "5e12116198edfb021d4515c803248688f9d1996f",
+          "url": "https://github.com/gfargo/git-scenarios/commit/8618111c55497660e377d958918e3388766113fa"
+        },
+        "date": 1782694397105,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 168.55,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 943.26,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7240.84,
             "unit": "ms"
           }
         ]
