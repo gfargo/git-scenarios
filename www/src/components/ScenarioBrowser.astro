@@ -85,7 +85,9 @@ const orderedKinds = [
         data-search={[s.name, s.summary, ...(s.contracts ?? [])].join(' ').toLowerCase()}
       >
         <div class="scenario-header">
-          <code class="scenario-name">{s.name}</code>
+          <a href={`/scenarios/${s.name}`} class="scenario-name-link" title={`View permalink for ${s.name}`}>
+            <code class="scenario-name">{s.name}</code>
+          </a>
           <span class={`scenario-kind kind-${s.kind}`}>{s.kind}</span>
         </div>
         <p class="scenario-summary">{s.summary}</p>
@@ -358,6 +360,17 @@ const orderedKinds = [
     align-items: baseline;
     justify-content: space-between;
     gap: 0.5rem;
+  }
+
+  .scenario-name-link {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .scenario-name-link:hover .scenario-name {
+    color: var(--gs-cyan);
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   .scenario-name {

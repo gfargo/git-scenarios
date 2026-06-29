@@ -414,6 +414,54 @@
     ]
   },
   {
+    "name": "dangling-commit",
+    "summary": "experimental commit dropped from main, reachable only via reflog",
+    "description": "A commit exists in the object store but is not reachable from any\nbranch or tag — only via `HEAD@{1}` in the reflog.\n\n`main` has 2 commits; the third \"experimental\" commit was dropped\nby a `git reset --hard HEAD~1`. The object is still present and\ncan be recovered with `git checkout HEAD@{1}` or by handing the\nSHA to `git branch recover <sha>`.\n\nUseful for testing:\n  - reflog-browsing UIs\n  - \"recover lost commit\" affordances\n  - `git fsck --lost-found` integrations",
+    "kind": "branch",
+    "tags": [
+      "reflog",
+      "recovery",
+      "dangling"
+    ],
+    "contracts": [
+      "main has 2 commits",
+      "worktree is clean",
+      "the experimental commit is not reachable from any branch",
+      "the experimental commit is recoverable via the reflog (HEAD@{1})"
+    ],
+    "graph": [
+      "* dca4ab1 (HEAD -> main) feat: keep this",
+      "* 7520170 chore: initial"
+    ],
+    "branches": [
+      "main"
+    ]
+  },
+  {
+    "name": "reset-recoverable-head",
+    "summary": "main reset 2 commits back; former tip recoverable via main@{1}",
+    "description": "`main` was at 4 commits, then hard-reset back to the 2nd commit.\nThe former tip (commit 4) and its parent (commit 3) are not on any\nbranch but remain in the object store, recoverable via the reflog:\n  `git checkout main@{1}`  or  `git reset --hard main@{1}`\n\nUseful for testing:\n  - \"undo reset\" / recovery affordances in TUIs\n  - reflog browsing and \"restore branch tip\" flows\n  - HEAD divergence visualisation after a hard reset",
+    "kind": "branch",
+    "tags": [
+      "reflog",
+      "recovery",
+      "reset"
+    ],
+    "contracts": [
+      "main has 2 commits",
+      "worktree is clean",
+      "the former tip (4th commit) is not reachable from main",
+      "the former tip is recoverable via main@{1} in the reflog"
+    ],
+    "graph": [
+      "* 1ab1c9c (HEAD -> main) feat: one",
+      "* 7520170 chore: initial"
+    ],
+    "branches": [
+      "main"
+    ]
+  },
+  {
     "name": "mid-bisect",
     "summary": "20-commit history with `git bisect` started, HEAD at midpoint",
     "description": "A repository with 20 commits on `main` and an active `git bisect`\nrun. HEAD is detached at the midpoint candidate; no `good` / `bad`\ndecisions have been recorded yet. The bisect log carries only the\nstart markers (`git bisect start <bad> <good>`).\n\nUseful for testing:\n  - bisect view active-state rendering\n  - decision keystrokes (`g`/`b`/`s`/`x`) and their immediate effect\n  - completion-panel detection (apply `g` / `b` repeatedly until\n    git emits \"X is the first bad commit\")\n  - title-bar BISECTING badge",
@@ -562,6 +610,120 @@
     ]
   },
   {
+    "name": "merge-conflict-rename-rename",
+    "summary": "in-progress merge with a rename/rename conflict (orig.txt → two different names)",
+    "description": "A repository mid-merge, blocked on a rename/rename conflict.\n`main` renamed `orig.txt` to `main-name.txt`; `feat/x` renamed\nthe same file to `feat-name.txt`. Running `git merge feat/x` on\n`main` detected the conflicting renames and left the merge\nuncommitted.\n\nUnlike content conflicts, there are no in-file conflict markers.\nBoth renamed files exist in the worktree as ordinary files; the\nconflict is expressed as unresolved index entries (`AU`, `UA`,\n`DD` in `git status --porcelain`). `orig.txt` is absent because\nboth sides deleted it (via the rename).\n\nUseful for testing:\n  - conflict views that must handle non-marker conflict types\n  - rename detection and display in diff/status tools\n  - tooling that reads git index stage entries (stages 1-3)",
+    "kind": "operation",
+    "tags": [
+      "conflict",
+      "merge",
+      "rename"
+    ],
+    "contracts": [
+      "main is checked out",
+      "a merge is in progress (MERGE_HEAD exists)",
+      "orig.txt was renamed to main-name.txt on main and to feat-name.txt on feat/x",
+      "main-name.txt and feat-name.txt both exist in the worktree (no conflict markers)",
+      "orig.txt is absent from the worktree (DD — deleted by both sides)",
+      "at least 2 unresolved conflicts (AU/UA/DD index entries)"
+    ],
+    "graph": [
+      "* 5ef56bd (HEAD -> main) refactor: rename orig.txt to main-name.txt",
+      "| * 78644df (feat/x) refactor: rename orig.txt to feat-name.txt",
+      "|/  ",
+      "* 740a739 chore: add shared file",
+      "* f4ee0a9 chore: initial scaffold"
+    ],
+    "branches": [
+      "feat/x",
+      "main"
+    ]
+  },
+  {
+    "name": "merge-conflict-delete-modify",
+    "summary": "in-progress merge with a delete/modify conflict on src/component.ts",
+    "description": "A repository mid-merge, blocked on a delete/modify conflict.\n`main` deleted `src/component.ts` while `feat/x` modified it.\nRunning `git merge feat/x` on `main` detected the conflict and\nleft the merge uncommitted.\n\nUnlike content conflicts, there are no in-file conflict markers.\nGit leaves `src/component.ts` in the worktree with the content\nfrom `feat/x` (the modifying side). The conflict is expressed as\na `DU` entry in `git status --porcelain` (deleted by us, modified\nby them).\n\nUseful for testing:\n  - conflict views that must handle delete-side conflicts\n  - tools that show \"deleted by us\" in their conflicts UI\n  - the \"keep theirs / remove file\" resolution paths",
+    "kind": "operation",
+    "tags": [
+      "conflict",
+      "merge",
+      "delete"
+    ],
+    "contracts": [
+      "main is checked out",
+      "a merge is in progress (MERGE_HEAD exists)",
+      "src/component.ts was deleted on main but modified on feat/x",
+      "src/component.ts exists in the worktree with feat/x content (no conflict markers)",
+      "exactly 1 unresolved conflict (DU status: deleted by us, modified by them)"
+    ],
+    "graph": [
+      "* 3685503 (feat/x) feat: update component to v2",
+      "| * da99c48 (HEAD -> main) refactor: remove component",
+      "|/  ",
+      "* 6626e42 feat: add component",
+      "* f4ee0a9 chore: initial scaffold"
+    ],
+    "branches": [
+      "feat/x",
+      "main"
+    ]
+  },
+  {
+    "name": "merge-conflict-add-add",
+    "summary": "in-progress merge with an add/add conflict on src/config.ts",
+    "description": "A repository mid-merge, blocked on an add/add conflict.\nBoth `main` and `feat/x` independently added `src/config.ts`\nwith different environment values. Running `git merge feat/x`\non `main` detected the conflicting additions and left the merge\nuncommitted.\n\nUnlike rename/rename and delete/modify conflicts, git does inject\nconflict markers here — the file has `<<<<<<<`, `=======`, and\n`>>>>>>>` sections showing both versions. The conflict appears as\nan `AA` (added by both) entry in `git status --porcelain`.\n\nUseful for testing:\n  - conflict views on newly-created files (no shared ancestor)\n  - add/add distinction from standard content (UU) conflicts\n  - merge resolution flows where neither side has a \"base\"",
+    "kind": "operation",
+    "tags": [
+      "conflict",
+      "merge",
+      "add"
+    ],
+    "contracts": [
+      "main is checked out",
+      "a merge is in progress (MERGE_HEAD exists)",
+      "src/config.ts was independently added on both branches with different content",
+      "src/config.ts has unresolved conflict markers",
+      "exactly 1 unresolved conflict (AA status: added by both)"
+    ],
+    "graph": [
+      "* 3c5fcfd (HEAD -> main) feat: add config for production",
+      "| * d9e1e2e (feat/x) feat: add config for development",
+      "|/  ",
+      "* f4ee0a9 chore: initial scaffold"
+    ],
+    "branches": [
+      "feat/x",
+      "main"
+    ]
+  },
+  {
+    "name": "interactive-rebase-mid-edit",
+    "summary": "interactive rebase paused at an edit action with 2 remaining picks",
+    "description": "A repository mid-interactive-rebase, stopped at the first commit\nmarked `edit`. Three commits are in the rebase range (`HEAD~3`);\nthe first was applied and the rebase paused so the user can amend it.\nTwo picks remain in `.git/rebase-merge/git-rebase-todo`.\n\nUseful for testing:\n  - detecting interactive-rebase state (`.git/rebase-merge/interactive`)\n  - distinguishing `edit`-pause from conflict-pause (no conflict markers,\n    no `REBASE_HEAD`, HEAD is at the applied commit not a pre-apply detach)\n  - displaying the remaining todo list and the current edit position\n  - `git rebase --continue` / `--abort` flows in the edit (non-conflict) case",
+    "kind": "operation",
+    "tags": [
+      "rebase",
+      "interactive",
+      "in-progress"
+    ],
+    "contracts": [
+      "a rebase is in progress (.git/rebase-merge/ exists)",
+      ".git/rebase-merge/interactive exists",
+      "HEAD is detached",
+      ".git/rebase-merge/git-rebase-todo has at least 1 remaining pick"
+    ],
+    "graph": [
+      "* a0afc60 (main) feat: add module c",
+      "* 895b026 feat: add module b",
+      "* 8c99000 (HEAD) feat: add module a",
+      "* f4ee0a9 chore: initial scaffold"
+    ],
+    "branches": [
+      "(no branch, rebasing main)",
+      "main"
+    ]
+  },
+  {
     "name": "merge-no-conflict",
     "summary": "a successful --no-ff merge of feat/x into main, fully committed",
     "description": "A repository with a completed `--no-ff` merge sitting at HEAD.\n`feat/x` was merged into `main` cleanly (no conflicts), and the\nmerge commit is at the tip. Distinct from a fast-forward merge\n(no merge commit produced) and from `mid-merge-conflict`\n(in-progress).\n\nUseful for testing:\n  - merge commit rendering (the 2-parent case)\n  - \"merged branches\" lists\n  - tools that distinguish --no-ff from fast-forward merges\n  - history graph visualization with merge nodes",
@@ -611,34 +773,34 @@
       "commit messages cover feat / fix / chore / docs / refactor / test / perf / revert and a breaking-change `!:`"
     ],
     "graph": [
-      "* db458aa (HEAD -> main) feat(search): trigram-based subject filter",
-      "* 1815c84 revert: temporary rollback of v1-shim removal",
-      "* 5917b38 chore: tidy imports",
-      "* 3f89892 fix!: drop deprecated v1 endpoints",
-      "| * 3cbe2f1 (feat/wip) chore(search): prototype lookup cache",
-      "| * 85cd19d feat(search): experimental trigram backend",
+      "* 451a33f (HEAD -> main) feat(search): trigram-based subject filter",
+      "* ee71820 revert: temporary rollback of v1-shim removal",
+      "* 5398d0e chore: tidy imports",
+      "* 7ee1e0b fix!: drop deprecated v1 endpoints",
+      "| * 8ec5b1b (feat/wip) chore(search): prototype lookup cache",
+      "| * 17c4bcd feat(search): experimental trigram backend",
       "|/  ",
-      "* c7be9ad perf(db): index user_id on sessions",
-      "* ee5371f fix(db): retry on transient timeout",
-      "* 81cbe1d perf(api): cache compiled route matcher",
-      "*   6d5d861 Merge branch 'feat/payments'",
+      "* 1ec5a59 perf(db): index user_id on sessions",
+      "* 3006ca8 fix(db): retry on transient timeout",
+      "* 244b15a perf(api): cache compiled route matcher",
+      "*   40b98ed Merge branch 'feat/payments'",
       "|\\  ",
-      "| * f92da17 (feat/payments) test: cover stripe checkout flow",
-      "| * 6abdfd7 fix(payments): handle 3D-secure redirect",
-      "| * acebb34 feat(payments): stripe checkout adapter",
+      "| * ba28fb6 (feat/payments) test: cover stripe checkout flow",
+      "| * 45785df fix(payments): handle 3D-secure redirect",
+      "| * 0f487f5 feat(payments): stripe checkout adapter",
       "|/  ",
-      "* d0370c5 docs: contributor guide",
-      "* 427be5c chore(deps): bump simple-git to 4.x",
-      "* 48fbad8 fix(api): route precedence for catch-all",
-      "* 5f6cb96 refactor(api): centralise error shapes",
-      "*   155d753 Merge branch 'feat/auth'",
+      "* 46c7770 docs: contributor guide",
+      "* 2f9deea chore(deps): bump simple-git to 4.x",
+      "* 1531ca9 fix(api): route precedence for catch-all",
+      "* d69ea35 refactor(api): centralise error shapes",
+      "*   943ca7e Merge branch 'feat/auth'",
       "|\\  ",
-      "| * cfce619 (feat/auth) test: cover session edge cases",
-      "| * ff3b5e5 feat(auth): session middleware",
+      "| * 9cbc28b (feat/auth) test: cover session edge cases",
+      "| * edec78d feat(auth): session middleware",
       "|/  ",
-      "* 739641e docs: project README and contributor guide",
-      "* 6ac41c2 feat(api): public router skeleton",
-      "* b76ef7d Initial scaffold"
+      "* 36a75fd docs: project README and contributor guide",
+      "* 4aeaeb7 feat(api): public router skeleton",
+      "* 73ab827 Initial scaffold"
     ],
     "branches": [
       "feat/auth",
@@ -1046,6 +1208,30 @@
     ]
   },
   {
+    "name": "locked-worktree",
+    "summary": "primary worktree on main + 1 linked worktree locked with a reason",
+    "description": "A repository with one linked worktree that has been locked via\n`git worktree lock`. Locked worktrees appear in `git worktree list`\nwith a `locked <reason>` annotation and resist removal without `--force`.\n\nUseful for testing:\n  - worktree list rendering when a worktree is locked\n  - locked-worktree badge / indicator in the worktree panel\n  - error handling when trying to delete a locked worktree\n  - unlock flow (`git worktree unlock`) before safe removal",
+    "kind": "worktree",
+    "tags": [
+      "worktree",
+      "locked",
+      "in-progress"
+    ],
+    "contracts": [
+      "1 linked worktree exists",
+      "the linked worktree is locked",
+      "git worktree list --porcelain shows locked with a reason",
+      ".git/worktrees/ has a locked file for the linked worktree"
+    ],
+    "graph": [
+      "* c949dcc (HEAD -> main, hotfix/reserved) chore: initial scaffold"
+    ],
+    "branches": [
+      "hotfix/reserved",
+      "main"
+    ]
+  },
+  {
     "name": "submodule-with-history",
     "summary": "parent with 4 commits + vendor/lib submodule pinned at its 4-commit HEAD",
     "description": "A parent repo on `main` with 4 commits, including the addition of a\nsubmodule mounted at `vendor/lib`. The submodule itself has 4 commits\nof its own, tracks branch `main`, and is currently clean (the parent\npin matches the submodule's HEAD).\n\nUseful for testing:\n  - submodule metadata loaders (`.gitmodules` + `git submodule status`)\n  - the submodule inspector side-panel (name / pinned / tracking)\n  - recursive submodule navigation: `Enter` on the submodule row\n    should drill into the submodule's history view, where the user\n    can navigate its 4 commits as if `coco ui` were launched from\n    `vendor/lib`. `Esc` / `<` pops back to the parent.\n\nNo remote is configured on either side. The URL recorded in\n`.gitmodules` points at the temp dir the submodule was cloned from\n(now removed) — read-only operations work fine offline, but do not\nrun `git submodule update --remote` or `git submodule sync`.",
@@ -1068,6 +1254,108 @@
       "* 1660bc7 chore: add vendor/lib submodule",
       "* 9326672 feat: app shell",
       "* 5f49d93 chore: initial scaffold"
+    ],
+    "branches": [
+      "main"
+    ]
+  },
+  {
+    "name": "out-of-date-submodule",
+    "summary": "parent pinned to an older submodule SHA while the submodule has moved ahead",
+    "description": "A parent repo whose pinned submodule SHA (`vendor/lib`) is one commit\nbehind the submodule's current HEAD. The parent committed the\nsubmodule when it had 2 commits; a third commit was then added\ninside the submodule without updating the parent's pin.\n`git submodule status` shows `+` for `vendor/lib`, indicating the\nchecked-out submodule HEAD differs from the parent's recorded SHA.\n\nUseful for testing:\n  - out-of-date submodule detection and `+` status flag display\n  - \"update submodule pin\" workflows (`git add vendor/lib` + commit)\n  - diff between the pinned SHA and the current submodule HEAD\n  - `git submodule update` to restore the pinned state",
+    "kind": "submodule",
+    "tags": [
+      "submodule",
+      "out-of-date",
+      "in-progress"
+    ],
+    "contracts": [
+      "parent main has 2 commits",
+      ".gitmodules registers vendor/lib",
+      "git submodule status shows + for vendor/lib",
+      "vendor/lib HEAD is 1 commit ahead of the parent pin"
+    ],
+    "graph": [
+      "* c4d8ca4 (HEAD -> main) chore: add vendor/lib submodule",
+      "* c428bd9 chore: initial scaffold"
+    ],
+    "branches": [
+      "main"
+    ]
+  },
+  {
+    "name": "git-lfs-pointer",
+    "summary": "repo with a Git LFS pointer file committed for a binary asset (no lfs binary required)",
+    "description": "A binary asset (`assets/blob.bin`) is tracked by Git LFS. The file on\ndisk is the plain-text *pointer stub* — the real binary object would\nlive on an LFS server that this scenario does not configure.\n\n`.gitattributes` marks `*.bin` with `filter=lfs diff=lfs merge=lfs -text`.\nThe `-text` attribute is required to prevent CRLF mangling of the pointer\ntext on Windows.\n\nPlatform notes:\n  - No `git-lfs` binary is needed — the pointer is written as plain text,\n    so the scenario passes everywhere without the LFS extension installed.\n  - Tools that call `git lfs checkout` or `git lfs pull` will fail unless\n    `git-lfs` is installed; test only pointer detection and attribute rules.\n  - The oid and size in `assets/blob.bin` are hardcoded constants and do\n    not correspond to any real LFS object.\n\nUseful for testing:\n  - LFS pointer detection (\"is this file an LFS pointer?\")\n  - UI badges or warnings for LFS-managed paths\n  - `.gitattributes` rule parsing (`filter=lfs`, `diff=lfs`, `-text`)",
+    "kind": "worktree",
+    "tags": [
+      "lfs",
+      "encoding",
+      "gitattributes",
+      "cross-platform"
+    ],
+    "contracts": [
+      "main is checked out",
+      "main has 2 commits",
+      ".gitattributes marks *.bin as LFS-tracked (filter=lfs diff=lfs merge=lfs -text)",
+      "assets/blob.bin contains a canonical LFS pointer (version + oid sha256 + size)",
+      "worktree is clean"
+    ],
+    "graph": [
+      "* b7b3122 (HEAD -> main) feat: add lfs-tracked binary asset",
+      "* 7520170 chore: initial"
+    ],
+    "branches": [
+      "main"
+    ]
+  },
+  {
+    "name": "crlf-normalization",
+    "summary": "repo with .gitattributes enforcing LF line endings on all text files (text=auto eol=lf)",
+    "description": "A root `.gitattributes` rule (`* text=auto eol=lf`) tells Git to\nnormalise all text files to LF on commit and to write LF to the\nworking tree on checkout — overriding platform defaults.\n\nThe committed text file (`src/lf-only.txt`) is stored with LF endings\nin the git object store regardless of the host OS.\n\nPlatform notes:\n  - Windows (core.autocrlf=true by default): without `.gitattributes`\n    Git would store LF but write CRLF on checkout. The `eol=lf`\n    attribute overrides that, keeping LF in the working tree.\n  - macOS / Linux (LF by default): the rule is a no-op for checkout\n    but still normalises any stray CRLF to LF on commit.\n  - Git emits \"CRLF will be replaced by LF\" when staging a file with\n    Windows-style endings under this rule — useful for testing\n    warning-suppression or line-ending conversion UI.\n\nUseful for testing:\n  - `.gitattributes` rule parsing (`text=auto`, `eol=lf`)\n  - Line-ending normalisation detection in diff and blame views\n  - \"mixed line endings\" or CRLF-conversion warnings in commit composers",
+    "kind": "worktree",
+    "tags": [
+      "crlf",
+      "encoding",
+      "gitattributes",
+      "cross-platform"
+    ],
+    "contracts": [
+      "main is checked out",
+      "main has 2 commits",
+      ".gitattributes contains \"* text=auto eol=lf\"",
+      "src/lf-only.txt is committed with LF-only line endings",
+      "worktree is clean"
+    ],
+    "graph": [
+      "* 9afdcd6 (HEAD -> main) chore: enforce LF line endings via .gitattributes",
+      "* 7520170 chore: initial"
+    ],
+    "branches": [
+      "main"
+    ]
+  },
+  {
+    "name": "case-collision",
+    "summary": "repo whose history holds src/File.ts and src/file.ts — a case-only path collision invisible on case-insensitive filesystems",
+    "description": "The git object store contains two paths that differ only by case:\n`src/File.ts` (PascalCase) and `src/file.ts` (lowercase). They\nco-exist in git's history but collide on case-insensitive filesystems.\n\nBoth entries are accessible via git plumbing regardless of platform:\n  git show HEAD:src/File.ts   # the PascalCase variant\n  git show HEAD:src/file.ts   # the lowercase variant\n  git ls-tree -r HEAD         # lists both as distinct paths\n\nPlatform notes:\n  - Linux (case-sensitive FS): `git checkout HEAD -- src/` creates both\n    files without conflict. The scenario leaves them off disk — both\n    show as \"deleted\" in the working tree.\n  - macOS / Windows (case-insensitive FS, the default): the OS maps\n    `File.ts` and `file.ts` to the same physical inode. Checking out\n    the commit silently overwrites one variant with the other, losing\n    data. This is the cross-platform footgun the scenario documents.\n  - `core.ignoreCase=false` is set explicitly so git exposes both\n    entries on all host platforms, including macOS where `git init`\n    would otherwise auto-detect `ignoreCase=true`.\n\nUseful for testing:\n  - Case-collision detection and warnings in status / diff views\n  - Tools that verify a repo is safe to clone on case-insensitive FS\n  - `git ls-tree` output parsing (two entries, same prefix, case only)",
+    "kind": "worktree",
+    "tags": [
+      "case-collision",
+      "filesystem",
+      "cross-platform"
+    ],
+    "contracts": [
+      "main is checked out",
+      "main has 2 commits",
+      "HEAD tree contains src/File.ts (PascalCase variant)",
+      "HEAD tree contains src/file.ts (lowercase variant)",
+      "both case variants are absent from the working tree",
+      "core.ignoreCase is false"
+    ],
+    "graph": [
+      "* ad7c59b (HEAD -> main) feat: add case-colliding sources",
+      "* 7520170 chore: initial"
     ],
     "branches": [
       "main"

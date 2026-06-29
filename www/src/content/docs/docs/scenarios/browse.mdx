@@ -19,9 +19,11 @@ Each card has a **commit graph** view — the real `git log --graph` output, cap
 - **Commit graph** expands the captured `git log --graph` for that scenario — fork lines, merge tips, and decorations included.
 - **Copy buttons** put either `spinUpScenario('name')` or `npx git-scenarios create name` on your clipboard.
 - **URL hash** is honored on load: `?kind=operation&tag=conflict` would arrive pre-filtered.
+- **Scenario name** links to that scenario's dedicated permalink page (e.g. `/scenarios/mid-merge-conflict`), which includes the full description, contracts, copy-paste snippets, and the captured git graph.
 
 ## See also
 
 - [Scenarios overview](/docs/scenarios/overview) — flat reference of all 32 scenarios grouped by kind
 - [CLI Reference](/docs/guides/cli) — same filter semantics as `git-scenarios list --kind ... --tag ... --json`
 - [Custom scenarios](/docs/guides/custom-scenarios) — register your own and they'll appear in the registry too (though not on this site, since the data is built from the package's source)
+- Each scenario also has its own permalink at `/scenarios/<name>` — shareable links with full description and code snippets
