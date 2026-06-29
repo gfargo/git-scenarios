@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782695155870,
+  "lastUpdate": 1782696491649,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -740,6 +740,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7364.35,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ghfargo@gmail.com",
+            "name": "gfargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "ghfargo@gmail.com",
+            "name": "gfargo",
+            "username": "gfargo"
+          },
+          "distinct": true,
+          "id": "f2c41b21d32109063d469860a65e9979cce9fdcb",
+          "message": "chore(release): 1.2.0\n\nMCP server, doctor, completions, GitHub Action, content-addressed cache,\nmetadata scenarios, attw/publint + API-surface gate + mutation testing,\nand the in-browser playground / permalink pages / decision guide.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-06-28T21:26:43-04:00",
+          "tree_id": "1afaffb716009ee7edb6add08ca2443a2c1e7003",
+          "url": "https://github.com/gfargo/git-scenarios/commit/f2c41b21d32109063d469860a65e9979cce9fdcb"
+        },
+        "date": 1782696491208,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 168.09,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 933.16,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7130.04,
             "unit": "ms"
           }
         ]
