@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782741368316,
+  "lastUpdate": 1782741555851,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -857,6 +857,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7245.43,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b5ca9e526ebd64cf5df77d45b0116efb77b83bd6",
+          "message": "feat(api): extend drift gate to cover mcp, playwright, and cypress exports (#90)\n\nAdd mcp, playwright, and cypress to the ENTRIES array in bin/api-report.mjs so\nall 14 tsup entry points are tracked by the API-surface gate. Commit the three\ngenerated baselines (etc/mcp.api.md, etc/playwright.api.md, etc/cypress.api.md).\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>\nCo-authored-by: Claude Sonnet 4.6 <noreply@anthropic.com>",
+          "timestamp": "2026-06-29T09:57:47-04:00",
+          "tree_id": "57670e82fd83cc7ec0d11236a43c07782c65cca2",
+          "url": "https://github.com/gfargo/git-scenarios/commit/b5ca9e526ebd64cf5df77d45b0116efb77b83bd6"
+        },
+        "date": 1782741555391,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 170.93,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 951.18,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7224.95,
             "unit": "ms"
           }
         ]
