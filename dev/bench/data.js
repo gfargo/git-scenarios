@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782693465188,
+  "lastUpdate": 1782693499930,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -545,6 +545,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7099.34,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dcedc7c6f6ef6b0c753e370c01d1aa69a3ffcc78",
+          "message": "feat(action): add composite GitHub Action to materialize scenarios in CI (#86)\n\nShips action.yml at repo root so it can be consumed as\nuses: gfargo/git-scenarios@<ref>.\n\n- Inputs: scenario (required), path, remote, version\n- Output: path — absolute path to the materialized repo\n- Wraps existing 'git-scenarios create --path --remote' CLI command\n- Passes inputs through env vars to avoid shell injection\n- Falls back to npx when git-scenarios binary isn't pre-installed\n- Guards against pre-existing target path\n\nAlso adds:\n- .github/workflows/action-test.yml: self-test CI job that packs and\n  installs the local CLI globally then exercises uses: ./ with\n  assertions on branch, git validity, and remote URL\n- www/src/content/docs/docs/guides/github-action.md: docs page\n- README.md: GitHub Action section before The CLI section\n- www/astro.config.mjs: GitHub Action entry in the Guides sidebar\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>",
+          "timestamp": "2026-06-28T17:36:58-07:00",
+          "tree_id": "4a1cca05b9276070efb3e8a1d78daa0ccbde82c8",
+          "url": "https://github.com/gfargo/git-scenarios/commit/dcedc7c6f6ef6b0c753e370c01d1aa69a3ffcc78"
+        },
+        "date": 1782693499654,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 169.99,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 937.18,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7195.1,
             "unit": "ms"
           }
         ]
