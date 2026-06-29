@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782693676139,
+  "lastUpdate": 1782694398008,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -623,6 +623,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7211.11,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "01cc423625f5e4d480fc814885758da6a3d92602",
+          "message": "feat(www): add in-browser scenario playground with interactive commit graph (#89)\n\nAdds a Playground page to the marketing site that renders each scenario's\ncommit DAG interactively in the browser — no install required.\n\n- www/scripts/generate-scenarios-json.mjs: capture structured `commits`\n  array (hash, parents, refs, subject, author, date) via git log --pretty\n  alongside the existing ASCII graph; add to scenarios.json payload.\n- www/src/lib/graph-layout.mjs: pure computeLanes() function that assigns\n  each commit a horizontal lane and computes parent edges from the\n  date-ordered git log output.\n- www/src/components/ScenarioPlayground.astro: interactive component with\n  a searchable scenario sidebar, kind-filter pills, SVG commit graph\n  (lane-colored circles + bezier edges), commit-detail hover panel, and\n  deep-link support via #scenario=<name> URL hash.\n- www/src/content/docs/docs/scenarios/playground.mdx: new Playground page\n  that renders the component with framing copy.\n- www/astro.config.mjs: add Playground entry to the Scenarios sidebar.\n- www/src/content/docs/docs/scenarios/browse.mdx: cross-link to Playground\n  in See also.\n- www/src/data/scenarios.json: regenerated with commits field (43 scenarios,\n  42 with graphs).\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>\nCo-authored-by: Claude Sonnet 4.6 <noreply@anthropic.com>",
+          "timestamp": "2026-06-28T17:51:52-07:00",
+          "tree_id": "1ec0943a1ea548468359006cb1b0ad18a11dcf7c",
+          "url": "https://github.com/gfargo/git-scenarios/commit/01cc423625f5e4d480fc814885758da6a3d92602"
+        },
+        "date": 1782694397743,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 169.19,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 944.24,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7221.15,
             "unit": "ms"
           }
         ]
