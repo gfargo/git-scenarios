@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782741555851,
+  "lastUpdate": 1782741724824,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -896,6 +896,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7224.95,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "distinct": true,
+          "id": "20cea6fad2243f0f7e43737def32af5c53b47422",
+          "message": "docs(www): update introduction scenario count to 46",
+          "timestamp": "2026-06-29T10:00:33-04:00",
+          "tree_id": "b0223ef5bbf8b3f86086e29bbefb3d1a8f2e4a7f",
+          "url": "https://github.com/gfargo/git-scenarios/commit/20cea6fad2243f0f7e43737def32af5c53b47422"
+        },
+        "date": 1782741724528,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 166.28,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 929.47,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7077.3,
             "unit": "ms"
           }
         ]
