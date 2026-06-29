@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782692695856,
+  "lastUpdate": 1782692697434,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -428,6 +428,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7040.96,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "08e64f363316bb6f3bd2392964d6a31ced4d6832",
+          "message": "feat(mcp): MCP server exposing scenarios to AI coding agents (#87)\n\n* feat(mcp): add MCP server exposing scenarios to AI coding agents\n\n- src/mcp.ts: createMcpServer() + runMcpServer() with 6 tools\n  (list_scenarios, describe_scenario, inspect_scenario,\n  materialize_scenario, capture_repo, cleanup_scenario)\n- bin/mcp.ts: thin stdio binary entry point\n- src/mcp.test.ts: 15 tests covering all tools via InMemoryTransport\n- package.json: add ./mcp export, git-scenarios-mcp bin,\n  @modelcontextprotocol/sdk@1.29.0 dependency\n- tsup.config.ts: add mcp library + bin/mcp build entries\n- www/: MCP server docs page + sidebar entry\n\nNew dependency: @modelcontextprotocol/sdk@1.29.0 (required by this feature)\n\n* fix(mcp): use basename check in isTempScenarioPath for macOS /tmp compat\n\n* fix(mcp): use path.basename for cross-platform temp-path + repo-name handling\n\nWindows CI failed because isTempScenarioPath and capture_repo's defaultName\nsplit on a hardcoded '/', so backslash-separated paths never matched. Use\npath.basename (platform-aware) instead.\n\n* fix(mcp): guard capture_repo against non-existent path (Windows)\n\nsimple-git's constructor throws synchronously on a directory that does\nnot exist (Windows has no /tmp), escaping the checkIsRepo try/catch and\nsurfacing a raw non-JSON error. Guard with existsSync first and collapse\nthe redundant double checkIsRepo.\n\n---------\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>\nCo-authored-by: gfargo <ghfargo@gmail.com>",
+          "timestamp": "2026-06-28T17:23:34-07:00",
+          "tree_id": "063c84c536ef3d9ba4378ffba1ac1948c46147ac",
+          "url": "https://github.com/gfargo/git-scenarios/commit/08e64f363316bb6f3bd2392964d6a31ced4d6832"
+        },
+        "date": 1782692696739,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 167.95,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 935.78,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7169.68,
             "unit": "ms"
           }
         ]
