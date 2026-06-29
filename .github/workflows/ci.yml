@@ -133,8 +133,12 @@ jobs:
   mutation:
     name: mutation testing (informational)
     runs-on: ubuntu-latest
+    # Only run on merges to main — too slow for PR feedback loops (~35-40 min).
+    # Reports are uploaded as artifacts and score is logged in the run summary.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     # Informational only — non-blocking until baseline is stable
     continue-on-error: true
+    timeout-minutes: 45
 
     steps:
       - name: Checkout
@@ -151,6 +155,25 @@ jobs:
 
       - name: Run mutation tests
         run: npm run test:mutation
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 🧬 Mutation Testing Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f reports/mutation/mutation.html ]; then
+            echo "✅ Report generated — see artifacts below." >> $GITHUB_STEP_SUMMARY
+            # Extract score from clear-text output if available
+            if [ -f reports/mutation/mutation-report.txt ]; then
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              tail -20 reports/mutation/mutation-report.txt >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "⚠️ Report not generated (timeout or error)." >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Mutated files: \`commitClock.ts\`, \`capture.ts\`, \`seededFiles.ts\`, \`chain.ts\`" >> $GITHUB_STEP_SUMMARY
 
       - name: Upload mutation report
         if: always()
