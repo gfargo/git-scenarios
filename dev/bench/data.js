@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782772062539,
+  "lastUpdate": 1782773477762,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -974,6 +974,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7408.49,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "distinct": true,
+          "id": "17c26b872a95f61c0be8e27cbd5db052338e4e97",
+          "message": "test: fix timeout flakes in property tests and scenario cache\n\nProperty tests that create many repos were timing out under full-suite\nload (83 suites competing for I/O). Fixes:\n\n- Property 5+6: reduce from 10 repos to 5, bump timeout 30s → 60s\n- Property 3: bump timeout 60s → 90s (15 runs × repo creation)\n- Property 7: bump timeout 30s → 60s per atom\n- Property 11: reduce from 20 runs to 10, bump timeout 60s → 90s\n- scenarioCache: add explicit 60s timeout for submodule-with-history\n\nThe property confidence is unchanged — 5 repos still validates the\ninvariant; the original 10 was overkill for a deterministic system.",
+          "timestamp": "2026-06-29T18:49:44-04:00",
+          "tree_id": "7b88d4487e014280383742a55db6f3fbf9d04160",
+          "url": "https://github.com/gfargo/git-scenarios/commit/17c26b872a95f61c0be8e27cbd5db052338e4e97"
+        },
+        "date": 1782773477432,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 171.12,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 950.77,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7459.81,
             "unit": "ms"
           }
         ]
