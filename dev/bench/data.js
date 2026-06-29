@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782696491649,
+  "lastUpdate": 1782740958666,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -779,6 +779,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7130.04,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "distinct": true,
+          "id": "64bf1a19766397170d0c9c6e66c679b2f6611841",
+          "message": "fix(www): update specs strip to show 5 test runner adapters\n\nWas showing '2 (jest · vitest)' but we ship Jest, Vitest, node:test,\nMocha, and AVA adapters since v0.7.0.",
+          "timestamp": "2026-06-29T09:47:45-04:00",
+          "tree_id": "74fa79021b6f2cffd42a7f798f8124e5db8255a0",
+          "url": "https://github.com/gfargo/git-scenarios/commit/64bf1a19766397170d0c9c6e66c679b2f6611841"
+        },
+        "date": 1782740958375,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 169.85,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 948.58,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7368.84,
             "unit": "ms"
           }
         ]
