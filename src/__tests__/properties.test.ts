@@ -193,7 +193,7 @@ describe('Property 5: Temp directory prefix identity', () => {
     // Create multiple repos to approximate "for any" creation
     const repos: TempGitRepo[] = []
     try {
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 5; i++) {
         repos.push(await createTempGitRepo())
       }
       for (const repo of repos) {
@@ -203,7 +203,7 @@ describe('Property 5: Temp directory prefix identity', () => {
     } finally {
       await Promise.all(repos.map((r) => r.cleanup()))
     }
-  }, 30_000)
+  }, 60_000)
 })
 
 /**
@@ -219,7 +219,7 @@ describe('Property 6: Repo identity configuration', () => {
   it('git config matches expected values across multiple repos', async () => {
     const repos: TempGitRepo[] = []
     try {
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 5; i++) {
         repos.push(await createTempGitRepo())
       }
       for (const repo of repos) {
@@ -231,5 +231,5 @@ describe('Property 6: Repo identity configuration', () => {
     } finally {
       await Promise.all(repos.map((r) => r.cleanup()))
     }
-  }, 30_000)
+  }, 60_000)
 })

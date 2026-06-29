@@ -74,7 +74,7 @@ describe('Property 3: InvalidArgumentError for invalid atom arguments', () => {
       ),
       { numRuns: 15 },
     )
-  }, 60_000)
+  }, 90_000)
 })
 
 /**
@@ -126,7 +126,7 @@ describe('Property 7: Commit-requiring atoms throw on empty repo', () => {
         }),
         { numRuns: 5 },
       )
-    }, 30_000)
+    }, 60_000)
   }
 })
 

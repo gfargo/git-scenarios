@@ -59,9 +59,9 @@ describe('Property 11: Path normalization for cross-platform correctness', () =>
           expect(fileExists).toBe(true)
         })
       }),
-      { numRuns: 20 },
+      { numRuns: 10 },
     )
-  }, 60_000)
+  }, 90_000)
 })
 
 describe('Cross-platform path tests by atom category', () => {

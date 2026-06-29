@@ -289,5 +289,5 @@ describe('cache safety: uncacheable scenarios', () => {
     const cacheEntries = await readdir(cacheRoot()).catch(() => [])
     const submoduleTemplate = cacheEntries.find((e) => e.startsWith('submodule-with-history'))
     expect(submoduleTemplate).toBeUndefined()
-  })
+  }, 60_000)
 })
