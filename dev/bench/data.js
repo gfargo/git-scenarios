@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782690867527,
+  "lastUpdate": 1782691908233,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -350,6 +350,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7280.67,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "12158b6fde49615e81f1a96195ebdf2d80856970",
+          "message": "feat(cli): add doctor command for environment health checks (#76)\n\nAdds `git-scenarios doctor` that runs pass/warn/fail checks on: git\nversion (≥ 2.25.0), temp-dir writability, leftover scenario dirs, and\noptional git-lfs. Exits non-zero when any hard check fails. Supports\n--json for machine-readable output. Exports parseGitVersion for unit\ntesting and guards main() with require.main === module.\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>\nCo-authored-by: Claude Sonnet 4.6 <noreply@anthropic.com>",
+          "timestamp": "2026-06-28T17:10:22-07:00",
+          "tree_id": "2bd3c472159650911c888d25437f3d66a64e79c0",
+          "url": "https://github.com/gfargo/git-scenarios/commit/12158b6fde49615e81f1a96195ebdf2d80856970"
+        },
+        "date": 1782691907338,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 166.74,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 935.25,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7091.92,
             "unit": "ms"
           }
         ]
