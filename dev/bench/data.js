@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782692697434,
+  "lastUpdate": 1782693463031,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -467,6 +467,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7169.68,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4ae24784a60022ac5dcfa2241433edd8258c6cac",
+          "message": "feat(ci): add attw + publint package-checks job (#83)\n\nRun @arethetypeswrong/cli and publint against the npm pack tarball in CI\nto catch dual CJS/ESM/types-resolution regressions before publish.\n\nAlso fixes the exports map across all 11 subpath entries to use\ncondition-specific types (require.types → .d.cts, import.types → .d.ts),\nresolving the FalseESM issue both tools detected against the old flat map.\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>\nCo-authored-by: Claude Sonnet 4.6 <noreply@anthropic.com>",
+          "timestamp": "2026-06-28T17:36:14-07:00",
+          "tree_id": "03085c116621802e583ba39da0668e138e869bd5",
+          "url": "https://github.com/gfargo/git-scenarios/commit/4ae24784a60022ac5dcfa2241433edd8258c6cac"
+        },
+        "date": 1782693461950,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 168.51,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 940.02,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7273.23,
             "unit": "ms"
           }
         ]
