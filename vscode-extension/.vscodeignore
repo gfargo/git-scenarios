@@ -1,0 +1,10 @@
+src/
+esbuild.mjs
+tsconfig.json
+jest.config.cjs
+**/*.test.ts
+**/*.test.js
+**/__mocks__/
+**/*.map
+node_modules/
+.vscode/
