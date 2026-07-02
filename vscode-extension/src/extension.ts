@@ -24,13 +24,16 @@ export function activate(context: vscode.ExtensionContext): void {
         () => materialize(picked.label),
       )
     } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
       vscode.window.showErrorMessage(
-        `Failed to create scenario "${picked.label}": ${(err as Error).message}`,
+        `Failed to create scenario "${picked.label}": ${msg}`,
       )
       return
     }
 
-    const dirs: string[] = context.globalState.get('gitScenarios.dirs', [])
+    // Sanitize stored value before appending
+    const raw: unknown = context.globalState.get('gitScenarios.dirs')
+    const dirs: string[] = Array.isArray(raw) ? raw.filter((v): v is string => typeof v === 'string') : []
     dirs.push(repoPath)
     await context.globalState.update('gitScenarios.dirs', dirs)
 

@@ -1,5 +1,7 @@
+import * as os from 'os'
+import * as path from 'path'
 import { listScenarios } from './scenarios'
-import { isScenarioDir, CURRENT_PREFIX, LEGACY_PREFIX, CACHE_DIR_NAME } from './cleanup'
+import { isScenarioDir, isSafeDeletionTarget, CURRENT_PREFIX, LEGACY_PREFIX, CACHE_DIR_NAME } from './cleanup'
 
 describe('listScenarios()', () => {
   it('returns a non-empty list', () => {
@@ -50,5 +52,28 @@ describe('isScenarioDir()', () => {
     expect(isScenarioDir('tmp-workspace')).toBe(false)
     expect(isScenarioDir('some-other-tool-abc')).toBe(false)
     expect(isScenarioDir('')).toBe(false)
+  })
+})
+
+describe('isSafeDeletionTarget()', () => {
+  const tmp = os.tmpdir()
+
+  it('allows a scenario dir directly under tmpdir', () => {
+    expect(isSafeDeletionTarget(path.join(tmp, `${CURRENT_PREFIX}abc123`))).toBe(true)
+    expect(isSafeDeletionTarget(path.join(tmp, `${LEGACY_PREFIX}old-repo`))).toBe(true)
+  })
+
+  it('rejects paths outside tmpdir even with valid basename', () => {
+    expect(isSafeDeletionTarget(`/home/user/${CURRENT_PREFIX}abc`)).toBe(false)
+    expect(isSafeDeletionTarget(`/var/data/${LEGACY_PREFIX}xyz`)).toBe(false)
+  })
+
+  it('rejects paths with unrelated basenames under tmpdir', () => {
+    expect(isSafeDeletionTarget(path.join(tmp, 'my-project'))).toBe(false)
+    expect(isSafeDeletionTarget(path.join(tmp, 'important-data'))).toBe(false)
+  })
+
+  it('rejects the cache dir name under tmpdir', () => {
+    expect(isSafeDeletionTarget(path.join(tmp, CACHE_DIR_NAME))).toBe(false)
   })
 })
