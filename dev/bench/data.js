@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1783083762501,
+  "lastUpdate": 1783084979981,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1052,6 +1052,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7102.36,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "942aad292d80652bec62a730eb2d80c0a3b78ff9",
+          "message": "feat(vscode): VS Code extension — create scenario from command palette (#91)\n\nfeat(vscode): VS Code extension — create scenario from command palette",
+          "timestamp": "2026-07-03T09:21:35-04:00",
+          "tree_id": "71ddb6186b4314af6698190675245cc07474d459",
+          "url": "https://github.com/gfargo/git-scenarios/commit/942aad292d80652bec62a730eb2d80c0a3b78ff9"
+        },
+        "date": 1783084979623,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 168.2,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 940.4,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7231.78,
             "unit": "ms"
           }
         ]
