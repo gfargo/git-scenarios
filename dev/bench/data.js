@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1783087042895,
+  "lastUpdate": 1783087345068,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1169,6 +1169,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7213.54,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "distinct": true,
+          "id": "9e0a9c32642acaf57e34b45f187f67729c8f1fe2",
+          "message": "feat(vscode): prepare extension for Marketplace publishing\n\n- Add publisher, icon, categories, keywords, repository metadata\n- Bundle @gfargo/git-scenarios + simple-git into extension.js (no\n  runtime node_modules needed — lean 90KB VSIX)\n- Move runtime deps to devDependencies (build-time only, bundled)\n- Simplify .vscodeignore (exclude all node_modules since bundled)\n- Suppress harmless import.meta esbuild warning\n- Add LICENSE, icon.png (256x256 from favicon.svg)\n- Add .gitignore for .vsix artifacts\n- Add package/publish npm scripts\n- Version 0.1.0",
+          "timestamp": "2026-07-03T10:00:52-04:00",
+          "tree_id": "fce2dfaf8d6cc79e220122a00096d0a1e8454016",
+          "url": "https://github.com/gfargo/git-scenarios/commit/9e0a9c32642acaf57e34b45f187f67729c8f1fe2"
+        },
+        "date": 1783087344784,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 171.73,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 951.36,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7355.23,
             "unit": "ms"
           }
         ]
