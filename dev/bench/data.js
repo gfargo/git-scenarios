@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1783084979981,
+  "lastUpdate": 1783086623943,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1091,6 +1091,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7231.78,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "distinct": true,
+          "id": "7ea69e4a8cd0b755af0bcdc729582ef3045e0a08",
+          "message": "chore(vscode): remove redundant activationEvents\n\nVS Code auto-generates onCommand activation events from the\ncontributes.commands section — explicit activationEvents are\nunnecessary and trigger a diagnostic warning.",
+          "timestamp": "2026-07-03T09:48:47-04:00",
+          "tree_id": "943ebc95ab87be7ff63b96ebb021608bc5aec97b",
+          "url": "https://github.com/gfargo/git-scenarios/commit/7ea69e4a8cd0b755af0bcdc729582ef3045e0a08"
+        },
+        "date": 1783086623160,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 169.01,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 943.56,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7211.99,
             "unit": "ms"
           }
         ]
