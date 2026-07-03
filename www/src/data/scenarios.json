@@ -2170,34 +2170,34 @@
       "commit messages cover feat / fix / chore / docs / refactor / test / perf / revert and a breaking-change `!:`"
     ],
     "graph": [
-      "* fbf5fa3 (HEAD -> main) feat(search): trigram-based subject filter",
-      "* 4c2be23 revert: temporary rollback of v1-shim removal",
-      "* 901855f chore: tidy imports",
-      "* 6c5bd64 fix!: drop deprecated v1 endpoints",
-      "| * 8a60805 (feat/wip) chore(search): prototype lookup cache",
-      "| * 22a0139 feat(search): experimental trigram backend",
+      "* 770a09d (HEAD -> main) feat(search): trigram-based subject filter",
+      "* 8c85eca revert: temporary rollback of v1-shim removal",
+      "* 8f2baa5 chore: tidy imports",
+      "* eebe0ea fix!: drop deprecated v1 endpoints",
+      "| * b0b61a6 (feat/wip) chore(search): prototype lookup cache",
+      "| * cb21330 feat(search): experimental trigram backend",
       "|/  ",
-      "* 1b096ce perf(db): index user_id on sessions",
-      "* f3cbc4e fix(db): retry on transient timeout",
-      "* d4d15db perf(api): cache compiled route matcher",
-      "*   0e88ac2 Merge branch 'feat/payments'",
+      "* dd1db0f perf(db): index user_id on sessions",
+      "* 496e4fd fix(db): retry on transient timeout",
+      "* b8f229d perf(api): cache compiled route matcher",
+      "*   2b51219 Merge branch 'feat/payments'",
       "|\\  ",
-      "| * 5a6d3dd (feat/payments) test: cover stripe checkout flow",
-      "| * a3febf6 fix(payments): handle 3D-secure redirect",
-      "| * 5d4547b feat(payments): stripe checkout adapter",
+      "| * 72a5063 (feat/payments) test: cover stripe checkout flow",
+      "| * bb0b72b fix(payments): handle 3D-secure redirect",
+      "| * d47e122 feat(payments): stripe checkout adapter",
       "|/  ",
-      "* 9b82ab9 docs: contributor guide",
-      "* 9d3e3f6 chore(deps): bump simple-git to 4.x",
-      "* fe7126a fix(api): route precedence for catch-all",
-      "* 5dfd594 refactor(api): centralise error shapes",
-      "*   2fc862c Merge branch 'feat/auth'",
+      "* ba2781e docs: contributor guide",
+      "* 02d7afd chore(deps): bump simple-git to 4.x",
+      "* 0740558 fix(api): route precedence for catch-all",
+      "* b429c84 refactor(api): centralise error shapes",
+      "*   55253c9 Merge branch 'feat/auth'",
       "|\\  ",
-      "| * 1e0921b (feat/auth) test: cover session edge cases",
-      "| * 2bd9d4d feat(auth): session middleware",
+      "| * 2bed279 (feat/auth) test: cover session edge cases",
+      "| * 3b411d0 feat(auth): session middleware",
       "|/  ",
-      "* ad7d898 docs: project README and contributor guide",
-      "* cf85f9d feat(api): public router skeleton",
-      "* 7d8be06 Initial scaffold"
+      "* 46dc0e6 docs: project README and contributor guide",
+      "* b92e9e9 feat(api): public router skeleton",
+      "* 66de6e0 Initial scaffold"
     ],
     "branches": [
       "feat/auth",
@@ -2207,257 +2207,257 @@
     ],
     "commits": [
       {
-        "hash": "fbf5fa3a500ea426dbd75772cace3f946ad29e74",
-        "short": "fbf5fa3",
+        "hash": "770a09da096a9b40b35e33660043bdc323ef2d5a",
+        "short": "770a09d",
         "parents": [
-          "4c2be231c40246d01984fca7b7007be9e099c6b4"
+          "8c85ecaaee140493c8e6e47daca9296314565607"
         ],
         "refs": "HEAD -> main",
         "subject": "feat(search): trigram-based subject filter",
         "author": "Git Scenarios Test",
-        "date": "2026-06-29T12:00:00Z"
+        "date": "2026-07-03T12:00:00Z"
       },
       {
-        "hash": "4c2be231c40246d01984fca7b7007be9e099c6b4",
-        "short": "4c2be23",
+        "hash": "8c85ecaaee140493c8e6e47daca9296314565607",
+        "short": "8c85eca",
         "parents": [
-          "901855f2eb90fc37faeb162a6ef25514c4bb39e8"
+          "8f2baa596032af015866a95fade49dd99ef83818"
         ],
         "refs": "",
         "subject": "revert: temporary rollback of v1-shim removal",
         "author": "Git Scenarios Test",
-        "date": "2026-06-29T12:00:00Z"
+        "date": "2026-07-03T12:00:00Z"
       },
       {
-        "hash": "901855f2eb90fc37faeb162a6ef25514c4bb39e8",
-        "short": "901855f",
+        "hash": "8f2baa596032af015866a95fade49dd99ef83818",
+        "short": "8f2baa5",
         "parents": [
-          "6c5bd649384dafb998c5906f8e38bc629a2ff649"
+          "eebe0eae4c01334fed932cae854166af290262ae"
         ],
         "refs": "",
         "subject": "chore: tidy imports",
         "author": "Git Scenarios Test",
-        "date": "2026-06-29T12:00:00Z"
+        "date": "2026-07-03T12:00:00Z"
       },
       {
-        "hash": "6c5bd649384dafb998c5906f8e38bc629a2ff649",
-        "short": "6c5bd64",
+        "hash": "eebe0eae4c01334fed932cae854166af290262ae",
+        "short": "eebe0ea",
         "parents": [
-          "1b096ce1546b1e2a8d99ca7f9ab582671be84395"
+          "dd1db0ff0c0f783ae2f5b2b87bca253ed26dc7ee"
         ],
         "refs": "",
         "subject": "fix!: drop deprecated v1 endpoints",
         "author": "Git Scenarios Test",
-        "date": "2026-06-28T12:00:00Z"
+        "date": "2026-07-02T12:00:00Z"
       },
       {
-        "hash": "8a6080568a2294d6a26c85f417a7b2a20bf09383",
-        "short": "8a60805",
+        "hash": "b0b61a69657201f67854ddb43c499c83cada947e",
+        "short": "b0b61a6",
         "parents": [
-          "22a013998f679620e327f378094fdf6ef69989b0"
+          "cb21330e4bd184976b225b77d2886466bc19bff6"
         ],
         "refs": "feat/wip",
         "subject": "chore(search): prototype lookup cache",
         "author": "Git Scenarios Test",
-        "date": "2026-06-27T12:00:00Z"
+        "date": "2026-07-01T12:00:00Z"
       },
       {
-        "hash": "22a013998f679620e327f378094fdf6ef69989b0",
-        "short": "22a0139",
+        "hash": "cb21330e4bd184976b225b77d2886466bc19bff6",
+        "short": "cb21330",
         "parents": [
-          "1b096ce1546b1e2a8d99ca7f9ab582671be84395"
+          "dd1db0ff0c0f783ae2f5b2b87bca253ed26dc7ee"
         ],
         "refs": "",
         "subject": "feat(search): experimental trigram backend",
         "author": "Git Scenarios Test",
-        "date": "2026-06-26T12:00:00Z"
+        "date": "2026-06-30T12:00:00Z"
       },
       {
-        "hash": "1b096ce1546b1e2a8d99ca7f9ab582671be84395",
-        "short": "1b096ce",
+        "hash": "dd1db0ff0c0f783ae2f5b2b87bca253ed26dc7ee",
+        "short": "dd1db0f",
         "parents": [
-          "f3cbc4e696bb860ce59154a09b41127ffa313a3b"
+          "496e4fd0739d9075d77b49fcfb46c00096a27bf1"
         ],
         "refs": "",
         "subject": "perf(db): index user_id on sessions",
         "author": "Git Scenarios Test",
-        "date": "2026-06-25T12:00:00Z"
+        "date": "2026-06-29T12:00:00Z"
       },
       {
-        "hash": "f3cbc4e696bb860ce59154a09b41127ffa313a3b",
-        "short": "f3cbc4e",
+        "hash": "496e4fd0739d9075d77b49fcfb46c00096a27bf1",
+        "short": "496e4fd",
         "parents": [
-          "d4d15db7230fa5a1904ae54e5db760b172a3f295"
+          "b8f229d6650089b4d548300685fe3a8045e7d445"
         ],
         "refs": "",
         "subject": "fix(db): retry on transient timeout",
         "author": "Git Scenarios Test",
-        "date": "2026-06-24T12:00:00Z"
+        "date": "2026-06-28T12:00:00Z"
       },
       {
-        "hash": "d4d15db7230fa5a1904ae54e5db760b172a3f295",
-        "short": "d4d15db",
+        "hash": "b8f229d6650089b4d548300685fe3a8045e7d445",
+        "short": "b8f229d",
         "parents": [
-          "0e88ac2b11882a6775b16d1f6b5c69dfc9f4bd28"
+          "2b51219bbe5802b80acdb08f10ef525c9d568a9d"
         ],
         "refs": "",
         "subject": "perf(api): cache compiled route matcher",
         "author": "Git Scenarios Test",
-        "date": "2026-06-23T12:00:00Z"
+        "date": "2026-06-27T12:00:00Z"
       },
       {
-        "hash": "0e88ac2b11882a6775b16d1f6b5c69dfc9f4bd28",
-        "short": "0e88ac2",
+        "hash": "2b51219bbe5802b80acdb08f10ef525c9d568a9d",
+        "short": "2b51219",
         "parents": [
-          "9b82ab966c6ae7d440bd49fd9963e5a0d4bd0af1",
-          "5a6d3ddcbabee6461351eca43cd5167f23f96279"
+          "ba2781ecdb4d03d0519f10c3d09fced7c8d3b95b",
+          "72a506351dd5ba15ef46517b9257e8893f6f2f82"
         ],
         "refs": "",
         "subject": "Merge branch 'feat/payments'",
         "author": "Git Scenarios Test",
-        "date": "2026-06-22T12:00:00Z"
+        "date": "2026-06-26T12:00:00Z"
       },
       {
-        "hash": "5a6d3ddcbabee6461351eca43cd5167f23f96279",
-        "short": "5a6d3dd",
+        "hash": "72a506351dd5ba15ef46517b9257e8893f6f2f82",
+        "short": "72a5063",
         "parents": [
-          "a3febf6823148aa2baf8eafa8ba0c3c3bb69572e"
+          "bb0b72b062f33d335e3c7be0656dbb05a5c64620"
         ],
         "refs": "feat/payments",
         "subject": "test: cover stripe checkout flow",
         "author": "Git Scenarios Test",
-        "date": "2026-06-20T12:00:00Z"
+        "date": "2026-06-24T12:00:00Z"
       },
       {
-        "hash": "a3febf6823148aa2baf8eafa8ba0c3c3bb69572e",
-        "short": "a3febf6",
+        "hash": "bb0b72b062f33d335e3c7be0656dbb05a5c64620",
+        "short": "bb0b72b",
         "parents": [
-          "5d4547bfa8d0f8d388edb95ba1ae06ce9e7483a2"
+          "d47e122bdd34331d9ee89a99876c2aaac3443ecf"
         ],
         "refs": "",
         "subject": "fix(payments): handle 3D-secure redirect",
         "author": "Git Scenarios Test",
-        "date": "2026-06-19T12:00:00Z"
+        "date": "2026-06-23T12:00:00Z"
       },
       {
-        "hash": "5d4547bfa8d0f8d388edb95ba1ae06ce9e7483a2",
-        "short": "5d4547b",
+        "hash": "d47e122bdd34331d9ee89a99876c2aaac3443ecf",
+        "short": "d47e122",
         "parents": [
-          "9b82ab966c6ae7d440bd49fd9963e5a0d4bd0af1"
+          "ba2781ecdb4d03d0519f10c3d09fced7c8d3b95b"
         ],
         "refs": "",
         "subject": "feat(payments): stripe checkout adapter",
         "author": "Git Scenarios Test",
-        "date": "2026-06-18T12:00:00Z"
+        "date": "2026-06-22T12:00:00Z"
       },
       {
-        "hash": "9b82ab966c6ae7d440bd49fd9963e5a0d4bd0af1",
-        "short": "9b82ab9",
+        "hash": "ba2781ecdb4d03d0519f10c3d09fced7c8d3b95b",
+        "short": "ba2781e",
         "parents": [
-          "9d3e3f628be9ddfb53f7e04590f39584d0f6455a"
+          "02d7afde12853ecd3021bc00f0d4c865d3a2c037"
         ],
         "refs": "",
         "subject": "docs: contributor guide",
         "author": "Git Scenarios Test",
-        "date": "2026-06-17T12:00:00Z"
+        "date": "2026-06-21T12:00:00Z"
       },
       {
-        "hash": "9d3e3f628be9ddfb53f7e04590f39584d0f6455a",
-        "short": "9d3e3f6",
+        "hash": "02d7afde12853ecd3021bc00f0d4c865d3a2c037",
+        "short": "02d7afd",
         "parents": [
-          "fe7126a2f8e5d8f680bfef5c0f05efe451363fd4"
+          "0740558227b61daa468ea8d443a2f7defd62cf58"
         ],
         "refs": "",
         "subject": "chore(deps): bump simple-git to 4.x",
         "author": "Git Scenarios Test",
-        "date": "2026-06-16T12:00:00Z"
+        "date": "2026-06-20T12:00:00Z"
       },
       {
-        "hash": "fe7126a2f8e5d8f680bfef5c0f05efe451363fd4",
-        "short": "fe7126a",
+        "hash": "0740558227b61daa468ea8d443a2f7defd62cf58",
+        "short": "0740558",
         "parents": [
-          "5dfd594367312c974284cf936cb1281adec789bc"
+          "b429c84344f1d7b227faa54bbf8964fd71db54db"
         ],
         "refs": "",
         "subject": "fix(api): route precedence for catch-all",
         "author": "Git Scenarios Test",
-        "date": "2026-06-13T12:00:00Z"
+        "date": "2026-06-17T12:00:00Z"
       },
       {
-        "hash": "5dfd594367312c974284cf936cb1281adec789bc",
-        "short": "5dfd594",
+        "hash": "b429c84344f1d7b227faa54bbf8964fd71db54db",
+        "short": "b429c84",
         "parents": [
-          "2fc862c4f936d81e7af41f10543bcc6e0fc764ed"
+          "55253c98460bbf8a447054c1617cdbd1037fee7d"
         ],
         "refs": "",
         "subject": "refactor(api): centralise error shapes",
         "author": "Git Scenarios Test",
-        "date": "2026-06-09T12:00:00Z"
+        "date": "2026-06-13T12:00:00Z"
       },
       {
-        "hash": "2fc862c4f936d81e7af41f10543bcc6e0fc764ed",
-        "short": "2fc862c",
+        "hash": "55253c98460bbf8a447054c1617cdbd1037fee7d",
+        "short": "55253c9",
         "parents": [
-          "ad7d898516f27ed67b808214b648830d721abaaf",
-          "1e0921b6853bfeb0554c92205bae91119bec9cdb"
+          "46dc0e636b9f54c192ec68c2e0010cd582a36964",
+          "2bed279b193602ff3c88d2d731bafa7e322bea80"
         ],
         "refs": "",
         "subject": "Merge branch 'feat/auth'",
         "author": "Git Scenarios Test",
-        "date": "2026-06-07T12:00:00Z"
+        "date": "2026-06-11T12:00:00Z"
       },
       {
-        "hash": "1e0921b6853bfeb0554c92205bae91119bec9cdb",
-        "short": "1e0921b",
+        "hash": "2bed279b193602ff3c88d2d731bafa7e322bea80",
+        "short": "2bed279",
         "parents": [
-          "2bd9d4df81dcf0e8d663d1a014b192da27f41f6f"
+          "3b411d0be16ec158152854b526cace95a8b16856"
         ],
         "refs": "feat/auth",
         "subject": "test: cover session edge cases",
         "author": "Git Scenarios Test",
-        "date": "2026-06-06T12:00:00Z"
+        "date": "2026-06-10T12:00:00Z"
       },
       {
-        "hash": "2bd9d4df81dcf0e8d663d1a014b192da27f41f6f",
-        "short": "2bd9d4d",
+        "hash": "3b411d0be16ec158152854b526cace95a8b16856",
+        "short": "3b411d0",
         "parents": [
-          "ad7d898516f27ed67b808214b648830d721abaaf"
+          "46dc0e636b9f54c192ec68c2e0010cd582a36964"
         ],
         "refs": "",
         "subject": "feat(auth): session middleware",
         "author": "Git Scenarios Test",
-        "date": "2026-06-04T12:00:00Z"
+        "date": "2026-06-08T12:00:00Z"
       },
       {
-        "hash": "ad7d898516f27ed67b808214b648830d721abaaf",
-        "short": "ad7d898",
+        "hash": "46dc0e636b9f54c192ec68c2e0010cd582a36964",
+        "short": "46dc0e6",
         "parents": [
-          "cf85f9d3d4afd8c7c05b70f19a0d4f10bafca4a2"
+          "b92e9e9ef597cbfe4f62b15db09851580986eef3"
         ],
         "refs": "",
         "subject": "docs: project README and contributor guide",
         "author": "Git Scenarios Test",
-        "date": "2026-05-30T12:00:00Z"
+        "date": "2026-06-03T12:00:00Z"
       },
       {
-        "hash": "cf85f9d3d4afd8c7c05b70f19a0d4f10bafca4a2",
-        "short": "cf85f9d",
+        "hash": "b92e9e9ef597cbfe4f62b15db09851580986eef3",
+        "short": "b92e9e9",
         "parents": [
-          "7d8be064e29ecfedc3ea9d6db72a681ec44da7c9"
+          "66de6e0e5dfa5b011096f5d7d6917f4ed6afacb6"
         ],
         "refs": "",
         "subject": "feat(api): public router skeleton",
         "author": "Git Scenarios Test",
-        "date": "2026-05-15T12:00:00Z"
+        "date": "2026-05-19T12:00:00Z"
       },
       {
-        "hash": "7d8be064e29ecfedc3ea9d6db72a681ec44da7c9",
-        "short": "7d8be06",
+        "hash": "66de6e0e5dfa5b011096f5d7d6917f4ed6afacb6",
+        "short": "66de6e0",
         "parents": [],
         "refs": "",
         "subject": "Initial scaffold",
         "author": "Git Scenarios Test",
-        "date": "2026-04-30T12:00:00Z"
+        "date": "2026-05-04T12:00:00Z"
       }
     ]
   },
