@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782773477762,
+  "lastUpdate": 1783083762501,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1013,6 +1013,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7459.81,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "distinct": true,
+          "id": "b1196288c80abb0be8553a7b7d88b89a66455cf8",
+          "message": "docs: update website and README for v1.2.0 features\n\n- Add v1.2.0 changelog entry (MCP server, VS Code extension, cache,\n  doctor/diff commands, new scenarios, Playwright/Cypress adapters)\n- Add VS Code Extension guide page + sidebar entry\n- Update installation.md exports table (mcp, playwright, cypress)\n- Update CLI guide with doctor and diff commands + flags\n- Update jest-adapter guide with Playwright/Cypress sections\n- Fix index.mdx adapter count: 5 → 7\n- Update README status line: v1.1.0→v1.2.0, 35→46 scenarios,\n  5→7 adapters, add MCP/VS Code/diff/doctor mentions\n- Add MCP Server and VS Code Extension sections to README TOC",
+          "timestamp": "2026-07-03T09:01:11-04:00",
+          "tree_id": "ed6d54b7ca68d295694cdfc5785c59d441a1bc40",
+          "url": "https://github.com/gfargo/git-scenarios/commit/b1196288c80abb0be8553a7b7d88b89a66455cf8"
+        },
+        "date": 1783083762179,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 167.35,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 931.08,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7102.36,
             "unit": "ms"
           }
         ]
