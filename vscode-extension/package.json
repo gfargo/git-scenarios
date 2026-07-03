@@ -8,10 +8,6 @@
     "vscode": "^1.85.0"
   },
   "main": "./dist/extension.js",
-  "activationEvents": [
-    "onCommand:gitScenarios.create",
-    "onCommand:gitScenarios.cleanup"
-  ],
   "contributes": {
     "commands": [
       {
