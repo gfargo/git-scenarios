@@ -1,9 +1,9 @@
 ---
 title: Test Runner Adapters
-description: Zero-boilerplate scenario testing with Jest, Vitest, node:test, Mocha, or AVA.
+description: Zero-boilerplate scenario testing with Jest, Vitest, node:test, Mocha, AVA, Playwright, or Cypress.
 ---
 
-The package ships adapters for every major TypeScript test runner. Each provides zero-boilerplate scenario setup with automatic cleanup — pick the one matching your runner.
+The package ships adapters for every major TypeScript test runner and E2E framework. Each provides zero-boilerplate scenario setup with automatic cleanup — pick the one matching your runner.
 
 ## Quick comparison
 
@@ -14,6 +14,8 @@ The package ships adapters for every major TypeScript test runner. Each provides
 | node:test | `@gfargo/git-scenarios/node-test` | `describeWithScenario` + `describeEachScenario` + `it` |
 | Mocha | `@gfargo/git-scenarios/mocha` | `describeWithScenario` + `describeEachScenario` |
 | AVA | `@gfargo/git-scenarios/ava` | `withScenario` + `withScenarios` |
+| Playwright | `@gfargo/git-scenarios/playwright` | `test.extend` fixture |
+| Cypress | `@gfargo/git-scenarios/cypress` | `cy.task` registration |
 
 The first four share the same `describeWithScenario` pattern. AVA uses a different shape because it has no `describe` blocks. Vitest additionally exports `repoFixture` for the idiomatic `test.extend` fixture pattern.
 
@@ -232,3 +234,66 @@ describeWithScenario('my-custom', (getRepo) => { /* ... */ })
 // or:
 const scenario = withScenario('my-custom')
 ```
+
+## Playwright
+
+The Playwright adapter uses `test.extend` to provide a `scenarioRepo` fixture that materializes a scenario per test and cleans up automatically:
+
+```ts
+import { createScenarioTest } from '@gfargo/git-scenarios/playwright'
+
+const test = createScenarioTest('mid-merge-conflict')
+
+test('my git GUI shows conflict markers', async ({ scenarioRepo, page }) => {
+  // scenarioRepo.path — path to the materialized repo
+  // scenarioRepo.git — simple-git instance
+  // Use page to drive your web-based git tool against the repo
+  await page.goto(`http://localhost:3000?repo=${scenarioRepo.path}`)
+  await expect(page.locator('.conflict-marker')).toBeVisible()
+})
+```
+
+Each test gets its own isolated repo instance. Cleanup runs automatically after the test completes.
+
+## Cypress
+
+The Cypress adapter registers scenario materialization as a `cy.task`:
+
+```ts
+// cypress.config.ts
+import { registerScenarioTasks } from '@gfargo/git-scenarios/cypress'
+
+export default defineConfig({
+  e2e: {
+    setupNodeEvents(on, config) {
+      registerScenarioTasks(on)
+      return config
+    },
+  },
+})
+```
+
+Then in your tests:
+
+```ts
+describe('git tool against merge conflict', () => {
+  let repoPath: string
+
+  before(() => {
+    cy.task('createScenario', 'mid-merge-conflict').then((path) => {
+      repoPath = path as string
+    })
+  })
+
+  after(() => {
+    cy.task('cleanupScenario', repoPath)
+  })
+
+  it('shows the conflict file', () => {
+    cy.visit(`/?repo=${repoPath}`)
+    cy.get('.conflict-indicator').should('exist')
+  })
+})
+```
+
+Tasks: `createScenario` (returns path), `cleanupScenario` (removes the dir).

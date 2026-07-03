@@ -56,9 +56,9 @@ state every run), so the tests built on top are deterministic too.
    anything from "single staged file" to "three-way nested submodule
    mid-rebase."
 
-> **Status: v1.1.0** — Stable release. 35 curated scenarios, 60+ composable atoms,
-> 5 framework adapters, `assertRepo()` + `expect` matchers, CLI
-> (`list` · `describe` · `inspect` · `create` · `capture` · `clean`),
+> **Status: v1.2.0** — Stable release. 46 curated scenarios, 60+ composable atoms,
+> 7 framework adapters, `assertRepo()` + `expect` matchers, MCP server, VS Code extension, CLI
+> (`list` · `describe` · `inspect` · `create` · `capture` · `diff` · `doctor` · `clean`),
 > dual CJS/ESM output.
 
 ## Table of contents
@@ -66,9 +66,12 @@ state every run), so the tests built on top are deterministic too.
 - [Installation](#installation)
 - [Prerequisites](#prerequisites)
 - [Quick start](#quick-start)
-- [Jest framework adapter](#jest-framework-adapter)
+- [Framework adapters](#framework-adapters-jest-vitest-nodetest-mocha-ava-playwright-cypress)
 - [Common patterns (cookbook)](#common-patterns-cookbook)
 - [Available scenarios](#available-scenarios)
+- [GitHub Action](#github-action)
+- [MCP Server](#mcp-server)
+- [VS Code Extension](#vs-code-extension)
 - [The CLI](#the-cli)
 - [Programmatic API](#programmatic-api)
 - [Custom scenario registration](#custom-scenario-registration)
@@ -651,6 +654,31 @@ any GitHub Actions workflow:
 **Output**: `path` — absolute path to the materialized repository.
 
 Supported on Linux and macOS runners. See the [GitHub Action guide →](https://git-scenarios.griffen.codes/docs/guides/github-action)
+
+## MCP Server
+
+The library ships a Model Context Protocol server for AI coding agents. It exposes the scenario catalogue and materialization as MCP tools: `list_scenarios`, `describe_scenario`, `inspect_scenario`, `materialize_scenario`, `capture_repo`, `cleanup_scenario`.
+
+```json
+{
+  "mcpServers": {
+    "git-scenarios": {
+      "command": "npx",
+      "args": ["-y", "@gfargo/git-scenarios", "git-scenarios-mcp"]
+    }
+  }
+}
+```
+
+See the [MCP Server guide →](https://git-scenarios.griffen.codes/docs/guides/mcp)
+
+## VS Code Extension
+
+Spin up scenarios from the command palette — "**git-scenarios: Create Scenario…**" opens a quick-pick, materializes the selected scenario, and opens it in a new VS Code window. A companion "**Clean Up Scenario Directories**" command removes accumulated temp dirs.
+
+The extension lives in `vscode-extension/` as a self-contained sub-package. To try it, build the root package and run the Extension Development Host (F5).
+
+See the [VS Code Extension guide →](https://git-scenarios.griffen.codes/docs/guides/vscode-extension)
 
 ## The CLI
 

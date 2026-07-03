@@ -185,6 +185,7 @@ export default defineConfig({
             { label: 'CLI Reference', slug: 'docs/guides/cli' },
             { label: 'Contributing', slug: 'docs/guides/contributing' },
             { label: 'MCP Server', slug: 'docs/guides/mcp' },
+            { label: 'VS Code Extension', slug: 'docs/guides/vscode-extension' },
             { label: 'vs. Alternatives', slug: 'docs/guides/comparison' },
           ],
         },

@@ -5,6 +5,39 @@ description: Version history and changelog for @gfargo/git-scenarios.
 
 The full changelog lives in [`CHANGELOG.md`](https://github.com/gfargo/git-scenarios/blob/main/CHANGELOG.md). This page summarizes recent releases.
 
+## v1.2.0 — 2026-06-28
+
+Ecosystem expansion: an MCP server for AI agents, a VS Code extension, a content-addressed scenario cache for near-instant spin-ups, and new CLI commands for environment health and scenario comparison.
+
+### Highlights
+
+- **MCP server** — a Model Context Protocol server that exposes the scenario catalogue and materialization to AI coding agents. Tools: `list_scenarios`, `describe_scenario`, `inspect_scenario`, `materialize_scenario`, `capture_repo`, `cleanup_scenario`. Available via `@gfargo/git-scenarios/mcp` subpath or as the `git-scenarios-mcp` binary.
+- **VS Code extension** — spin up scenarios from the command palette ("git-scenarios: Create Scenario…") and clean up with one click. Opens materialized repos in a new VS Code window. Lives in `vscode-extension/` as a self-contained sub-package.
+- **Content-addressed scenario cache** — materialize each scenario once into a template, then serve later spin-ups via `git clone --local` (hardlinked objects, near-instant). Removes the large-repo timeout class of problems.
+- **`doctor` command** — `git-scenarios doctor [--json]` checks git version, temp-dir writability, leftover dirs, and optional deps.
+- **`diff` command** — `git-scenarios diff <a> <b> [--json]` compares two scenarios side by side.
+- **Shell completions** — `git-scenarios completions <bash|zsh|fish>` with dynamic scenario-name completion.
+- **GitHub Action** — a composite action that materializes a named scenario into the workspace for downstream CI.
+- **Playwright & Cypress adapters** — `@gfargo/git-scenarios/playwright` (test.extend fixture) and `@gfargo/git-scenarios/cypress` (task helper) for E2E git-tool testing.
+- **`repo.snapshot()`** — structured, read-only description of repo state (HEAD, branches, status, in-progress operation, stash, graph). Also exported standalone as `snapshotRepo(git)`.
+
+### New scenarios (46 total)
+
+- `interactive-rebase-mid-edit` — rebase -i paused at an `edit` action
+- `out-of-date-submodule` — parent pinned to older submodule SHA
+- `locked-worktree` — linked worktree locked with a reason
+- `dangling-commit` — commit dropped from main, recoverable via reflog
+- `reset-recoverable-head` — main reset 2 commits back, former tip in reflog
+- `git-lfs-pointer`, `crlf-normalization`, `case-collision` — encoding/FS edge cases
+- `installed-hooks`, `commits-with-notes`, `mixed-tags` — metadata scenarios
+
+### New atoms
+
+- `startInteractiveRebase(onto)` — starts interactive rebase paused at first commit
+- `lockWorktree(path, opts)` / `unlockWorktree(path)` — worktree lock management
+
+[Full release notes →](https://github.com/gfargo/git-scenarios/releases/tag/v1.2.0)
+
 ## v1.1.0 — 2026-06-23
 
 Tooling and trust. Two new CLI commands for working with scenarios interactively, plus a determinism fix that makes the "byte-identical every run" promise hold across **all** scenarios — not just the few that pinned dates.

@@ -47,6 +47,9 @@ const { spinUpScenario } = require('@gfargo/git-scenarios')
 | `@gfargo/git-scenarios/node-test` | Node.js native test runner adapter (`node:test`) |
 | `@gfargo/git-scenarios/mocha` | Mocha framework adapter |
 | `@gfargo/git-scenarios/ava` | AVA framework adapter (`withScenario` handle pattern) |
+| `@gfargo/git-scenarios/playwright` | Playwright fixture (`test.extend`) for E2E tests |
+| `@gfargo/git-scenarios/cypress` | Cypress task helper for E2E tests |
+| `@gfargo/git-scenarios/mcp` | Model Context Protocol server (programmatic access) |
 
 ## TypeScript
 

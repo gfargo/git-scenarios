@@ -173,6 +173,37 @@ git-scenarios completions fish | source
 git-scenarios completions fish > ~/.config/fish/completions/git-scenarios.fish
 ```
 
+### `git-scenarios doctor [--json]`
+
+Check your environment for compatibility issues. Verifies git version (≥ 2.25.0), temp-dir writability, leftover scenario dirs, and optional dependencies (git-lfs). Exits non-zero on hard failures.
+
+```bash
+npx git-scenarios doctor
+npx git-scenarios doctor --json    # machine-readable
+```
+
+Example output:
+
+```
+  git-scenarios doctor
+  ────────────────────
+  ✓ git version 2.43.0 (≥ 2.25.0)
+  ✓ temp dir writable (/var/folders/...)
+  ✓ no leftover scenario dirs in /var/folders/...
+  ⓘ git-lfs not found (optional — only needed for git-lfs-pointer scenario)
+
+  All checks passed.
+```
+
+### `git-scenarios diff <name-a> <name-b> [--json]`
+
+Compare two scenarios side by side. Materializes both in throwaway temp dirs, captures their shape (HEAD, branches, status, in-progress operation, contracts), and prints a structured comparison. SHA values and raw commit graphs are excluded from the diff.
+
+```bash
+npx git-scenarios diff feature-pr-ready multi-commit-branch
+npx git-scenarios diff mid-merge-conflict mid-rebase-conflict --json
+```
+
 ## Flags
 
 ### List flags
@@ -226,6 +257,18 @@ git-scenarios completions fish > ~/.config/fish/completions/git-scenarios.fish
 | Flag | Behavior |
 |---|---|
 | `--names` | Print scenario names only, one per line (no headers, no JSON). Used internally by shell completion scripts to resolve scenario names dynamically. Respects `--kind` and `--tag` filters. |
+
+### Doctor flags
+
+| Flag | Behavior |
+|---|---|
+| `--json` | Emit machine-readable JSON with check results, pass/fail status, and version info. |
+
+### Diff flags
+
+| Flag | Behavior |
+|---|---|
+| `--json` | Emit structured JSON: `{ a, b, same, differences }`. SHA values are excluded. |
 
 ## Examples
 
