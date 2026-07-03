@@ -30,7 +30,8 @@
     "test": "jest --config jest.config.cjs"
   },
   "dependencies": {
-    "@gfargo/git-scenarios": "file:.."
+    "@gfargo/git-scenarios": "file:..",
+    "simple-git": "^3.27.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",
