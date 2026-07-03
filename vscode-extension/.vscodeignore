@@ -6,11 +6,5 @@ jest.config.cjs
 **/*.test.js
 **/__mocks__/
 **/*.map
-node_modules/.package-lock.json
-node_modules/@types/
-node_modules/esbuild/
-node_modules/jest/
-node_modules/ts-jest/
-node_modules/@jest/
-node_modules/typescript/
+node_modules/
 .vscode/

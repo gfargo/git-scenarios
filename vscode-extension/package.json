@@ -1,9 +1,33 @@
 {
   "name": "git-scenarios-vscode",
   "displayName": "git-scenarios",
-  "description": "Spin up real git scenario repos from the command palette",
-  "version": "0.0.1",
-  "private": true,
+  "description": "Spin up real git scenario repos from the command palette — one keystroke to a sandbox for testing git tooling.",
+  "version": "0.1.0",
+  "publisher": "gfargo",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gfargo/git-scenarios",
+    "directory": "vscode-extension"
+  },
+  "homepage": "https://git-scenarios.griffen.codes/docs/guides/vscode-extension",
+  "bugs": {
+    "url": "https://github.com/gfargo/git-scenarios/issues"
+  },
+  "icon": "icon.png",
+  "categories": [
+    "Testing",
+    "Other"
+  ],
+  "keywords": [
+    "git",
+    "testing",
+    "fixtures",
+    "scenarios",
+    "repository",
+    "merge-conflict",
+    "sandbox"
+  ],
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -23,18 +47,18 @@
   "scripts": {
     "build": "node esbuild.mjs",
     "watch": "node esbuild.mjs --watch",
-    "test": "jest --config jest.config.cjs"
-  },
-  "dependencies": {
-    "@gfargo/git-scenarios": "file:..",
-    "simple-git": "^3.27.0"
+    "test": "jest --config jest.config.cjs",
+    "package": "npx @vscode/vsce package",
+    "publish": "npx @vscode/vsce publish"
   },
   "devDependencies": {
+    "@gfargo/git-scenarios": "file:..",
     "@types/jest": "^29.5.0",
     "@types/node": "^22.0.0",
     "@types/vscode": "^1.85.0",
     "esbuild": "^0.21.0",
     "jest": "^29.7.0",
+    "simple-git": "^3.27.0",
     "ts-jest": "^29.1.0",
     "typescript": "^5.4.0"
   }

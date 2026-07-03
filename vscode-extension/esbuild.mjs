@@ -11,11 +11,12 @@ const config = {
   platform: 'node',
   outfile: 'dist/extension.js',
   // vscode is provided by the extension host at runtime
-  // @gfargo/git-scenarios is kept external to avoid bundling optional
-  // native tree-sitter bindings it re-exports; node_modules must be present.
-  external: ['vscode', '@gfargo/git-scenarios'],
+  external: ['vscode'],
   sourcemap: true,
   minify: false,
+  logOverride: {
+    'empty-import-meta': 'silent',
+  },
 }
 
 if (watch) {
