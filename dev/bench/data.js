@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1783086623943,
+  "lastUpdate": 1783087042895,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1130,6 +1130,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7211.99,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "3642037+gfargo@users.noreply.github.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "distinct": true,
+          "id": "4d47576497ce0947ea0214d3659733366c8b07fb",
+          "message": "chore(www): regenerate scenarios.json",
+          "timestamp": "2026-07-03T09:55:47-04:00",
+          "tree_id": "a7dc8c158d22c8a09cb3caabe62b3c2750362d05",
+          "url": "https://github.com/gfargo/git-scenarios/commit/4d47576497ce0947ea0214d3659733366c8b07fb"
+        },
+        "date": 1783087042034,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 168.52,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 942.17,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7213.54,
             "unit": "ms"
           }
         ]
