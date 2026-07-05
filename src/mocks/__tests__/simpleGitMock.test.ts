@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { mockSimpleGit } from '../simpleGitMock'
 import type { MockFnFactory } from '../simpleGitMock'
 import { mockStatusResult } from '../statusFactory'

@@ -20,8 +20,10 @@ import { mockDiffResult } from './diffFactory'
  * A function that creates a mock/spy function. Matches `jest.fn()` and `vi.fn()`.
  * Consumers pass their framework's mock factory.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type MockFnFactory = <T extends (...args: any[]) => any>(
   impl?: T
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ) => T & { mockResolvedValue?: (val: any) => void }
 
 /**
@@ -113,9 +115,9 @@ export function mockSimpleGit(options: MockSimpleGitOptions): SimpleGit {
         // simple-git's raw() accepts variadic strings: git.raw('rev-parse', 'HEAD')
         if (overrides.raw) {
           const rawOverride = overrides.raw
-          mockFn = createMockFn((...args: any[]) => {
+          mockFn = createMockFn((...args: unknown[]) => {
             // Normalize: if first arg is an array, use it; otherwise collect all args
-            const normalizedArgs = Array.isArray(args[0]) ? args[0] : args
+            const normalizedArgs = Array.isArray(args[0]) ? args[0] as string[] : args as string[]
             return Promise.resolve(rawOverride(normalizedArgs))
           })
         } else {
