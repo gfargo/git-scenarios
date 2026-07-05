@@ -77,6 +77,7 @@ state every run), so the tests built on top are deterministic too.
 - [Custom scenario registration](#custom-scenario-registration)
 - [Atoms — compose any repo state](#atoms--compose-any-repo-state-from-building-blocks)
 - [Defining your own scenarios](#defining-your-own-scenarios)
+- [Mock Factories](#mock-factories)
 - [TypeScript support](#typescript-support)
 - [Debugging](#debugging)
 - [Contributing](#contributing)
@@ -191,6 +192,7 @@ Each provides zero-boilerplate scenario setup with automatic cleanup.
 | AVA | `@gfargo/git-scenarios/ava` | `withScenario` (no describe) |
 | Playwright | `@gfargo/git-scenarios/playwright` | `test.extend` fixture |
 | Cypress | `@gfargo/git-scenarios/cypress` | `cy.task` registration |
+| Mock Factories | `@gfargo/git-scenarios/mocks` | `mockStatus`, `mockSimpleGit` |
 
 ```ts
 // Jest:
@@ -1410,6 +1412,47 @@ If your custom scenario is generally useful (e.g. "stashed-with-untracked",
 3. Register in `src/scenarios/index.ts`.
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full checklist.
+
+## Mock Factories
+
+The library also ships in-memory mock factories for `simple-git` response types (`StatusResult`, `LogResult`, `BranchSummary`, `DiffResult`) — enabling fast unit tests that validate git-state-dependent logic without touching disk. Mock factories complement the real-repo approach: use real repos for integration tests, mocks for unit tests that need sub-millisecond speed.
+
+Import from the dedicated subpath export at `@gfargo/git-scenarios/mocks`:
+
+```ts
+import { mockStatus, mockSimpleGit } from '@gfargo/git-scenarios/mocks'
+```
+
+### Fluent builder
+
+```ts
+const status = mockStatus()
+  .staged('auth.ts')
+  .modified('utils.ts')
+  .build()
+// → A complete StatusResult with correct files[], bucket arrays, and isClean() = false
+```
+
+### Wiring into a Jest test
+
+```ts
+import { mockSimpleGit, mockStatus } from '@gfargo/git-scenarios/mocks'
+
+const git = mockSimpleGit({
+  createMockFn: jest.fn,
+  overrides: {
+    status: mockStatus().staged('src/auth.ts').modified('src/utils.ts').build(),
+  },
+})
+
+it('detects dirty worktree', async () => {
+  const status = await git.status()
+  expect(status.isClean()).toBe(false)
+  expect(status.staged).toContain('src/auth.ts')
+})
+```
+
+📖 **[Full mock factories guide →](https://git-scenarios.griffen.codes/docs/guides/mock-factories)**
 
 ## TypeScript support
 

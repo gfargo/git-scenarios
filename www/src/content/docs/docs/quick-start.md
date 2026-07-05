@@ -149,3 +149,4 @@ npx git-scenarios create feature-pr-ready
 - [Browse all 46 scenarios →](/docs/scenarios/browse)
 - [Learn the atom API →](/docs/atoms/overview)
 - [Set up the Jest adapter →](/docs/guides/jest-adapter)
+- For blazing-fast unit tests without disk I/O, check out [Mock Factories →](/docs/guides/mock-factories)

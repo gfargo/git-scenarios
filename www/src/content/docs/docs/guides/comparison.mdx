@@ -1,6 +1,6 @@
 ---
 title: vs. Alternatives
-description: An honest comparison of git-scenarios against hand-rolled fixtures, checked-in .git directories, mocking git, and Docker containers.
+description: An honest comparison of git-scenarios against hand-rolled fixtures, checked-in .git directories, mocking git, hand-rolled mock objects, Docker containers, and the library's own mock factories.
 ---
 
 import { Card, CardGrid, Aside } from '@astrojs/starlight/components';
@@ -88,6 +88,74 @@ Mocking still has a role: when a test needs to isolate a network call, an LLM re
 
 ---
 
+## Hand-rolled mock objects
+
+### What people do today
+
+Write `StatusResult`, `LogResult`, or `BranchSummary` object literals by hand. Hard-code the fields they think they need, leave the rest as `undefined` or empty arrays, and cast with `as StatusResult` to silence TypeScript.
+
+```ts
+const fakeStatus = {
+  staged: ['src/auth.ts'],
+  modified: [],
+  not_added: [],
+  files: [{ path: 'src/auth.ts', index: 'M', working_dir: ' ' }],
+  current: 'main',
+  isClean: () => false,
+} as unknown as StatusResult
+```
+
+### Where it breaks down
+
+**Incomplete shapes.** `simple-git` response types have many required fields (`ahead`, `behind`, `tracking`, `detached`, `conflicted`, `renamed`, `created`, `deleted`...). Hand-rolled objects routinely omit them, and downstream code accessing those fields hits `undefined` instead of an empty array.
+
+**XY code mistakes.** The mapping between porcelain status codes and bucket arrays (`staged`, `modified`, `not_added`) is non-obvious. A file with `index: 'A'` should appear in both `staged` and `created`, but most hand-rolled mocks miss the `created` bucket entirely.
+
+**No reuse.** Each test file re-invents its own fake object. When `simple-git` adds a field or changes a type, every hand-rolled mock is potentially broken — silently, because `as unknown as StatusResult` suppresses all type errors.
+
+**Difficult to read.** Nested object literals with ten fields obscure test intent. The reader has to scan the whole literal to find the one field that matters for this particular test case.
+
+### What git-scenarios mocks do instead
+
+The `@gfargo/git-scenarios/mocks` subpath provides typed factories and fluent builders that produce complete, correct objects:
+
+```ts
+import { mockStatus, mockSimpleGit } from '@gfargo/git-scenarios/mocks'
+
+const status = mockStatus()
+  .onBranch('feature/auth')
+  .staged('src/auth.ts')
+  .modified('src/utils.ts')
+  .build()
+
+// Wire into a full SimpleGit mock
+const git = mockSimpleGit({ createMockFn: jest.fn, overrides: { status } })
+```
+
+Every returned object has all required fields populated with correct defaults. The bucket-to-XY-code mapping is handled internally, so `staged('x.ts')` produces a `FileStatusResult` with `index: 'M', working_dir: ' '` — matching exactly what `simple-git` would return. No type casting, no missing fields, no drift.
+
+---
+
+## When to use which: Real Repos vs. Mock Factories vs. Hand-rolled mocks
+
+The three approaches serve different testing goals. Pick based on what you need to prove:
+
+| | Real Repos (`spinUpScenario`) | Mock Factories (`@gfargo/git-scenarios/mocks`) | Hand-rolled mocks |
+|---|:---:|:---:|:---:|
+| **Speed** | ~200–500ms per scenario | &lt;1ms | &lt;1ms |
+| **Fidelity** | Perfect — real git | High — correct types + bucket mapping | Low — prone to missing fields |
+| **Setup complexity** | One line (`spinUpScenario(...)`) | One chain (`.staged().modified().build()`) | Manual object literals per test |
+| **Git dependency** | Requires `git` installed | None (types only) | None |
+| **Best use case** | Integration tests, multi-step workflows, verifying real git behavior | Unit tests for UI/rendering, status parsing, error handling | Quick one-off tests where shape barely matters |
+| **Type safety** | N/A (real runtime) | Full — no `as` casts needed | Fragile — usually requires `as unknown as T` |
+| **Reusability** | Scenarios are named and shared | Factories are composable, builders are chainable | Copy-paste across test files |
+
+<Aside type="tip">
+**Rule of thumb:** If the test exercises git *behavior* (does a merge produce a conflict?), use a real repo. If the test exercises your code's *reaction* to git state (does the UI render a conflict badge?), use a mock factory. If you only need a status object for a quick type check in a utility function, hand-rolled is fine — but consider whether a one-liner mock builder is just as easy.
+</Aside>
+
+---
+
 ## Docker containers with pre-baked git state
 
 ### What people do today
@@ -120,15 +188,16 @@ Docker is still appropriate when you need a full-system integration test — for
 
 ## Summary
 
-| | Hand-rolled | Checked-in `.git` | Mocking git | Docker | git-scenarios |
-|---|:---:|:---:|:---:|:---:|:---:|
-| Real git state | ✅ | ✅ | ❌ | ✅ | ✅ |
-| Deterministic | ⚠️ | ✅ | ✅ | ✅ | ✅ |
-| Fast (ms spin-up) | ✅ | ⚠️ | ✅ | ❌ | ✅ |
-| No binary in repo | ✅ | ❌ | ✅ | ⚠️ | ✅ |
-| Composable / reusable | ❌ | ❌ | ⚠️ | ❌ | ✅ |
-| Interactive-friendly | ✅ | ⚠️ | ❌ | ❌ | ✅ |
-| Scales across many states | ❌ | ❌ | ⚠️ | ⚠️ | ✅ |
+| | Hand-rolled | Checked-in `.git` | Mocking git | Hand-rolled mocks | Docker | git-scenarios (Real Repos) | git-scenarios (Mock Factories) |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Real git state | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ (faithful types) |
+| Deterministic | ⚠️ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Fast (&lt;1ms) | ❌ | ⚠️ | ✅ | ✅ | ❌ | ❌ (~200-500ms) | ✅ |
+| No binary in repo | ✅ | ❌ | ✅ | ✅ | ⚠️ | ✅ | ✅ |
+| No git dependency | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Type-safe | ⚠️ | N/A | ⚠️ | ❌ | N/A | N/A | ✅ |
+| Composable / reusable | ❌ | ❌ | ⚠️ | ❌ | ❌ | ✅ | ✅ |
+| Scales across many states | ❌ | ❌ | ⚠️ | ❌ | ⚠️ | ✅ | ✅ |
 
 ⚠️ = possible with extra effort; ❌ = not well-suited; ✅ = good fit
 
@@ -136,6 +205,7 @@ Docker is still appropriate when you need a full-system integration test — for
 
 ## See also
 
+- [Mock Factories →](/docs/guides/mock-factories) — in-memory mocks for unit tests without disk I/O
 - [Choosing a Scenario →](/docs/guides/choosing-a-scenario) — pick the right scenario for your use case
 - [Quick Start →](/docs/quick-start) — up and running in five minutes
 - [Custom Scenarios →](/docs/guides/custom-scenarios) — define your own reusable states

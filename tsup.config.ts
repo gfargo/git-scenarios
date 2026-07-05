@@ -18,6 +18,7 @@ export default defineConfig([
       'playwright': 'src/playwright.ts',
       'cypress': 'src/cypress.ts',
       'mcp': 'src/mcp.ts',
+      'mocks/index': 'src/mocks/index.ts',
     },
     format: ['cjs', 'esm'],
     dts: true,

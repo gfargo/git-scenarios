@@ -6,6 +6,36 @@ versions follow [semver](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.3.0] — 2026-07-12
+
+### Added
+
+- **Mock factory layer** (`@gfargo/git-scenarios/mocks`) — a new subpath export
+  providing in-memory mock objects matching `simple-git`'s type signatures
+  (`StatusResult`, `LogResult`, `BranchSummary`, `DiffResult`). Zero runtime
+  dependencies, <1ms per call, no disk I/O or git required.
+- **Functional factories** — `mockStatusResult()`, `mockLogResult()`,
+  `mockBranchSummary()`, `mockDiffResult()` with sensible defaults and partial
+  overrides.
+- **Fluent builders** — `mockStatus().staged('a.ts').modified('b.ts').build()`
+  chainable API for incremental mock construction with automatic multi-bucket
+  path merging.
+- **`mockSimpleGit()`** — Proxy-based full `SimpleGit` interface stub.
+  Framework-agnostic via a `createMockFn` parameter (pass `jest.fn` or `vi.fn`).
+- **`mockFromScenario(name)`** — derive mock objects from any registered
+  scenario's contracts without spinning up a real repo.
+- **Pretty-printers** — `printMockStatus()` and `printMockLog()` format mocks
+  as human-readable porcelain output for debugging test failures.
+- **Bucket mapping utilities** — `mapXYToBuckets()` and `bucketsToXY()` exposed
+  for advanced consumers building custom parsers.
+- **Mock factories documentation** — comprehensive guide page at
+  `/docs/guides/mock-factories` covering all APIs, decision guide (real repos
+  vs mocks), and XY code reference table.
+- **Property tests** for mock factory invariants (round-trip, builder
+  equivalence, `isClean()`, `total === all.length`, `all === keys(branches)`).
+- **Integration validation tests** confirming mock counts match real repo output
+  for `partial-stage` and `mid-merge-conflict` scenarios.
+
 ## [1.2.0] — 2026-06-28
 
 ### Added

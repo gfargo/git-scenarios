@@ -20,6 +20,10 @@ pnpm add --save-dev @gfargo/git-scenarios simple-git
 - **Node.js**: `^22.22.2 || ^24.15.0 || >=26.0.0`
 - **Git**: Any modern version (2.25+ recommended for sparse checkout support)
 
+:::note
+The `./mocks` subpath (`@gfargo/git-scenarios/mocks`) does **not** require `simple-git` as a peer dependency. It uses `simple-git`'s type definitions only (`import type`) and has zero runtime dependencies. You can install and use the mock factories without having `simple-git` in your project.
+:::
+
 ## Module format
 
 The package ships **both CJS and ESM**. Use `import` or `require` — both work:
@@ -49,6 +53,7 @@ const { spinUpScenario } = require('@gfargo/git-scenarios')
 | `@gfargo/git-scenarios/ava` | AVA framework adapter (`withScenario` handle pattern) |
 | `@gfargo/git-scenarios/playwright` | Playwright fixture (`test.extend`) for E2E tests |
 | `@gfargo/git-scenarios/cypress` | Cypress task helper for E2E tests |
+| `@gfargo/git-scenarios/mocks` | Mock factories for simple-git types (`StatusResult`, `LogResult`, `BranchSummary`, `DiffResult`) — zero runtime deps |
 | `@gfargo/git-scenarios/mcp` | Model Context Protocol server (programmatic access) |
 
 ## TypeScript
