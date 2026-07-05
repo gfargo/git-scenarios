@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1783087345068,
+  "lastUpdate": 1783219559349,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1208,6 +1208,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7355.23,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "81047f0fe3fe0964699df298e8bc68b01276b163",
+          "message": "Merge pull request #92 from gfargo/feat/mock-factory-layer\n\nfeat: add mock factory layer",
+          "timestamp": "2026-07-04T22:44:28-04:00",
+          "tree_id": "25a4beb7ea93293bf4b1b3f6bdea3e2fa730464a",
+          "url": "https://github.com/gfargo/git-scenarios/commit/81047f0fe3fe0964699df298e8bc68b01276b163"
+        },
+        "date": 1783219558569,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 167.68,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 940.47,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7198.36,
             "unit": "ms"
           }
         ]
