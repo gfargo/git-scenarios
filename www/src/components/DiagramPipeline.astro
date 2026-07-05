@@ -1,15 +1,14 @@
 ---
 /**
- * Pipeline diagram — illustrates how a one-liner becomes a real
- * temp git repo on disk. Reads left to right:
+ * Pipeline diagram — illustrates how a one-liner becomes either a real
+ * temp git repo on disk OR typed in-memory mock objects.
  *
- *   spinUpScenario('mid-merge-conflict')
- *           │
- *           ▼
- *   resolve in registry → run setup() → real .git/ on disk → return TempGitRepo
+ * Two paths from the RESOLVE stage:
+ *   spinUpScenario('mid-merge-conflict') → setup() → real .git/ on disk
+ *   mockFromScenario('mid-merge-conflict') → parse contracts → typed mocks
  *
  * Pure SVG, animates on first paint via stroke-dash and fade-up.
- * Sized for a 720x340 viewBox to fit naturally in 64rem column.
+ * Sized for a 720x460 viewBox to fit naturally in 64rem column.
  */
 ---
 
@@ -17,22 +16,25 @@
   <figcaption class="dgm-pipeline__caption">
     <span class="dgm-pipeline__fig">FIG. 02</span>
     <span class="dgm-pipeline__caption-text">
-      Lifecycle of a single <code>spinUpScenario()</code> call &mdash; from one
-      line of TypeScript to a real <code>.git/</code> directory on disk.
+      Two output modes: <code>spinUpScenario</code> for real repos on disk,
+      <code>mockFromScenario</code> for typed in-memory mocks.
     </span>
   </figcaption>
 
   <div class="dgm-pipeline__frame">
     <svg
       class="dgm-pipeline__svg"
-      viewBox="0 0 720 340"
+      viewBox="0 0 720 460"
       xmlns="http://www.w3.org/2000/svg"
       role="img"
-      aria-label="Pipeline diagram showing how spinUpScenario takes a name string and produces a fully-built temp git repository"
+      aria-label="Pipeline diagram showing two paths: spinUpScenario produces a real temp git repo, mockFromScenario produces typed in-memory mock objects"
     >
       <defs>
         <marker id="dgm-pipe-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
           <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+        </marker>
+        <marker id="dgm-pipe-arrow-mock" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--gs-emerald)" />
         </marker>
       </defs>
 
@@ -65,13 +67,13 @@
         <text x="334" y="120" text-anchor="middle" class="dgm-stage__hint">[ 46 built‑in + N custom ]</text>
       </g>
 
-      <!-- ─→ Pipe 2 -->
+      <!-- ─→ Pipe 2 (real path continues right) -->
       <path class="dgm-pipe" style="--d:0.7s"
             d="M422 96 L468 96"
             fill="none" stroke="var(--gs-cyan)" stroke-width="1.5"
             marker-end="url(#dgm-pipe-arrow)"/>
 
-      <!-- ░░░ Stage 3: Compose + write ░░░ -->
+      <!-- ░░░ Stage 3: Compose + write (real path) ░░░ -->
       <g class="dgm-stage" style="--d:0.8s">
         <text x="476" y="32" class="dgm-stage__num">03</text>
         <text x="476" y="48" class="dgm-stage__lbl">EXECUTE</text>
@@ -111,14 +113,14 @@
         <rect x="20" y="200" width="290" height="116" rx="2"
               fill="var(--gs-paper)" stroke="var(--gs-cyan)" stroke-width="1.5"
               stroke-dasharray="3 3"/>
-        <text x="35" y="224" class="dgm-stage__code">type&nbsp;TempGitRepo = {</text>
+        <text x="35" y="224" class="dgm-stage__code">type&nbsp;TempGitRepo = {'{'}</text>
         <text x="48" y="244" class="dgm-stage__code dgm-stage__code--key">path:</text>
         <text x="98" y="244" class="dgm-stage__code dgm-stage__code--str">string</text>
         <text x="48" y="262" class="dgm-stage__code dgm-stage__code--key">git:</text>
         <text x="84" y="262" class="dgm-stage__code dgm-stage__code--str">SimpleGit</text>
         <text x="48" y="280" class="dgm-stage__code dgm-stage__code--key">cleanup:</text>
         <text x="124" y="280" class="dgm-stage__code dgm-stage__code--str">() =&gt; Promise&lt;void&gt;</text>
-        <text x="35" y="304" class="dgm-stage__code">}</text>
+        <text x="35" y="304" class="dgm-stage__code">{'}'}</text>
       </g>
 
       <!-- Pipe up from result to return value -->
@@ -127,6 +129,61 @@
             fill="none" stroke="var(--gs-cyan)" stroke-width="1.2"
             stroke-dasharray="4 4"
             marker-end="url(#dgm-pipe-arrow)"/>
+
+      <!-- ═══════════════════════════════════════════════════════════ -->
+      <!-- MOCK PATH — branches down from Stage 02 (RESOLVE)         -->
+      <!-- ═══════════════════════════════════════════════════════════ -->
+
+      <!-- Branch annotation label -->
+      <g class="dgm-stage" style="--d:1.6s">
+        <text x="340" y="150" class="dgm-stage__lbl dgm-stage__lbl--emerald">MOCK PATH</text>
+      </g>
+
+      <!-- ░░░ Stage M1: Parse contracts (mock path) ░░░ -->
+      <g class="dgm-stage" style="--d:1.72s">
+        <text x="20" y="340" class="dgm-stage__num dgm-stage__num--emerald">M1</text>
+        <text x="20" y="356" class="dgm-stage__lbl dgm-stage__lbl--emerald">PARSE CONTRACTS</text>
+        <rect x="20" y="368" width="230" height="56" rx="2"
+              fill="var(--gs-paper)" stroke="var(--gs-emerald)" stroke-width="1.5"
+              stroke-dasharray="5 3"/>
+        <text x="135" y="390" text-anchor="middle" class="dgm-stage__title dgm-stage__title--emerald">mockFromScenario(name)</text>
+        <text x="135" y="408" text-anchor="middle" class="dgm-stage__sub dgm-stage__sub--emerald">parse contracts → typed objects</text>
+      </g>
+
+      <!-- ─↓ Pipe: from RESOLVE down through gap, then left to M1 -->
+      <path class="dgm-pipe dgm-pipe--mock" style="--d:1.65s"
+            d="M334 130 L334 330 L135 330 L135 368"
+            fill="none" stroke="var(--gs-emerald)" stroke-width="1.5"
+            stroke-dasharray="5 3"
+            marker-end="url(#dgm-pipe-arrow-mock)"/>
+
+      <!-- ─→ Pipe: from M1 to mock result -->
+      <path class="dgm-pipe dgm-pipe--mock" style="--d:1.9s"
+            d="M255 396 L290 396"
+            fill="none" stroke="var(--gs-emerald)" stroke-width="1.5"
+            stroke-dasharray="5 3"
+            marker-end="url(#dgm-pipe-arrow-mock)"/>
+
+      <!-- ░░░ Stage M2: Mock result — in-memory objects ░░░ -->
+      <g class="dgm-stage" style="--d:2.0s">
+        <text x="298" y="340" class="dgm-stage__num dgm-stage__num--emerald">M2</text>
+        <text x="298" y="356" class="dgm-stage__lbl dgm-stage__lbl--emerald">RESULT &mdash; IN MEMORY</text>
+        <rect x="298" y="368" width="400" height="80" rx="2"
+              fill="rgba(74, 222, 128, 0.05)" stroke="var(--gs-emerald)" stroke-width="1.5"
+              stroke-dasharray="5 3"/>
+
+        <text x="313" y="390" class="dgm-stage__code dgm-stage__code--emerald">{`{ status, log, branches } =`}</text>
+        <text x="313" y="408" class="dgm-stage__code dgm-stage__code--emerald">{`  mockFromScenario('mid-merge-conflict')`}</text>
+
+        <text x="313" y="430" class="dgm-stage__code dgm-stage__code--key-emerald">status:</text>
+        <text x="374" y="430" class="dgm-stage__code dgm-stage__code--dim">StatusResult</text>
+        <text x="480" y="430" class="dgm-stage__code dgm-stage__code--key-emerald">log:</text>
+        <text x="512" y="430" class="dgm-stage__code dgm-stage__code--dim">LogResult</text>
+        <text x="585" y="430" class="dgm-stage__code dgm-stage__code--key-emerald">branches:</text>
+        <text x="658" y="430" class="dgm-stage__code dgm-stage__code--dim">BranchSummary</text>
+
+        <text x="313" y="444" class="dgm-stage__hint dgm-stage__hint--emerald">no disk I/O · no simple-git runtime · &lt;1ms</text>
+      </g>
     </svg>
   </div>
 </figure>
@@ -275,6 +332,20 @@
     font-weight: 500;
   }
 
+  .dgm-stage__code--emerald {
+    fill: var(--gs-emerald);
+    font-weight: 500;
+  }
+
+  .dgm-stage__code--key-emerald {
+    fill: var(--gs-emerald);
+    font-weight: 500;
+  }
+
+  .dgm-stage__code--dim {
+    fill: var(--gs-graphite);
+  }
+
   .dgm-stage__tree {
     font-family: var(--gs-mono);
     font-size: 10.5px;
@@ -295,6 +366,33 @@
     font-weight: 500;
   }
 
+  /* Mock path (emerald) variants */
+  .dgm-stage__num--emerald {
+    fill: var(--gs-emerald);
+  }
+
+  .dgm-stage__lbl--emerald {
+    fill: var(--gs-emerald);
+    font-weight: 600;
+  }
+
+  .dgm-stage__title--emerald {
+    fill: var(--gs-emerald);
+  }
+
+  .dgm-stage__sub--emerald {
+    fill: var(--gs-emerald);
+  }
+
+  .dgm-stage__hint--emerald {
+    fill: var(--gs-emerald);
+    font-style: italic;
+  }
+
+  .dgm-pipe--mock {
+    color: var(--gs-emerald);
+  }
+
   /* Entrance animation — same approach as the hero schematic */
   .dgm-stage,
   .dgm-pipe {
@@ -311,6 +409,15 @@
       dgmFadeUp 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) forwards,
       dgmDraw 0.5s cubic-bezier(0.5, 0, 0.5, 1) forwards;
     animation-delay: var(--d, 0s), var(--d, 0s);
+  }
+
+  /* Mock pipes: fade in only (no draw), keep dashed stroke */
+  .dgm-pipe.dgm-pipe--mock {
+    stroke-dasharray: 5 3;
+    stroke-dashoffset: 0;
+    animation:
+      dgmFadeUp 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+    animation-delay: var(--d, 0s);
   }
 
   @keyframes dgmFadeUp {

@@ -44,6 +44,15 @@ await chain(
 // repo is mid-merge with src/x.ts conflicted
 ```
 
+For unit tests that don't need a real repo on disk, the mock layer gives you the same typed state objects in under 1 ms:
+
+```ts
+// 04. Unit test mocks — no git, no disk, <1ms
+import { mockStatus, mockSimpleGit } from '@gfargo/git-scenarios/mocks'
+const status = mockStatus().staged('auth.ts').conflicted('merge.ts').build()
+const git = mockSimpleGit({ createMockFn: jest.fn, overrides: { status } })
+```
+
 Every scenario produces byte-identical state every run. Tests built on top are deterministic too — no flake from clock-drift or hash variance.
 
 <DiagramPipeline />
@@ -59,8 +68,8 @@ Every scenario produces byte-identical state every run. Tests built on top are d
   <Card title="Checked-in fixtures" icon="document">
     Real `.git` directories in your repo. Bloats the tree, breaks on updates, no programmatic access.
   </Card>
-  <Card title="Mocking git" icon="puzzle">
-    Tests verify "my code called the right command" — not "my code does the right thing in this state."
+  <Card title="Mocking git commands" icon="puzzle">
+    Shallow command mocks verify you called the right git CLI args — they say nothing about how your code handles the actual state. Mock the **state**, not the command. [Mock Factories →](/docs/guides/mock-factories)
   </Card>
   <Card title="Docker containers" icon="rocket">
     Pre-baked images with git state. Heavy, slow, CI-only. Not interactive-test-friendly.
@@ -88,6 +97,9 @@ Every scenario produces byte-identical state every run. Tests built on top are d
   </Card>
   <Card title="Custom registration" icon="add-document">
     `registerScenario(myScenario)` — your custom states work everywhere built-ins do. [Define your own →](/docs/guides/custom-scenarios)
+  </Card>
+  <Card title="Mock Factories" icon="seti:typescript">
+    Zero-dep in-memory mocks for `StatusResult`, `LogResult`, `BranchSummary` — typed, realistic, under 1 ms. Unit-test your git UI without touching disk. [Mock Factories →](/docs/guides/mock-factories)
   </Card>
   <Card title="Dual CJS / ESM" icon="setting">
     Ships both formats. Use `import` or `require` — both work. TypeScript-first with full type declarations. [Install →](/docs/installation)

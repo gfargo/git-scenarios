@@ -72,15 +72,17 @@ const version = rootPkg.version;
         </div>
 
         <h2 class="dr-display">
-          <span class="dr-display__line">Real git repos.</span>
-          <span class="dr-display__line"><em>Any state.</em></span>
-          <span class="dr-display__line">One&nbsp;line.</span>
+          <span class="dr-display__line">Real repos.</span>
+          <span class="dr-display__line"><em>Mock objects.</em></span>
+          <span class="dr-display__line">Any git&nbsp;state.</span>
         </h2>
 
         <p class="dr-lede">
           Deterministic fixtures for merge conflicts, submodules,
           multiple remotes, in&#8209;progress operations, monorepos,
-          and&nbsp;more. For tests, demos, and tool&nbsp;development.
+          and&nbsp;more — plus in&#8209;memory mock factories for
+          blazing&#8209;fast unit&nbsp;tests. Real repos or typed mocks,
+          one&nbsp;line&nbsp;each.
         </p>
 
         <div class="dr-install">
@@ -284,8 +286,12 @@ const version = rootPkg.version;
         <span class="dr-spec__lbl">composable atoms</span>
       </div>
       <div class="dr-spec">
-        <span class="dr-spec__num">5</span>
+        <span class="dr-spec__num">7</span>
         <span class="dr-spec__lbl">test runner adapters</span>
+      </div>
+      <div class="dr-spec">
+        <span class="dr-spec__num">4</span>
+        <span class="dr-spec__lbl">mock factories</span>
       </div>
       <div class="dr-spec">
         <span class="dr-spec__num">22+</span>
@@ -746,7 +752,7 @@ const version = rootPkg.version;
   .dr-specs {
     margin-top:0!important;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 0;
     background: var(--gs-cyan-low);
   }
@@ -787,9 +793,9 @@ const version = rootPkg.version;
       border-bottom: 1px solid var(--gs-rule);
     }
     .dr-specs {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
     }
-    .dr-spec:nth-child(2n) {
+    .dr-spec:nth-child(3n) {
       border-right: 0;
     }
     .dr-spec {

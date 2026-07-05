@@ -180,6 +180,7 @@ export default defineConfig({
             { label: 'Choosing a Scenario', slug: 'docs/guides/choosing-a-scenario' },
             { label: 'Test Runner Adapters', slug: 'docs/guides/jest-adapter' },
             { label: 'Testing Recipes', slug: 'docs/guides/recipes' },
+            { label: 'Mock Factories', slug: 'docs/guides/mock-factories' },
             { label: 'Custom Scenarios', slug: 'docs/guides/custom-scenarios' },
             { label: 'GitHub Action', slug: 'docs/guides/github-action' },
             { label: 'CLI Reference', slug: 'docs/guides/cli' },
