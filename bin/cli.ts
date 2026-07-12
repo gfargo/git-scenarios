@@ -59,6 +59,19 @@ const VALID_KINDS: readonly ScenarioKind[] = [
   'submodule',
 ]
 
+// Flags that never take a value — always `true` when present. Any flag not
+// listed here is treated as value-taking when followed by a non-flag token,
+// so it must be kept in sync with every `flags.<name>`/`flags['<name>']`
+// boolean read in commandRun below.
+const BOOLEAN_FLAGS = new Set([
+  'help',
+  'no-interactive',
+  'json',
+  'names',
+  'dry-run',
+  'ephemeral',
+])
+
 function parseArgs(argv: string[]): ParsedArgs {
   const positional: string[] = []
   const flags: Record<string, string | boolean> = {}
@@ -68,13 +81,18 @@ function parseArgs(argv: string[]): ParsedArgs {
     const arg = argv[i]
     if (arg.startsWith('--')) {
       const eqIdx = arg.indexOf('=')
+      const name = eqIdx > 0 ? arg.slice(2, eqIdx) : arg.slice(2)
       if (eqIdx > 0) {
-        flags[arg.slice(2, eqIdx)] = arg.slice(eqIdx + 1)
-      } else if (i + 1 < argv.length && !argv[i + 1].startsWith('-')) {
-        flags[arg.slice(2)] = argv[i + 1]
+        flags[name] = arg.slice(eqIdx + 1)
+      } else if (
+        !BOOLEAN_FLAGS.has(name) &&
+        i + 1 < argv.length &&
+        !argv[i + 1].startsWith('-')
+      ) {
+        flags[name] = argv[i + 1]
         i += 1
       } else {
-        flags[arg.slice(2)] = true
+        flags[name] = true
       }
     } else if (!command) {
       if (arg === 'list' || arg === 'describe' || arg === 'inspect' || arg === 'create' || arg === 'capture' || arg === 'clean' || arg === 'diff' || arg === 'doctor' || arg === 'completions' || arg === 'help') {

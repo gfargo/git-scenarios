@@ -130,6 +130,13 @@ function runCLI(args: string[]): { stdout: string; stderr: string; status: numbe
       expect(status).toBe(2)
       expect(stderr).toMatch(/Unknown scenario/)
     })
+
+    it('--json before the scenario name still works (flag-before-positional)', () => {
+      const { stdout, status } = runCLI(['describe', '--json', 'feature-pr-ready'])
+      expect(status).toBe(0)
+      const data = JSON.parse(stdout)
+      expect(data.name).toBe('feature-pr-ready')
+    })
   })
 
   describe('inspect', () => {
@@ -169,6 +176,13 @@ function runCLI(args: string[]): { stdout: string; stderr: string; status: numbe
       expect(status).toBe(2)
       expect(stderr).toMatch(/Unknown scenario/)
     })
+
+    it('--json before the scenario name still works (flag-before-positional)', () => {
+      const { stdout, status } = runCLI(['inspect', '--json', 'feature-pr-ready'])
+      expect(status).toBe(0)
+      const data = JSON.parse(stdout)
+      expect(data.name).toBe('feature-pr-ready')
+    }, 30_000)
   })
 
   describe('diff', () => {
@@ -211,6 +225,14 @@ function runCLI(args: string[]): { stdout: string; stderr: string; status: numbe
       expect(status).toBe(2)
       expect(stderr).toContain('Missing scenario')
     })
+
+    it('--json before the scenario names still works (flag-before-positional)', () => {
+      const { stdout, status } = runCLI(['diff', '--json', 'feature-pr-ready', 'merge-no-conflict'])
+      expect(status).toBe(0)
+      const data = JSON.parse(stdout)
+      expect(data.a.name).toBe('feature-pr-ready')
+      expect(data.b.name).toBe('merge-no-conflict')
+    }, 30_000)
   })
 
   describe('capture', () => {
@@ -286,6 +308,13 @@ function runCLI(args: string[]): { stdout: string; stderr: string; status: numbe
   describe('create --ephemeral', () => {
     it('creates and cleans up an empty-repo scenario', () => {
       const { stdout, status } = runCLI(['create', 'empty-repo', '--ephemeral'])
+      expect(status).toBe(0)
+      expect(stdout).toContain('empty-repo')
+      expect(stdout).toContain('ephemeral')
+    }, 30_000)
+
+    it('--ephemeral before the scenario name still works (flag-before-positional)', () => {
+      const { stdout, status } = runCLI(['create', '--ephemeral', 'empty-repo'])
       expect(status).toBe(0)
       expect(stdout).toContain('empty-repo')
       expect(stdout).toContain('ephemeral')
