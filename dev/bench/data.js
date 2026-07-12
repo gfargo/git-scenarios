@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1783283250167,
+  "lastUpdate": 1783884738241,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1325,6 +1325,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7193.04,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9890413ac69a0b1dcadd5a1b3687e8bea2723ca8",
+          "message": "Merge pull request #105 from gfargo/fix/cli-flag-parsing-and-engines-range\n\nfix: CLI flag-before-positional parsing and engines.node range",
+          "timestamp": "2026-07-12T15:30:47-04:00",
+          "tree_id": "8b53dd7543f533bfa97345e7972eaa49162d7b1c",
+          "url": "https://github.com/gfargo/git-scenarios/commit/9890413ac69a0b1dcadd5a1b3687e8bea2723ca8"
+        },
+        "date": 1783884737349,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 168.83,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 939.85,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7194.38,
             "unit": "ms"
           }
         ]
