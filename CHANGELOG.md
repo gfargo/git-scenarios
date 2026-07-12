@@ -4,6 +4,15 @@ All notable changes to `@gfargo/git-scenarios` are documented here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [semver](https://semver.org/).
 
+## [1.3.1](https://github.com/gfargo/git-scenarios/compare/v1.3.0...v1.3.1) (2026-07-12)
+
+
+### Bug Fixes
+
+* boolean CLI flags no longer swallow the following positional ([#93](https://github.com/gfargo/git-scenarios/issues/93)) ([b0d1fef](https://github.com/gfargo/git-scenarios/commit/b0d1fefbbebb00506a951e3a4c7c1965a6a48b3a))
+* CLI flag-before-positional parsing and engines.node range ([9890413](https://github.com/gfargo/git-scenarios/commit/9890413ac69a0b1dcadd5a1b3687e8bea2723ca8))
+* loosen engines.node range to include real Node 22/24 LTS installs ([#94](https://github.com/gfargo/git-scenarios/issues/94)) ([b0d1fef](https://github.com/gfargo/git-scenarios/commit/b0d1fefbbebb00506a951e3a4c7c1965a6a48b3a))
+
 ## [Unreleased]
 
 ## [1.3.0] — 2026-07-12
