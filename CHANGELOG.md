@@ -4,6 +4,18 @@ All notable changes to `@gfargo/git-scenarios` are documented here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [semver](https://semver.org/).
 
+## [1.3.2](https://github.com/gfargo/git-scenarios/compare/v1.3.1...v1.3.2) (2026-07-13)
+
+
+### Bug Fixes
+
+* bucket four low-severity mock/snapshot/docs bugs ([988583b](https://github.com/gfargo/git-scenarios/commit/988583b6f81d5c7e9aa2e6827b485524a98ad3a7))
+* bucket of four low-severity mock/snapshot/docs bugs ([04fee13](https://github.com/gfargo/git-scenarios/commit/04fee137df816969d47cc6e89d81a4bc9b3b3867))
+* correct the git-scenarios-mcp npx invocation in docs ([#103](https://github.com/gfargo/git-scenarios/issues/103)) ([988583b](https://github.com/gfargo/git-scenarios/commit/988583b6f81d5c7e9aa2e6827b485524a98ad3a7))
+* mocks bucket mapping now reports unstaged deletes as `deleted`, ([988583b](https://github.com/gfargo/git-scenarios/commit/988583b6f81d5c7e9aa2e6827b485524a98ad3a7))
+* mocks commitCount contract regex now matches slashed/dashed ([988583b](https://github.com/gfargo/git-scenarios/commit/988583b6f81d5c7e9aa2e6827b485524a98ad3a7))
+* staged renames report the new path, not the raw "old -&gt; new" ([988583b](https://github.com/gfargo/git-scenarios/commit/988583b6f81d5c7e9aa2e6827b485524a98ad3a7))
+
 ## [1.3.1](https://github.com/gfargo/git-scenarios/compare/v1.3.0...v1.3.1) (2026-07-12)
 
 
