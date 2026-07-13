@@ -88,11 +88,11 @@ describe('mapXYToBuckets', () => {
       })
     })
 
-    it('_D → modified only', () => {
+    it('_D → deleted only (worktree delete, matches simple-git StatusSummary)', () => {
       const result = mapXYToBuckets(' ', 'D')
       expect(result).toEqual({
         ...emptyPlacement(),
-        modified: true,
+        deleted: true,
       })
     })
   })
@@ -262,7 +262,6 @@ describe('Round-trip property: bucketsToXY(mapXYToBuckets(x, y)) === (x, y)', ()
    *
    * Aliases:
    * - C_ → same placement as A_ (both: staged + created)
-   * - _D → same placement as _M (both: modified)
    * - MD → same placement as MM (both: staged + modified)
    * - AD → same placement as AM (both: staged + created + modified)
    * - All conflict forms → same placement (conflicted: true), canonicalize to UU
@@ -274,6 +273,7 @@ describe('Round-trip property: bucketsToXY(mapXYToBuckets(x, y)) === (x, y)', ()
     ['D', ' '],   // staged delete
     ['R', ' '],   // staged rename
     [' ', 'M'],   // worktree modification
+    [' ', 'D'],   // worktree delete
     ['M', 'M'],   // staged + worktree modified
     ['A', 'M'],   // staged add + worktree modified
     ['U', 'U'],   // canonical conflict
@@ -294,10 +294,12 @@ describe('Round-trip property: bucketsToXY(mapXYToBuckets(x, y)) === (x, y)', ()
     expect(result).toEqual({ x: 'A', y: ' ' })
   })
 
-  it('_D round-trips to _M (both produce modified: true)', () => {
+  it('_D round-trips to _D exactly (worktree delete, distinct from _M)', () => {
     const placement = mapXYToBuckets(' ', 'D')
+    expect(placement.deleted).toBe(true)
+    expect(placement.modified).toBe(false)
     const result = bucketsToXY(placement)
-    expect(result).toEqual({ x: ' ', y: 'M' })
+    expect(result).toEqual({ x: ' ', y: 'D' })
   })
 
   it('MD round-trips to MM (both produce staged + modified)', () => {

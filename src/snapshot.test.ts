@@ -6,6 +6,7 @@
  * one real state.
  */
 
+import { addCommit, chain, renameFile } from './atoms'
 import { spinUpScenario } from './spinUpScenario'
 import { createTempGitRepo } from './tempGitRepo'
 import type { TempGitRepo } from './tempGitRepo'
@@ -128,6 +129,26 @@ describe('repo.snapshot()', () => {
       expect(snap.status.staged.length).toBeGreaterThan(0)
       expect(snap.status.modified.length).toBeGreaterThan(0)
       expect(snap.status.untracked.length).toBeGreaterThan(0)
+    })
+  })
+
+  describe('staged rename', () => {
+    let repo: TempGitRepo
+    beforeAll(async () => {
+      repo = await createTempGitRepo()
+      await chain(
+        addCommit({ message: 'init', files: { 'old.ts': 'content\n' } }),
+        renameFile('old.ts', 'new.ts'),
+      )(repo)
+    })
+    afterAll(async () => {
+      await repo.cleanup()
+    })
+
+    it('reports the new path, not the raw "old -> new" porcelain line', async () => {
+      const snap = await repo.snapshot()
+      expect(snap.status.staged).toContain('new.ts')
+      expect(snap.status.staged).not.toContain('old.ts -> new.ts')
     })
   })
 

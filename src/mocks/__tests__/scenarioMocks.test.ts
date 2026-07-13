@@ -12,6 +12,11 @@ describe('parseContracts', () => {
     expect(result.commitCount).toBe(1)
   })
 
+  it('parses commit count pattern for a slashed branch name', () => {
+    const result = parseContracts(['feat/widget-v2 has 3 commits'])
+    expect(result.commitCount).toBe(3)
+  })
+
   it('parses staged count pattern', () => {
     const result = parseContracts(['exactly 3 staged files'])
     expect(result.stagedCount).toBe(3)

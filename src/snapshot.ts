@@ -144,7 +144,9 @@ function parseStatus(raw: string): Omit<StatusSnapshot, 'clean'> {
 
     const x = line[0]
     const y = line[1]
-    const path = line.slice(3)
+    let path = line.slice(3)
+    // Renames show as `orig -> new`; report the new path.
+    if (path.includes(' -> ')) path = path.split(' -> ')[1]
 
     if (x === '?' && y === '?') {
       untracked.push(path)

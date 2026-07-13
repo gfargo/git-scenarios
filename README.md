@@ -666,7 +666,7 @@ The library ships a Model Context Protocol server for AI coding agents. It expos
   "mcpServers": {
     "git-scenarios": {
       "command": "npx",
-      "args": ["-y", "@gfargo/git-scenarios", "git-scenarios-mcp"]
+      "args": ["-y", "-p", "@gfargo/git-scenarios", "git-scenarios-mcp"]
     }
   }
 }
