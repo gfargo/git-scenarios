@@ -65,9 +65,18 @@ export function mapXYToBuckets(x: XCode, y: YCode): BucketPlacement {
   if (x === 'R') { placement.staged = true; placement.renamed = true }
   if (x === 'C') { placement.staged = true; placement.created = true }
 
-  // Working tree (Y) analysis — unstaged changes
+  // Working tree (Y) analysis — unstaged changes.
+  // A pure worktree delete (` D`, no staged change) lands in `deleted`,
+  // matching simple-git's StatusSummary parser. Combined with a staged
+  // change (e.g. `AD`/`MD`) it's still reported as a worktree modification.
   if (y === 'M') placement.modified = true
-  if (y === 'D') placement.modified = true
+  if (y === 'D') {
+    if (x === ' ') {
+      placement.deleted = true
+    } else {
+      placement.modified = true
+    }
+  }
 
   return placement
 }
@@ -90,11 +99,13 @@ export function bucketsToXY(placement: BucketPlacement): { x: XCode; y: YCode } 
     return { x: '?', y: '?' }
   }
 
-  // Derive X code from staged/created/deleted/renamed
+  // Derive X code from staged/created/deleted/renamed. A `deleted` flag
+  // only belongs in the index column when the delete is staged — an
+  // unstaged-only delete (`deleted` without `staged`) belongs in Y instead.
   let x: XCode = ' '
   if (placement.renamed) {
     x = 'R'
-  } else if (placement.deleted) {
+  } else if (placement.staged && placement.deleted) {
     x = 'D'
   } else if (placement.created) {
     x = 'A'
@@ -102,13 +113,15 @@ export function bucketsToXY(placement: BucketPlacement): { x: XCode; y: YCode } 
     x = 'M'
   }
 
-  // Derive Y code from modified
+  // Derive Y code from modified/deleted
   let y: YCode = ' '
   if (placement.modified) {
     // If there's no staged change, use 'M' for worktree modification.
     // If the file is staged+deleted (AD case), use 'D' for worktree delete.
     // Otherwise use 'M' for worktree modification.
     y = 'M'
+  } else if (placement.deleted && !placement.staged) {
+    y = 'D'
   }
 
   return { x, y }

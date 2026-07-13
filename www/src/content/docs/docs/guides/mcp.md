@@ -12,7 +12,7 @@ description: Expose git-scenarios to AI coding agents via the Model Context Prot
 Run the server directly with `npx`:
 
 ```bash
-npx -y @gfargo/git-scenarios git-scenarios-mcp
+npx -y -p @gfargo/git-scenarios git-scenarios-mcp
 ```
 
 The server communicates on **stdio** (the standard MCP transport for local tools).
@@ -28,7 +28,7 @@ Add to your MCP client config (e.g. `~/.claude/claude_desktop_config.json`):
   "mcpServers": {
     "git-scenarios": {
       "command": "npx",
-      "args": ["-y", "@gfargo/git-scenarios", "git-scenarios-mcp"]
+      "args": ["-y", "-p", "@gfargo/git-scenarios", "git-scenarios-mcp"]
     }
   }
 }
@@ -43,7 +43,7 @@ Add to your MCP client config (e.g. `~/.claude/claude_desktop_config.json`):
       "git-scenarios": {
         "type": "stdio",
         "command": "npx",
-        "args": ["-y", "@gfargo/git-scenarios", "git-scenarios-mcp"]
+        "args": ["-y", "-p", "@gfargo/git-scenarios", "git-scenarios-mcp"]
       }
     }
   }
@@ -55,7 +55,7 @@ Add to your MCP client config (e.g. `~/.claude/claude_desktop_config.json`):
 ```json
 {
   "command": "npx",
-  "args": ["-y", "@gfargo/git-scenarios", "git-scenarios-mcp"],
+  "args": ["-y", "-p", "@gfargo/git-scenarios", "git-scenarios-mcp"],
   "transport": "stdio"
 }
 ```

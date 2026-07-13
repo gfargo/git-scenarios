@@ -41,7 +41,7 @@ const CONTRACT_PATTERNS: Array<{
   pattern: RegExp
   extract: keyof ParsedContracts
 }> = [
-  { pattern: /^(\w+) has (\d+) commits?$/, extract: 'commitCount' },
+  { pattern: /^(\w[\w/-]*) has (\d+) commits?$/, extract: 'commitCount' },
   { pattern: /^exactly (\d+) staged files?$/, extract: 'stagedCount' },
   { pattern: /^exactly (\d+) modified-but-unstaged files?$/, extract: 'modifiedCount' },
   { pattern: /^exactly (\d+) untracked files?$/, extract: 'untrackedCount' },
