@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1783891208997,
+  "lastUpdate": 1783959234818,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1403,6 +1403,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7128.35,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "04fee137df816969d47cc6e89d81a4bc9b3b3867",
+          "message": "Merge pull request #107 from gfargo/fix/low-severity-mock-and-snapshot-bugs\n\nfix: bucket of four low-severity mock/snapshot/docs bugs",
+          "timestamp": "2026-07-13T12:12:05-04:00",
+          "tree_id": "721d5bc7fc06a9077e01f21bcba753d10f25c1a1",
+          "url": "https://github.com/gfargo/git-scenarios/commit/04fee137df816969d47cc6e89d81a4bc9b3b3867"
+        },
+        "date": 1783959234040,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 164.89,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 1268.77,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 8808.18,
             "unit": "ms"
           }
         ]
