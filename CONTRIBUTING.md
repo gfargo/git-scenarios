@@ -160,6 +160,20 @@ npm run test:watch          # watch mode
 npx jest path/to/file       # single file
 ```
 
+> **Build before running e2e tests.**
+> `bin/cli.e2e.test.ts` runs against the compiled `dist/bin/cli.cjs`.
+> If `dist/` is absent the e2e suite skips silently — that's intentional
+> for day-to-day unit/atom work.  If `dist/` is present but stale (e.g. a
+> cached build from before the `mocks`, `mcp`, `matchers`, `playwright`, or
+> `cypress` subpaths were added) the suite runs and a dedicated freshness
+> test fails with an actionable message.
+>
+> Run `npm run build` once before the full suite, or any time you add/change
+> a CLI command or export subpath.  `npm test` (the script in package.json)
+> already calls `npm run build` as part of its pipeline — the skip path only
+> surfaces when running jest directly (e.g. `npm run test:jest` or
+> `npx jest --testPathPattern cli.e2e`).
+
 ### Test conventions
 
 - Use `withRepo` helper for atom tests (creates + cleans up a `TempGitRepo`)

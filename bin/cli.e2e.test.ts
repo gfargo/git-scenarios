@@ -5,9 +5,18 @@
  * tests in cli.test.ts don't cover.
  *
  * Tests run against the BUILT cli (dist/bin/cli.cjs) so they exercise
- * the published shape. If `dist/` doesn't exist, the suite skips —
- * useful when running `jest --testPathPattern` against unbuilt
- * source during development.
+ * the published shape.
+ *
+ * Two-tier build gate:
+ *   - dist/ absent entirely  → suite skips (dev convenience — run
+ *     `npm run build` first if you want e2e coverage).
+ *   - dist/ present but stale (missing mcp.cjs or new CLI commands) →
+ *     suite runs and the "dist freshness" test fails with an actionable
+ *     message. This catches the regression where a cached/committed dist
+ *     predates newer entry points (mocks, mcp, matchers, playwright,
+ *     cypress subpaths and the git-scenarios-mcp bin).
+ *
+ * Run `npm run build` to satisfy both conditions.
  */
 
 import { spawnSync } from 'child_process'
@@ -16,7 +25,13 @@ import { tmpdir } from 'os'
 import { join } from 'path'
 
 const CLI = join(__dirname, '..', 'dist', 'bin', 'cli.cjs')
-const HAS_BUILD = existsSync(CLI)
+/** True only when dist/ does not exist at all — triggers a suite-level skip. */
+const DIST_ABSENT = !existsSync(CLI)
+/** MCP server binary added in v1.3.0 — best single proxy for "dist is fresh". */
+const MCP_BIN = join(__dirname, '..', 'dist', 'bin', 'mcp.cjs')
+
+// Legacy alias kept for the (HAS_BUILD ? describe : describe.skip) gate below.
+const HAS_BUILD = !DIST_ABSENT
 
 /** Build a small real git repo on disk for capture tests. */
 function makeRepo(): string {
@@ -51,6 +66,30 @@ function runCLI(args: string[]): { stdout: string; stderr: string; status: numbe
     status: result.status ?? 1,
   }
 }
+
+// ─── dist freshness guard ──────────────────────────────────────────────────
+// This describe always runs when dist/ is present, so a stale build produces
+// a clear failure rather than silently passing (or silently skipping) the
+// whole suite.  If dist/ is entirely absent the suite is already skipped via
+// the (HAS_BUILD ? describe : describe.skip) gate below.
+;(DIST_ABSENT ? describe.skip : describe)('dist freshness', () => {
+  it('dist/bin/mcp.cjs exists (git-scenarios-mcp bin — added v1.3.0)', () => {
+    expect(existsSync(MCP_BIN)).toBe(true)
+    // If this fails, run `npm run build` to regenerate dist/.
+    // The mcp.cjs binary is the canonical freshness proxy: it was absent in
+    // the stale dist that triggered this guard (see GitHub issue #104).
+  })
+
+  it('--help output lists recently-added commands: doctor, diff, completions', () => {
+    const { stdout, status } = runCLI(['--help'])
+    expect(status).toBe(0)
+    // These commands were added after the stale dist snapshot (~2026-06-23).
+    // Their absence in --help is a reliable signal that dist is out of date.
+    expect(stdout).toContain('doctor')
+    expect(stdout).toContain('diff')
+    expect(stdout).toContain('completions')
+  })
+})
 
 ;(HAS_BUILD ? describe : describe.skip)('CLI — end-to-end', () => {
   describe('list', () => {
