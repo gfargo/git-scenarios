@@ -10,7 +10,8 @@
 import * as vitestAdapter from './vitest'
 import * as jestAdapter from './jest'
 import { repoFixture } from './vitest'
-import { writeFiles } from './atoms'
+import { writeFiles, defineScenario, chain } from './atoms'
+import { registerScenario, unregisterScenario } from './registry'
 
 describe('vitest adapter', () => {
   it('exports describeWithScenario', () => {
@@ -103,5 +104,38 @@ describe('repoFixture', () => {
     expect(threw).toBe(true)
     expect(repoPath).toBeDefined()
     expect(existsSync(repoPath!)).toBe(false)
+  }, 30_000)
+
+  it('cleans up the temp repo when scenario setup throws', async () => {
+    const { existsSync } = await import('fs')
+
+    let capturedPath: string | undefined
+    const throwingScenario = defineScenario({
+      name: 'vitest-leak-throwing-setup',
+      summary: 'Throws during setup to verify no temp dir leak',
+      description: 'Used to verify repoFixture cleans up on a throwing setup.',
+      kind: 'branch',
+      setup: chain(async (repo) => {
+        capturedPath = repo.path
+        throw new Error('setup boom')
+      }),
+    })
+
+    registerScenario(throwingScenario)
+    try {
+      const fixture = repoFixture('vitest-leak-throwing-setup')
+      let threw = false
+      try {
+        await fixture.repo({}, async () => {})
+      } catch {
+        threw = true
+      }
+
+      expect(threw).toBe(true)
+      expect(capturedPath).toBeDefined()
+      expect(existsSync(capturedPath!)).toBe(false)
+    } finally {
+      unregisterScenario('vitest-leak-throwing-setup')
+    }
   }, 30_000)
 })

@@ -139,10 +139,16 @@ export function registerScenarioTasks(
 
       const scenario = resolveScenario(name, `cypress/${prefix}:spinUp`)
       const repo = await createTempGitRepo(createOptions)
-      await scenario.setup(repo)
 
-      if (remote) {
-        await repo.git.addRemote('origin', remote)
+      try {
+        await scenario.setup(repo)
+
+        if (remote) {
+          await repo.git.addRemote('origin', remote)
+        }
+      } catch (error) {
+        await repo.cleanup()
+        throw error
       }
 
       activeRepos.set(repo.path, repo)

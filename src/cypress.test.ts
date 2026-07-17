@@ -14,6 +14,8 @@
 import { existsSync } from 'fs'
 import { simpleGit } from 'simple-git'
 import { registerScenarioTasks } from './cypress'
+import { defineScenario, chain } from './atoms'
+import { registerScenario, unregisterScenario } from './registry'
 
 type TaskFn = (args: unknown) => Promise<unknown>
 type TaskMap = Record<string, TaskFn>
@@ -106,6 +108,37 @@ describe('cypress adapter', () => {
       const origin = remotes.find((r) => r.name === 'origin')
       expect(origin).toBeDefined()
       expect(origin!.refs.fetch).toBe('https://github.com/example/repo.git')
+    }, 30_000)
+
+    it('cleans up the temp repo when scenario setup throws, without registering it in activeRepos', async () => {
+      let capturedPath: string | undefined
+      const throwingScenario = defineScenario({
+        name: 'cypress-leak-throwing-setup',
+        summary: 'Throws during setup to verify no temp dir leak',
+        description: 'Used to verify the spinUp task cleans up on a throwing setup.',
+        kind: 'branch',
+        setup: chain(async (repo) => {
+          capturedPath = repo.path
+          throw new Error('setup boom')
+        }),
+      })
+
+      registerScenario(throwingScenario)
+      try {
+        await expect(
+          tasks['gitScenario:spinUp']({ name: 'cypress-leak-throwing-setup' }),
+        ).rejects.toThrow(/setup boom/)
+
+        expect(capturedPath).toBeDefined()
+        expect(existsSync(capturedPath!)).toBe(false)
+
+        // cleanupAll should have nothing to drain — the throwing repo was
+        // never registered in activeRepos.
+        await tasks['gitScenario:cleanupAll'](undefined)
+        expect(existsSync(capturedPath!)).toBe(false)
+      } finally {
+        unregisterScenario('cypress-leak-throwing-setup')
+      }
     }, 30_000)
   })
 })

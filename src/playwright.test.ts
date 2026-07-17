@@ -12,6 +12,8 @@
 import { existsSync } from 'fs'
 import { scenarioFixtures, createScenarioTest } from './playwright'
 import type { TempGitRepo } from './tempGitRepo'
+import { defineScenario, chain } from './atoms'
+import { registerScenario, unregisterScenario } from './registry'
 
 describe('playwright adapter', () => {
   describe('scenarioFixtures', () => {
@@ -92,5 +94,34 @@ describe('playwright adapter', () => {
         ),
       ).rejects.toThrow(/Unknown scenario/)
     })
+
+    it('cleans up the temp repo when scenario setup throws', async () => {
+      let capturedPath: string | undefined
+      const throwingScenario = defineScenario({
+        name: 'playwright-leak-throwing-setup',
+        summary: 'Throws during setup to verify no temp dir leak',
+        description: 'Used to verify the repo fixture cleans up on a throwing setup.',
+        kind: 'branch',
+        setup: chain(async (repo) => {
+          capturedPath = repo.path
+          throw new Error('setup boom')
+        }),
+      })
+
+      registerScenario(throwingScenario)
+      try {
+        await expect(
+          scenarioFixtures.repo(
+            { scenarioName: 'playwright-leak-throwing-setup', scenarioOptions: {} },
+            async () => {},
+          ),
+        ).rejects.toThrow(/setup boom/)
+
+        expect(capturedPath).toBeDefined()
+        expect(existsSync(capturedPath!)).toBe(false)
+      } finally {
+        unregisterScenario('playwright-leak-throwing-setup')
+      }
+    }, 30_000)
   })
 })
