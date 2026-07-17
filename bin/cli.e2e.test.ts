@@ -30,9 +30,6 @@ const DIST_ABSENT = !existsSync(CLI)
 /** MCP server binary added in v1.3.0 — best single proxy for "dist is fresh". */
 const MCP_BIN = join(__dirname, '..', 'dist', 'bin', 'mcp.cjs')
 
-// Legacy alias kept for the (HAS_BUILD ? describe : describe.skip) gate below.
-const HAS_BUILD = !DIST_ABSENT
-
 /** Build a small real git repo on disk for capture tests. */
 function makeRepo(): string {
   const dir = mkdtempSync(join(tmpdir(), 'git-scenarios-capture-src-'))
@@ -71,13 +68,15 @@ function runCLI(args: string[]): { stdout: string; stderr: string; status: numbe
 // This describe always runs when dist/ is present, so a stale build produces
 // a clear failure rather than silently passing (or silently skipping) the
 // whole suite.  If dist/ is entirely absent the suite is already skipped via
-// the (HAS_BUILD ? describe : describe.skip) gate below.
+// the (!DIST_ABSENT ? describe : describe.skip) gate below.
 ;(DIST_ABSENT ? describe.skip : describe)('dist freshness', () => {
   it('dist/bin/mcp.cjs exists (git-scenarios-mcp bin — added v1.3.0)', () => {
-    expect(existsSync(MCP_BIN)).toBe(true)
-    // If this fails, run `npm run build` to regenerate dist/.
-    // The mcp.cjs binary is the canonical freshness proxy: it was absent in
-    // the stale dist that triggered this guard (see GitHub issue #104).
+    if (!existsSync(MCP_BIN)) {
+      throw new Error(
+        'dist/bin/mcp.cjs is missing — run `npm run build` to regenerate dist/.\n' +
+          '  This file (the git-scenarios-mcp bin) was absent in the stale dist that triggered this guard (see GitHub issue #104).',
+      )
+    }
   })
 
   it('--help output lists recently-added commands: doctor, diff, completions', () => {
@@ -85,13 +84,18 @@ function runCLI(args: string[]): { stdout: string; stderr: string; status: numbe
     expect(status).toBe(0)
     // These commands were added after the stale dist snapshot (~2026-06-23).
     // Their absence in --help is a reliable signal that dist is out of date.
-    expect(stdout).toContain('doctor')
-    expect(stdout).toContain('diff')
-    expect(stdout).toContain('completions')
+    for (const cmd of ['doctor', 'diff', 'completions']) {
+      if (!stdout.includes(cmd)) {
+        throw new Error(
+          `--help output is missing command "${cmd}" — run \`npm run build\` to regenerate dist/.\n` +
+            '  Commands added after the stale dist snapshot are absent when dist is out of date.',
+        )
+      }
+    }
   })
 })
 
-;(HAS_BUILD ? describe : describe.skip)('CLI — end-to-end', () => {
+;(!DIST_ABSENT ? describe : describe.skip)('CLI — end-to-end', () => {
   describe('list', () => {
     it('prints scenarios grouped by kind', () => {
       const { stdout, status } = runCLI(['list'])
