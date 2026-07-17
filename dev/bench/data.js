@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1783959260455,
+  "lastUpdate": 1784326477512,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1481,6 +1481,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7129.23,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0cec737a778aeb4cb5ddea77341af3f19d9bdb6e",
+          "message": "test(e2e): harden dist freshness gate — fail loudly on stale build (#109)\n\n* test(e2e): harden dist freshness gate in cli.e2e.test.ts\n\nReplace the silent-skip-on-stale-build path with a two-tier gate:\n\n- dist/ absent entirely → suite skips (dev convenience preserved)\n- dist/ present but stale → dedicated 'dist freshness' describe runs\n  and fails loudly with an actionable message\n\nTwo new tests guard the exact regression from issue #104:\n1. dist/bin/mcp.cjs exists (git-scenarios-mcp bin, added v1.3.0) —\n   the mcp binary was the canonical missing artifact in the stale dist.\n2. --help output contains doctor, diff, completions — these commands\n   were absent from the pre-v1.3.0 stale dist snapshot.\n\nAlso documents the build-before-e2e requirement in CONTRIBUTING.md.\n\nNo production source changed; test + docs only.\n\n* test(e2e): surface fix hint in failure message; drop HAS_BUILD alias\n\nTwo nits from review:\n- Replace silent expect().toBe(true) with throw new Error() so the\n  'run npm run build' hint appears directly in Jest failure output\n  instead of being hidden in a comment.\n- Remove the HAS_BUILD = !DIST_ABSENT alias; use !DIST_ABSENT directly\n  in the (? describe : describe.skip) gate — one less level of\n  indirection with no readability benefit.\n\n---------\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>",
+          "timestamp": "2026-07-17T22:13:05Z",
+          "tree_id": "4a812b0bfe4dd7b7805a55e764dfc7c54ee1385d",
+          "url": "https://github.com/gfargo/git-scenarios/commit/0cec737a778aeb4cb5ddea77341af3f19d9bdb6e"
+        },
+        "date": 1784326476934,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 172.53,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 951.99,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7383.59,
             "unit": "ms"
           }
         ]
