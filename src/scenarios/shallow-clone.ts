@@ -41,7 +41,7 @@ export const shallowCloneScenario = defineScenario({
     'main is checked out',
     'repo is shallow (git rev-parse --is-shallow-repository = true)',
     'main has 10 total commits in object store',
-    'only 4 commits are reachable from HEAD (depth boundary inclusive)',
+    'only 3 commits are reachable from HEAD',
   ],
   setup: chain(
     addCommit({ message: 'chore: initial scaffold', files: { 'README.md': '# Project\n' } }),

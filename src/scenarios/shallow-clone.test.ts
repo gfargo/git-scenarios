@@ -23,16 +23,9 @@ describe('shallow-clone scenario', () => {
     expect(isShallow.trim()).toBe('true')
   })
 
-  it('has 10 total commits in object store', async () => {
-    // In a shallow repo, rev-list only shows reachable commits.
-    // The shallow boundary commit is included (graft point).
-    // shallowAt(3) → HEAD~3 is the boundary → 4 commits reachable.
+  it('only 3 commits are reachable from HEAD', async () => {
+    // shallowAt(3) → HEAD~2 is the boundary → 3 commits reachable.
     const log = await repo.git.log()
-    expect(log.total).toBe(4)
-  })
-
-  it('only 4 commits are reachable from HEAD (depth boundary inclusive)', async () => {
-    const log = await repo.git.log()
-    expect(log.total).toBe(4)
+    expect(log.total).toBe(3)
   })
 })

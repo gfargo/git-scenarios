@@ -107,6 +107,20 @@ describe('shallowClone', () => {
       expect(isShallow.trim()).toBe('false')
     })
   })
+
+  it.each([1, 2, 3])('shallowAt(%i) leaves exactly that many commits reachable from HEAD', async (depth) => {
+    await withRepo(async (repo) => {
+      await chain(
+        addCommit({ message: 'commit 1', files: { 'a.ts': 'a\n' } }),
+        addCommit({ message: 'commit 2', files: { 'b.ts': 'b\n' } }),
+        addCommit({ message: 'commit 3', files: { 'c.ts': 'c\n' } }),
+        shallowAt(depth),
+      )(repo)
+
+      const log = await repo.git.log()
+      expect(log.total).toBe(depth)
+    })
+  })
 })
 
 describe('notes', () => {

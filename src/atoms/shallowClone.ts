@@ -35,8 +35,11 @@ import type { Step } from './types'
  */
 export function shallowAt(depth: number): Step {
   return async (repo) => {
-    // Get the commit at the boundary (depth commits back from HEAD)
-    const boundaryRef = `HEAD~${depth}`
+    // The commit written to `.git/shallow` is itself still reachable —
+    // only its parents get cut off. So the boundary commit is
+    // `depth - 1` commits back from HEAD, giving exactly `depth`
+    // reachable commits (matching `git clone --depth <depth>`).
+    const boundaryRef = `HEAD~${depth - 1}`
     const sha = await repo.git.raw(['rev-parse', boundaryRef])
     const shallowFile = join(repo.path, '.git', 'shallow')
     await writeFile(shallowFile, sha.trim() + '\n')
