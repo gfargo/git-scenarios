@@ -148,6 +148,22 @@ The one-line API. Creates a temp repo + runs the named scenario.
 const repo = await spinUpScenario('feature-pr-ready')
 ```
 
+Both `spinUpScenario` and `fromScenario` accept `{ cache: true }`, which
+materializes the scenario from an on-disk template (`scenarioCache.ts`)
+instead of replaying every atom. The cache key differs by scenario origin:
+
+- **Built-in** scenarios key on the installed package version
+  (`${name}@${LIBRARY_VERSION}`) — safe, since their `setup` only changes
+  on a version bump.
+- **Custom** (consumer-registered) scenarios are keyed by object-reference
+  identity against the built-in registry, *not* by name — so shadowing a
+  built-in name with a different scenario is correctly treated as custom.
+  A custom scenario is only cached when it declares an explicit
+  `version` field (`${name}@custom-${version}`); without one, it's always
+  cold-replayed. This avoids ever serving a stale template after a
+  consumer edits a custom scenario's `setup` without bumping any version.
+  See the "Caching custom scenarios" section in the custom-scenarios guide.
+
 ### `fromScenario(name, ...extraSteps)`
 
 Scenario + custom atoms in one call. For when the registered scenario

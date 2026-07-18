@@ -63,4 +63,13 @@ export type Scenario = {
    * for the CLI's `describe` output.
    */
   contracts?: string[]
+  /**
+   * Optional: opt-in cache key for consumer-registered custom scenarios.
+   * Built-in scenarios are cached by package version and ignore this
+   * field. A custom scenario is only ever served from the on-disk cache
+   * when `version` is set — bump it whenever `setup` changes so stale
+   * templates are never served. Without it, custom scenarios are always
+   * freshly replayed (never cached).
+   */
+  version?: string
 }

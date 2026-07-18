@@ -497,6 +497,7 @@ export type Scenario = {
     tags?: string[];
     setup: (repo: TempGitRepo) => Promise<void>;
     contracts?: string[];
+    version?: string;
 };
 
 // @public

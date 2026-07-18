@@ -1,10 +1,19 @@
 /**
  * Content-addressed scenario cache.
  *
- * Materialises each scenario once into a template directory keyed by
- * `${scenarioName}@${LIBRARY_VERSION}`, then serves subsequent spin-ups
- * by copying that template (near-instant) rather than replaying every
- * git atom from scratch.
+ * Materialises each scenario once into a template directory, then serves
+ * subsequent spin-ups by copying that template (near-instant) rather than
+ * replaying every git atom from scratch.
+ *
+ * Cache key depends on whether the scenario is built-in or custom
+ * (determined by object-reference identity against `allScenarios`):
+ *   - built-in  → `${scenarioName}@${LIBRARY_VERSION}` — safe, because a
+ *     built-in's `setup` only changes when the package version bumps.
+ *   - custom, with an explicit `scenario.version` → `${scenarioName}@custom-${version}`.
+ *   - custom, without a `version` → not cached at all; always cold-replayed.
+ *     A consumer's `setup` can change at any time without a package version
+ *     bump, so caching it under a version-less key would risk silently
+ *     serving a stale template. See `Scenario.version` in `scenarios/types.ts`.
  *
  * Cache root: `$GIT_SCENARIOS_CACHE_DIR` env override, or
  *   `<os.tmpdir()>/git-scenarios-cache`.
@@ -24,6 +33,7 @@ import { tmpdir } from 'os'
 import { dirname, join } from 'path'
 
 import { getCommitClockCount, resetCommitClock, setCommitClockCount } from './commitClock'
+import { allScenarios } from './scenarios'
 import type { Scenario } from './scenarios/types'
 import {
   createTempGitRepo,
@@ -43,16 +53,52 @@ const CACHE_ROOT_NAME = 'git-scenarios-cache'
 /** Filename inside `.git/` that stores the commit-clock count for a template. */
 const CLOCK_FILE = 'GIT_SCENARIOS_CLOCK'
 
+/**
+ * Identity set of the built-in scenarios, used to decide cacheability.
+ * Reference identity (not name) so a consumer who unregisters a built-in
+ * and re-registers a different scenario under the same name is correctly
+ * treated as custom.
+ */
+const BUILTIN_SCENARIOS = new Set<Scenario>(allScenarios)
+
 /** Returns the root directory that holds all cached scenario templates. */
 export function cacheRoot(): string {
   return process.env['GIT_SCENARIOS_CACHE_DIR'] ?? join(tmpdir(), CACHE_ROOT_NAME)
 }
 
-/** Returns the path of the cached template for a given scenario name. */
-function templatePath(scenarioName: string): string {
-  // Sanitise: replace characters that may be unsafe on some filesystems
-  const safeName = scenarioName.replace(/[^a-zA-Z0-9-]/g, '_')
-  return join(cacheRoot(), `${safeName}@${LIBRARY_VERSION}`)
+/** Replace characters that may be unsafe as a filesystem path segment. */
+function sanitize(segment: string): string {
+  return segment.replace(/[^a-zA-Z0-9-]/g, '_')
+}
+
+/**
+ * Compute the on-disk cache key for a scenario, or `null` when the
+ * scenario must not be cached.
+ *
+ * - Built-in scenarios (by object-reference identity) key on the
+ *   installed package version — their `setup` only changes on a version
+ *   bump, so this can never go stale.
+ * - Custom scenarios with an explicit `version` key on that value —
+ *   bumping it produces a fresh cache entry.
+ * - Custom scenarios without a `version` are not cacheable: their
+ *   `setup` can change at any time without a package version bump, so
+ *   there is no safe key. These are always cold-replayed.
+ */
+function cacheKeyFor(scenario: Scenario): string | null {
+  const safeName = sanitize(scenario.name)
+  if (BUILTIN_SCENARIOS.has(scenario)) {
+    return `${safeName}@${LIBRARY_VERSION}`
+  }
+  if (scenario.version) {
+    return `${safeName}@custom-${sanitize(scenario.version)}`
+  }
+  return null
+}
+
+/** Returns the path of the cached template for a given scenario, or `null` if uncacheable. */
+function templatePath(scenario: Scenario): string | null {
+  const key = cacheKeyFor(scenario)
+  return key === null ? null : join(cacheRoot(), key)
 }
 
 /**
@@ -138,13 +184,23 @@ async function buildTemplate(
  * Ensure the template for `scenario` exists.
  *
  * Returns the template path on success, or the already-built `TempGitRepo`
- * when the scenario cannot be safely cached (linked worktrees / submodules).
+ * when the scenario cannot be safely cached — either because a plain
+ * directory copy can't reproduce it faithfully (linked worktrees /
+ * submodules), or because it's a custom scenario with no `version` (no
+ * safe cache key — see `cacheKeyFor`).
  */
 async function ensureTemplate(
   scenario: Scenario,
   options: CreateTempGitRepoOptions,
 ): Promise<string | TempGitRepo> {
-  const dest = templatePath(scenario.name)
+  const dest = templatePath(scenario)
+  if (dest === null) {
+    // Not cacheable by key — cold-replay directly, skipping the on-disk
+    // cache entirely so no stale template can ever be served.
+    const repo = await createTempGitRepo(options)
+    await scenario.setup(repo)
+    return repo
+  }
   try {
     await stat(dest)
     return dest // cache hit
