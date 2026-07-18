@@ -4,6 +4,17 @@ All notable changes to `@gfargo/git-scenarios` are documented here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [semver](https://semver.org/).
 
+## [1.3.3](https://github.com/gfargo/git-scenarios/compare/v1.3.2...v1.3.3) (2026-07-18)
+
+
+### Bug Fixes
+
+* **atoms:** correct shallowAt(depth) off-by-one boundary ([#111](https://github.com/gfargo/git-scenarios/issues/111)) ([e48049a](https://github.com/gfargo/git-scenarios/commit/e48049a81be85f73725dfe7318dbb4eeffb57cf9))
+* **atoms:** pin tagger date on annotated tags for replay determinism ([#113](https://github.com/gfargo/git-scenarios/issues/113)) ([a7fc4ce](https://github.com/gfargo/git-scenarios/commit/a7fc4cecb02871330d468e1b37ea9769e9811413))
+* prevent temp repo leaks when scenario setup throws ([#110](https://github.com/gfargo/git-scenarios/issues/110)) ([174c271](https://github.com/gfargo/git-scenarios/commit/174c271794f8a98377592ba1c2df073985bd722c))
+* **scenarioCache:** never serve stale templates for custom scenarios ([#114](https://github.com/gfargo/git-scenarios/issues/114)) ([b77f912](https://github.com/gfargo/git-scenarios/commit/b77f912b79ce9a50b16d0095ac79b47380de941d))
+* **scopes:** continue parent commit clock for all atoms inside withRemoteTracking ([#112](https://github.com/gfargo/git-scenarios/issues/112)) ([b0af5d3](https://github.com/gfargo/git-scenarios/commit/b0af5d33eb43b4dada21899eb0a03639a0d60bab))
+
 ## [1.3.2](https://github.com/gfargo/git-scenarios/compare/v1.3.1...v1.3.2) (2026-07-13)
 
 
