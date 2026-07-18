@@ -5,7 +5,7 @@ import { tmpdir } from 'os'
 import { dirname, join } from 'path'
 import { simpleGit } from 'simple-git'
 import { promisify } from 'util'
-import { nextCommitDate } from '../commitClock'
+import { getCommitClockCount, nextCommitDate, resetCommitClock, setCommitClockCount } from '../commitClock'
 import { snapshotRepo } from '../snapshot'
 import type { TempGitRepo } from '../tempGitRepo'
 import type { Step } from './types'
@@ -242,6 +242,11 @@ export function insideSubmodule(submodulePath: string, step: Step): Step {
 export function withRemoteTracking(remote: string, branch: string, step: Step): Step {
   return async (parentRepo) => {
     const clonePath = await mkdtemp(join(tmpdir(), 'coco-remote-track-'))
+    // Seed the clone's clock from the parent's current position so every
+    // commit-producing atom used inside `step` (not just `commitAll`)
+    // continues the parent's deterministic sequence instead of restarting
+    // at the BASE_MS epoch for this brand-new `clonePath` key.
+    setCommitClockCount(clonePath, getCommitClockCount(parentRepo.path))
     try {
       // Clone parent into the temp dir. `protocol.file.allow=always`
       // is needed for file-protocol clones on git ≥ 2.38.
@@ -285,11 +290,12 @@ export function withRemoteTracking(remote: string, branch: string, step: Step): 
         },
         commitAll: async (message) => {
           await cloneGit.add('.')
-          // Continue the PARENT's clock (keyed by parentRepo.path), not
-          // the clone's — otherwise upstream commits would reuse the same
-          // timestamps as the parent's local commits and `git log --all`
-          // ordering between the diverged tips would tie (non-deterministic).
-          const date = nextCommitDate(parentRepo.path)
+          // The clone's clock was seeded from the parent's position at
+          // scope-entry, so this naturally continues the parent's
+          // sequence — same source every other atom inside `step` reads
+          // via `repo.path` (== clonePath here). Keeps this atom
+          // consistent with `commit`/`emptyCommit`/`bulkCommits`/etc.
+          const date = nextCommitDate(clonePath)
           await simpleGit(clonePath)
             .env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
             .commit(message)
@@ -316,6 +322,11 @@ export function withRemoteTracking(remote: string, branch: string, step: Step): 
         { cwd: parentRepo.path },
       )
     } finally {
+      // Propagate the clone's advanced clock position back to the parent
+      // so commits made after the scope closes continue the sequence
+      // rather than reusing timestamps already handed out inside `step`.
+      setCommitClockCount(parentRepo.path, getCommitClockCount(clonePath))
+      resetCommitClock(clonePath)
       await rm(clonePath, { recursive: true, force: true })
     }
   }
