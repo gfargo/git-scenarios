@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784388059779,
+  "lastUpdate": 1784388124841,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1559,6 +1559,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7306.17,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b0af5d33eb43b4dada21899eb0a03639a0d60bab",
+          "message": "fix(scopes): continue parent commit clock for all atoms inside withRemoteTracking (#112)\n\nOnly commitAll pulled dates from the parent's clock; commit/emptyCommit/\nbulkCommits/etc. keyed off the clone's own path, restarting the\ndeterministic clock at the 2020-01-01 epoch and letting upstream commits\ntie or overlap with the parent's dates. Seed the clone's clock from the\nparent's position at scope-entry and propagate it back on exit, so every\natom used inside the scope continues one deterministic sequence.\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>",
+          "timestamp": "2026-07-18T15:20:35Z",
+          "tree_id": "7d4deb759f89ad7852c8462573de8ee72283fdd3",
+          "url": "https://github.com/gfargo/git-scenarios/commit/b0af5d33eb43b4dada21899eb0a03639a0d60bab"
+        },
+        "date": 1784388124346,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 168.58,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 944.11,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7221.14,
             "unit": "ms"
           }
         ]
