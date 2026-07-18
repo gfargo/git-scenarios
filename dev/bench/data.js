@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784326477512,
+  "lastUpdate": 1784388059779,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1520,6 +1520,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7383.59,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e48049a81be85f73725dfe7318dbb4eeffb57cf9",
+          "message": "fix(atoms): correct shallowAt(depth) off-by-one boundary (#111)\n\nThe shallow boundary commit written to .git/shallow is itself still\nreachable — only its parents get cut off. shallowAt(depth) computed\nthe boundary as HEAD~depth, leaving depth+1 commits reachable instead\nof depth, contradicting its own docstring and git clone --depth\nsemantics. Boundary is now HEAD~(depth-1).\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>",
+          "timestamp": "2026-07-18T15:19:31Z",
+          "tree_id": "6ad32997489fa9ffdd62f9c16f93d211ca4d965d",
+          "url": "https://github.com/gfargo/git-scenarios/commit/e48049a81be85f73725dfe7318dbb4eeffb57cf9"
+        },
+        "date": 1784388059253,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 168.56,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 938.49,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7306.17,
             "unit": "ms"
           }
         ]
