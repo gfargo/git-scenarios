@@ -619,6 +619,7 @@ async function commandCreate(
     await scenario.setup(repo)
   } catch (error) {
     console.error(`Scenario setup failed: ${(error as Error).message}`)
+    await repo.cleanup()
     return 1
   }
 
@@ -630,6 +631,7 @@ async function commandCreate(
       await repo.git.addRemote('origin', options.remote)
     } catch (error) {
       console.error(`Failed to add origin remote: ${(error as Error).message}`)
+      await repo.cleanup()
       return 1
     }
   }
@@ -642,6 +644,7 @@ async function commandCreate(
     const renameResult = spawnSync('mv', [repo.path, target])
     if (renameResult.status !== 0) {
       console.error(`Failed to move scenario to ${target}`)
+      await repo.cleanup()
       return 1
     }
     finalPath = target

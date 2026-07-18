@@ -115,10 +115,10 @@ export function repoFixture(
     repo: async (_fixtures: object, use: UseFn<TempGitRepo>): Promise<void> => {
       const scenario = resolveScenario(scenarioName, 'repoFixture')
       const repo = await createTempGitRepo()
-      await scenario.setup(repo)
-      if (extraSteps?.length) await chain(...extraSteps)(repo)
-      if (remote) await repo.git.addRemote('origin', remote)
       try {
+        await scenario.setup(repo)
+        if (extraSteps?.length) await chain(...extraSteps)(repo)
+        if (remote) await repo.git.addRemote('origin', remote)
         await use(repo)
       } finally {
         await repo.cleanup()

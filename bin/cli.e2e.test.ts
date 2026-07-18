@@ -20,7 +20,7 @@
  */
 
 import { spawnSync } from 'child_process'
-import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'fs'
+import { existsSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'fs'
 import { tmpdir } from 'os'
 import { join } from 'path'
 
@@ -361,6 +361,23 @@ function runCLI(args: string[]): { stdout: string; stderr: string; status: numbe
       expect(status).toBe(0)
       expect(stdout).toContain('empty-repo')
       expect(stdout).toContain('ephemeral')
+    }, 30_000)
+  })
+
+  describe('create --path failure', () => {
+    it('does not leak a temp dir when moving to the target path fails', () => {
+      const countScenarioDirs = (): number =>
+        readdirSync(tmpdir()).filter((name) => name.startsWith('git-scenarios-')).length
+
+      const before = countScenarioDirs()
+      const { status } = runCLI([
+        'create',
+        'empty-repo',
+        '--path',
+        '/nonexistent-parent-dir/target',
+      ])
+      expect(status).toBe(1)
+      expect(countScenarioDirs()).toBe(before)
     }, 30_000)
   })
 

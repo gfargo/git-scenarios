@@ -125,14 +125,20 @@ export const scenarioFixtures = {
     const { extraSteps, remote, ...createOptions } = scenarioOptions
     const scenario = resolveScenario(scenarioName, 'playwright/repo fixture')
     const repo = await createTempGitRepo(createOptions)
-    await scenario.setup(repo)
 
-    if (remote) {
-      await repo.git.addRemote('origin', remote)
-    }
+    try {
+      await scenario.setup(repo)
 
-    if (extraSteps && extraSteps.length > 0) {
-      await chain(...extraSteps)(repo)
+      if (remote) {
+        await repo.git.addRemote('origin', remote)
+      }
+
+      if (extraSteps && extraSteps.length > 0) {
+        await chain(...extraSteps)(repo)
+      }
+    } catch (error) {
+      await repo.cleanup()
+      throw error
     }
 
     await use(repo)
