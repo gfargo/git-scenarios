@@ -1,3 +1,4 @@
+import { nextCommitDate } from '../commitClock'
 import type { Step } from './types'
 
 /**
@@ -12,10 +13,16 @@ import type { Step } from './types'
  *
  * `sha` can be any ref git understands (`HEAD~3`, `feat/x`, full sha,
  * short sha). Defaults to current HEAD.
+ *
+ * Annotated tags embed a tagger date; pass `date` to pin it (same
+ * mechanism as the commit-creating atoms). Left unset, it's pulled
+ * from the shared commit clock so the tag object's SHA stays stable
+ * across replays. Lightweight tags don't create a tag object, so
+ * they don't consume the clock.
  */
 export function createTag(
   name: string,
-  options: { message?: string; sha?: string } = {},
+  options: { message?: string; sha?: string; date?: string } = {},
 ): Step {
   return async (repo) => {
     const args = ['tag']
@@ -27,7 +34,16 @@ export function createTag(
     if (options.sha) {
       args.push(options.sha)
     }
-    await repo.git.raw(args)
+    if (options.message) {
+      // Annotated tags embed a tagger date from GIT_COMMITTER_DATE.
+      // Pin it so the tag object SHA is stable across replays. Use
+      // the merge form of `env()` (not the object form) so a
+      // surrounding `withAuthor` scope's committer identity survives.
+      const date = options.date ?? nextCommitDate(repo.path)
+      await repo.git.env('GIT_COMMITTER_DATE', date).raw(args)
+    } else {
+      await repo.git.raw(args)
+    }
   }
 }
 

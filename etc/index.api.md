@@ -155,6 +155,7 @@ export function createBranch(name: string, options?: {
 export function createTag(name: string, options?: {
     message?: string;
     sha?: string;
+    date?: string;
 }): Step;
 
 // @public
