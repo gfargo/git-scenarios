@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784388124841,
+  "lastUpdate": 1784392180293,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1598,6 +1598,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7221.14,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "174c271794f8a98377592ba1c2df073985bd722c",
+          "message": "fix: prevent temp repo leaks when scenario setup throws (#110)\n\nplaywright/vitest/cypress adapters and the CLI create command each\ncreated a temp git repo, then ran (throwable) scenario setup before\ncleanup was wired up or the repo was registered for cleanup. If setup\nthrew, the temp dir under /tmp/git-scenarios-* was orphaned.\n\nWrap createTempGitRepo() + setup/remote/extraSteps in try/catch so a\nthrow triggers cleanup before rethrowing, and add cleanup calls to the\nthree early-return failure branches in the CLI's create command.\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>",
+          "timestamp": "2026-07-18T16:28:11Z",
+          "tree_id": "bfaeb9809f895081a96c7bc7941094cbc78efbea",
+          "url": "https://github.com/gfargo/git-scenarios/commit/174c271794f8a98377592ba1c2df073985bd722c"
+        },
+        "date": 1784392179982,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 172.46,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 951.23,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7317.9,
             "unit": "ms"
           }
         ]
