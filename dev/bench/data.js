@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784392180293,
+  "lastUpdate": 1784392194382,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1637,6 +1637,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7317.9,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a7fc4cecb02871330d468e1b37ea9769e9811413",
+          "message": "fix(atoms): pin tagger date on annotated tags for replay determinism (#113)\n\nAnnotated tags were the one commit-like git object not pinned to the\nshared commit clock, so `git tag -a` embedded the real wall-clock time\nand produced a different tag object SHA on every replay. Pin\nGIT_COMMITTER_DATE (merged, not replaced, so a withAuthor scope's\nidentity survives) from the commit clock, with an optional `date`\noverride for parity with the other date-pinning atoms.\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>",
+          "timestamp": "2026-07-18T16:28:23Z",
+          "tree_id": "a963831db55e3bbe967875fd619639b3d43c0b0e",
+          "url": "https://github.com/gfargo/git-scenarios/commit/a7fc4cecb02871330d468e1b37ea9769e9811413"
+        },
+        "date": 1784392193540,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 169.56,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 947.7,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7270.74,
             "unit": "ms"
           }
         ]
