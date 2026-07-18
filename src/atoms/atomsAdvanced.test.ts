@@ -185,6 +185,23 @@ describe('tags', () => {
       expect(tags.all).not.toContain('v1.0.0')
     })
   })
+
+  it('createTag with message produces an identical annotated-tag SHA across replays', async () => {
+    async function annotatedTagSha(): Promise<string> {
+      const repo = await createTempGitRepo()
+      try {
+        await seedMain(repo)
+        await createTag('v1.0.0', { message: 'release' })(repo)
+        return (await repo.git.revparse(['v1.0.0'])).trim()
+      } finally {
+        await repo.cleanup()
+      }
+    }
+
+    const first = await annotatedTagSha()
+    const second = await annotatedTagSha()
+    expect(first).toBe(second)
+  })
 })
 
 describe('remotes', () => {
