@@ -13,7 +13,7 @@
  */
 
 import { existsSync } from 'fs'
-import { readdir } from 'fs/promises'
+import { readdir, readFile } from 'fs/promises'
 import { tmpdir } from 'os'
 import { join } from 'path'
 
@@ -21,6 +21,8 @@ import { cacheRoot, clearScenarioCache, materializeCached } from './scenarioCach
 import { spinUpScenario } from './spinUpScenario'
 import { fromScenario } from './fromScenario'
 import { addCommit } from './atoms/addCommit'
+import { defineScenario } from './atoms/defineScenario'
+import { registerScenario, unregisterScenario, resetRegistry } from './registry'
 import type { TempGitRepo } from './tempGitRepo'
 
 // Use a custom cache root per test run to avoid cross-test pollution
@@ -290,4 +292,130 @@ describe('cache safety: uncacheable scenarios', () => {
     const submoduleTemplate = cacheEntries.find((e) => e.startsWith('submodule-with-history'))
     expect(submoduleTemplate).toBeUndefined()
   }, 60_000)
+})
+
+describe('cache safety: custom scenarios', () => {
+  let repo: TempGitRepo
+
+  afterEach(async () => {
+    await repo?.cleanup()
+    resetRegistry()
+  })
+
+  it('never serves a stale template for a version-less custom scenario', async () => {
+    registerScenario(
+      defineScenario({
+        name: 'my-scenario',
+        summary: 'custom scenario A',
+        description: 'writes file A',
+        kind: 'branch',
+        setup: async (r) => {
+          await r.writeFile('marker.txt', 'A')
+          await r.commitAll('chore: A')
+        },
+      }),
+    )
+
+    const { findRegistered } = await import('./registry')
+    const first = await materializeCached(findRegistered('my-scenario')!)
+    const firstContent = await readFile(join(first.path, 'marker.txt'), 'utf8')
+    expect(firstContent).toBe('A')
+    await first.cleanup()
+
+    unregisterScenario('my-scenario')
+    registerScenario(
+      defineScenario({
+        name: 'my-scenario',
+        summary: 'custom scenario B',
+        description: 'writes file B',
+        kind: 'branch',
+        setup: async (r) => {
+          await r.writeFile('marker.txt', 'B')
+          await r.commitAll('chore: B')
+        },
+      }),
+    )
+
+    const second = await materializeCached(findRegistered('my-scenario')!)
+    repo = second
+    const secondContent = await readFile(join(second.path, 'marker.txt'), 'utf8')
+    expect(secondContent).toBe('B')
+
+    const cacheEntries = await readdir(cacheRoot()).catch(() => [])
+    const customTemplate = cacheEntries.find((e) => e.startsWith('my-scenario@'))
+    expect(customTemplate).toBeUndefined()
+  })
+
+  it('caches a custom scenario only when an explicit version is supplied, and bumping it invalidates', async () => {
+    registerScenario(
+      defineScenario({
+        name: 'my-versioned',
+        summary: 'custom versioned scenario v1',
+        description: 'writes file v1',
+        kind: 'branch',
+        version: '1',
+        setup: async (r) => {
+          await r.writeFile('marker.txt', 'v1')
+          await r.commitAll('chore: v1')
+        },
+      }),
+    )
+
+    const { findRegistered } = await import('./registry')
+    const v1 = await materializeCached(findRegistered('my-versioned')!)
+    await v1.cleanup()
+
+    let cacheEntries = await readdir(cacheRoot()).catch(() => [])
+    expect(cacheEntries.some((e) => e.startsWith('my-versioned@custom-1'))).toBe(true)
+
+    unregisterScenario('my-versioned')
+    registerScenario(
+      defineScenario({
+        name: 'my-versioned',
+        summary: 'custom versioned scenario v2',
+        description: 'writes file v2',
+        kind: 'branch',
+        version: '2',
+        setup: async (r) => {
+          await r.writeFile('marker.txt', 'v2')
+          await r.commitAll('chore: v2')
+        },
+      }),
+    )
+
+    const v2 = await materializeCached(findRegistered('my-versioned')!)
+    repo = v2
+    const v2Content = await readFile(join(v2.path, 'marker.txt'), 'utf8')
+    expect(v2Content).toBe('v2')
+
+    cacheEntries = await readdir(cacheRoot()).catch(() => [])
+    expect(cacheEntries.some((e) => e.startsWith('my-versioned@custom-1'))).toBe(true)
+    expect(cacheEntries.some((e) => e.startsWith('my-versioned@custom-2'))).toBe(true)
+  })
+
+  it('treats a re-registered scenario with a built-in name as custom (reference identity)', async () => {
+    unregisterScenario('empty-repo')
+    registerScenario(
+      defineScenario({
+        name: 'empty-repo',
+        summary: 'shadow of built-in empty-repo',
+        description: 'a completely different setup',
+        kind: 'branch',
+        setup: async (r) => {
+          await r.writeFile('shadow.txt', 'shadow')
+          await r.commitAll('chore: shadow')
+        },
+      }),
+    )
+
+    const { findRegistered } = await import('./registry')
+    repo = await materializeCached(findRegistered('empty-repo')!)
+    expect(existsSync(join(repo.path, 'shadow.txt'))).toBe(true)
+
+    // The built-in template key must not have been reused/overwritten by
+    // this shadowing custom scenario.
+    const cacheEntries = await readdir(cacheRoot()).catch(() => [])
+    const emptyRepoTemplates = cacheEntries.filter((e) => e.startsWith('empty-repo@'))
+    expect(emptyRepoTemplates.every((e) => !e.includes('custom'))).toBe(true)
+  })
 })

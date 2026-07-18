@@ -110,3 +110,22 @@ const dirtyMonorepos = findRegisteredByTag(['monorepo', 'dirty'], 'all')
 ```
 
 Use the registry-aware variant (`findRegisteredByTag`) when your test suite registers custom scenarios at startup and you want to query the full surface uniformly.
+
+## Caching custom scenarios
+
+`spinUpScenario(name, { cache: true })` and `fromScenario(name, { cache: true }, ...)` materialize built-in scenarios from an on-disk template cache, keyed by the installed package version — safe, because a built-in's `setup` only changes when the package bumps.
+
+That key isn't safe for a custom scenario: its `setup` can change at any time without a package version bump, so **custom scenarios are always freshly replayed and never cached by default**, even when `{ cache: true }` is passed. This avoids silently serving a stale materialized repo after you edit a scenario's `setup`.
+
+If you want caching for a custom scenario, opt in with an explicit `version`:
+
+```ts
+export const myScenario = defineScenario({
+  name: 'my-monorepo-dirty',
+  // ...
+  version: '2', // bump this every time `setup` changes
+  setup: chain(/* ... */),
+})
+```
+
+Bumping `version` produces a new cache key, so the old (now-stale) template is never reused. Omit `version` if you'd rather always get a correctness-guaranteed cold replay.
