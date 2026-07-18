@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784392194382,
+  "lastUpdate": 1784392212201,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1676,6 +1676,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7270.74,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b77f912b79ce9a50b16d0095ac79b47380de941d",
+          "message": "fix(scenarioCache): never serve stale templates for custom scenarios (#114)\n\nThe on-disk cache keyed every scenario by `${name}@${LIBRARY_VERSION}`,\nwhich is safe for built-ins (setup only changes on a version bump) but\nunsafe for consumer-registered custom scenarios, whose setup can change\nwithout any package version change. Custom scenarios are now identified\nby reference identity against the built-in registry and are only cached\nwhen they declare an explicit `version`; otherwise they're always\ncold-replayed so a stale template can never be served.\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>",
+          "timestamp": "2026-07-18T16:28:35Z",
+          "tree_id": "c8027dabeb3b83e3d166bd0a4aad852a0c0ca168",
+          "url": "https://github.com/gfargo/git-scenarios/commit/b77f912b79ce9a50b16d0095ac79b47380de941d"
+        },
+        "date": 1784392211751,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 169.8,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 947.68,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7388.04,
             "unit": "ms"
           }
         ]
