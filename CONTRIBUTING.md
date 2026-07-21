@@ -73,6 +73,14 @@ export function myNewAtom(arg: string): Step {
 
 ## Adding a new scenario
 
+> **Quick start:** Copy the template files and fill in the blanks:
+> ```bash
+> cp templates/scenario.template.ts src/scenarios/<your-name>.ts
+> cp templates/scenario.test.template.ts src/scenarios/<your-name>.test.ts
+> ```
+> Then follow the checklist below. When opening your PR, use the
+> **New Scenario** PR template (`.github/PULL_REQUEST_TEMPLATE/new_scenario.md`).
+
 A copy-paste starting point lives in `templates/` at the repo root:
 
 - `templates/scenario.template.ts` — scenario skeleton
