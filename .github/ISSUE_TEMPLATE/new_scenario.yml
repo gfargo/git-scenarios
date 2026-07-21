@@ -1,0 +1,71 @@
+name: New Scenario Proposal
+description: Propose a new built-in scenario for the catalogue
+labels: ["enhancement", "scenario"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing a new scenario! Please fill out the sections below
+        so the maintainers can evaluate the use-case and scope.
+
+  - type: input
+    id: name
+    attributes:
+      label: Scenario name (kebab-case)
+      description: "e.g., mid-interactive-rebase, multi-remote-conflict"
+      placeholder: "my-new-scenario"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - branch
+        - worktree
+        - operation
+        - history
+        - stash
+        - submodule
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What
+      description: "Describe the repo state this scenario creates."
+      placeholder: "A repo with..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: "What tools/flows need this scenario for testing? Why don't existing scenarios cover this?"
+      placeholder: "This is needed because..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: contracts
+    attributes:
+      label: Contracts (expected post-setup state)
+      description: "List the verifiable invariants, one per line."
+      placeholder: |
+        - main has 3 commits
+        - feat/x is checked out
+        - worktree is clean
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: "Platform caveats, related scenarios, implementation hints, etc."
+      placeholder: "Optional"
+    validations:
+      required: false
