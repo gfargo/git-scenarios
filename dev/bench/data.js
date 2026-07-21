@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784392283139,
+  "lastUpdate": 1784670442291,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1754,6 +1754,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7480.2,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7bf7374d93f0fd38b15254102ff1e8740a31d852",
+          "message": "Merge pull request #118 from gfargo/docs/scenario-contribution-template\n\ndocs: add new-scenario contribution template & checklist",
+          "timestamp": "2026-07-21T17:45:51-04:00",
+          "tree_id": "3b39e5b9b6a022e8de635ad0ba78d9f0f496042a",
+          "url": "https://github.com/gfargo/git-scenarios/commit/7bf7374d93f0fd38b15254102ff1e8740a31d852"
+        },
+        "date": 1784670441337,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 167.05,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 947.86,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7179.29,
             "unit": "ms"
           }
         ]
