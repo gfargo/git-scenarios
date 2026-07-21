@@ -147,6 +147,14 @@ export function continueRebase(): Step;
 export function continueRevert(): Step;
 
 // @public
+export type ContractResult = {
+    contract: string;
+    pass: boolean;
+    message: string;
+    verified: boolean;
+};
+
+// @public
 export function createBranch(name: string, options?: {
     from?: string;
 }): Step;
@@ -650,6 +658,21 @@ export function unshallow(): Step;
 
 // @public
 export function unstageFiles(...paths: string[]): Step;
+
+// @public
+export function verifyContracts(repo: TempGitRepo | {
+    git: SimpleGit;
+    path: string;
+}, scenario: Scenario): Promise<VerifyContractsResult>;
+
+// @public
+export type VerifyContractsResult = {
+    scenario: string;
+    results: ContractResult[];
+    allPassed: boolean;
+    verifiedCount: number;
+    unrecognizedCount: number;
+};
 
 // @public
 export function withAuthor(identity: AuthorIdentity, step: Step): Step;
