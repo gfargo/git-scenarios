@@ -32,6 +32,11 @@ export {
 } from './errors'
 
 export { assertRepo, RepoAssertion, type SnapshotSource } from './assert'
+export {
+  verifyContracts,
+  type ContractResult,
+  type VerifyContractsResult,
+} from './verifyContracts'
 
 export { spinUpScenario, type SpinUpScenarioOptions } from './spinUpScenario'
 export { fromScenario, type FromScenarioOptions } from './fromScenario'
