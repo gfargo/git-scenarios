@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784670442291,
+  "lastUpdate": 1784683160013,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1793,6 +1793,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7179.29,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "86acd88949b607f1faf2ec85d9545019042f4cea",
+          "message": "Merge pull request #116 from gfargo/feat/executable-contracts\n\nfeat: add verifyContracts() for executable scenario contracts",
+          "timestamp": "2026-07-21T21:17:48-04:00",
+          "tree_id": "77731c31946d06cb2f26b757a842120839d27e95",
+          "url": "https://github.com/gfargo/git-scenarios/commit/86acd88949b607f1faf2ec85d9545019042f4cea"
+        },
+        "date": 1784683159303,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 167.72,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 942.37,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7172.28,
             "unit": "ms"
           }
         ]
