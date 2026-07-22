@@ -12,6 +12,7 @@ import * as jestAdapter from './jest'
 import { repoFixture, scenarioTest } from './vitest'
 import { writeFiles, defineScenario, chain } from './atoms'
 import { registerScenario, unregisterScenario } from './registry'
+import type { TempGitRepo } from './tempGitRepo'
 
 describe('vitest adapter', () => {
   it('exports describeWithScenario', () => {
@@ -156,10 +157,11 @@ describe('scenarioTest', () => {
     }
 
     const result = scenarioTest(mockBase, 'empty-repo')
+    const extended = result as unknown as { _fixtures: Record<string, unknown> }
     expect(result).toHaveProperty('_fixtures')
     // The fixtures object should contain a `repo` key
-    expect((result as any)._fixtures).toHaveProperty('repo')
-    expect(typeof (result as any)._fixtures.repo).toBe('function')
+    expect(extended._fixtures).toHaveProperty('repo')
+    expect(typeof extended._fixtures.repo).toBe('function')
   })
 
   it('passes options through to the underlying repoFixture', () => {
@@ -173,7 +175,8 @@ describe('scenarioTest', () => {
       extraSteps: [writeFiles({ 'test.txt': 'hello' })],
       remote: 'git@github.com:org/repo.git',
     })
-    expect((result as any)._fixtures).toHaveProperty('repo')
+    const extended = result as unknown as { _fixtures: Record<string, unknown> }
+    expect(extended._fixtures).toHaveProperty('repo')
   })
 
   it('the repo fixture function sets up and tears down correctly', async () => {
@@ -185,10 +188,11 @@ describe('scenarioTest', () => {
     }
 
     const result = scenarioTest(mockBase, 'empty-repo')
-    const fixturesFn = (result as any)._fixtures.repo
+    const extended = result as unknown as { _fixtures: Record<string, (fixtures: object, use: (repo: TempGitRepo) => Promise<void>) => Promise<void>> }
+    const fixturesFn = extended._fixtures.repo
 
     let repoPath: string | undefined
-    await fixturesFn({}, async (repo: any) => {
+    await fixturesFn({}, async (repo) => {
       repoPath = repo.path
       expect(existsSync(repo.path)).toBe(true)
     })
