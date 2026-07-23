@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784683160013,
+  "lastUpdate": 1784779900989,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1832,6 +1832,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7172.28,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d898cf6a133b118b59a647372d755a3ae2b1be55",
+          "message": "Merge pull request #121 from gfargo/chore/close-completed-issues\n\nchore: close issues for already-implemented features",
+          "timestamp": "2026-07-23T00:10:11-04:00",
+          "tree_id": "77731c31946d06cb2f26b757a842120839d27e95",
+          "url": "https://github.com/gfargo/git-scenarios/commit/d898cf6a133b118b59a647372d755a3ae2b1be55"
+        },
+        "date": 1784779900262,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 167.05,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 934.12,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7116.21,
             "unit": "ms"
           }
         ]
