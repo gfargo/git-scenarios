@@ -56,8 +56,9 @@ state every run), so the tests built on top are deterministic too.
    anything from "single staged file" to "three-way nested submodule
    mid-rebase."
 
-> **Status: v1.2.0** — Stable release. 46 curated scenarios, 60+ composable atoms,
-> 7 framework adapters, `assertRepo()` + `expect` matchers, MCP server, VS Code extension, CLI
+> **Status: v1.4.0** — Stable release. 48 curated scenarios, 60+ composable atoms,
+> 7 framework adapters, `assertRepo()` + `expect` matchers, `verifyContracts()`,
+> `spinUpAll()`, MCP server, VS Code extension, CLI
 > (`list` · `describe` · `inspect` · `create` · `capture` · `diff` · `doctor` · `clean`),
 > dual CJS/ESM output.
 
@@ -186,7 +187,7 @@ Each provides zero-boilerplate scenario setup with automatic cleanup.
 | Adapter | Import path | API style |
 |---|---|---|
 | Jest | `@gfargo/git-scenarios/jest` | `describeWithScenario` |
-| Vitest | `@gfargo/git-scenarios/vitest` | `describeWithScenario` |
+| Vitest | `@gfargo/git-scenarios/vitest` | `describeWithScenario`, `scenarioTest`, `repoFixture` |
 | node:test | `@gfargo/git-scenarios/node-test` | `describeWithScenario` |
 | Mocha | `@gfargo/git-scenarios/mocha` | `describeWithScenario` |
 | AVA | `@gfargo/git-scenarios/ava` | `withScenario` (no describe) |
@@ -260,6 +261,51 @@ describeWithScenario('single-staged-file', (getRepo) => {
 }, {
   timeout: 60_000,
   extraSteps: [writeFiles({ 'extra.ts': 'uncommitted\n' })],
+})
+```
+
+### Vitest (`test.extend` fixture)
+
+For Vitest users who prefer the idiomatic `test.extend` pattern over
+`describeWithScenario`, use `scenarioTest` (one-liner) or `repoFixture`
+(lower-level):
+
+```ts
+import { test as base } from 'vitest'
+import { scenarioTest } from '@gfargo/git-scenarios/vitest'
+
+// One-liner — creates a test function with a `repo` fixture
+const test = scenarioTest(base, 'feature-pr-ready')
+
+test('on feature branch', async ({ repo }) => {
+  const status = await repo.git.status()
+  expect(status.current).toBe('feat/widget-v2')
+})
+```
+
+Each test gets a **fresh** repo with automatic cleanup — no `afterAll`
+boilerplate needed. Pass options for extra steps or a remote:
+
+```ts
+import { writeFiles } from '@gfargo/git-scenarios/atoms'
+
+const test = scenarioTest(base, 'empty-repo', {
+  extraSteps: [writeFiles({ 'config.json': '{}' })],
+  remote: 'git@github.com:org/repo.git',
+})
+```
+
+Or use the lower-level `repoFixture` for manual `test.extend`:
+
+```ts
+import { test as base } from 'vitest'
+import { repoFixture } from '@gfargo/git-scenarios/vitest'
+
+const test = base.extend(repoFixture('mid-merge-conflict'))
+
+test('has conflicts', async ({ repo }) => {
+  const snap = await repo.snapshot()
+  expect(snap.conflicts.length).toBeGreaterThan(0)
 })
 ```
 
@@ -978,6 +1024,59 @@ const repo = await fromScenario('feature-pr-ready',
 )
 // repo is feature-pr-ready + one extra commit + one dirty file
 ```
+
+### `spinUpAll(names, options?)` — parallel materialization
+
+Materialize multiple scenarios concurrently with bounded parallelism.
+Cuts wall-clock time for test suites that exercise many scenarios:
+
+```ts
+import { spinUpAll } from '@gfargo/git-scenarios'
+
+// Spin up 5 scenarios with default concurrency (4):
+const repos = await spinUpAll([
+  'feature-pr-ready',
+  'mid-merge-conflict',
+  'stashed-changes',
+  'large-repo',
+  'detached-head',
+])
+
+// repos[i] corresponds positionally to names[i]
+// Clean up when done:
+await Promise.all(repos.map(r => r.cleanup()))
+```
+
+Custom concurrency (higher = faster but more file handles):
+
+```ts
+const repos = await spinUpAll(names, { concurrency: 8 })
+```
+
+On failure, all already-materialized repos are cleaned up automatically
+before the error propagates — no leaked temp directories.
+
+### `verifyContracts(repo, scenario)` — machine-verify scenario contracts
+
+Verify a scenario's declared `contracts` array against the actual
+materialized repo state. Useful for CI guards and scenario authoring:
+
+```ts
+import { spinUpScenario, verifyContracts } from '@gfargo/git-scenarios'
+import { featurePrReadyScenario } from '@gfargo/git-scenarios/scenarios'
+
+const repo = await spinUpScenario('feature-pr-ready')
+const result = await verifyContracts(repo, featurePrReadyScenario)
+
+console.log(result.allPassed)      // true
+console.log(result.verifiedCount)  // 4 (machine-checked contracts)
+console.log(result.results)        // per-contract pass/fail + message
+```
+
+Supports 25+ contract patterns: branch checkout, commit counts,
+ahead/behind, worktree status, operations, stashes, conflicts,
+remotes, tags, worktrees, file existence, and more. Unrecognized
+contract strings pass but are flagged as `verified: false`.
 
 ## Custom scenario registration
 
