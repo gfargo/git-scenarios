@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784854099231,
+  "lastUpdate": 1784860993042,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1988,6 +1988,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7200.94,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6c7948b7cab4870747d333781c69b42c8a6bc462",
+          "message": "Merge pull request #126 from gfargo/fix/flaky-temp-dir-leak-test\n\nfix: prevent temp repo leaks in core API + fix flaky e2e test",
+          "timestamp": "2026-07-23T22:41:48-04:00",
+          "tree_id": "6b0d244f810d08540509963eabbfa16c04bc1924",
+          "url": "https://github.com/gfargo/git-scenarios/commit/6c7948b7cab4870747d333781c69b42c8a6bc462"
+        },
+        "date": 1784860992741,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 170.13,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 943.33,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7284.73,
             "unit": "ms"
           }
         ]
