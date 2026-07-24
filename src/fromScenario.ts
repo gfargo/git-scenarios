@@ -94,11 +94,21 @@ export async function fromScenario(
     repo = await materializeCached(scenario, repoOptions)
   } else {
     repo = await createTempGitRepo(repoOptions)
-    await scenario.setup(repo)
+    try {
+      await scenario.setup(repo)
+    } catch (err) {
+      await repo.cleanup()
+      throw err
+    }
   }
 
   if (extraSteps.length > 0) {
-    await chain(...extraSteps)(repo)
+    try {
+      await chain(...extraSteps)(repo)
+    } catch (err) {
+      await repo.cleanup()
+      throw err
+    }
   }
 
   return repo

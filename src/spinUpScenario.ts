@@ -83,11 +83,21 @@ export async function spinUpScenario(
     repo = await materializeCached(scenario, repoOptions)
   } else {
     repo = await createTempGitRepo(repoOptions)
-    await scenario.setup(repo)
+    try {
+      await scenario.setup(repo)
+    } catch (err) {
+      await repo.cleanup()
+      throw err
+    }
   }
 
   if (remote) {
-    await repo.git.addRemote('origin', remote)
+    try {
+      await repo.git.addRemote('origin', remote)
+    } catch (err) {
+      await repo.cleanup()
+      throw err
+    }
   }
 
   return repo
