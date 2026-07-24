@@ -29,6 +29,15 @@ export type RepoFixtureOptions = {
     remote?: string;
 };
 
+// @public
+export function scenarioTest<T extends {
+    extend: (fixtures: Record<string, unknown>) => unknown;
+}>(base: T, scenarioName: string, options?: RepoFixtureOptions): T & {
+    (name: string, fn: (args: {
+        repo: TempGitRepo;
+    }) => Promise<void>): void;
+};
+
 // (No @packageDocumentation comment for this package)
 
 ```

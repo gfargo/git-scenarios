@@ -128,6 +128,58 @@ export function repoFixture(
 }
 
 /**
+ * Convenience factory that creates a ready-to-use Vitest `test` function
+ * with a `repo` fixture pre-configured for the given scenario.
+ *
+ * This is the most ergonomic API for Vitest users — a single import
+ * and one call gives you a `test` function whose tests receive a fresh
+ * `{ repo }` fixture with auto-cleanup.
+ *
+ * @example
+ * ```ts
+ * import { test as base } from 'vitest'
+ * import { scenarioTest } from '@gfargo/git-scenarios/vitest'
+ *
+ * const test = scenarioTest(base, 'feature-pr-ready')
+ *
+ * test('on feature branch', async ({ repo }) => {
+ *   const status = await repo.git.status()
+ *   expect(status.current).toBe('feat/widget-v2')
+ * })
+ * ```
+ *
+ * @example
+ * ```ts
+ * // With options:
+ * import { test as base } from 'vitest'
+ * import { scenarioTest } from '@gfargo/git-scenarios/vitest'
+ * import { writeFiles } from '@gfargo/git-scenarios/atoms'
+ *
+ * const test = scenarioTest(base, 'empty-repo', {
+ *   extraSteps: [writeFiles({ 'config.json': '{}' })],
+ *   remote: 'git@github.com:org/repo.git',
+ * })
+ *
+ * test('has config file', async ({ repo }) => {
+ *   expect(await repo.exists('config.json')).toBe(true)
+ * })
+ * ```
+ *
+ * @param base - The Vitest `test` function (from `import { test } from 'vitest'`)
+ * @param scenarioName - Registered scenario name (kebab-case)
+ * @param options - Optional extra steps and remote configuration
+ */
+export function scenarioTest<T extends { extend: (fixtures: Record<string, unknown>) => unknown }>(
+  base: T,
+  scenarioName: string,
+  options: RepoFixtureOptions = {},
+): T & { (name: string, fn: (args: { repo: TempGitRepo }) => Promise<void>): void } {
+  return base.extend(repoFixture(scenarioName, options)) as T & {
+    (name: string, fn: (args: { repo: TempGitRepo }) => Promise<void>): void
+  }
+}
+
+/**
  * A Vitest `describe` wrapper that spins up a named scenario in
  * `beforeAll` and cleans it up in `afterAll`.
  *

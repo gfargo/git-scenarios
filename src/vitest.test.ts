@@ -9,9 +9,10 @@
 
 import * as vitestAdapter from './vitest'
 import * as jestAdapter from './jest'
-import { repoFixture } from './vitest'
+import { repoFixture, scenarioTest } from './vitest'
 import { writeFiles, defineScenario, chain } from './atoms'
 import { registerScenario, unregisterScenario } from './registry'
+import type { TempGitRepo } from './tempGitRepo'
 
 describe('vitest adapter', () => {
   it('exports describeWithScenario', () => {
@@ -137,5 +138,66 @@ describe('repoFixture', () => {
     } finally {
       unregisterScenario('vitest-leak-throwing-setup')
     }
+  }, 30_000)
+})
+
+
+describe('scenarioTest', () => {
+  it('exports scenarioTest', () => {
+    expect(typeof vitestAdapter.scenarioTest).toBe('function')
+  })
+
+  it('returns an extended test function when given a base with extend()', () => {
+    // Mock a minimal Vitest-like `test` object with an `extend` method
+    const mockBase = {
+      extend: (fixtures: Record<string, unknown>) => {
+        // In real Vitest, this returns a new test function with the fixture
+        return { ...mockBase, _fixtures: fixtures }
+      },
+    }
+
+    const result = scenarioTest(mockBase, 'empty-repo')
+    const extended = result as unknown as { _fixtures: Record<string, unknown> }
+    expect(result).toHaveProperty('_fixtures')
+    // The fixtures object should contain a `repo` key
+    expect(extended._fixtures).toHaveProperty('repo')
+    expect(typeof extended._fixtures.repo).toBe('function')
+  })
+
+  it('passes options through to the underlying repoFixture', () => {
+    const mockBase = {
+      extend: (fixtures: Record<string, unknown>) => {
+        return { ...mockBase, _fixtures: fixtures }
+      },
+    }
+
+    const result = scenarioTest(mockBase, 'empty-repo', {
+      extraSteps: [writeFiles({ 'test.txt': 'hello' })],
+      remote: 'git@github.com:org/repo.git',
+    })
+    const extended = result as unknown as { _fixtures: Record<string, unknown> }
+    expect(extended._fixtures).toHaveProperty('repo')
+  })
+
+  it('the repo fixture function sets up and tears down correctly', async () => {
+    const { existsSync } = await import('fs')
+    const mockBase = {
+      extend: (fixtures: Record<string, unknown>) => {
+        return { ...mockBase, _fixtures: fixtures }
+      },
+    }
+
+    const result = scenarioTest(mockBase, 'empty-repo')
+    const extended = result as unknown as { _fixtures: Record<string, (fixtures: object, use: (repo: TempGitRepo) => Promise<void>) => Promise<void>> }
+    const fixturesFn = extended._fixtures.repo
+
+    let repoPath: string | undefined
+    await fixturesFn({}, async (repo) => {
+      repoPath = repo.path
+      expect(existsSync(repo.path)).toBe(true)
+    })
+
+    expect(repoPath).toBeDefined()
+    expect(existsSync(repoPath!)).toBe(false)
   }, 30_000)
 })
