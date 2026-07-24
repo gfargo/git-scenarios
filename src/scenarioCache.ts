@@ -148,7 +148,12 @@ async function buildTemplate(
   await mkdir(dirname(dest), { recursive: true })
 
   const repo = await createTempGitRepo()
-  await scenario.setup(repo)
+  try {
+    await scenario.setup(repo)
+  } catch (err) {
+    await repo.cleanup()
+    throw err
+  }
   const staging = repo.path
 
   // Decline scenarios that a directory copy cannot faithfully reproduce.
@@ -198,7 +203,12 @@ async function ensureTemplate(
     // Not cacheable by key — cold-replay directly, skipping the on-disk
     // cache entirely so no stale template can ever be served.
     const repo = await createTempGitRepo(options)
-    await scenario.setup(repo)
+    try {
+      await scenario.setup(repo)
+    } catch (err) {
+      await repo.cleanup()
+      throw err
+    }
     return repo
   }
   try {
