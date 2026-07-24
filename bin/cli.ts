@@ -45,7 +45,7 @@ import type { RepoSnapshot } from '../src/snapshot'
 import { createTempGitRepo } from '../src/tempGitRepo'
 
 type ParsedArgs = {
-  command?: 'list' | 'describe' | 'inspect' | 'create' | 'capture' | 'clean' | 'diff' | 'doctor' | 'completions' | 'help'
+  command?: 'list' | 'describe' | 'inspect' | 'create' | 'capture' | 'clean' | 'diff' | 'doctor' | 'completions' | 'init' | 'help'
   positional: string[]
   flags: Record<string, string | boolean>
 }
@@ -95,7 +95,7 @@ function parseArgs(argv: string[]): ParsedArgs {
         flags[name] = true
       }
     } else if (!command) {
-      if (arg === 'list' || arg === 'describe' || arg === 'inspect' || arg === 'create' || arg === 'capture' || arg === 'clean' || arg === 'diff' || arg === 'doctor' || arg === 'completions' || arg === 'help') {
+      if (arg === 'list' || arg === 'describe' || arg === 'inspect' || arg === 'create' || arg === 'capture' || arg === 'clean' || arg === 'diff' || arg === 'doctor' || arg === 'completions' || arg === 'init' || arg === 'help') {
         command = arg
       } else {
         positional.push(arg)
@@ -141,6 +141,7 @@ function printHelp(): void {
     '    git-scenarios clean [options]',
     '    git-scenarios doctor [--json]',
     '    git-scenarios completions <bash|zsh|fish>',
+    '    git-scenarios init <name> [--out <dir>] [--kind <kind>]',
     '',
     '  List options:',
     '    --kind <kind>    Filter by kind (branch | worktree | operation |',
@@ -208,6 +209,15 @@ function printHelp(): void {
     '      bash:  eval "$(git-scenarios completions bash)"',
     '      zsh:   eval "$(git-scenarios completions zsh)"',
     '      fish:  git-scenarios completions fish | source',
+    '',
+    '  Init options:',
+    '    git-scenarios init <kebab-name>',
+    '    --out <dir>     Output directory (default: current directory)',
+    '    --kind <kind>   Scenario kind (default: branch)',
+    '',
+    '    Scaffolds a custom scenario file + co-located test file in your',
+    '    project. Fill in the template, register with registerScenario(),',
+    '    and use via spinUpScenario().',
     '',
     `  Available scenarios (${listRegistered().length}):`,
     ...listRegistered().map((s) => `    ${s.name.padEnd(28)} ${s.summary}`),
@@ -1190,6 +1200,163 @@ async function commandDoctor(options: { json?: boolean }): Promise<number> {
   return checks.some((c) => c.status === 'fail') ? 1 : 0
 }
 
+// ── init command ─────────────────────────────────────────────────────────────
+
+/**
+ * Scaffold a new custom scenario in the consumer's project.
+ * Creates a scenario file + co-located test file from templates.
+ */
+function commandInit(
+  name: string | undefined,
+  options: { out?: string; kind?: string },
+): number {
+  const KEBAB_CASE = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/
+
+  if (!name) {
+    console.error('Missing scenario name. Usage: git-scenarios init <kebab-name> [--out <dir>]')
+    console.error('')
+    console.error('Example:')
+    console.error('  git-scenarios init my-custom-state')
+    console.error('  git-scenarios init my-custom-state --out src/scenarios')
+    console.error('  git-scenarios init my-custom-state --kind operation')
+    return 2
+  }
+
+  if (!KEBAB_CASE.test(name)) {
+    console.error(`Invalid name "${name}" — must be kebab-case (e.g., "my-new-scenario").`)
+    return 2
+  }
+
+  const kind = options.kind ?? 'branch'
+  if (!VALID_KINDS.includes(kind as ScenarioKind)) {
+    console.error(`Invalid kind "${kind}". Must be one of: ${VALID_KINDS.join(', ')}`)
+    return 2
+  }
+
+  const outDir = options.out ? path.resolve(options.out) : process.cwd()
+
+  // Convert kebab-case to camelCase for the export name
+  const camel = name.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase())
+  const varName = `${camel}Scenario`
+
+  // Generate scenario file content
+  const scenarioContent = `/**
+ * \`${name}\` — <one-line description of the repo state>.
+ *
+ * State after setup:
+ *   - <describe branch / HEAD state>
+ *   - <describe worktree state>
+ *
+ * DETERMINISM: never use \`new Date()\` or \`Math.random()\` here.
+ * Let the commit atoms pin dates via the monotonic commit clock.
+ * Use \`seededFiles({ seed, files })\` for generated content.
+ */
+
+import {
+  addCommit,
+  chain,
+  defineScenario,
+  switchToBranch,
+} from '@gfargo/git-scenarios'
+
+export const ${varName} = defineScenario({
+  name: '${name}',
+  summary: '<short description>',
+  description: [
+    '<Full description of what the scenario sets up and why.>',
+    '',
+    'Useful for testing:',
+    '  - <use case 1>',
+    '  - <use case 2>',
+  ].join('\\n'),
+  kind: '${kind}',
+  tags: [],
+  contracts: [
+    'main has 1 commit',
+    '<add more contracts>',
+  ],
+  setup: chain(
+    addCommit({
+      message: 'chore: initial commit',
+      files: { 'README.md': '# ${name}\\n' },
+    }),
+    // Add more atoms here...
+  ),
+})
+`
+
+  // Generate test file content
+  const testContent = `import { createTempGitRepo, type TempGitRepo } from '@gfargo/git-scenarios'
+import { ${varName} } from './${name}'
+
+describe('${name}', () => {
+  let repo: TempGitRepo
+
+  beforeAll(async () => {
+    repo = await createTempGitRepo()
+    await ${varName}.setup(repo)
+  }, 30_000)
+
+  afterAll(async () => {
+    await repo?.cleanup()
+  })
+
+  // One \`it()\` per contract line:
+
+  it('main has 1 commit', async () => {
+    const log = await repo.git.log(['main'])
+    expect(log.total).toBe(1)
+  })
+
+  // Add more contract tests...
+})
+`
+
+  const { existsSync, mkdirSync, writeFileSync } = require('fs') as typeof import('fs')
+
+  // Create output directory if needed
+  if (!existsSync(outDir)) {
+    mkdirSync(outDir, { recursive: true })
+  }
+
+  const scenarioPath = path.join(outDir, `${name}.ts`)
+  const testPath = path.join(outDir, `${name}.test.ts`)
+
+  // Check for existing files
+  if (existsSync(scenarioPath)) {
+    console.error(`File already exists: ${scenarioPath}`)
+    console.error('Remove it first or choose a different name.')
+    return 1
+  }
+  if (existsSync(testPath)) {
+    console.error(`File already exists: ${testPath}`)
+    console.error('Remove it first or choose a different name.')
+    return 1
+  }
+
+  writeFileSync(scenarioPath, scenarioContent)
+  writeFileSync(testPath, testContent)
+
+  console.log('')
+  console.log(`  Scenario scaffolded:`)
+  console.log(`    ${scenarioPath}`)
+  console.log(`    ${testPath}`)
+  console.log('')
+  console.log('  Next steps:')
+  console.log(`    1. Edit ${name}.ts — fill in summary, description, contracts, and setup`)
+  console.log(`    2. Edit ${name}.test.ts — add one it() per contract`)
+  console.log('    3. Register in your project:')
+  console.log(`       import { registerScenario } from '@gfargo/git-scenarios'`)
+  console.log(`       import { ${varName} } from './${name}'`)
+  console.log(`       registerScenario(${varName})`)
+  console.log('')
+  console.log('  Then use it:')
+  console.log(`    const repo = await spinUpScenario('${name}')`)
+  console.log('')
+
+  return 0
+}
+
 async function main(): Promise<number> {
   const { command, positional, flags } = parseArgs(process.argv.slice(2))
 
@@ -1268,6 +1435,13 @@ async function main(): Promise<number> {
       return 2
     }
     return commandCompletions(shell)
+  }
+
+  if (command === 'init') {
+    return commandInit(positional[0], {
+      out: typeof flags.out === 'string' ? flags.out : undefined,
+      kind: typeof flags.kind === 'string' ? flags.kind : undefined,
+    })
   }
 
   if (command === 'create') {
