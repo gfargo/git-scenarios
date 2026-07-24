@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784854078361,
+  "lastUpdate": 1784854099231,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1949,6 +1949,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7373.27,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f8f6f53a8807efc03b44b2c070d5c8aa78c8edbc",
+          "message": "Merge pull request #122 from gfargo/docs/readme-new-apis\n\ndocs: add README sections for new APIs (verifyContracts, spinUpAll, scenarioTest)",
+          "timestamp": "2026-07-23T20:46:48-04:00",
+          "tree_id": "e7b9d9cba9d347bb244b967f7de7cc40e7b4b3d8",
+          "url": "https://github.com/gfargo/git-scenarios/commit/f8f6f53a8807efc03b44b2c070d5c8aa78c8edbc"
+        },
+        "date": 1784854098390,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 168.42,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 940.89,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7200.94,
             "unit": "ms"
           }
         ]
