@@ -149,8 +149,30 @@ async function regenerate() {
   }
 
   const payload = []
-  for (const s of allScenarios) {
-    const { graph, branches, commits } = await captureGraph(s)
+  const CONCURRENCY = parseInt(process.env.GIT_SCENARIOS_CONCURRENCY ?? '4', 10)
+
+  // Bounded-concurrency materialization — same pattern as spinUpAll
+  // but applied to captureGraph which does custom git log capture.
+  let nextIndex = 0
+  const results = new Array(allScenarios.length)
+
+  async function worker() {
+    while (true) {
+      const idx = nextIndex++
+      if (idx >= allScenarios.length) break
+      results[idx] = await captureGraph(allScenarios[idx])
+    }
+  }
+
+  const workers = Array.from(
+    { length: Math.min(CONCURRENCY, allScenarios.length) },
+    () => worker(),
+  )
+  await Promise.all(workers)
+
+  for (let i = 0; i < allScenarios.length; i++) {
+    const s = allScenarios[i]
+    const { graph, branches, commits } = results[i]
     // Strip the runtime-only `setup` function — it's not serializable
     // and the browser doesn't need it. Everything else is plain data.
     payload.push({

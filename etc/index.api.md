@@ -565,6 +565,14 @@ export type SnapshotSource = {
 } | SimpleGit;
 
 // @public
+export function spinUpAll(names: string[], options?: SpinUpAllOptions): Promise<TempGitRepo[]>;
+
+// @public
+export type SpinUpAllOptions = SpinUpScenarioOptions & {
+    concurrency?: number;
+};
+
+// @public
 export function spinUpScenario(name: string, options?: SpinUpScenarioOptions): Promise<TempGitRepo>;
 
 // @public

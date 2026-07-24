@@ -39,6 +39,7 @@ export {
 } from './verifyContracts'
 
 export { spinUpScenario, type SpinUpScenarioOptions } from './spinUpScenario'
+export { spinUpAll, type SpinUpAllOptions } from './spinUpAll'
 export { fromScenario, type FromScenarioOptions } from './fromScenario'
 export { createTempGitRepo, type TempGitRepo, type CreateTempGitRepoOptions } from './tempGitRepo'
 export { clearScenarioCache, cacheRoot } from './scenarioCache'
