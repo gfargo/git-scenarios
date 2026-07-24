@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784861047397,
+  "lastUpdate": 1784866827236,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2066,6 +2066,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7245.61,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c58a4c90be8dcc76c9e600e338174db06e6679fb",
+          "message": "Merge pull request #124 from gfargo/feat/new-scenarios-sparse-multiremote\n\nfeat(scenarios): add sparse-checkout-monorepo and multi-remote-fetch-conflict",
+          "timestamp": "2026-07-24T00:18:58-04:00",
+          "tree_id": "974780ed2f57865d1167e853b6b778dfed10d7a2",
+          "url": "https://github.com/gfargo/git-scenarios/commit/c58a4c90be8dcc76c9e600e338174db06e6679fb"
+        },
+        "date": 1784866826751,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 170.37,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 948.33,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7408.7,
             "unit": "ms"
           }
         ]
