@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784779900989,
+  "lastUpdate": 1784854033459,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1871,6 +1871,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7116.21,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dff64eccd26abf6363834d8fb6ad7781f406c2d6",
+          "message": "Merge pull request #117 from gfargo/feat/vitest-test-extend-fixture\n\nfeat(vitest): add scenarioTest() for test.extend fixture API",
+          "timestamp": "2026-07-23T20:45:45-04:00",
+          "tree_id": "385f72c1a820c781b024a4f30de9768e9ac91ba1",
+          "url": "https://github.com/gfargo/git-scenarios/commit/dff64eccd26abf6363834d8fb6ad7781f406c2d6"
+        },
+        "date": 1784854032633,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 167.66,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 935.83,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7113.21,
             "unit": "ms"
           }
         ]
