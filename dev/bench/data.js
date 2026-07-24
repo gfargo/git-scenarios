@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784854033459,
+  "lastUpdate": 1784854078361,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -1910,6 +1910,45 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7113.21,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f245e0750813b23e7ba544d87c97e5ee8f49f428",
+          "message": "Merge pull request #120 from gfargo/feat/parallel-materialization\n\nfeat: add spinUpAll() for parallel scenario materialization",
+          "timestamp": "2026-07-23T20:46:31-04:00",
+          "tree_id": "79b92b65bb3cefe20834fe51efd57b7e76053643",
+          "url": "https://github.com/gfargo/git-scenarios/commit/f245e0750813b23e7ba544d87c97e5ee8f49f428"
+        },
+        "date": 1784854078033,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 171.73,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 944.77,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7373.27,
             "unit": "ms"
           }
         ]
