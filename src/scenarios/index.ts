@@ -58,6 +58,8 @@ import { stashWithUntrackedScenario } from './stash-with-untracked'
 import { stashedChangesScenario } from './stashed-changes'
 import { submoduleWithHistoryScenario } from './submodule-with-history'
 import { twoCommitFeatureScenario } from './two-commit-feature'
+import { sparseCheckoutMonorepoScenario } from './sparse-checkout-monorepo'
+import { multiRemoteFetchConflictScenario } from './multi-remote-fetch-conflict'
 
 /**
  * Ordered list of all available scenarios. The order is shown in
@@ -81,6 +83,7 @@ export const allScenarios: readonly Scenario[] = [
   branchDivergedScenario,
   branchSyncShowcaseScenario,
   multiRemoteWithTrackingScenario,
+  multiRemoteFetchConflictScenario,
   // detached / config shapes
   detachedHeadScenario,
   signedCommitsRequiredScenario,
@@ -113,6 +116,7 @@ export const allScenarios: readonly Scenario[] = [
   dirtyManyFilesScenario,
   multipleWorktreesScenario,
   lockedWorktreeScenario,
+  sparseCheckoutMonorepoScenario,
   // submodule shapes
   submoduleWithHistoryScenario,
   outOfDateSubmoduleScenario,
@@ -204,3 +208,5 @@ export { caseCollisionScenario } from './case-collision'
 export { installedHooksScenario } from './installed-hooks'
 export { commitsWithNotesScenario } from './commits-with-notes'
 export { mixedTagsScenario } from './mixed-tags'
+export { sparseCheckoutMonorepoScenario } from './sparse-checkout-monorepo'
+export { multiRemoteFetchConflictScenario } from './multi-remote-fetch-conflict'

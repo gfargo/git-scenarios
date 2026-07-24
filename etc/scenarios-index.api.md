@@ -115,6 +115,9 @@ export const multiCommitBranchScenario: Scenario;
 export const multipleWorktreesScenario: Scenario;
 
 // @public
+export const multiRemoteFetchConflictScenario: Scenario;
+
+// @public
 export const multiRemoteWithTrackingScenario: Scenario;
 
 // @public
@@ -155,6 +158,9 @@ export const signedCommitsRequiredScenario: Scenario;
 
 // @public
 export const singleStagedFileScenario: Scenario;
+
+// @public
+export const sparseCheckoutMonorepoScenario: Scenario;
 
 // @public
 export const stashedChangesScenario: Scenario;
