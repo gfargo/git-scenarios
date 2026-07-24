@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784866827236,
+  "lastUpdate": 1784912436599,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2105,6 +2105,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "large-repo",
             "value": 7408.7,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9be50e0e7044ebb5a8d68a0e191d8e76d8ba65c8",
+          "message": "Merge pull request #123 from gfargo/feat/benchmark-spinup-all\n\nperf: add spinUpAll serial vs parallel benchmark",
+          "timestamp": "2026-07-24T12:58:51-04:00",
+          "tree_id": "75d751ca8f3a25f06f0fe7a872eb1c5f451da70e",
+          "url": "https://github.com/gfargo/git-scenarios/commit/9be50e0e7044ebb5a8d68a0e191d8e76d8ba65c8"
+        },
+        "date": 1784912436133,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 167.17,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 935.35,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7225.25,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3235.77,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1100.31,
             "unit": "ms"
           }
         ]
