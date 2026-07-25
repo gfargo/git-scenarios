@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784912436599,
+  "lastUpdate": 1784965285917,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2154,6 +2154,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1100.31,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "41ea95642b109ad98e1e910bffcd1ecc17e18b5e",
+          "message": "Merge pull request #127 from gfargo/fix/env-merge-root-cause\n\nfix(atoms): merge git environment instead of replacing it",
+          "timestamp": "2026-07-25T03:39:45-04:00",
+          "tree_id": "4ceadff76d95f3ded37b8b966fece8b65b605fe6",
+          "url": "https://github.com/gfargo/git-scenarios/commit/41ea95642b109ad98e1e910bffcd1ecc17e18b5e"
+        },
+        "date": 1784965285634,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 168.37,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 944.13,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7276.69,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3259.42,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1131.94,
             "unit": "ms"
           }
         ]
