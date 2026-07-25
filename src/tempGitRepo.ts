@@ -5,6 +5,7 @@ import { dirname, join } from 'path'
 import { simpleGit, type SimpleGit } from 'simple-git'
 
 import { nextCommitDate, resetCommitClock } from './commitClock'
+import { datePin, gitAt } from './atoms/gitEnv'
 import { snapshotRepo, type RepoSnapshot } from './snapshot'
 
 /**
@@ -143,7 +144,9 @@ function makeRepoHandle(
       // explicit-date path isn't offered here — callers that need to
       // pin a date use the `commit`/`addCommit` atoms.
       const date = nextCommitDate(repoPath)
-      await git.env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date }).commit(message)
+      // Merge (never replace) the environment so hooks keep PATH/HOME,
+      // and use a fresh instance so the pin doesn't leak onto `git`.
+      await gitAt(repoPath, datePin(date)).commit(message)
     },
     snapshot: () => snapshotRepo(git),
     cleanup: async () => {

@@ -4,6 +4,8 @@ import { chmod, mkdtemp, rm, writeFile } from 'fs/promises'
 import { tmpdir } from 'os'
 import { join } from 'path'
 import { promisify } from 'util'
+import { nextCommitDate } from '../commitClock'
+import { gitForRepo } from './gitEnv'
 import { requireCommits } from './preconditions'
 import type { Step } from './types'
 
@@ -44,7 +46,16 @@ export function startRebase(
     await requireCommits(repo, 'startRebase')
     let rebaseError: unknown
     try {
-      await repo.git.raw(['rebase', onto])
+      // Rebase preserves each replayed commit's AUTHOR date but stamps
+      // a fresh COMMITTER date from the wall clock — which would make
+      // the resulting SHAs non-reproducible. Pin only the committer
+      // date so replayed authorship is untouched.
+      //
+      // Historically this worked by accident: a previous atom's date
+      // pin leaked onto the shared `repo.git` instance. That leak is
+      // gone (see ./gitEnv), so the pin has to be explicit.
+      const date = nextCommitDate(repo.path)
+      await gitForRepo(repo, { GIT_COMMITTER_DATE: date }).raw(['rebase', onto])
     } catch (error) {
       rebaseError = error
     }
@@ -101,7 +112,14 @@ export function continueRebase(): Step {
     // which would leak into subsequent atoms in the chain.
     await execFileAsync('git', ['rebase', '--continue'], {
       cwd: repo.path,
-      env: { ...process.env, GIT_EDITOR: ':', GIT_SEQUENCE_EDITOR: ':' },
+      env: {
+        ...process.env,
+        GIT_EDITOR: ':',
+        GIT_SEQUENCE_EDITOR: ':',
+        // Pin the committer date — completing a rebase writes commits,
+        // which would otherwise pick up wall-clock time.
+        GIT_COMMITTER_DATE: nextCommitDate(repo.path),
+      },
     })
   }
 }

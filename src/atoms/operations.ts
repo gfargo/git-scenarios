@@ -2,6 +2,7 @@ import { execFile } from 'child_process';
 import { promisify } from 'util';
 import { nextCommitDate } from '../commitClock';
 import { requireCommits } from './preconditions';
+import { datePin, gitForRepo } from './gitEnv';
 import type { Step } from './types';
 
 const execFileAsync = promisify(execFile);
@@ -51,10 +52,7 @@ export function startMerge(
     }
     args.push(branch)
     const date = options.date ?? nextCommitDate(repo.path)
-    const gitInstance = repo.git.env({
-      GIT_AUTHOR_DATE: date,
-      GIT_COMMITTER_DATE: date,
-    })
+    const gitInstance = gitForRepo(repo, datePin(date))
 
     let mergeError: unknown
     try {
@@ -184,10 +182,7 @@ export function cherryPick(
   return async (repo) => {
     await requireCommits(repo, 'cherryPick')
     const date = options.date ?? nextCommitDate(repo.path)
-    const gitInstance = repo.git.env({
-      GIT_AUTHOR_DATE: date,
-      GIT_COMMITTER_DATE: date,
-    })
+    const gitInstance = gitForRepo(repo, datePin(date))
 
     let cherryError: unknown
     try {
@@ -241,7 +236,11 @@ export function continueCherryPick(): Step {
   return async (repo) => {
     await execFileAsync('git', ['cherry-pick', '--continue'], {
       cwd: repo.path,
-      env: { ...process.env, GIT_EDITOR: ':' },
+      env: {
+        ...process.env,
+        GIT_EDITOR: ':',
+        GIT_COMMITTER_DATE: nextCommitDate(repo.path),
+      },
     })
   }
 }
@@ -274,10 +273,7 @@ export function revert(
     }
     args.push(ref)
     const date = options.date ?? nextCommitDate(repo.path)
-    const gitInstance = repo.git.env({
-      GIT_AUTHOR_DATE: date,
-      GIT_COMMITTER_DATE: date,
-    })
+    const gitInstance = gitForRepo(repo, datePin(date))
 
     let revertError: unknown
     try {
@@ -330,7 +326,11 @@ export function continueRevert(): Step {
   return async (repo) => {
     await execFileAsync('git', ['revert', '--continue'], {
       cwd: repo.path,
-      env: { ...process.env, GIT_EDITOR: ':' },
+      env: {
+        ...process.env,
+        GIT_EDITOR: ':',
+        GIT_COMMITTER_DATE: nextCommitDate(repo.path),
+      },
     })
   }
 }

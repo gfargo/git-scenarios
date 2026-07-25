@@ -1,3 +1,5 @@
+import { nextCommitDate } from '../commitClock'
+import { datePin, gitForRepo } from './gitEnv'
 import type { Step } from './types'
 
 /**
@@ -36,7 +38,11 @@ export function stashChanges(
     if (options.keepIndex) {
       args.push('--keep-index')
     }
-    await repo.git.stash(args)
+    // A stash entry is a commit pair, so it needs a pinned date to stay
+    // reproducible. This previously worked only because an earlier
+    // atom's date pin leaked onto the shared instance (see ./gitEnv).
+    const date = nextCommitDate(repo.path)
+    await gitForRepo(repo, datePin(date)).stash(args)
   }
 }
 

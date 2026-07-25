@@ -1,3 +1,4 @@
+import { datePin, gitForRepo } from './gitEnv'
 import { nextCommitDate } from '../commitClock'
 import type { Step } from './types'
 
@@ -20,9 +21,7 @@ import type { Step } from './types'
 export function emptyCommit(message: string, options: { date?: string } = {}): Step {
   return async (repo) => {
     const date = options.date ?? nextCommitDate(repo.path)
-    await repo.git
-      .env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
-      .raw(['commit', '--allow-empty', '-m', message])
+    await gitForRepo(repo, datePin(date)).raw(['commit', '--allow-empty', '-m', message])
   }
 }
 
@@ -53,6 +52,6 @@ export function amendCommit(options: { message?: string; date?: string } = {}): 
     // Amending rewrites the commit, so its committer date (and thus
     // hash) would otherwise drift to wall-clock time. Pin it.
     const date = options.date ?? nextCommitDate(repo.path)
-    await repo.git.env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date }).raw(args)
+    await gitForRepo(repo, datePin(date)).raw(args)
   }
 }

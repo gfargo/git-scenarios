@@ -1,3 +1,5 @@
+import { nextCommitDate } from '../commitClock'
+import { datePin, gitForRepo } from './gitEnv'
 /**
  * Git notes atom — add, remove, or append notes to commits. Useful
  * for testing tools that display or process git notes (code review
@@ -33,7 +35,9 @@ export function addNote(
     if (options.ref) {
       args.push(options.ref)
     }
-    await repo.git.raw(args)
+    // A note lives in a commit under `refs/notes/*`, so it needs a
+    // pinned date to stay reproducible.
+    await gitForRepo(repo, datePin(nextCommitDate(repo.path))).raw(args)
   }
 }
 
@@ -58,7 +62,7 @@ export function appendNote(
     if (options.ref) {
       args.push(options.ref)
     }
-    await repo.git.raw(args)
+    await gitForRepo(repo, datePin(nextCommitDate(repo.path))).raw(args)
   }
 }
 

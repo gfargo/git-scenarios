@@ -39,6 +39,8 @@
 import { join } from 'node:path'
 import { unlink } from 'node:fs/promises'
 import { addCommit, chain, defineScenario } from '../atoms'
+import { datePin, gitAt } from '../atoms/gitEnv'
+import { nextCommitDate } from '../commitClock'
 
 export const caseCollisionScenario = defineScenario({
   name: 'case-collision',
@@ -120,7 +122,11 @@ export const caseCollisionScenario = defineScenario({
       // Commit — index now holds README.md + src/File.ts + src/file.ts.
       // Both case variants land in the git object store but neither is
       // written to disk, so the working tree shows them as deleted.
-      await repo.git.commit('feat: add case-colliding sources')
+      //
+      // Pin the date explicitly: this commits via a raw `git commit`
+      // rather than through an atom, so it has no date of its own.
+      await gitAt(repo.path, datePin(nextCommitDate(repo.path)))
+        .commit('feat: add case-colliding sources')
     },
   ),
 })
