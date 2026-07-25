@@ -1,3 +1,4 @@
+import { gitForRepo } from './gitEnv'
 import { nextCommitDate } from '../commitClock'
 import type { Step } from './types'
 
@@ -36,11 +37,12 @@ export function createTag(
     }
     if (options.message) {
       // Annotated tags embed a tagger date from GIT_COMMITTER_DATE.
-      // Pin it so the tag object SHA is stable across replays. Use
-      // the merge form of `env()` (not the object form) so a
-      // surrounding `withAuthor` scope's committer identity survives.
+      // Pin it so the tag object SHA is stable across replays.
+      // `gitForRepo` merges (never replaces) the environment, so a
+      // surrounding `withAuthor` scope's committer identity survives
+      // and the child keeps PATH/HOME.
       const date = options.date ?? nextCommitDate(repo.path)
-      await repo.git.env('GIT_COMMITTER_DATE', date).raw(args)
+      await gitForRepo(repo, { GIT_COMMITTER_DATE: date }).raw(args)
     } else {
       await repo.git.raw(args)
     }

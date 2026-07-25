@@ -21,6 +21,7 @@ import {
 import { join } from 'path'
 import { mkdtemp } from 'fs/promises'
 import { tmpdir } from 'os'
+import { datePin, gitAt } from '../atoms/gitEnv'
 import { nextCommitDate } from '../commitClock'
 import type { Step } from '../atoms/types'
 
@@ -56,9 +57,7 @@ function addWorktreeWithCommit(
       // continue the parent's deterministic clock to keep commit
       // hashes (and `git log --all` ordering) stable.
       const date = nextCommitDate(repo.path)
-      await wtGit
-        .env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
-        .commit(c.message)
+      await gitAt(wtPath, datePin(date)).commit(c.message)
     }
   }
 }

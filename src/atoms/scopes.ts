@@ -8,6 +8,7 @@ import { promisify } from 'util'
 import { getCommitClockCount, nextCommitDate, resetCommitClock, setCommitClockCount } from '../commitClock'
 import { snapshotRepo } from '../snapshot'
 import type { TempGitRepo } from '../tempGitRepo'
+import { datePin, gitAt, setScopedEnv } from './gitEnv'
 import type { Step } from './types'
 
 const execFileAsync = promisify(execFile)
@@ -99,15 +100,21 @@ export function onBranch(name: string, step: Step): Step {
  *     withAuthor({ name: 'Bob', email: 'bob@x' }, addCommit({ message: 'fix: b' })),
  *   )
  *
- * **Footgun**: simple-git's `env()` replaces (doesn't merge) env
- * vars. If an atom inside `withAuthor` also specifies its own
- * `date`, that atom's env override will clobber the author env for
- * that one command. To pin a date *and* author together, pass the
- * date into `withAuthor`:
+ * The identity is registered as scope-inherited environment (see
+ * `./gitEnv`), so every atom inside merges it with its own date pin
+ * rather than replacing it. Pinning a date on an inner atom and
+ * setting an author are therefore independent — both apply:
+ *
+ *   withAuthor({ name: 'Alice', email: 'alice@x' },
+ *     addCommit({ message: 'feat: a', date: daysAgo(30) }),
+ *   )
+ *
+ * Passing `date` to `withAuthor` still works and applies to every
+ * commit in the scope:
  *
  *   withAuthor(
  *     { name: 'Alice', email: 'alice@x', date: daysAgo(30) },
- *     addCommit({ message: 'feat: a' }),   // no `date` here
+ *     addCommit({ message: 'feat: a' }),
  *   )
  *
  * The wrapped repo's `cleanup` is a no-op — the underlying repo is
@@ -130,7 +137,7 @@ export function withAuthor(identity: AuthorIdentity, step: Step): Step {
     // `repo.git.env(...)` would leak the override outside this scope.
     // Build a fresh SimpleGit bound to the same workdir so the
     // original `repo.git` stays untouched.
-    const scopedGit = simpleGit(repo.path).env(env)
+    const scopedGit = gitAt(repo.path, env)
     const scopedRepo: TempGitRepo = {
       path: repo.path,
       git: scopedGit,
@@ -143,15 +150,21 @@ export function withAuthor(identity: AuthorIdentity, step: Step): Step {
         // while preserving the author identity env. Build a fresh
         // instance so we don't mutate `scopedGit` across commits.
         const date = identity.date ?? nextCommitDate(repo.path)
-        await simpleGit(repo.path)
-          .env({ ...env, GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
-          .commit(message)
+        await gitAt(repo.path, datePin(date), env).commit(message)
       },
       snapshot: () => snapshotRepo(scopedGit),
       cleanup: async () => {
         // No-op: the parent's cleanup owns the actual repo.
       },
     }
+    // Register the identity as scope-inherited environment so every
+    // commit-producing atom running inside `step` MERGES it with its
+    // own date pin instead of replacing it. Without this, only
+    // `addCommit` (which routes through `commitAll` above) attributed
+    // correctly — `commit`, `emptyCommit`, `bulkCommits`,
+    // `amendCommit`, `cherryPick`, `revert` and `startMerge` all
+    // silently fell back to the repo's default identity.
+    setScopedEnv(scopedRepo, env)
     await step(scopedRepo)
   }
 }
@@ -179,9 +192,7 @@ export function insideSubmodule(submodulePath: string, step: Step): Step {
         // The submodule is its own repo with its own history, so it
         // gets its own deterministic clock keyed by its path.
         const date = nextCommitDate(submoduleRoot)
-        await simpleGit(submoduleRoot)
-          .env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
-          .commit(message)
+        await gitAt(submoduleRoot, datePin(date)).commit(message)
       },
       snapshot: () => snapshotRepo(submoduleGit),
       cleanup: async () => {
@@ -296,9 +307,7 @@ export function withRemoteTracking(remote: string, branch: string, step: Step): 
           // via `repo.path` (== clonePath here). Keeps this atom
           // consistent with `commit`/`emptyCommit`/`bulkCommits`/etc.
           const date = nextCommitDate(clonePath)
-          await simpleGit(clonePath)
-            .env({ GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date })
-            .commit(message)
+          await gitAt(clonePath, datePin(date)).commit(message)
         },
         snapshot: () => snapshotRepo(cloneGit),
         cleanup: async () => {

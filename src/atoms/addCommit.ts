@@ -1,3 +1,4 @@
+import { datePin, gitForRepo } from './gitEnv'
 import type { FileMap, Step } from './types'
 import { writeFiles } from './writeFiles'
 
@@ -55,9 +56,7 @@ export function addCommit(opts: {
     }
     if (opts.date) {
       await repo.git.add('.')
-      await repo.git
-        .env({ GIT_AUTHOR_DATE: opts.date, GIT_COMMITTER_DATE: opts.date })
-        .raw(['commit', '-m', opts.message])
+      await gitForRepo(repo, datePin(opts.date)).raw(['commit', '-m', opts.message])
     } else {
       await repo.commitAll(opts.message)
     }
