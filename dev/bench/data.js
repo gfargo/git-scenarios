@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784965285917,
+  "lastUpdate": 1785628704196,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2203,6 +2203,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1131.94,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f2ac185366a525bb493adf51367dbe570b98c303",
+          "message": "fix(atoms): restore detached HEAD in onBranch (#136)\n\nstatus.current returns \"HEAD\" (not null) when detached, so the\nrestore step was matching name !== \"HEAD\" and leaving the repo\nchecked out on the target branch instead of back on the original\ndetached commit. Capture the commit sha via status.detached and\nre-detach onto it in the finally block.\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>",
+          "timestamp": "2026-08-01T23:56:37Z",
+          "tree_id": "4a51af04e48a463f5316d5184658eb0b63be063d",
+          "url": "https://github.com/gfargo/git-scenarios/commit/f2ac185366a525bb493adf51367dbe570b98c303"
+        },
+        "date": 1785628703398,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 166.49,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 939.43,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7433.5,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3348.62,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1144.59,
             "unit": "ms"
           }
         ]
