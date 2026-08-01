@@ -51,6 +51,11 @@ export type StatusSnapshot = {
   ahead: number
   /** Commits the current branch is behind its upstream (0 when no upstream). */
   behind: number
+  /**
+   * Upstream tracking ref for the current branch (e.g. `"origin/main"`),
+   * or `null` when the branch has no upstream configured.
+   */
+  upstream: string | null
 }
 
 /** The full structured state of a repository at one moment. */
@@ -130,6 +135,7 @@ function parseStatus(raw: string): Omit<StatusSnapshot, 'clean'> {
   const untracked: string[] = []
   let ahead = 0
   let behind = 0
+  let upstream: string | null = null
 
   for (const line of raw.split('\n')) {
     if (!line) continue
@@ -139,6 +145,15 @@ function parseStatus(raw: string): Omit<StatusSnapshot, 'clean'> {
       const behindMatch = line.match(/\bbehind (\d+)/)
       if (aheadMatch) ahead = Number(aheadMatch[1])
       if (behindMatch) behind = Number(behindMatch[1])
+      // Parse the upstream ref from the branch header: "## branch...upstream [ahead/behind N]"
+      // The "..." separator is unambiguous because git forbids ".." in ref names.
+      const dotdotdot = line.indexOf('...')
+      if (dotdotdot !== -1) {
+        // Upstream ref follows "...", ends at the next space (before "[ahead N]" etc.)
+        const afterSep = line.slice(dotdotdot + 3)
+        const spaceIdx = afterSep.indexOf(' ')
+        upstream = spaceIdx === -1 ? afterSep : afterSep.slice(0, spaceIdx)
+      }
       continue
     }
 
@@ -161,7 +176,7 @@ function parseStatus(raw: string): Omit<StatusSnapshot, 'clean'> {
     if (y !== ' ' && y !== '?') modified.push(path)
   }
 
-  return { staged, modified, untracked, ahead, behind }
+  return { staged, modified, untracked, ahead, behind, upstream }
 }
 
 /**

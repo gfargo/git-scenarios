@@ -202,6 +202,14 @@ export class RepoAssertion implements PromiseLike<RepoSnapshot> {
   /** Assert the branch is in sync with its upstream (0 ahead, 0 behind). */
   inSyncWithUpstream(): this {
     this.checks.push((s) => {
+      if (s.status.upstream === null) {
+        fail(
+          'inSyncWithUpstream',
+          'an upstream branch',
+          null,
+          'Expected to be in sync with upstream, but no upstream is configured for this branch.',
+        )
+      }
       if (s.status.ahead !== 0 || s.status.behind !== 0) {
         fail('inSyncWithUpstream', { ahead: 0, behind: 0 }, { ahead: s.status.ahead, behind: s.status.behind }, `Expected to be in sync with upstream, but found ${s.status.ahead} ahead / ${s.status.behind} behind.`)
       }

@@ -198,6 +198,53 @@ describe('repo.snapshot()', () => {
     })
   })
 
+  describe('status.upstream field', () => {
+    it('is null when no upstream is configured (fresh repo, no remote)', async () => {
+      const repo = await createTempGitRepo()
+      try {
+        await addCommit({ message: 'init', files: { 'README.md': '# repo\n' } })(repo)
+        const snap = await repo.snapshot()
+        expect(snap.status.upstream).toBeNull()
+      } finally {
+        await repo.cleanup()
+      }
+    })
+
+    it('is null for feature-pr-ready (branch has commits but no upstream)', async () => {
+      const repo = await spinUpScenario('feature-pr-ready')
+      try {
+        const snap = await repo.snapshot()
+        expect(snap.status.upstream).toBeNull()
+      } finally {
+        await repo.cleanup()
+      }
+    })
+
+    it('is the tracking ref string for branch-tracking-upstream', async () => {
+      const repo = await spinUpScenario('branch-tracking-upstream')
+      try {
+        const snap = await repo.snapshot()
+        expect(snap.status.upstream).not.toBeNull()
+        expect(typeof snap.status.upstream).toBe('string')
+        // The upstream should look like "remote/branch" (e.g. "origin/main")
+        expect(snap.status.upstream).toMatch(/^[^/]+\/.+$/)
+      } finally {
+        await repo.cleanup()
+      }
+    })
+
+    it('is set for branch-ahead-of-upstream and ahead count is positive', async () => {
+      const repo = await spinUpScenario('branch-ahead-of-upstream')
+      try {
+        const snap = await repo.snapshot()
+        expect(snap.status.upstream).not.toBeNull()
+        expect(snap.status.ahead).toBeGreaterThan(0)
+      } finally {
+        await repo.cleanup()
+      }
+    })
+  })
+
   it('is deterministic — two runs of one scenario snapshot identically', async () => {
     const a = await spinUpScenario('feature-pr-ready')
     const b = await spinUpScenario('feature-pr-ready')
