@@ -1,11 +1,13 @@
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { createTempGitRepo, type TempGitRepo } from '../tempGitRepo'
+import { InvalidArgumentError } from '../errors'
 import {
     addCommit,
     chain,
     checkoutBranch,
     commit,
+    deleteFiles,
     repeat,
     seededFiles,
     stageFiles,
@@ -156,6 +158,37 @@ describe('stageFiles + commit', () => {
       const status = await repo.git.status()
       // b.ts wasn't staged, so it stays in the worktree post-commit.
       expect(status.not_added).toContain('b.ts')
+    })
+  })
+
+  it('throws when nothing is staged on an unborn HEAD', async () => {
+    await withRepo(async (repo) => {
+      await expect(commit('feat: noop')(repo)).rejects.toBeInstanceOf(InvalidArgumentError)
+      const log = await repo.git.log().catch(() => null)
+      expect(log).toBeNull()
+    })
+  })
+
+  it('throws when nothing is staged on a clean tree after prior commits', async () => {
+    await withRepo(async (repo) => {
+      await addCommit({ message: 'chore: init', files: { 'README.md': '# repo\n' } })(repo)
+      await expect(commit('feat: noop')(repo)).rejects.toBeInstanceOf(InvalidArgumentError)
+      const log = await repo.git.log()
+      expect(log.total).toBe(1)
+    })
+  })
+
+  it('succeeds when only a deletion is staged', async () => {
+    await withRepo(async (repo) => {
+      await addCommit({ message: 'chore: init', files: { 'a.ts': 'a', 'b.ts': 'b' } })(repo)
+      await chain(
+        deleteFiles('b.ts'),
+        stageFiles('b.ts'),
+        commit('chore: remove b'),
+      )(repo)
+      const log = await repo.git.log()
+      expect(log.latest?.message).toBe('chore: remove b')
+      expect(log.total).toBe(2)
     })
   })
 })
