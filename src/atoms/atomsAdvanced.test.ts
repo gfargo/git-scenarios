@@ -507,6 +507,45 @@ describe('onBranch scope', () => {
       expect(status.current).toBe('main')
     })
   })
+
+  it('restores a detached HEAD to its original commit', async () => {
+    await withRepo(async (repo) => {
+      await seedMain(repo)
+      await addCommit({ message: 'two', files: { 'a.ts': 'a' } })(repo)
+      await createBranch('feat/x')(repo)
+      await repo.git.checkout(['--detach', 'HEAD~1'])
+      const before = (await repo.git.revparse(['HEAD'])).trim()
+
+      await onBranch(
+        'feat/x',
+        addCommit({ message: 'on feat/x', files: { 'b.ts': 'b' } }),
+      )(repo)
+
+      const status = await repo.git.status()
+      expect(status.detached).toBe(true)
+      expect((await repo.git.revparse(['HEAD'])).trim()).toBe(before)
+    })
+  })
+
+  it('re-detaches HEAD onto the original commit even if the step throws', async () => {
+    await withRepo(async (repo) => {
+      await seedMain(repo)
+      await addCommit({ message: 'two', files: { 'a.ts': 'a' } })(repo)
+      await createBranch('feat/x')(repo)
+      await repo.git.checkout(['--detach', 'HEAD~1'])
+      const before = (await repo.git.revparse(['HEAD'])).trim()
+
+      await expect(
+        onBranch('feat/x', async () => {
+          throw new Error('boom')
+        })(repo),
+      ).rejects.toThrow('boom')
+
+      const status = await repo.git.status()
+      expect(status.detached).toBe(true)
+      expect((await repo.git.revparse(['HEAD'])).trim()).toBe(before)
+    })
+  })
 })
 
 describe('addSubmodule + insideSubmodule + pinSubmodule', () => {
