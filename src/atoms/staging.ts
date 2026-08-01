@@ -1,5 +1,6 @@
 import { datePin, gitForRepo } from './gitEnv'
 import { nextCommitDate } from '../commitClock'
+import { requireStaged } from './preconditions'
 import type { Step } from './types'
 
 /**
@@ -42,6 +43,7 @@ export function stageFiles(...paths: string[]): Step {
  */
 export function commit(message: string, options: { date?: string } = {}): Step {
   return async (repo) => {
+    await requireStaged(repo, 'commit')
     // Pin a date always — an explicit one if given, else the next
     // deterministic tick — so the commit hash is reproducible.
     const date = options.date ?? nextCommitDate(repo.path)
