@@ -35,8 +35,8 @@ export type AuthorIdentity = {
  *
  * The pre-step branch is captured at run time, so this composes
  * cleanly inside `repeat()` or other dynamic contexts. If the repo
- * is in detached-HEAD state, the restore step is a no-op (which
- * matches what `git checkout -` would do).
+ * is in detached-HEAD state, the restore step re-detaches HEAD onto
+ * the original commit (which matches what `git checkout -` would do).
  *
  * The atom does NOT create the branch — pair with `createBranch` or
  * `switchToBranch` if the target doesn't exist yet:
@@ -49,12 +49,17 @@ export type AuthorIdentity = {
 export function onBranch(name: string, step: Step): Step {
   return async (repo) => {
     const status = await repo.git.status()
-    const previous = status.current
+    const wasDetached = status.detached
+    // When detached, `status.current` is the string "HEAD", not a branch —
+    // capture the exact commit so we can re-detach onto it afterward.
+    const previous = wasDetached ? (await repo.git.revparse(['HEAD'])).trim() : status.current
     await repo.git.checkout(name)
     try {
       await step(repo)
     } finally {
-      if (previous && previous !== name) {
+      if (wasDetached) {
+        await repo.git.checkout(['--detach', previous as string])
+      } else if (previous && previous !== name) {
         await repo.git.checkout(previous)
       }
     }
