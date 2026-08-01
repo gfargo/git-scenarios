@@ -10,7 +10,7 @@ import type { Step } from './types'
  *
  *   chain(
  *     writeFiles({ 'src/foo.ts': '…' }),
- *     stashChanges({ message: 'wip: foo' }),
+ *     stashChanges({ message: 'wip: foo', includeUntracked: true }),
  *   )
  *
  * Options:
@@ -42,7 +42,16 @@ export function stashChanges(
     // reproducible. This previously worked only because an earlier
     // atom's date pin leaked onto the shared instance (see ./gitEnv).
     const date = nextCommitDate(repo.path)
+    const before = (await repo.git.stashList()).total
     await gitForRepo(repo, datePin(date)).stash(args)
+    const after = (await repo.git.stashList()).total
+    if (after === before) {
+      throw new Error(
+        'stashChanges created no stash (git reported nothing to save). ' +
+          'A worktree with only untracked files needs includeUntracked: true; ' +
+          'a clean worktree has nothing to stash.',
+      )
+    }
   }
 }
 
