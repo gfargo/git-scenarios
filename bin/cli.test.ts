@@ -7,12 +7,13 @@
  * registry surface is covered in `src/registry.test.ts`.
  */
 
-import { existsSync } from 'fs'
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs'
+import { tmpdir } from 'os'
 import { join } from 'path'
 
 import { findRegistered, listRegistered, registerScenario, resetRegistry } from '../src/registry'
 import { defineScenario, chain, addCommit } from '../src/atoms'
-import { parseGitVersion } from '../bin/cli'
+import { moveDir, parseGitVersion } from '../bin/cli'
 
 describe('CLI — scenario registry (lookup path used by CLI)', () => {
   afterEach(() => {
@@ -94,6 +95,48 @@ describe('CLI — create flow (smoke)', () => {
       expect(branches.current).not.toBe('main')
     } finally {
       await repo.cleanup()
+    }
+  })
+})
+
+describe('moveDir (cross-platform replacement for spawnSync("mv"))', () => {
+  it('moves a populated directory to a fresh destination', () => {
+    const src = mkdtempSync(join(tmpdir(), 'git-scenarios-movedir-src-'))
+    const dest = join(tmpdir(), `git-scenarios-movedir-dest-${process.pid}-${Math.random().toString(36).slice(2)}`)
+    writeFileSync(join(src, 'file.txt'), 'hello\n')
+
+    try {
+      moveDir(src, dest)
+
+      expect(existsSync(src)).toBe(false)
+      expect(existsSync(dest)).toBe(true)
+      expect(readFileSync(join(dest, 'file.txt'), 'utf8')).toBe('hello\n')
+    } finally {
+      rmSync(dest, { recursive: true, force: true })
+    }
+  })
+
+  it('falls back to copy+remove when renameSync reports EXDEV', () => {
+    const fs = jest.requireActual('fs')
+    const src = mkdtempSync(join(tmpdir(), 'git-scenarios-movedir-exdev-src-'))
+    const dest = join(tmpdir(), `git-scenarios-movedir-exdev-dest-${process.pid}-${Math.random().toString(36).slice(2)}`)
+    writeFileSync(join(src, 'file.txt'), 'cross-device\n')
+
+    const renameSpy = jest.spyOn(fs, 'renameSync').mockImplementation(() => {
+      const error = new Error('EXDEV: cross-device link not permitted') as NodeJS.ErrnoException
+      error.code = 'EXDEV'
+      throw error
+    })
+
+    try {
+      moveDir(src, dest)
+
+      expect(existsSync(src)).toBe(false)
+      expect(existsSync(dest)).toBe(true)
+      expect(readFileSync(join(dest, 'file.txt'), 'utf8')).toBe('cross-device\n')
+    } finally {
+      renameSpy.mockRestore()
+      rmSync(dest, { recursive: true, force: true })
     }
   })
 })
