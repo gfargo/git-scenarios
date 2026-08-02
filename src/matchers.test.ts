@@ -166,8 +166,14 @@ describe('expect matchers', () => {
         await repo.writeFile('README.md', '# repo\n')
         await repo.commitAll('init')
         await expect(expect(repo).toBeInSyncWithUpstream()).rejects.toThrow(/no upstream/i)
-        // .not passes when no upstream — the assertion itself fails
-        await expect(repo).not.toBeInSyncWithUpstream()
+        // Call the matcher directly and assert on its result shape instead of
+        // going through Jest's `.not` inversion, which only reports a pass
+        // here because `evaluate()` catches `RepoAssertionError` and turns it
+        // into `{ pass: false }` — a non-obvious side effect of that plumbing
+        // that `.not` alone wouldn't surface if it ever changed.
+        const result = await matchers.toBeInSyncWithUpstream(repo)
+        expect(result.pass).toBe(false)
+        expect(result.message()).toMatch(/no upstream/i)
       } finally {
         await repo.cleanup()
       }
@@ -176,7 +182,9 @@ describe('expect matchers', () => {
     it('fails for feature-pr-ready (clean branch but no upstream)', async () => {
       const repo = await spinUpScenario('feature-pr-ready')
       try {
-        await expect(repo).not.toBeInSyncWithUpstream()
+        const result = await matchers.toBeInSyncWithUpstream(repo)
+        expect(result.pass).toBe(false)
+        expect(result.message()).toMatch(/no upstream/i)
       } finally {
         await repo.cleanup()
       }

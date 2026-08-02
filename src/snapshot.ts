@@ -47,9 +47,9 @@ export type StatusSnapshot = {
   modified: string[]
   /** Untracked paths. */
   untracked: string[]
-  /** Commits the current branch is ahead of its upstream (0 when no upstream). */
+  /** Commits the current branch is ahead of its upstream. Only meaningful when `upstream` is non-null. */
   ahead: number
-  /** Commits the current branch is behind its upstream (0 when no upstream). */
+  /** Commits the current branch is behind its upstream. Only meaningful when `upstream` is non-null. */
   behind: number
   /**
    * Upstream tracking ref for the current branch (e.g. `"origin/main"`),
