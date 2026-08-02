@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785645677407,
+  "lastUpdate": 1785682633412,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2448,6 +2448,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1248.03,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "06e8022cde8f94f64be70c4dbd77889e691e0986",
+          "message": "fix(atoms): resolve git-dir paths via rev-parse instead of hardcoded .git (#140)\n\n* fix(atoms): resolve git-dir paths via rev-parse instead of hardcoded .git\n\ninstallHook, removeHook, shallowAt, and unshallow joined `.git` onto\nrepo.path directly, which breaks in a linked worktree where `.git` is\na file (gitdir pointer) rather than a directory. Route resolution\nthrough `git rev-parse --git-path` instead, which correctly targets\nthe common dir for shared files and the per-worktree dir otherwise.\nAlso drops the equivalent hardcoded fallback in verifyContracts.ts.\n\n* fix(atoms): route startInteractiveRebase's git-dir check through gitDirPath\n\nstartInteractiveRebase still checked existsSync(join(repo.path, '.git',\n'rebase-merge')) after the rest of the atoms were migrated to\ngitDirPath()/git rev-parse --git-path. On a linked worktree, .git is a\nfile, so this check was always false and the atom threw its \"did not\npause at the edit step\" error even when the rebase paused correctly.\nAdds a regression test on the worktree fixture asserting the rebase\nactually pauses.\n\n---------\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>",
+          "timestamp": "2026-08-02T14:55:26Z",
+          "tree_id": "13e2b11d102a0e4015bde4cce1ec5df9c3446a79",
+          "url": "https://github.com/gfargo/git-scenarios/commit/06e8022cde8f94f64be70c4dbd77889e691e0986"
+        },
+        "date": 1785682632905,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 168.27,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 961.39,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7510.81,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3457.74,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1255.21,
             "unit": "ms"
           }
         ]
