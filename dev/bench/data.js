@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785628893849,
+  "lastUpdate": 1785636067341,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2301,6 +2301,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1148.33,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3ab0ac483858130c37cb1b9ec13d1450467c1f53",
+          "message": "fix(assert): inSyncWithUpstream fails when no upstream configured (#134)\n\n* fix(assert): inSyncWithUpstream fails when no upstream is configured\n\nPreviously, inSyncWithUpstream() would pass silently on a branch\nwith no upstream configured, because both ahead and behind default\nto 0 when git status --porcelain=v1 -b reports no '...' segment.\n\nRoot cause: StatusSnapshot had no way to distinguish 'synced at 0'\nfrom 'no upstream at all'.\n\nFix:\n- Add upstream: string | null to StatusSnapshot (null = no upstream)\n- Parse the upstream ref from the '## branch...upstream' porcelain\n  header in parseStatus()\n- Add a guard in inSyncWithUpstream() that throws RepoAssertionError\n  with a clear message when upstream is null\n- Regenerate etc/index.api.md with the new field\n- Add tests covering: null upstream on a no-remote repo, null for\n  feature-pr-ready, non-null for branch-tracking-upstream; and\n  assert/matcher tests for the pass/fail cases\n\nPotential follow-up: ahead(0)/behind(0) still pass on no-upstream\nbranches (they only check the count, not tracking presence). Out of\nscope for this item.\n\n* fix(assert): address review feedback on inSyncWithUpstream no-upstream tests\n\nAssert on the matcher's result shape directly instead of relying on\nJest's `.not` inversion, which only passes because evaluate() catches\nRepoAssertionError and converts it to `{ pass: false }` — a non-obvious\nside effect that wouldn't surface if that plumbing ever changed.\n\nAlso update the stale ahead/behind JSDoc, which still said \"0 when no\nupstream\" even though `upstream: null` is now the authoritative signal.\n\n---------\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>",
+          "timestamp": "2026-08-02T01:59:19Z",
+          "tree_id": "d97e1cfd216aa440524f2481b9384d002d26ca2a",
+          "url": "https://github.com/gfargo/git-scenarios/commit/3ab0ac483858130c37cb1b9ec13d1450467c1f53"
+        },
+        "date": 1785636066976,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 169.74,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 959.43,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7543.1,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3363.76,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1170.45,
             "unit": "ms"
           }
         ]
