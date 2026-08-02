@@ -6,6 +6,7 @@ import { join } from 'path'
 import { promisify } from 'util'
 import { nextCommitDate } from '../commitClock'
 import { gitForRepo } from './gitEnv'
+import { gitDirPath } from './gitPaths'
 import { requireCommits } from './preconditions'
 import type { Step } from './types'
 
@@ -194,7 +195,7 @@ export function startInteractiveRebase(onto: string): Step {
         // through to the check below to distinguish this from a real error.
       }
 
-      if (!existsSync(join(repo.path, '.git', 'rebase-merge'))) {
+      if (!existsSync(await gitDirPath(repo, 'rebase-merge'))) {
         throw new Error(
           'startInteractiveRebase: .git/rebase-merge/ is absent — the ' +
             'interactive rebase did not pause at the edit step. ' +

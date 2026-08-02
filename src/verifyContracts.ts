@@ -25,7 +25,7 @@
 import type { SimpleGit } from 'simple-git'
 import { access } from 'fs/promises'
 import { constants } from 'fs'
-import { join } from 'path'
+import { isAbsolute, join } from 'path'
 
 import type { TempGitRepo } from './tempGitRepo'
 import type { Scenario } from './scenarios/types'
@@ -551,14 +551,10 @@ const matchers: Matcher[] = [
     pattern: /^\.git\/(?<path>.+?) exists$/,
     check: async (m, _snap, git, repoPath) => {
       const relPath = m.groups!.path
-      // Resolve the actual git dir (handles worktrees)
-      let gitDir: string
-      try {
-        gitDir = (await git.raw(['rev-parse', '--absolute-git-dir'])).trim()
-      } catch {
-        gitDir = join(repoPath, '.git')
-      }
-      const fullPath = join(gitDir, relPath)
+      // `--git-path` routes shared files to the common dir and
+      // per-worktree files to the worktree's own git dir.
+      const resolved = (await git.raw(['rev-parse', '--git-path', relPath])).trim()
+      const fullPath = isAbsolute(resolved) ? resolved : join(repoPath, resolved)
       try {
         await access(fullPath, constants.F_OK)
         return { pass: true, message: `".git/${relPath}" exists.` }
@@ -573,13 +569,10 @@ const matchers: Matcher[] = [
     pattern: /^\.git\/rebase-merge\/git-rebase-todo has at least (?<n>\d+) remaining picks?$/,
     check: async (m, _snap, git, repoPath) => {
       const expected = parseInt(m.groups!.n, 10)
-      let gitDir: string
-      try {
-        gitDir = (await git.raw(['rev-parse', '--absolute-git-dir'])).trim()
-      } catch {
-        gitDir = join(repoPath, '.git')
-      }
-      const todoPath = join(gitDir, 'rebase-merge', 'git-rebase-todo')
+      const resolved = (
+        await git.raw(['rev-parse', '--git-path', 'rebase-merge/git-rebase-todo'])
+      ).trim()
+      const todoPath = isAbsolute(resolved) ? resolved : join(repoPath, resolved)
       try {
         const { readFile: rf } = await import('fs/promises')
         const content = await rf(todoPath, 'utf-8')
