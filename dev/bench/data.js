@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785628704196,
+  "lastUpdate": 1785628893849,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2252,6 +2252,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1144.59,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2363e14512edc81cfe56b14976f7841f6a947bfb",
+          "message": "fix(atoms): make commit() throw when nothing is staged (#135)\n\nPreviously commit() ran `git commit` directly through simple-git's\n.raw(), which resolves (rather than rejects) when there's nothing to\ncommit — producing no commit and no error. commit() now calls a new\nrequireStaged() precondition first, so it fails loudly with an\nInvalidArgumentError. emptyCommit() is unaffected and remains the way\nto make an intentional empty commit.\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>",
+          "timestamp": "2026-08-01T23:59:52Z",
+          "tree_id": "dbf0289d9e469e3ef622dcd87455b746ff169bd5",
+          "url": "https://github.com/gfargo/git-scenarios/commit/2363e14512edc81cfe56b14976f7841f6a947bfb"
+        },
+        "date": 1785628893554,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 168.02,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 951.56,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7432.67,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3329.44,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1148.33,
             "unit": "ms"
           }
         ]
