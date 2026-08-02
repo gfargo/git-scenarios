@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785636067341,
+  "lastUpdate": 1785636737425,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2350,6 +2350,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1170.45,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3949c2424a18ae53d181148624bd8d7056cd54b0",
+          "message": "fix(atoms): make stashChanges throw instead of silently no-op (#137)\n\ngit stash push is a silent no-op when there's nothing to stash (e.g.\nuntracked-only changes without -u), and simple-git doesn't surface\nthat as an error. stashChanges now compares the stash count before\nand after and throws with an actionable message. Also fixes the\ndocstring example, which hit this exact case.\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>",
+          "timestamp": "2026-08-02T02:10:29Z",
+          "tree_id": "3ee8ffe50d98460afa2887e8c06431319dc0a599",
+          "url": "https://github.com/gfargo/git-scenarios/commit/3949c2424a18ae53d181148624bd8d7056cd54b0"
+        },
+        "date": 1785636736679,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 166.81,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 945.09,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7527.92,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3435.48,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1245.73,
             "unit": "ms"
           }
         ]
