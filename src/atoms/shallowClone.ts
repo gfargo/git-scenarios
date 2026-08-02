@@ -17,7 +17,7 @@
  */
 
 import { writeFile } from 'fs/promises'
-import { join } from 'path'
+import { gitDirPath } from './gitPaths'
 import type { Step } from './types'
 
 /**
@@ -41,7 +41,7 @@ export function shallowAt(depth: number): Step {
     // reachable commits (matching `git clone --depth <depth>`).
     const boundaryRef = `HEAD~${depth - 1}`
     const sha = await repo.git.raw(['rev-parse', boundaryRef])
-    const shallowFile = join(repo.path, '.git', 'shallow')
+    const shallowFile = await gitDirPath(repo, 'shallow')
     await writeFile(shallowFile, sha.trim() + '\n')
   }
 }
@@ -54,7 +54,7 @@ export function shallowAt(depth: number): Step {
 export function unshallow(): Step {
   return async (repo) => {
     const { rm } = await import('fs/promises')
-    const shallowFile = join(repo.path, '.git', 'shallow')
+    const shallowFile = await gitDirPath(repo, 'shallow')
     await rm(shallowFile, { force: true })
   }
 }

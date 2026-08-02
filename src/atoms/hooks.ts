@@ -12,6 +12,7 @@
 
 import { chmod, mkdir, writeFile } from 'fs/promises'
 import { join } from 'path'
+import { gitDirPath } from './gitPaths'
 import type { Step } from './types'
 
 /**
@@ -45,7 +46,7 @@ export type GitHookName =
  */
 export function installHook(name: GitHookName, script: string): Step {
   return async (repo) => {
-    const hooksDir = join(repo.path, '.git', 'hooks')
+    const hooksDir = await gitDirPath(repo, 'hooks')
     await mkdir(hooksDir, { recursive: true })
     const hookPath = join(hooksDir, name)
     await writeFile(hookPath, script)
@@ -61,7 +62,7 @@ export function installHook(name: GitHookName, script: string): Step {
 export function removeHook(name: GitHookName): Step {
   return async (repo) => {
     const { rm } = await import('fs/promises')
-    const hookPath = join(repo.path, '.git', 'hooks', name)
+    const hookPath = join(await gitDirPath(repo, 'hooks'), name)
     await rm(hookPath, { force: true })
   }
 }
