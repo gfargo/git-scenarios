@@ -1,10 +1,11 @@
 /**
  * Regression tests for atoms that write directly into the git dir
- * (installHook, shallowAt/unshallow) when the target repo handle is a
- * *linked worktree*. There, `.git` is a file containing `gitdir: <path>`,
- * not a directory — a hardcoded `join(repo.path, '.git', ...)` fails with
- * ENOTDIR. These atoms must resolve the real git dir via
- * `git rev-parse --git-path` instead.
+ * (installHook, shallowAt/unshallow, startInteractiveRebase) when the
+ * target repo handle is a *linked worktree*. There, `.git` is a file
+ * containing `gitdir: <path>`, not a directory — a hardcoded
+ * `join(repo.path, '.git', ...)` fails with ENOTDIR (or, for a plain
+ * existence check, silently reads the wrong location). These atoms must
+ * resolve the real git dir via `git rev-parse --git-path` instead.
  */
 
 import { mkdtemp, rm } from 'fs/promises'
@@ -16,6 +17,7 @@ import { addCommit } from './addCommit'
 import { addWorktree, removeWorktree } from './worktrees'
 import { installHook, removeHook } from './hooks'
 import { shallowAt, unshallow } from './shallowClone'
+import { abortRebase, startInteractiveRebase } from './rebase'
 
 async function withWorktree(
   callback: (repo: TempGitRepo, worktree: TempGitRepo, wtPath: string) => Promise<void>,
@@ -65,6 +67,30 @@ describe('atoms against a linked worktree', () => {
       await unshallow()(worktree)
       const isShallowAfter = await worktree.git.raw(['rev-parse', '--is-shallow-repository'])
       expect(isShallowAfter.trim()).toBe('false')
+    })
+  }, 30_000)
+
+  it('startInteractiveRebase pauses correctly on a linked worktree', async () => {
+    await withWorktree(async (_repo, worktree, wtPath) => {
+      await addCommit({ message: 'second', files: { 'a.ts': 'a\n' } })(worktree)
+      await addCommit({ message: 'third', files: { 'b.ts': 'b\n' } })(worktree)
+
+      // Would previously throw 'did not pause at the edit step' because
+      // the existsSync check looked for `<wtPath>/.git/rebase-merge`,
+      // which never exists for a linked worktree (`.git` is a file
+      // there; the real state lives in the common dir's
+      // `worktrees/<name>/rebase-merge`). If it didn't throw, the test
+      // below independently confirms the rebase actually paused.
+      await startInteractiveRebase('HEAD~2')(worktree)
+
+      const { existsSync } = await import('fs')
+      expect(existsSync(join(wtPath, '.git', 'rebase-merge'))).toBe(false) // the old, broken check
+      const rebaseMergePath = (
+        await worktree.git.raw(['rev-parse', '--git-path', 'rebase-merge'])
+      ).trim()
+      expect(existsSync(rebaseMergePath)).toBe(true) // the real state
+
+      await abortRebase()(worktree)
     })
   }, 30_000)
 
