@@ -313,6 +313,36 @@ describe('stash', () => {
       expect(list.all[1].message).toMatch(/stash-a/)
     })
   })
+
+  it('stashChanges throws instead of silently no-oping on untracked-only changes without includeUntracked', async () => {
+    await withRepo(async (repo) => {
+      await seedMain(repo)
+      await writeFiles({ 'src/foo.ts': 'foo' })(repo)
+      await expect(stashChanges({ message: 'wip' })(repo)).rejects.toThrow(/includeUntracked/i)
+      const list = await repo.git.stashList()
+      expect(list.total).toBe(0)
+      expect(existsSync(join(repo.path, 'src/foo.ts'))).toBe(true)
+    })
+  })
+
+  it('stashChanges throws instead of silently no-oping on a clean worktree', async () => {
+    await withRepo(async (repo) => {
+      await seedMain(repo)
+      await expect(stashChanges({ message: 'wip' })(repo)).rejects.toThrow()
+      const list = await repo.git.stashList()
+      expect(list.total).toBe(0)
+    })
+  })
+
+  it('stashChanges succeeds without includeUntracked when a tracked file is modified', async () => {
+    await withRepo(async (repo) => {
+      await seedMain(repo)
+      await writeFiles({ 'README.md': 'changed' })(repo)
+      await stashChanges({ message: 'wip' })(repo)
+      const list = await repo.git.stashList()
+      expect(list.total).toBe(1)
+    })
+  })
 })
 
 describe('merge operations', () => {
