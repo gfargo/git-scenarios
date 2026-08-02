@@ -187,4 +187,81 @@ describe('assertRepo', () => {
       await expect(assertRepo(repo).onBranch('main')).rejects.toThrow(/detached/)
     })
   })
+
+  describe('inSyncWithUpstream', () => {
+    describe('no-upstream repo', () => {
+      let repo: TempGitRepo
+      beforeAll(async () => {
+        repo = await createTempGitRepo()
+        await repo.writeFile('README.md', '# repo\n')
+        await repo.commitAll('init')
+      })
+      afterAll(async () => {
+        await repo.cleanup()
+      })
+
+      it('throws RepoAssertionError when no upstream is configured', async () => {
+        expect.assertions(3)
+        try {
+          await assertRepo(repo).inSyncWithUpstream()
+        } catch (error) {
+          const e = error as RepoAssertionError
+          expect(e).toBeInstanceOf(RepoAssertionError)
+          expect(e.assertion).toBe('inSyncWithUpstream')
+          expect(e.message).toMatch(/no upstream/i)
+        }
+      })
+
+      it('also throws for feature-pr-ready (branch has commits but no upstream)', async () => {
+        const featureRepo = await spinUpScenario('feature-pr-ready')
+        try {
+          await expect(assertRepo(featureRepo).inSyncWithUpstream()).rejects.toThrow(RepoAssertionError)
+        } finally {
+          await featureRepo.cleanup()
+        }
+      })
+    })
+
+    describe('branch-tracking-upstream (synced)', () => {
+      let repo: TempGitRepo
+      beforeAll(async () => {
+        repo = await spinUpScenario('branch-tracking-upstream')
+      })
+      afterAll(async () => {
+        await repo.cleanup()
+      })
+
+      it('passes when the branch is fully synced with its upstream', async () => {
+        await assertRepo(repo).inSyncWithUpstream()
+      })
+    })
+
+    describe('branch-ahead-of-upstream', () => {
+      let repo: TempGitRepo
+      beforeAll(async () => {
+        repo = await spinUpScenario('branch-ahead-of-upstream')
+      })
+      afterAll(async () => {
+        await repo.cleanup()
+      })
+
+      it('fails when the branch is ahead of its upstream', async () => {
+        await expect(assertRepo(repo).inSyncWithUpstream()).rejects.toThrow(/ahead/)
+      })
+    })
+
+    describe('branch-behind-upstream', () => {
+      let repo: TempGitRepo
+      beforeAll(async () => {
+        repo = await spinUpScenario('branch-behind-upstream')
+      })
+      afterAll(async () => {
+        await repo.cleanup()
+      })
+
+      it('fails when the branch is behind its upstream', async () => {
+        await expect(assertRepo(repo).inSyncWithUpstream()).rejects.toThrow(/behind/)
+      })
+    })
+  })
 })

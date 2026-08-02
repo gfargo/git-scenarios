@@ -627,6 +627,7 @@ export type StatusSnapshot = {
     untracked: string[];
     ahead: number;
     behind: number;
+    upstream: string | null;
 };
 
 // @public

@@ -158,4 +158,45 @@ describe('expect matchers', () => {
       await expect(repo).not.toBeBehindOf('v0', 3)
     })
   })
+
+  describe('toBeInSyncWithUpstream', () => {
+    it('fails for a repo with no upstream configured', async () => {
+      const repo = await createTempGitRepo()
+      try {
+        await repo.writeFile('README.md', '# repo\n')
+        await repo.commitAll('init')
+        await expect(expect(repo).toBeInSyncWithUpstream()).rejects.toThrow(/no upstream/i)
+        // Call the matcher directly and assert on its result shape instead of
+        // going through Jest's `.not` inversion, which only reports a pass
+        // here because `evaluate()` catches `RepoAssertionError` and turns it
+        // into `{ pass: false }` — a non-obvious side effect of that plumbing
+        // that `.not` alone wouldn't surface if it ever changed.
+        const result = await matchers.toBeInSyncWithUpstream(repo)
+        expect(result.pass).toBe(false)
+        expect(result.message()).toMatch(/no upstream/i)
+      } finally {
+        await repo.cleanup()
+      }
+    })
+
+    it('fails for feature-pr-ready (clean branch but no upstream)', async () => {
+      const repo = await spinUpScenario('feature-pr-ready')
+      try {
+        const result = await matchers.toBeInSyncWithUpstream(repo)
+        expect(result.pass).toBe(false)
+        expect(result.message()).toMatch(/no upstream/i)
+      } finally {
+        await repo.cleanup()
+      }
+    })
+
+    it('passes for branch-tracking-upstream (synced)', async () => {
+      const repo = await spinUpScenario('branch-tracking-upstream')
+      try {
+        await expect(repo).toBeInSyncWithUpstream()
+      } finally {
+        await repo.cleanup()
+      }
+    })
+  })
 })
