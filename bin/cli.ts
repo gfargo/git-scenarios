@@ -23,7 +23,7 @@
  */
 
 import { spawnSync } from 'node:child_process'
-import { readdirSync, rmSync, statSync, writeFileSync } from 'node:fs'
+import { cpSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import * as path from 'node:path'
 import { emitKeypressEvents } from 'node:readline'
@@ -607,6 +607,28 @@ async function commandDiff(
   return 0
 }
 
+/**
+ * Move a directory, falling back to copy+remove when `renameSync` can't
+ * do an atomic rename across filesystems (EXDEV — e.g. a temp dir and
+ * the requested `--path` living on different volumes on CI/Windows).
+ *
+ * Note: unlike GNU `mv`, this does not nest `from` inside `to` when `to`
+ * already exists as a directory — `renameSync` replaces an empty `to`, or
+ * throws `ENOTEMPTY`/`EEXIST` for a non-empty one. That matches the `--path`
+ * contract ("materialize the scenario at <dir>") better than nesting would.
+ */
+export function moveDir(from: string, to: string): void {
+  try {
+    renameSync(from, to)
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'EXDEV') {
+      throw error
+    }
+    cpSync(from, to, { recursive: true })
+    rmSync(from, { recursive: true, force: true })
+  }
+}
+
 async function commandCreate(
   name: string,
   options: {
@@ -651,9 +673,14 @@ async function commandCreate(
     const target = path.resolve(options.targetPath)
     // Plain rename keeps the worktree state intact and is what manual
     // testers expect when they say "put this scenario at ~/sandbox".
-    const renameResult = spawnSync('mv', [repo.path, target])
-    if (renameResult.status !== 0) {
-      console.error(`Failed to move scenario to ${target}`)
+    try {
+      moveDir(repo.path, target)
+    } catch (error) {
+      const code = (error as NodeJS.ErrnoException).code
+      const reason = code === 'ENOTEMPTY' || code === 'EEXIST'
+        ? 'the target directory already exists and is not empty'
+        : (error as Error).message
+      console.error(`Failed to move scenario to ${target}: ${reason}`)
       await repo.cleanup()
       return 1
     }
