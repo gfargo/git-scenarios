@@ -139,6 +139,25 @@ describe('moveDir (cross-platform replacement for spawnSync("mv"))', () => {
       rmSync(dest, { recursive: true, force: true })
     }
   })
+
+  // Unlike GNU `mv`, which nests `from` inside an existing `to` directory,
+  // `renameSync` refuses a non-empty `to` — this matches the --path
+  // contract ("materialize the scenario at <dir>") better than nesting.
+  it('throws when the destination already exists and is not empty', () => {
+    const src = mkdtempSync(join(tmpdir(), 'git-scenarios-movedir-nonempty-src-'))
+    const dest = mkdtempSync(join(tmpdir(), 'git-scenarios-movedir-nonempty-dest-'))
+    writeFileSync(join(src, 'file.txt'), 'hello\n')
+    writeFileSync(join(dest, 'existing.txt'), 'already here\n')
+
+    try {
+      expect(() => moveDir(src, dest)).toThrow()
+      expect(existsSync(src)).toBe(true)
+      expect(existsSync(join(dest, 'existing.txt'))).toBe(true)
+    } finally {
+      rmSync(src, { recursive: true, force: true })
+      rmSync(dest, { recursive: true, force: true })
+    }
+  })
 })
 
 describe('parseGitVersion', () => {

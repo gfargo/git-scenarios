@@ -611,6 +611,11 @@ async function commandDiff(
  * Move a directory, falling back to copy+remove when `renameSync` can't
  * do an atomic rename across filesystems (EXDEV — e.g. a temp dir and
  * the requested `--path` living on different volumes on CI/Windows).
+ *
+ * Note: unlike GNU `mv`, this does not nest `from` inside `to` when `to`
+ * already exists as a directory — `renameSync` replaces an empty `to`, or
+ * throws `ENOTEMPTY`/`EEXIST` for a non-empty one. That matches the `--path`
+ * contract ("materialize the scenario at <dir>") better than nesting would.
  */
 export function moveDir(from: string, to: string): void {
   try {
@@ -670,8 +675,12 @@ async function commandCreate(
     // testers expect when they say "put this scenario at ~/sandbox".
     try {
       moveDir(repo.path, target)
-    } catch {
-      console.error(`Failed to move scenario to ${target}`)
+    } catch (error) {
+      const code = (error as NodeJS.ErrnoException).code
+      const reason = code === 'ENOTEMPTY' || code === 'EEXIST'
+        ? 'the target directory already exists and is not empty'
+        : (error as Error).message
+      console.error(`Failed to move scenario to ${target}: ${reason}`)
       await repo.cleanup()
       return 1
     }
