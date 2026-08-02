@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785636737425,
+  "lastUpdate": 1785645677407,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2399,6 +2399,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1245.73,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "294710345+gfargo-horizon-agent[bot]@users.noreply.github.com",
+            "name": "gfargo-horizon-agent[bot]",
+            "username": "gfargo-horizon-agent[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "16ed00611bff12acdd4870fd12b2c1ed9451c413",
+          "message": "fix(cli): replace spawnSync('mv') with cross-platform fs move for create --path (#138)\n\n* fix(cli): replace spawnSync('mv') with cross-platform fs move for create --path\n\ngit-scenarios create --path <dir> shelled out to the POSIX mv binary, which\ndoesn't exist on Windows. Move via fs.renameSync, falling back to cpSync +\nrmSync on EXDEV (cross-device rename, e.g. temp dir and target on different\nvolumes on CI/Windows).\n\n* fix(cli): document and surface moveDir's non-nesting semantics\n\nrenameSync doesn't nest into a pre-existing target directory the way\nGNU mv does — it replaces an empty dir or throws ENOTEMPTY/EEXIST for\na non-empty one. Document that this is intentional (it matches the\n--path contract of materializing the scenario at <dir> rather than\ninside it), surface a clear error message instead of a generic\n\"Failed to move\" when the target isn't empty, and add a regression\ntest plus a README note.\n\n---------\n\nCo-authored-by: gfargo-horizon-agent[bot] <294710345+gfargo-horizon-agent[bot]@users.noreply.github.com>",
+          "timestamp": "2026-08-02T04:39:21Z",
+          "tree_id": "8a1a6801ad820a1c01e7ff1a47792deca7da9baf",
+          "url": "https://github.com/gfargo/git-scenarios/commit/16ed00611bff12acdd4870fd12b2c1ed9451c413"
+        },
+        "date": 1785645676552,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 169.19,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 959.17,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7551.53,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3422.06,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1248.03,
             "unit": "ms"
           }
         ]
