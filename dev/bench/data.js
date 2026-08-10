@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786403949808,
+  "lastUpdate": 1786405996655,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2546,6 +2546,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1237.97,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "87b2468170590d56d533a8311d92ef942153bd1d",
+          "message": "Merge pull request #142 from gfargo/feat/www-i18n-string-extraction\n\nwww: extract hardcoded UI strings into i18n translation dictionary",
+          "timestamp": "2026-08-10T19:51:35-04:00",
+          "tree_id": "af1439158f81cdf4b6495643d27deaf72ac83e5f",
+          "url": "https://github.com/gfargo/git-scenarios/commit/87b2468170590d56d533a8311d92ef942153bd1d"
+        },
+        "date": 1786405996173,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 168.18,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 950.07,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7340.41,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3386.69,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1217.8,
             "unit": "ms"
           }
         ]
