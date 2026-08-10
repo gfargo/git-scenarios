@@ -18,11 +18,15 @@
  * Vermilion redline accent — the color of editor's marks on a print.
  */
 
-/* ─── Type tokens ─── */
+/* ─── Type tokens ───
+ * 'Noto Sans SC' sits ahead of the generic fallbacks in each stack so
+ * CJK glyphs (missing from Bricolage/Newsreader/DM Mono) render
+ * consistently instead of falling back to whatever the OS picks.
+ */
 :root {
-  --gs-display: 'Bricolage Grotesque', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
-  --gs-body: 'Newsreader', 'Iowan Old Style', 'Times New Roman', Georgia, serif;
-  --gs-mono: 'DM Mono', 'JetBrains Mono', ui-monospace, 'SF Mono', Consolas, monospace;
+  --gs-display: 'Bricolage Grotesque', 'Noto Sans SC', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+  --gs-body: 'Newsreader', 'Noto Sans SC', 'Iowan Old Style', 'Times New Roman', Georgia, serif;
+  --gs-mono: 'DM Mono', 'Noto Sans SC', 'JetBrains Mono', ui-monospace, 'SF Mono', Consolas, monospace;
 }
 
 /* ─── Dark theme — graphite drafting board ─── */
