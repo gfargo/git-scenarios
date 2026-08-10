@@ -10,15 +10,13 @@
  * Pure SVG, animates on first paint via stroke-dash and fade-up.
  * Sized for a 720x460 viewBox to fit naturally in 64rem column.
  */
+const { t } = Astro.locals
 ---
 
 <figure class="dgm-pipeline">
   <figcaption class="dgm-pipeline__caption">
     <span class="dgm-pipeline__fig">FIG. 02</span>
-    <span class="dgm-pipeline__caption-text">
-      Two output modes: <code>spinUpScenario</code> for real repos on disk,
-      <code>mockFromScenario</code> for typed in-memory mocks.
-    </span>
+    <span class="dgm-pipeline__caption-text" set:html={t('diagramPipeline.caption')} />
   </figcaption>
 
   <div class="dgm-pipeline__frame">
@@ -27,7 +25,7 @@
       viewBox="0 0 720 460"
       xmlns="http://www.w3.org/2000/svg"
       role="img"
-      aria-label="Pipeline diagram showing two paths: spinUpScenario produces a real temp git repo, mockFromScenario produces typed in-memory mock objects"
+      aria-label={t('diagramPipeline.ariaLabel')}
     >
       <defs>
         <marker id="dgm-pipe-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
@@ -41,7 +39,7 @@
       <!-- ░░░ Stage 1: Input — the call site ░░░ -->
       <g class="dgm-stage" style="--d:0.05s">
         <text x="20" y="32" class="dgm-stage__num">01</text>
-        <text x="20" y="48" class="dgm-stage__lbl">CALL SITE</text>
+        <text x="20" y="48" class="dgm-stage__lbl">{t('diagramPipeline.callSite')}</text>
         <rect x="20" y="62" width="170" height="68" rx="2"
               fill="var(--gs-paper)" stroke="var(--gs-cyan)" stroke-width="1.5"/>
         <text x="30" y="86" class="dgm-stage__code">await</text>
@@ -59,12 +57,12 @@
       <!-- ░░░ Stage 2: Registry lookup ░░░ -->
       <g class="dgm-stage" style="--d:0.42s">
         <text x="248" y="32" class="dgm-stage__num">02</text>
-        <text x="248" y="48" class="dgm-stage__lbl">RESOLVE</text>
+        <text x="248" y="48" class="dgm-stage__lbl">{t('diagramPipeline.resolve')}</text>
         <rect x="248" y="62" width="170" height="68" rx="2"
               fill="var(--gs-paper)" stroke="var(--gs-cyan)" stroke-width="1.5"/>
-        <text x="334" y="84" text-anchor="middle" class="dgm-stage__title">scenario&nbsp;registry</text>
+        <text x="334" y="84" text-anchor="middle" class="dgm-stage__title">{t('diagramPipeline.scenarioRegistry')}</text>
         <text x="334" y="102" text-anchor="middle" class="dgm-stage__sub">findRegistered(name)</text>
-        <text x="334" y="120" text-anchor="middle" class="dgm-stage__hint">[ 46 built‑in + N custom ]</text>
+        <text x="334" y="120" text-anchor="middle" class="dgm-stage__hint">{t('diagramPipeline.builtinCustomHint')}</text>
       </g>
 
       <!-- ─→ Pipe 2 (real path continues right) -->
@@ -76,7 +74,7 @@
       <!-- ░░░ Stage 3: Compose + write (real path) ░░░ -->
       <g class="dgm-stage" style="--d:0.8s">
         <text x="476" y="32" class="dgm-stage__num">03</text>
-        <text x="476" y="48" class="dgm-stage__lbl">EXECUTE</text>
+        <text x="476" y="48" class="dgm-stage__lbl">{t('diagramPipeline.execute')}</text>
         <rect x="476" y="62" width="220" height="68" rx="2"
               fill="var(--gs-paper)" stroke="var(--gs-cyan)" stroke-width="1.5"/>
         <text x="586" y="84" text-anchor="middle" class="dgm-stage__title">scenario.setup(repo)</text>
@@ -93,7 +91,7 @@
       <!-- ░░░ Stage 4: The real on-disk repo (output) ░░░ -->
       <g class="dgm-stage" style="--d:1.18s">
         <text x="380" y="186" class="dgm-stage__num dgm-stage__num--vermilion">04</text>
-        <text x="380" y="202" class="dgm-stage__lbl dgm-stage__lbl--vermilion">RESULT &mdash; ON DISK</text>
+        <text x="380" y="202" class="dgm-stage__lbl dgm-stage__lbl--vermilion">{t('diagramPipeline.resultOnDisk')}</text>
         <rect x="380" y="216" width="280" height="100" rx="2"
               fill="var(--gs-vermilion-low)" stroke="var(--gs-vermilion)" stroke-width="1.5"/>
 
@@ -109,7 +107,7 @@
       <!-- ░░░ Side note: the return value ░░░ -->
       <g class="dgm-stage" style="--d:1.32s">
         <text x="20" y="186" class="dgm-stage__num">←</text>
-        <text x="40" y="186" class="dgm-stage__lbl">RETURNS</text>
+        <text x="40" y="186" class="dgm-stage__lbl">{t('diagramPipeline.returns')}</text>
         <rect x="20" y="200" width="290" height="116" rx="2"
               fill="var(--gs-paper)" stroke="var(--gs-cyan)" stroke-width="1.5"
               stroke-dasharray="3 3"/>
@@ -136,18 +134,18 @@
 
       <!-- Branch annotation label -->
       <g class="dgm-stage" style="--d:1.6s">
-        <text x="340" y="150" class="dgm-stage__lbl dgm-stage__lbl--emerald">MOCK PATH</text>
+        <text x="340" y="150" class="dgm-stage__lbl dgm-stage__lbl--emerald">{t('diagramPipeline.mockPath')}</text>
       </g>
 
       <!-- ░░░ Stage M1: Parse contracts (mock path) ░░░ -->
       <g class="dgm-stage" style="--d:1.72s">
         <text x="20" y="340" class="dgm-stage__num dgm-stage__num--emerald">M1</text>
-        <text x="20" y="356" class="dgm-stage__lbl dgm-stage__lbl--emerald">PARSE CONTRACTS</text>
+        <text x="20" y="356" class="dgm-stage__lbl dgm-stage__lbl--emerald">{t('diagramPipeline.parseContracts')}</text>
         <rect x="20" y="368" width="230" height="56" rx="2"
               fill="var(--gs-paper)" stroke="var(--gs-emerald)" stroke-width="1.5"
               stroke-dasharray="5 3"/>
         <text x="135" y="390" text-anchor="middle" class="dgm-stage__title dgm-stage__title--emerald">mockFromScenario(name)</text>
-        <text x="135" y="408" text-anchor="middle" class="dgm-stage__sub dgm-stage__sub--emerald">parse contracts → typed objects</text>
+        <text x="135" y="408" text-anchor="middle" class="dgm-stage__sub dgm-stage__sub--emerald">{t('diagramPipeline.parseContractsHint')}</text>
       </g>
 
       <!-- ─↓ Pipe: from RESOLVE down through gap, then left to M1 -->
@@ -167,7 +165,7 @@
       <!-- ░░░ Stage M2: Mock result — in-memory objects ░░░ -->
       <g class="dgm-stage" style="--d:2.0s">
         <text x="298" y="340" class="dgm-stage__num dgm-stage__num--emerald">M2</text>
-        <text x="298" y="356" class="dgm-stage__lbl dgm-stage__lbl--emerald">RESULT &mdash; IN MEMORY</text>
+        <text x="298" y="356" class="dgm-stage__lbl dgm-stage__lbl--emerald">{t('diagramPipeline.resultInMemory')}</text>
         <rect x="298" y="368" width="400" height="80" rx="2"
               fill="rgba(74, 222, 128, 0.05)" stroke="var(--gs-emerald)" stroke-width="1.5"
               stroke-dasharray="5 3"/>
@@ -182,7 +180,7 @@
         <text x="585" y="430" class="dgm-stage__code dgm-stage__code--key-emerald">branches:</text>
         <text x="658" y="430" class="dgm-stage__code dgm-stage__code--dim">BranchSummary</text>
 
-        <text x="313" y="444" class="dgm-stage__hint dgm-stage__hint--emerald">no disk I/O · no simple-git runtime · &lt;1ms</text>
+        <text x="313" y="444" class="dgm-stage__hint dgm-stage__hint--emerald">{t('diagramPipeline.noDiskIoHint')}</text>
       </g>
     </svg>
   </div>

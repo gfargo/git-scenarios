@@ -8,16 +8,13 @@
  * 4-up grid of "tags" — each labeled with the operation, its state
  * file, and the scenario that produces it.
  */
+const { t } = Astro.locals
 ---
 
 <figure class="dgm-conflicts">
   <figcaption class="dgm-conflicts__caption">
     <span class="dgm-conflicts__fig">FIG. 03</span>
-    <span class="dgm-conflicts__caption-text">
-      Four mid&#8209;operation states &mdash; each leaves a distinct
-      <code>.git/</code> marker file. <em>git&#8209;scenarios</em>
-      produces all four deterministically.
-    </span>
+    <span class="dgm-conflicts__caption-text" set:html={t('diagramConflicts.caption')} />
   </figcaption>
 
   <div class="dgm-conflicts__grid">
@@ -27,8 +24,8 @@
         <span class="dgm-tag__op">merge</span>
       </header>
       <code class="dgm-tag__file">.git/MERGE_HEAD</code>
-      <p class="dgm-tag__desc">Two branches edit the same line. Merge halts; conflict markers in worktree.</p>
-      <code class="dgm-tag__scenario">mid-merge-conflict</code>
+      <p class="dgm-tag__desc" set:html={t('diagramConflicts.descMerge')} />
+      <code class="dgm-tag__scenario" data-produced-by={t('diagramConflicts.producedByLabel')}>mid-merge-conflict</code>
     </article>
 
     <article class="dgm-tag" style="--d:0.08s">
@@ -37,8 +34,8 @@
         <span class="dgm-tag__op">rebase</span>
       </header>
       <code class="dgm-tag__file">.git/rebase-merge/</code>
-      <p class="dgm-tag__desc">Replay halts on a conflict. <code>REBASE_HEAD</code> set; resume with <code>--continue</code>.</p>
-      <code class="dgm-tag__scenario">mid-rebase-conflict</code>
+      <p class="dgm-tag__desc" set:html={t('diagramConflicts.descRebase')} />
+      <code class="dgm-tag__scenario" data-produced-by={t('diagramConflicts.producedByLabel')}>mid-rebase-conflict</code>
     </article>
 
     <article class="dgm-tag" style="--d:0.16s">
@@ -47,8 +44,8 @@
         <span class="dgm-tag__op">cherry&#8209;pick</span>
       </header>
       <code class="dgm-tag__file">.git/CHERRY_PICK_HEAD</code>
-      <p class="dgm-tag__desc">Pick from another branch conflicts. Worktree shows both sides.</p>
-      <code class="dgm-tag__scenario">mid-cherry-pick-conflict</code>
+      <p class="dgm-tag__desc" set:html={t('diagramConflicts.descCherryPick')} />
+      <code class="dgm-tag__scenario" data-produced-by={t('diagramConflicts.producedByLabel')}>mid-cherry-pick-conflict</code>
     </article>
 
     <article class="dgm-tag" style="--d:0.24s">
@@ -57,8 +54,8 @@
         <span class="dgm-tag__op">revert</span>
       </header>
       <code class="dgm-tag__file">.git/REVERT_HEAD</code>
-      <p class="dgm-tag__desc">Reverting a commit conflicts with later changes. Distinct UI state.</p>
-      <code class="dgm-tag__scenario">mid-revert-conflict</code>
+      <p class="dgm-tag__desc" set:html={t('diagramConflicts.descRevert')} />
+      <code class="dgm-tag__scenario" data-produced-by={t('diagramConflicts.producedByLabel')}>mid-revert-conflict</code>
     </article>
   </div>
 </figure>
@@ -212,7 +209,7 @@
   }
 
   .dgm-tag__scenario::before {
-    content: 'produced by ';
+    content: attr(data-produced-by);
     color: var(--gs-graphite);
     text-transform: uppercase;
     letter-spacing: 0.12em;

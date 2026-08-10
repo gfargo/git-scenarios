@@ -21,9 +21,13 @@ const rootPkg = JSON.parse(
   readFileSync(resolve(process.cwd(), '..', 'package.json'), 'utf-8')
 );
 const version = rootPkg.version;
+
+const { locale } = Astro.locals.starlightRoute
+const { t } = Astro.locals
+const withLocale = (path: string) => (locale ? `/${locale}${path}` : path)
 ---
 
-<section class="dr-hero" aria-label="Introduction">
+<section class="dr-hero" aria-label={t('hero.sectionAriaLabel')}>
   <!-- Outer drawing border with corner crosshairs -->
   <div class="dr-frame">
     <span class="dr-corner dr-corner--tl" aria-hidden="true"></span>
@@ -38,27 +42,27 @@ const version = rootPkg.version;
          page identity visually. -->
     <header class="dr-titleblock">
       <div class="dr-titleblock__cell dr-titleblock__cell--title">
-        <span class="dr-label">Package</span>
+        <span class="dr-label">{t('hero.labelPackage')}</span>
         <h1 class="dr-title">git&#8209;scenarios</h1>
       </div>
       <div class="dr-titleblock__cell">
-        <span class="dr-label">Version</span>
+        <span class="dr-label">{t('hero.labelVersion')}</span>
         <span class="dr-value dr-value--accent">v{version}</span>
       </div>
       <div class="dr-titleblock__cell">
-        <span class="dr-label">Output</span>
+        <span class="dr-label">{t('hero.labelOutput')}</span>
         <span class="dr-value">ESM + CJS</span>
       </div>
       <div class="dr-titleblock__cell">
-        <span class="dr-label">Runtime</span>
+        <span class="dr-label">{t('hero.labelRuntime')}</span>
         <span class="dr-value">Node ≥22</span>
       </div>
       <div class="dr-titleblock__cell">
-        <span class="dr-label">Peer dep</span>
+        <span class="dr-label">{t('hero.labelPeerDep')}</span>
         <span class="dr-value">simple-git ^3</span>
       </div>
       <div class="dr-titleblock__cell dr-titleblock__cell--scale">
-        <span class="dr-label">Author</span>
+        <span class="dr-label">{t('hero.labelAuthor')}</span>
         <span class="dr-value">gfargo</span>
       </div>
     </header>
@@ -68,27 +72,28 @@ const version = rootPkg.version;
       <!-- Left column: headline lockup -->
       <div class="dr-headline">
         <div class="dr-headline__top">
-          <span class="dr-badge">composable git fixtures</span>
+          <span class="dr-badge">{t('hero.badge')}</span>
         </div>
 
         <h2 class="dr-display">
-          <span class="dr-display__line">Real repos.</span>
-          <span class="dr-display__line"><em>Mock objects.</em></span>
-          <span class="dr-display__line">Any git&nbsp;state.</span>
+          <span class="dr-display__line">{t('hero.headline1')}</span>
+          <span class="dr-display__line"><em>{t('hero.headline2')}</em></span>
+          <span class="dr-display__line">{t('hero.headline3')}</span>
         </h2>
 
         <p class="dr-lede">
-          Deterministic fixtures for merge conflicts, submodules,
-          multiple remotes, in&#8209;progress operations, monorepos,
-          and&nbsp;more — plus in&#8209;memory mock factories for
-          blazing&#8209;fast unit&nbsp;tests. Real repos or typed mocks,
-          one&nbsp;line&nbsp;each.
+          {t('hero.lede')}
         </p>
 
         <div class="dr-install">
           <span class="dr-install__prompt">$</span>
           <code class="dr-install__cmd">npm i -D @gfargo/git-scenarios simple-git</code>
-          <button class="dr-install__copy" data-copy="npm install --save-dev @gfargo/git-scenarios simple-git" aria-label="Copy install command">
+          <button
+            class="dr-install__copy"
+            data-copy="npm install --save-dev @gfargo/git-scenarios simple-git"
+            aria-label={t('hero.copyInstallAriaLabel')}
+            style={`--copied-label: '${t('hero.copiedLabel')}'`}
+          >
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
               <rect x="4" y="4" width="9" height="9" rx="1.5"/>
               <path d="M3 11V3.5A1.5 1.5 0 0 1 4.5 2H11"/>
@@ -97,11 +102,11 @@ const version = rootPkg.version;
         </div>
 
         <div class="dr-actions">
-          <a class="dr-action dr-action--primary" href="/docs/quick-start">
-            Get started <span aria-hidden="true">→</span>
+          <a class="dr-action dr-action--primary" href={withLocale('/docs/quick-start')}>
+            {t('hero.getStarted')} <span aria-hidden="true">→</span>
           </a>
           <a class="dr-action dr-action--ghost" href="https://github.com/gfargo/git-scenarios">
-            View source <span aria-hidden="true">↗</span>
+            {t('hero.viewSource')} <span aria-hidden="true">↗</span>
           </a>
         </div>
       </div>
@@ -113,7 +118,7 @@ const version = rootPkg.version;
           viewBox="0 0 360 380"
           xmlns="http://www.w3.org/2000/svg"
           role="img"
-          aria-label="Schematic showing how git-scenarios composes atoms into scenarios into the public API"
+          aria-label={t('hero.schematicAriaLabel')}
         >
           <defs>
             <!-- Arrowhead for pipe flow -->
@@ -158,7 +163,7 @@ const version = rootPkg.version;
             <text x="180" y="63" text-anchor="middle"
                   class="dr-schematic__label-mono">spinUpScenario(name)</text>
             <text x="180" y="78" text-anchor="middle"
-                  class="dr-schematic__label-small">PUBLIC API</text>
+                  class="dr-schematic__label-small">{t('hero.svgPublicApi')}</text>
           </g>
 
           <!-- Pipe down from API to Scenarios -->
@@ -180,9 +185,9 @@ const version = rootPkg.version;
                   stroke-width="1.5"
                   class="dr-schematic__rect"/>
             <text x="180" y="158" text-anchor="middle"
-                  class="dr-schematic__label-mono">46 named scenarios</text>
+                  class="dr-schematic__label-mono">{t('hero.svgScenarioCount')}</text>
             <text x="180" y="175" text-anchor="middle"
-                  class="dr-schematic__label-small">SCENARIO REGISTRY</text>
+                  class="dr-schematic__label-small">{t('hero.svgScenarioRegistry')}</text>
             <!-- Sub-divisions inside the scenario block -->
             <line x1="100" y1="135" x2="100" y2="195" stroke="var(--gs-rule-strong)" stroke-width="0.5" stroke-dasharray="2 3"/>
             <line x1="180" y1="135" x2="180" y2="195" stroke="var(--gs-rule-strong)" stroke-width="0.5" stroke-dasharray="2 3"/>
@@ -224,7 +229,7 @@ const version = rootPkg.version;
           </g>
 
           <!-- Atom layer label -->
-          <text x="180" y="298" text-anchor="middle" class="dr-schematic__label-small dr-schematic__label-small--strong">60+ COMPOSABLE ATOMS</text>
+          <text x="180" y="298" text-anchor="middle" class="dr-schematic__label-small dr-schematic__label-small--strong">{t('hero.svgComposableAtoms')}</text>
 
           <!-- Numbered callout balloons (right side, pointing at each layer) -->
           <g class="dr-callout" style="--d: 1.0s">
@@ -262,14 +267,14 @@ const version = rootPkg.version;
                   marker-start="url(#tick)" marker-end="url(#tick)"/>
             <text x="9" y="170" text-anchor="middle"
                   transform="rotate(-90 9 170)"
-                  class="dr-schematic__dim">3 LAYERS</text>
+                  class="dr-schematic__dim">{t('hero.svgLayerCount')}</text>
           </g>
 
           <!-- Bottom legend -->
           <g class="dr-legend" style="--d: 1.45s">
             <text x="20" y="335" class="dr-schematic__legend-key">FIG. 01</text>
-            <text x="68" y="335" class="dr-schematic__legend-text">Composition diagram — atoms compose into scenarios; the public</text>
-            <text x="20" y="350" class="dr-schematic__legend-text">API and CLI consume the registry. Same shape every test run.</text>
+            <text x="68" y="335" class="dr-schematic__legend-text">{t('hero.svgLegendLine1')}</text>
+            <text x="20" y="350" class="dr-schematic__legend-text">{t('hero.svgLegendLine2')}</text>
           </g>
         </svg>
       </figure>
@@ -279,27 +284,27 @@ const version = rootPkg.version;
     <footer class="dr-specs mt-0">
       <div class="dr-spec">
         <span class="dr-spec__num">46</span>
-        <span class="dr-spec__lbl">scenarios</span>
+        <span class="dr-spec__lbl">{t('hero.specScenarios')}</span>
       </div>
       <div class="dr-spec">
         <span class="dr-spec__num">60+</span>
-        <span class="dr-spec__lbl">composable atoms</span>
+        <span class="dr-spec__lbl">{t('hero.specComposableAtoms')}</span>
       </div>
       <div class="dr-spec">
         <span class="dr-spec__num">7</span>
-        <span class="dr-spec__lbl">test runner adapters</span>
+        <span class="dr-spec__lbl">{t('hero.specTestRunnerAdapters')}</span>
       </div>
       <div class="dr-spec">
         <span class="dr-spec__num">4</span>
-        <span class="dr-spec__lbl">mock factories</span>
+        <span class="dr-spec__lbl">{t('hero.specMockFactories')}</span>
       </div>
       <div class="dr-spec">
         <span class="dr-spec__num">22+</span>
-        <span class="dr-spec__lbl">supported node</span>
+        <span class="dr-spec__lbl">{t('hero.specSupportedNode')}</span>
       </div>
       <div class="dr-spec">
         <span class="dr-spec__num">MIT</span>
-        <span class="dr-spec__lbl">license</span>
+        <span class="dr-spec__lbl">{t('hero.specLicense')}</span>
       </div>
     </footer>
   </div>
@@ -620,7 +625,7 @@ const version = rootPkg.version;
   }
 
   .dr-install__copy.is-copied::after {
-    content: ' OK';
+    content: var(--copied-label, ' OK');
     margin-left: 0.3rem;
     font-family: var(--gs-mono);
     font-size: 0.7rem;

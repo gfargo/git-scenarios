@@ -22,6 +22,23 @@ const orderedKinds = [
   ...kindOrder.filter((k) => kinds.includes(k)),
   ...kinds.filter((k) => !kindOrder.includes(k)),
 ]
+
+const { t } = Astro.locals
+
+// Strings needed by the client-side <script> (which has no access to
+// Astro.locals.t at runtime) are serialized into a JSON island below.
+const clientI18n = {
+  hash: t('playground.detailHash'),
+  refs: t('playground.detailRefs'),
+  subject: t('playground.detailSubject'),
+  author: t('playground.detailAuthor'),
+  date: t('playground.detailDate'),
+  parents: t('playground.detailParents'),
+  clickToCopy: t('playground.clickToCopy'),
+  copied: t('playground.copied'),
+  commitLabelOne: t('playground.commitLabel', { count: 1 }),
+  commitLabelOther: t('playground.commitLabel', { count: 2 }),
+}
 ---
 
 <div class="pg" id="pg-root">
@@ -31,20 +48,20 @@ const orderedKinds = [
       <input
         type="search"
         id="pg-search"
-        placeholder="Filter scenarios…"
+        placeholder={t('playground.searchPlaceholder')}
         autocomplete="off"
         spellcheck="false"
       />
     </div>
 
     <div class="pg-kind-pills" id="pg-kind-pills">
-      <button class="pg-kind-pill active" data-kind="" type="button">all</button>
+      <button class="pg-kind-pill active" data-kind="" type="button">{t('playground.allKindsPill')}</button>
       {orderedKinds.map((k) => (
         <button class={`pg-kind-pill`} data-kind={k} type="button">{k}</button>
       ))}
     </div>
 
-    <ul class="pg-list" id="pg-list" role="listbox" aria-label="Scenarios">
+    <ul class="pg-list" id="pg-list" role="listbox" aria-label={t('playground.scenariosAriaLabel')}>
       {scenarios.map((s) => (
         <li
           class="pg-list-item"
@@ -63,7 +80,7 @@ const orderedKinds = [
     </ul>
 
     <div class="pg-list-count">
-      <span id="pg-list-count">{scenarios.length}</span> of {scenarios.length} scenarios
+      <span id="pg-list-count">{scenarios.length}</span> {t('playground.resultCountSuffix', { total: scenarios.length })}
     </div>
   </aside>
 
@@ -71,11 +88,10 @@ const orderedKinds = [
   <div class="pg-content">
     <div class="pg-welcome" id="pg-welcome">
       <div class="pg-welcome-inner">
-        <span class="pg-welcome-label">playground</span>
-        <p class="pg-welcome-text">Select a scenario from the list to see its commit graph.</p>
+        <span class="pg-welcome-label">{t('playground.welcomeLabel')}</span>
+        <p class="pg-welcome-text">{t('playground.welcomeText')}</p>
         <p class="pg-welcome-hint">
-          Hover a commit node to inspect its details. Copy the short hash with a click.
-          Deep-link to any graph via <code>#scenario=&lt;name&gt;</code> in the URL.
+          {t('playground.welcomeHintPrefix')} <code>#scenario=&lt;name&gt;</code> {t('playground.welcomeHintSuffix')}
         </p>
       </div>
     </div>
@@ -91,7 +107,7 @@ const orderedKinds = [
             id="pg-svg"
             xmlns="http://www.w3.org/2000/svg"
             class="pg-svg"
-            aria-label="Commit graph"
+            aria-label={t('playground.commitGraphAriaLabel')}
           ></svg>
         </div>
 
@@ -101,15 +117,16 @@ const orderedKinds = [
       </div>
 
       <div class="pg-empty-graph" id="pg-empty-graph" hidden>
-        <span class="pg-empty-label">empty repository</span>
-        <p>This scenario has no commits — HEAD is unborn.</p>
+        <span class="pg-empty-label">{t('playground.emptyRepoLabel')}</span>
+        <p>{t('playground.emptyRepoText')}</p>
         <p class="pg-empty-hint">
-          Useful for testing empty-state UI: branch views, log views, the
-          "create your first commit" affordance, etc.
+          {t('playground.emptyRepoHint')}
         </p>
       </div>
     </div>
   </div>
+
+  <script type="application/json" id="pg-i18n" set:html={JSON.stringify(clientI18n)}></script>
 </div>
 
 <style>
@@ -556,6 +573,17 @@ const orderedKinds = [
   import { computeLanes } from '../lib/graph-layout.mjs'
   import scenariosRaw from '../data/scenarios.json'
 
+  // ── i18n (rendered server-side into a JSON island, see pg-i18n above) ───────
+
+  const i18nEl = document.getElementById('pg-i18n')
+  const I18N = i18nEl
+    ? JSON.parse(i18nEl.textContent || '{}')
+    : {
+        hash: 'hash', refs: 'refs', subject: 'subject', author: 'author', date: 'date', parents: 'parents',
+        clickToCopy: 'Click to copy', copied: 'copied!',
+        commitLabelOne: 'commit', commitLabelOther: 'commits',
+      }
+
   // ── Constants ──────────────────────────────────────────────────────────────
 
   const LANE_COLORS = ['#38bdf8', '#4ade80', '#f59e0b', '#a78bfa', '#fb7185', '#34d399', '#818cf8']
@@ -752,12 +780,12 @@ const orderedKinds = [
     hashEl.style.color = color
     hashEl.style.fontFamily = 'var(--gs-mono)'
     hashEl.textContent = node.hash
-    hashEl.title = 'Click to copy'
+    hashEl.title = I18N.clickToCopy
     hashEl.style.cursor = 'pointer'
     hashEl.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(node.hash)
-        hashEl.textContent = 'copied!'
+        hashEl.textContent = I18N.copied
         setTimeout(() => { hashEl.textContent = node.hash }, 1200)
       } catch { /* ignore */ }
     })
@@ -765,21 +793,21 @@ const orderedKinds = [
     hashRow.className = 'pg-detail-row'
     const hashLabel = document.createElement('span')
     hashLabel.className = 'pg-detail-label'
-    hashLabel.textContent = 'hash'
+    hashLabel.textContent = I18N.hash
     hashRow.appendChild(hashLabel)
     hashRow.appendChild(hashEl)
     detailEl.appendChild(hashRow)
 
     if (refs.length > 0) {
       const refsHtml = refs.map((r) => `<span class="pg-ref-badge pg-ref-${r.type}">${r.name}</span>`).join('')
-      detailEl.appendChild(row('refs', refsHtml))
+      detailEl.appendChild(row(I18N.refs, refsHtml))
     }
 
-    if (node.subject) detailEl.appendChild(row('subject', escapeHtml(node.subject)))
-    if (node.author) detailEl.appendChild(row('author', escapeHtml(node.author)))
-    if (node.date) detailEl.appendChild(row('date', escapeHtml(node.date.slice(0, 19).replace('T', ' '))))
+    if (node.subject) detailEl.appendChild(row(I18N.subject, escapeHtml(node.subject)))
+    if (node.author) detailEl.appendChild(row(I18N.author, escapeHtml(node.author)))
+    if (node.date) detailEl.appendChild(row(I18N.date, escapeHtml(node.date.slice(0, 19).replace('T', ' '))))
     if (node.parents && node.parents.length > 0) {
-      detailEl.appendChild(row('parents', node.parents.map((p) => `<code>${p.slice(0, 9)}</code>`).join(' ')))
+      detailEl.appendChild(row(I18N.parents, node.parents.map((p) => `<code>${p.slice(0, 9)}</code>`).join(' ')))
     }
   }
 
@@ -808,7 +836,8 @@ const orderedKinds = [
     const commits = scenario.commits ?? []
     const cntEl = document.createElement('span')
     cntEl.style.cssText = 'font-size:0.65rem;color:var(--sl-color-gray-3);font-family:var(--gs-mono)'
-    cntEl.textContent = `${commits.length} commit${commits.length === 1 ? '' : 's'}`
+    const countLabel = commits.length === 1 ? I18N.commitLabelOne : I18N.commitLabelOther
+    cntEl.textContent = `${commits.length} ${countLabel}`
     meta.appendChild(cntEl)
 
     ;(scenario.tags ?? []).forEach((t) => {

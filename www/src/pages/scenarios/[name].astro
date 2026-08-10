@@ -26,6 +26,11 @@ describeWithScenario('${s.name}', (getRepo) => {
     // your assertions here
   })
 })`
+
+const { t } = Astro.locals
+// Note: this route has no per-locale variants yet (unlike the docs pages),
+// so links stay unprefixed — `Astro.locals.starlightRoute` isn't available
+// this early in a non-Starlight-routed page's frontmatter anyway.
 ---
 
 <StarlightPage
@@ -42,14 +47,14 @@ describeWithScenario('${s.name}', (getRepo) => {
 
   {s.description && (
     <section class="sp-section">
-      <h2 class="sp-section-label">Description</h2>
+      <h2 class="sp-section-label">{t('scenarioPage.description')}</h2>
       <pre class="sp-description">{s.description}</pre>
     </section>
   )}
 
   {(s.contracts ?? []).length > 0 && (
     <section class="sp-section">
-      <h2 class="sp-section-label">Contracts</h2>
+      <h2 class="sp-section-label">{t('scenarioPage.contracts')}</h2>
       <ul class="sp-contracts">
         {(s.contracts ?? []).map((c) => <li>{c}</li>)}
       </ul>
@@ -58,16 +63,16 @@ describeWithScenario('${s.name}', (getRepo) => {
 
   {(s.tags ?? []).length > 0 && (
     <section class="sp-section">
-      <h2 class="sp-section-label">Tags</h2>
+      <h2 class="sp-section-label">{t('scenarioPage.tags')}</h2>
       <div class="sp-tags">
-        {(s.tags ?? []).map((t) => <span class="sp-tag">{t}</span>)}
+        {(s.tags ?? []).map((tag) => <span class="sp-tag">{tag}</span>)}
       </div>
     </section>
   )}
 
   {(s.branches ?? []).length > 0 && (
     <section class="sp-section">
-      <h2 class="sp-section-label">Branches</h2>
+      <h2 class="sp-section-label">{t('scenarioPage.branches')}</h2>
       <div class="sp-branches">
         {(s.branches ?? []).map((b) => <code class="sp-branch">{b}</code>)}
       </div>
@@ -75,42 +80,42 @@ describeWithScenario('${s.name}', (getRepo) => {
   )}
 
   <section class="sp-section">
-    <h2 class="sp-section-label">Use it</h2>
+    <h2 class="sp-section-label">{t('scenarioPage.useIt')}</h2>
     <div class="sp-tabs" role="tablist">
-      <button class="sp-tab active" data-tab="lib" role="tab" aria-selected="true">Library</button>
-      <button class="sp-tab" data-tab="cli" role="tab" aria-selected="false">CLI</button>
-      <button class="sp-tab" data-tab="jest" role="tab" aria-selected="false">Jest</button>
+      <button class="sp-tab active" data-tab="lib" role="tab" aria-selected="true">{t('scenarioPage.tabLibrary')}</button>
+      <button class="sp-tab" data-tab="cli" role="tab" aria-selected="false">{t('scenarioPage.tabCli')}</button>
+      <button class="sp-tab" data-tab="jest" role="tab" aria-selected="false">{t('scenarioPage.tabJest')}</button>
     </div>
     <div class="sp-tab-panels">
       <div class="sp-tab-panel" data-panel="lib">
         <pre class="sp-code"><code>{libSnippet}</code></pre>
-        <button class="sp-copy" data-copy={libSnippet}>Copy</button>
+        <button class="sp-copy" data-copy={libSnippet} data-copied-label={t('scenarioPage.copiedLabel')}>{t('scenarioPage.copy')}</button>
       </div>
       <div class="sp-tab-panel" data-panel="cli" hidden>
         <pre class="sp-code"><code>{cliSnippet}</code></pre>
-        <button class="sp-copy" data-copy={cliSnippet}>Copy</button>
+        <button class="sp-copy" data-copy={cliSnippet} data-copied-label={t('scenarioPage.copiedLabel')}>{t('scenarioPage.copy')}</button>
       </div>
       <div class="sp-tab-panel" data-panel="jest" hidden>
         <pre class="sp-code"><code>{jestSnippet}</code></pre>
-        <button class="sp-copy" data-copy={jestSnippet}>Copy</button>
+        <button class="sp-copy" data-copy={jestSnippet} data-copied-label={t('scenarioPage.copiedLabel')}>{t('scenarioPage.copy')}</button>
       </div>
     </div>
   </section>
 
   {(s.graph ?? []).length > 0 ? (
     <section class="sp-section">
-      <h2 class="sp-section-label">Commit graph</h2>
+      <h2 class="sp-section-label">{t('scenarioPage.commitGraph')}</h2>
       <pre class="sp-graph"><code>{(s.graph ?? []).join('\n')}</code></pre>
     </section>
   ) : (
     <section class="sp-section">
-      <h2 class="sp-section-label">Commit graph</h2>
-      <p class="sp-empty-graph">No commits — this scenario starts with an unborn HEAD.</p>
+      <h2 class="sp-section-label">{t('scenarioPage.commitGraph')}</h2>
+      <p class="sp-empty-graph">{t('scenarioPage.emptyGraphText')}</p>
     </section>
   )}
 
   <p class="sp-back">
-    ← <a href="/docs/scenarios/browse">Back to Scenario Browser</a>
+    ← <a href="/docs/scenarios/browse">{t('scenarioPage.backToBrowser')}</a>
   </p>
 </StarlightPage>
 
@@ -414,7 +419,7 @@ describeWithScenario('${s.name}', (getRepo) => {
       try {
         await navigator.clipboard.writeText(payload)
         const orig = btn.textContent
-        btn.textContent = 'Copied!'
+        btn.textContent = btn.dataset.copiedLabel || 'Copied!'
         btn.classList.add('copied')
         setTimeout(() => {
           btn.textContent = orig
