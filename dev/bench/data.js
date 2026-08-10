@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785682633412,
+  "lastUpdate": 1786403949808,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2497,6 +2497,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1255.21,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ddcc0d812f12e78653a5453c416c85ea464b8a72",
+          "message": "Merge pull request #141 from gfargo/agent/site-i18n-review-44a206\n\nwww: add sitemap, Starlight i18n scaffold, CJK font fallback",
+          "timestamp": "2026-08-10T19:17:22-04:00",
+          "tree_id": "656d46ffba8dc780bb018ff8c1b07a30ffee5b23",
+          "url": "https://github.com/gfargo/git-scenarios/commit/ddcc0d812f12e78653a5453c416c85ea464b8a72"
+        },
+        "date": 1786403948787,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 169.74,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 953.21,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7424.12,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3410.01,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1237.97,
             "unit": "ms"
           }
         ]
