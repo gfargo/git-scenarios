@@ -10,16 +10,20 @@
  * size — distinct from the mono UI elsewhere on the page.
  */
 import Default from '@astrojs/starlight/components/SiteTitle.astro'
+
+const { locale } = Astro.locals.starlightRoute
+const { t } = Astro.locals
+const withLocale = (path: string) => (locale ? `/${locale}${path}` : path)
 ---
 
 <div class="site-title-with-nav">
   <Default {...Astro.props}><slot /></Default>
-  <nav class="header-nav-links" aria-label="Primary navigation">
-    <a href="/docs/quick-start">Quick&nbsp;start</a>
-    <a href="/docs/scenarios/browse">Browse</a>
-    <a href="/docs/atoms/overview">Atoms</a>
-    <a href="/docs/architecture">Architecture</a>
-    <a href="/docs/changelog">Changelog</a>
+  <nav class="header-nav-links" aria-label={t('nav.ariaLabel')}>
+    <a href={withLocale('/docs/quick-start')}>{t('nav.quickStart')}</a>
+    <a href={withLocale('/docs/scenarios/browse')}>{t('nav.browse')}</a>
+    <a href={withLocale('/docs/atoms/overview')}>{t('nav.atoms')}</a>
+    <a href={withLocale('/docs/architecture')}>{t('nav.architecture')}</a>
+    <a href={withLocale('/docs/changelog')}>{t('nav.changelog')}</a>
   </nav>
 </div>
 

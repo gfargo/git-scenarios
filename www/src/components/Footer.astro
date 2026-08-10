@@ -9,41 +9,45 @@
  * every page gets the project links.
  */
 import Default from '@astrojs/starlight/components/Footer.astro'
+
+const { locale } = Astro.locals.starlightRoute
+const { t } = Astro.locals
+const withLocale = (path: string) => (locale ? `/${locale}${path}` : path)
 ---
 
 <Default {...Astro.props}><slot /></Default>
 
 <footer class="site-footer" aria-labelledby="site-footer-heading">
-  <h2 id="site-footer-heading" class="visually-hidden">Site footer</h2>
+  <h2 id="site-footer-heading" class="visually-hidden">{t('footer.heading')}</h2>
   <div class="site-footer-grid">
     <div class="site-footer-col">
-      <span class="site-footer-label">Project</span>
+      <span class="site-footer-label">{t('footer.project')}</span>
       <ul>
         <li><a href="https://github.com/gfargo/git-scenarios">GitHub</a></li>
         <li><a href="https://www.npmjs.com/package/@gfargo/git-scenarios">npm</a></li>
-        <li><a href="https://github.com/gfargo/git-scenarios/blob/main/LICENSE">License (MIT)</a></li>
+        <li><a href="https://github.com/gfargo/git-scenarios/blob/main/LICENSE">{t('footer.licenseColumnLabel')}</a></li>
       </ul>
     </div>
     <div class="site-footer-col">
-      <span class="site-footer-label">Documentation</span>
+      <span class="site-footer-label">{t('footer.documentation')}</span>
       <ul>
-        <li><a href="/docs/quick-start">Quick start</a></li>
-        <li><a href="/docs/scenarios/browse">Browse scenarios</a></li>
-        <li><a href="/docs/atoms/overview">Atom reference</a></li>
-        <li><a href="/docs/architecture">Architecture</a></li>
+        <li><a href={withLocale('/docs/quick-start')}>{t('nav.quickStart')}</a></li>
+        <li><a href={withLocale('/docs/scenarios/browse')}>{t('footer.browseScenarios')}</a></li>
+        <li><a href={withLocale('/docs/atoms/overview')}>{t('footer.atomReference')}</a></li>
+        <li><a href={withLocale('/docs/architecture')}>{t('nav.architecture')}</a></li>
       </ul>
     </div>
     <div class="site-footer-col">
-      <span class="site-footer-label">Community</span>
+      <span class="site-footer-label">{t('footer.community')}</span>
       <ul>
-        <li><a href="https://github.com/gfargo/git-scenarios/issues">Report an issue</a></li>
-        <li><a href="https://github.com/gfargo/git-scenarios/discussions">Discussions</a></li>
-        <li><a href="https://github.com/gfargo/git-scenarios/blob/main/CONTRIBUTING.md">Contributing</a></li>
-        <li><a href="/docs/changelog">Release notes</a></li>
+        <li><a href="https://github.com/gfargo/git-scenarios/issues">{t('footer.reportIssue')}</a></li>
+        <li><a href="https://github.com/gfargo/git-scenarios/discussions">{t('footer.discussions')}</a></li>
+        <li><a href="https://github.com/gfargo/git-scenarios/blob/main/CONTRIBUTING.md">{t('footer.contributing')}</a></li>
+        <li><a href={withLocale('/docs/changelog')}>{t('footer.releaseNotes')}</a></li>
       </ul>
     </div>
     <div class="site-footer-col">
-      <span class="site-footer-label">Author</span>
+      <span class="site-footer-label">{t('footer.author')}</span>
       <ul>
         <li><a href="https://github.com/gfargo">@gfargo</a></li>
         <li><a href="https://griffen.codes">griffen.codes</a></li>
@@ -52,9 +56,9 @@ import Default from '@astrojs/starlight/components/Footer.astro'
   </div>
 
   <div class="site-footer-meta">
-    <span>Released under the <a href="https://github.com/gfargo/git-scenarios/blob/main/LICENSE">MIT License</a>.</span>
+    <span>{t('footer.releasedUnderPrefix')} <a href="https://github.com/gfargo/git-scenarios/blob/main/LICENSE">{t('footer.mitLicenseLink')}</a>{t('footer.releasedUnderSuffix')}</span>
     <span class="site-footer-build-info">
-      Site built with <a href="https://starlight.astro.build">Starlight</a>.
+      {t('footer.builtWithPrefix')} <a href="https://starlight.astro.build">Starlight</a>{t('footer.builtWithSuffix')}
     </span>
   </div>
 </footer>

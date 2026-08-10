@@ -28,14 +28,16 @@ const orderedKinds = [
   ...KIND_ORDER.filter((k) => kinds.includes(k)),
   ...kinds.filter((k) => !KIND_ORDER.includes(k)),
 ]
+
+const { t } = Astro.locals
 ---
 
 <div class="scenario-browser">
   <div class="filters">
     <div class="filter-group">
-      <label class="filter-label">Kind</label>
+      <label class="filter-label">{t('browser.labelKind')}</label>
       <div class="filter-chips" data-filter-group="kind">
-        <button class="chip chip-kind active" data-value="">All ({scenarios.length})</button>
+        <button class="chip chip-kind active" data-value="">{t('browser.filterAll', { count: scenarios.length })}</button>
         {orderedKinds.map((k) => (
           <button class="chip chip-kind" data-value={k}>
             {k} ({scenarios.filter((s) => s.kind === k).length})
@@ -45,13 +47,13 @@ const orderedKinds = [
     </div>
 
     <div class="filter-group">
-      <label class="filter-label">Tags</label>
+      <label class="filter-label">{t('browser.labelTags')}</label>
       <div class="filter-chips" data-filter-group="tag">
-        {allTags.map((t) => {
-          const count = scenarios.filter((s) => (s.tags ?? []).includes(t)).length
+        {allTags.map((t2) => {
+          const count = scenarios.filter((s) => (s.tags ?? []).includes(t2)).length
           return (
-            <button class="chip chip-tag" data-value={t}>
-              {t} <span class="chip-count">{count}</span>
+            <button class="chip chip-tag" data-value={t2}>
+              {t2} <span class="chip-count">{count}</span>
             </button>
           )
         })}
@@ -59,19 +61,19 @@ const orderedKinds = [
     </div>
 
     <div class="filter-group">
-      <label class="filter-label" for="scenario-search">Search</label>
+      <label class="filter-label" for="scenario-search">{t('browser.labelSearch')}</label>
       <input
         id="scenario-search"
         type="search"
-        placeholder="Filter by name, summary, or contract…"
+        placeholder={t('browser.searchPlaceholder')}
         autocomplete="off"
         spellcheck="false"
       />
     </div>
 
     <div class="filter-meta">
-      <span class="result-count" data-result-count>{scenarios.length}</span> of {scenarios.length} scenarios
-      <button class="reset-btn" data-reset hidden>Reset filters</button>
+      <span class="result-count" data-result-count>{scenarios.length}</span> {t('browser.resultCountSuffix', { total: scenarios.length })}
+      <button class="reset-btn" data-reset hidden>{t('browser.resetFilters')}</button>
     </div>
   </div>
 
@@ -85,7 +87,7 @@ const orderedKinds = [
         data-search={[s.name, s.summary, ...(s.contracts ?? [])].join(' ').toLowerCase()}
       >
         <div class="scenario-header">
-          <a href={`/scenarios/${s.name}`} class="scenario-name-link" title={`View permalink for ${s.name}`}>
+          <a href={`/scenarios/${s.name}`} class="scenario-name-link" title={t('browser.viewPermalinkTitle', { name: s.name })}>
             <code class="scenario-name">{s.name}</code>
           </a>
           <span class={`scenario-kind kind-${s.kind}`}>{s.kind}</span>
@@ -93,14 +95,14 @@ const orderedKinds = [
         <p class="scenario-summary">{s.summary}</p>
         {(s.tags ?? []).length > 0 && (
           <div class="scenario-tags">
-            {(s.tags ?? []).map((t) => (
-              <span class="scenario-tag" data-tag={t}>{t}</span>
+            {(s.tags ?? []).map((tag) => (
+              <span class="scenario-tag" data-tag={tag}>{tag}</span>
             ))}
           </div>
         )}
         {(s.contracts ?? []).length > 0 && (
           <details class="scenario-contracts">
-            <summary>{(s.contracts ?? []).length} contract{(s.contracts ?? []).length === 1 ? '' : 's'}</summary>
+            <summary>{t('browser.contractsCount', { count: (s.contracts ?? []).length })}</summary>
             <ul>
               {(s.contracts ?? []).map((c) => (
                 <li>{c}</li>
@@ -110,16 +112,26 @@ const orderedKinds = [
         )}
         {(s.graph ?? []).length > 0 && (
           <details class="scenario-graph">
-            <summary>commit graph · {(s.graph ?? []).length} line{(s.graph ?? []).length === 1 ? '' : 's'}</summary>
+            <summary>{t('browser.graphLineCount', { count: (s.graph ?? []).length })}</summary>
             <pre class="graph-pre"><code>{(s.graph ?? []).join('\n')}</code></pre>
           </details>
         )}
         <div class="scenario-actions">
-          <button class="copy-btn" data-copy={`spinUpScenario('${s.name}')`} title="Copy spinUpScenario call">
-            Copy spinUpScenario
+          <button
+            class="copy-btn"
+            data-copy={`spinUpScenario('${s.name}')`}
+            data-copied-label={t('browser.copiedLabel')}
+            title={t('browser.copySpinUpTitle')}
+          >
+            {t('browser.copySpinUpButton')}
           </button>
-          <button class="copy-btn" data-copy={`npx git-scenarios create ${s.name}`} title="Copy CLI command">
-            Copy CLI cmd
+          <button
+            class="copy-btn"
+            data-copy={`npx git-scenarios create ${s.name}`}
+            data-copied-label={t('browser.copiedLabel')}
+            title={t('browser.copyCliTitle')}
+          >
+            {t('browser.copyCliButton')}
           </button>
         </div>
       </li>
@@ -127,8 +139,9 @@ const orderedKinds = [
   </ul>
 
   <div class="empty-state" data-empty-state hidden>
-    <p>No scenarios match the current filters.</p>
-    <button class="reset-btn" data-reset>Reset filters</button>
+    <span class="empty-state-kicker">{t('browser.noResultsKicker')}</span>
+    <p>{t('browser.emptyStateText')}</p>
+    <button class="reset-btn" data-reset>{t('browser.resetFilters')}</button>
   </div>
 </div>
 
@@ -620,8 +633,7 @@ const orderedKinds = [
     margin: 0 0 1rem 0;
   }
 
-  .empty-state::before {
-    content: 'no results';
+  .empty-state-kicker {
     display: block;
     font-size: 0.65rem;
     text-transform: uppercase;
@@ -747,7 +759,7 @@ const orderedKinds = [
         try {
           await navigator.clipboard.writeText(payload)
           const orig = btn.textContent
-          btn.textContent = 'Copied!'
+          btn.textContent = btn.dataset.copiedLabel || 'Copied!'
           btn.classList.add('copied')
           setTimeout(() => {
             btn.textContent = orig
