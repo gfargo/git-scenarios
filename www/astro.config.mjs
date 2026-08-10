@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
 import vercel from '@astrojs/vercel'
+import sitemap from '@astrojs/sitemap'
 
 export default defineConfig({
   site: 'https://git-scenarios.griffen.codes',
@@ -9,6 +10,7 @@ export default defineConfig({
     webAnalytics: { enabled: true },
   }),
   integrations: [
+    sitemap(),
     starlight({
       title: 'git-scenarios',
       description: 'Spin up real git repositories in any state, deterministically. Composable atoms for merge conflicts, submodules, multiple remotes, and more.',
@@ -44,10 +46,14 @@ export default defineConfig({
           tag: 'link',
           attrs: {
             rel: 'stylesheet',
-            href: 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap',
+            href: 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Noto+Sans+SC:wght@300;400;500;700&display=swap',
           },
         },
         // Open Graph
+        {
+          tag: 'meta',
+          attrs: { property: 'og:locale', content: 'en_US' },
+        },
         {
           tag: 'meta',
           attrs: { property: 'og:image', content: 'https://git-scenarios.griffen.codes/og-image.png' },
@@ -132,6 +138,17 @@ export default defineConfig({
       ],
       social: {
         github: 'https://github.com/gfargo/git-scenarios',
+      },
+      defaultLocale: 'root',
+      locales: {
+        root: {
+          label: 'English',
+          lang: 'en',
+        },
+        'zh-cn': {
+          label: '简体中文',
+          lang: 'zh-CN',
+        },
       },
       customCss: ['./src/styles/custom.css'],
       components: {
