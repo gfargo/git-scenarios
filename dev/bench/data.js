@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786407869899,
+  "lastUpdate": 1786452460645,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2742,6 +2742,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1136.13,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f2b2cc0e602d38b2121afd8323c5b42a289b04f4",
+          "message": "Merge pull request #144 from gfargo/release-please--branches--main--components--git-scenarios\n\nchore(main): release 1.4.1",
+          "timestamp": "2026-08-11T08:45:51-04:00",
+          "tree_id": "259d0b6fe14adb591c51d5b7a6300a4064bab62c",
+          "url": "https://github.com/gfargo/git-scenarios/commit/f2b2cc0e602d38b2121afd8323c5b42a289b04f4"
+        },
+        "date": 1786452459289,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 169.62,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 957.98,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7483.99,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3412.89,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1239.08,
             "unit": "ms"
           }
         ]
