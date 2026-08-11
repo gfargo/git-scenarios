@@ -4,6 +4,13 @@ All notable changes to `@gfargo/git-scenarios` are documented here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [semver](https://semver.org/).
 
+## [1.4.1](https://github.com/gfargo/git-scenarios/compare/v1.4.0...v1.4.1) (2026-08-11)
+
+
+### Bug Fixes
+
+* **www:** correct zh-CN translation errors found in linguistic review ([dafc7d8](https://github.com/gfargo/git-scenarios/commit/dafc7d839245f0049bf3d12ec8ff879f2f05e1f8))
+
 ## [1.4.0](https://github.com/gfargo/git-scenarios/compare/v1.3.3...v1.4.0) (2026-08-11)
 
 
