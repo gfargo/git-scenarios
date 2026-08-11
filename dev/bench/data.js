@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786405996655,
+  "lastUpdate": 1786407023636,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2595,6 +2595,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1217.8,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "53de36fbc9d595a7c6e366d1ff81a6cd612261a1",
+          "message": "Merge pull request #139 from gfargo/agent/git-scenarios-ci-benchmark-pr-permissions\n\nfix(ci): grant pull-requests: write to the benchmark job",
+          "timestamp": "2026-08-10T20:08:32-04:00",
+          "tree_id": "dd5ec915312a5da037b333ad3b877c8f4eedfe90",
+          "url": "https://github.com/gfargo/git-scenarios/commit/53de36fbc9d595a7c6e366d1ff81a6cd612261a1"
+        },
+        "date": 1786407022963,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 170.55,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 957.36,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7432.79,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3356.84,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1217.96,
             "unit": "ms"
           }
         ]
