@@ -1,6 +1,6 @@
 {
   "name": "@gfargo/git-scenarios",
-  "version": "1.3.3",
+  "version": "1.4.0",
   "description": "Composable atoms for spinning up real git repos in any state — merge conflicts, out-of-date submodules, multiple remotes, in-progress operations, multi-contributor history, and more. For tests, demos, and tool development.",
   "license": "MIT",
   "author": {

@@ -4,6 +4,59 @@ All notable changes to `@gfargo/git-scenarios` are documented here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [semver](https://semver.org/).
 
+## [1.4.0](https://github.com/gfargo/git-scenarios/compare/v1.3.3...v1.4.0) (2026-08-11)
+
+
+### Features
+
+* add spinUpAll() for parallel scenario materialization ([f245e07](https://github.com/gfargo/git-scenarios/commit/f245e0750813b23e7ba544d87c97e5ee8f49f428))
+* add spinUpAll() for parallel scenario materialization ([3a295f1](https://github.com/gfargo/git-scenarios/commit/3a295f1c18409968e4fb49e5ee76209d5a39d1ca)), closes [#42](https://github.com/gfargo/git-scenarios/issues/42)
+* add verifyContracts() for executable scenario contracts ([86acd88](https://github.com/gfargo/git-scenarios/commit/86acd88949b607f1faf2ec85d9545019042f4cea))
+* add verifyContracts() for machine-verifying scenario contracts ([db2fb56](https://github.com/gfargo/git-scenarios/commit/db2fb56b4755cd6ab18ac81de2f7f5c811e6e6b5)), closes [#36](https://github.com/gfargo/git-scenarios/issues/36)
+* **cli:** add `git-scenarios init` command ([4b07bc2](https://github.com/gfargo/git-scenarios/commit/4b07bc26614b17d60c7ffb9cd1096358d232ee4d))
+* **cli:** add `git-scenarios init` command to scaffold custom scenarios ([7c06643](https://github.com/gfargo/git-scenarios/commit/7c06643fc0acb8469ffb729983fc4e6ab56a106d))
+* **scenarios:** add sparse-checkout-monorepo and multi-remote-fetch-conflict ([c58a4c9](https://github.com/gfargo/git-scenarios/commit/c58a4c90be8dcc76c9e600e338174db06e6679fb))
+* **scenarios:** add sparse-checkout-monorepo and multi-remote-fetch-conflict ([02ea920](https://github.com/gfargo/git-scenarios/commit/02ea9204000b3a375252ca59f07205b06bb8cf57))
+* **vitest:** add scenarioTest() convenience for test.extend fixture ([605b32e](https://github.com/gfargo/git-scenarios/commit/605b32ede8577d11db028704de194b112b268955)), closes [#55](https://github.com/gfargo/git-scenarios/issues/55)
+* **vitest:** add scenarioTest() for test.extend fixture API ([dff64ec](https://github.com/gfargo/git-scenarios/commit/dff64eccd26abf6363834d8fb6ad7781f406c2d6))
+* **www:** add sitemap, Starlight i18n scaffold, and CJK font fallback ([1faa517](https://github.com/gfargo/git-scenarios/commit/1faa5171fe9e07a11db10100849be39c3db62b74))
+* **www:** extract hardcoded UI strings into a translation dictionary ([54ffc9b](https://github.com/gfargo/git-scenarios/commit/54ffc9b0805aff3b323524f78de281124ad1414c))
+* **www:** wire remaining components through the i18n translation dictionary ([43fcb99](https://github.com/gfargo/git-scenarios/commit/43fcb9900fae69f70c7e6d301d190f75a5838f1b))
+
+
+### Bug Fixes
+
+* **assert:** inSyncWithUpstream fails when no upstream configured ([#134](https://github.com/gfargo/git-scenarios/issues/134)) ([3ab0ac4](https://github.com/gfargo/git-scenarios/commit/3ab0ac483858130c37cb1b9ec13d1450467c1f53))
+* **atoms:** make commit() throw when nothing is staged ([#135](https://github.com/gfargo/git-scenarios/issues/135)) ([2363e14](https://github.com/gfargo/git-scenarios/commit/2363e14512edc81cfe56b14976f7841f6a947bfb))
+* **atoms:** make stashChanges throw instead of silently no-op ([#137](https://github.com/gfargo/git-scenarios/issues/137)) ([3949c24](https://github.com/gfargo/git-scenarios/commit/3949c2424a18ae53d181148624bd8d7056cd54b0))
+* **atoms:** merge git environment instead of replacing it ([41ea956](https://github.com/gfargo/git-scenarios/commit/41ea95642b109ad98e1e910bffcd1ecc17e18b5e))
+* **atoms:** merge git environment instead of replacing it ([b4dc6d5](https://github.com/gfargo/git-scenarios/commit/b4dc6d56a13c7586853e142802131a670e8df852))
+* **atoms:** resolve git-dir paths via rev-parse instead of hardcoded .git ([#140](https://github.com/gfargo/git-scenarios/issues/140)) ([06e8022](https://github.com/gfargo/git-scenarios/commit/06e8022cde8f94f64be70c4dbd77889e691e0986))
+* **atoms:** restore detached HEAD in onBranch ([#136](https://github.com/gfargo/git-scenarios/issues/136)) ([f2ac185](https://github.com/gfargo/git-scenarios/commit/f2ac185366a525bb493adf51367dbe570b98c303))
+* **ci:** grant pull-requests: write to the benchmark job ([53de36f](https://github.com/gfargo/git-scenarios/commit/53de36fbc9d595a7c6e366d1ff81a6cd612261a1))
+* **ci:** grant pull-requests: write to the benchmark job ([91c7351](https://github.com/gfargo/git-scenarios/commit/91c7351d4e4aeff6ab43077051a4039f2ec418b6))
+* **cli:** replace spawnSync('mv') with cross-platform fs move for create --path ([#138](https://github.com/gfargo/git-scenarios/issues/138)) ([16ed006](https://github.com/gfargo/git-scenarios/commit/16ed00611bff12acdd4870fd12b2c1ed9451c413))
+* prevent temp repo leaks in core API + fix flaky e2e test ([6c7948b](https://github.com/gfargo/git-scenarios/commit/6c7948b7cab4870747d333781c69b42c8a6bc462))
+* prevent temp repo leaks in spinUpScenario/fromScenario + fix flaky e2e test ([c3747a9](https://github.com/gfargo/git-scenarios/commit/c3747a9e4ef38841c30d86cb2cf14a6bb3a89c18))
+* regenerate scenarios-index API report for new scenario exports ([bc0b443](https://github.com/gfargo/git-scenarios/commit/bc0b443f47c4f9056dfdf10d78fbfe065878e7fa))
+* replace flaky temp-dir count assertion with behavioral check ([a2e5f3c](https://github.com/gfargo/git-scenarios/commit/a2e5f3ca39388700f8349b630db95158a9e5f6e2))
+* resolve lint errors and regenerate vitest API report ([f77a84c](https://github.com/gfargo/git-scenarios/commit/f77a84c7fe9872f94cd1666f836af982c0f75479))
+* update etc/index.api.md for new verifyContracts exports ([1ec8b1e](https://github.com/gfargo/git-scenarios/commit/1ec8b1e5e6d0a928858dbba9ff0553a59b5596f1))
+
+
+### Performance
+
+* add spinUpAll serial vs parallel benchmark ([9be50e0](https://github.com/gfargo/git-scenarios/commit/9be50e0e7044ebb5a8d68a0e191d8e76d8ba65c8))
+* add spinUpAll serial vs parallel benchmark ([96c7010](https://github.com/gfargo/git-scenarios/commit/96c70109795748758193ffc57afec6852a10b2a7))
+
+
+### Documentation
+
+* add new-scenario contribution template & checklist ([7bf7374](https://github.com/gfargo/git-scenarios/commit/7bf7374d93f0fd38b15254102ff1e8740a31d852))
+* add new-scenario contribution template & checklist ([040e7bb](https://github.com/gfargo/git-scenarios/commit/040e7bbb2ae796525c36b8aa3807ebb109fa93da)), closes [#60](https://github.com/gfargo/git-scenarios/issues/60)
+* add README sections for new APIs (verifyContracts, spinUpAll, scenarioTest) ([f8f6f53](https://github.com/gfargo/git-scenarios/commit/f8f6f53a8807efc03b44b2c070d5c8aa78c8edbc))
+* add README sections for verifyContracts, spinUpAll, scenarioTest ([6220274](https://github.com/gfargo/git-scenarios/commit/62202749dbcbb6e93bd6b53aadf1490457670a3f))
+
 ## [1.3.3](https://github.com/gfargo/git-scenarios/compare/v1.3.2...v1.3.3) (2026-07-18)
 
 
