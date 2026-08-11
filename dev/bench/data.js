@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786407048643,
+  "lastUpdate": 1786407869899,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2693,6 +2693,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1180.07,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bf73dfae80add033ef0afebe05edfe81b7206003",
+          "message": "Merge pull request #143 from gfargo/fix/www-zh-cn-translation-review\n\nwww: fix zh-CN translation errors from linguistic review",
+          "timestamp": "2026-08-10T20:22:44-04:00",
+          "tree_id": "49c097fd18f4632e66d5a7286f89d4075972e7fc",
+          "url": "https://github.com/gfargo/git-scenarios/commit/bf73dfae80add033ef0afebe05edfe81b7206003"
+        },
+        "date": 1786407868753,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 162.03,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 911.96,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 6928.88,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3183.72,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1136.13,
             "unit": "ms"
           }
         ]
