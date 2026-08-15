@@ -57,9 +57,6 @@ const withLocale = (path: string) => (locale ? `/${locale}${path}` : path)
 
   <div class="site-footer-meta">
     <span>{t('footer.releasedUnderPrefix')} <a href="https://github.com/gfargo/git-scenarios/blob/main/LICENSE">{t('footer.mitLicenseLink')}</a>{t('footer.releasedUnderSuffix')}</span>
-    <span class="site-footer-build-info">
-      {t('footer.builtWithPrefix')} <a href="https://starlight.astro.build">Starlight</a>{t('footer.builtWithSuffix')}
-    </span>
   </div>
 </footer>
 
@@ -131,7 +128,6 @@ const withLocale = (path: string) => (locale ? `/${locale}${path}` : path)
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
     gap: 0.75rem;
     padding: 1rem 0 1.75rem;
     border-top: 1px solid var(--sl-color-hairline-shade);
@@ -145,11 +141,6 @@ const withLocale = (path: string) => (locale ? `/${locale}${path}` : path)
 
   .site-footer-meta a:hover {
     color: var(--gs-cyan, var(--sl-color-accent));
-  }
-
-  .site-footer-build-info {
-    color: var(--sl-color-gray-4);
-    font-size: 0.75rem;
   }
 
   @media (max-width: 50rem) {

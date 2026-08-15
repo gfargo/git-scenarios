@@ -21,8 +21,6 @@
   "footer.releasedUnderPrefix": "Released under the",
   "footer.mitLicenseLink": "MIT License",
   "footer.releasedUnderSuffix": ".",
-  "footer.builtWithPrefix": "Site built with",
-  "footer.builtWithSuffix": ".",
 
   "hero.sectionAriaLabel": "Introduction",
   "hero.labelPackage": "Package",
