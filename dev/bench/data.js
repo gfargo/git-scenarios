@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786452460645,
+  "lastUpdate": 1786799574441,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2791,6 +2791,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1239.08,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "94697b75a489c256751658bf497963c34d649036",
+          "message": "Merge pull request #145 from gfargo/chore/www-cleanup-and-changelog\n\nwww: remove Starlight attribution, update stale changelog page",
+          "timestamp": "2026-08-15T09:11:09-04:00",
+          "tree_id": "b17aa08426c68b5f192099b785617ecaf2d0e23a",
+          "url": "https://github.com/gfargo/git-scenarios/commit/94697b75a489c256751658bf497963c34d649036"
+        },
+        "date": 1786799573369,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 165.01,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 942.5,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7251.12,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3348.82,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1207.28,
             "unit": "ms"
           }
         ]
