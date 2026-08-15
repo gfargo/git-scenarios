@@ -5,6 +5,57 @@ description: Version history and changelog for @gfargo/git-scenarios.
 
 The full changelog lives in [`CHANGELOG.md`](https://github.com/gfargo/git-scenarios/blob/main/CHANGELOG.md). This page summarizes recent releases.
 
+## v1.4.0 — 2026-08-11
+
+Contract verification, parallel batch spin-up, and a scaffolding command for custom scenarios.
+
+### Highlights
+
+- **`verifyContracts(repo, contracts)`** — machine-verify a scenario's declared contracts against a real repo, instead of trusting them as documentation-only assertions.
+- **`spinUpAll(names)`** — materialize multiple scenarios in parallel instead of sequentially.
+- **`git-scenarios init`** — CLI command that scaffolds a new custom scenario file.
+- **`scenarioTest()`** — Vitest `test.extend` fixture convenience wrapper, alongside the existing `describeWithScenario` / `describeEachScenario`.
+- **New scenarios**: `sparse-checkout-monorepo`, `multi-remote-fetch-conflict`
+
+### Fixes
+
+- `inSyncWithUpstream` no longer throws when no upstream is configured
+- `commit()` now throws when nothing is staged, instead of silently no-op-ing
+- `stashChanges` throws instead of silently no-op-ing
+- Git-dir paths resolved via `rev-parse` instead of a hardcoded `.git`
+- Detached HEAD state now restored correctly inside `onBranch`
+- Git environment variables are merged instead of replaced, so custom `GIT_*` env vars set by the caller survive
+
+[Full release notes →](https://github.com/gfargo/git-scenarios/releases/tag/v1.4.0)
+
+## v1.3.1 – v1.3.3 — 2026-07-12 to 2026-07-18
+
+Three patch releases fixing reliability and determinism issues in the scenario cache and commit clock.
+
+- Fixed a leaked temp repo when a scenario's `setup()` throws partway through
+- Fixed the scenario cache serving stale templates for custom (non-built-in) scenarios
+- Fixed annotated-tag timestamps not being pinned, breaking replay determinism across runs
+- Fixed a `shallowAt(depth)` off-by-one boundary bug
+- Fixed CLI boolean flags swallowing the following positional argument
+- Loosened the `engines.node` range to include real Node 22/24 LTS installs
+
+[v1.3.3 release notes →](https://github.com/gfargo/git-scenarios/releases/tag/v1.3.3)
+
+## v1.3.0 — 2026-07-12
+
+The mock factory release. In-memory mocks for every `simple-git` result type — no disk I/O, no real git process, sub-millisecond.
+
+### Highlights
+
+- **Mock factory layer** (`@gfargo/git-scenarios/mocks`) — in-memory objects matching `simple-git`'s type signatures (`StatusResult`, `LogResult`, `BranchSummary`, `DiffResult`). Zero runtime dependencies, <1ms per call.
+- **Functional factories** — `mockStatusResult()`, `mockLogResult()`, `mockBranchSummary()`, `mockDiffResult()` with sensible defaults and partial overrides.
+- **Fluent builders** — `mockStatus().staged('a.ts').modified('b.ts').build()` for incremental construction.
+- **`mockSimpleGit()`** — a Proxy-based stub of the full `SimpleGit` interface, framework-agnostic via a `createMockFn` parameter (`jest.fn`, `vi.fn`, etc).
+- **`mockFromScenario(name)`** — derive mock objects straight from a registered scenario's contracts, without spinning up a real repo.
+- **Pretty-printers** — `printMockStatus()` / `printMockLog()` format mocks as human-readable porcelain output for debugging test failures.
+
+[Full release notes →](https://github.com/gfargo/git-scenarios/releases/tag/v1.3.0)
+
 ## v1.2.0 — 2026-06-28
 
 Ecosystem expansion: an MCP server for AI agents, a VS Code extension, a content-addressed scenario cache for near-instant spin-ups, and new CLI commands for environment health and scenario comparison.

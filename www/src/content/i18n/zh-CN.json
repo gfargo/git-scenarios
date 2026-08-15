@@ -21,8 +21,6 @@
   "footer.releasedUnderPrefix": "基于",
   "footer.mitLicenseLink": "MIT 许可证",
   "footer.releasedUnderSuffix": "发布。",
-  "footer.builtWithPrefix": "网站基于",
-  "footer.builtWithSuffix": "构建。",
 
   "hero.sectionAriaLabel": "简介",
   "hero.labelPackage": "包名",
