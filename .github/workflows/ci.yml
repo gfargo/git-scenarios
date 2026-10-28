@@ -184,6 +184,32 @@ jobs:
           path: reports/mutation/
           retention-days: 30
 
+  # The `test` job installs the locked simple-git 3.x. This job runs the same
+  # build and suite against simple-git 4, which added an environment guard that
+  # rejects an explicit `.env({ GIT_* })` unless it is listed in
+  # `allowEnvironment`. The peer range is `^3.0.0 || ^4.0.0`, so both majors are
+  # supported and both must stay green.
+  test-simple-git-4:
+    name: simple-git 4
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.2'
+          cache: npm
+      - run: npm ci
+      - name: Install simple-git 4
+        run: npm install --no-save simple-git@^4
+      - name: Verify simple-git 4 is the version under test
+        run: |
+          version=$(node -p "JSON.parse(require('fs').readFileSync('node_modules/simple-git/package.json','utf8')).version")
+          echo "simple-git $version"
+          case "$version" in 4.*) ;; *) echo "expected simple-git 4.x" >&2; exit 1 ;; esac
+      - name: Build (typechecks against simple-git 4's typings)
+        run: npm run build
+      - run: npm test
+
   test-git-compat:
     name: git-compat (${{ matrix.git-version }})
     runs-on: ubuntu-latest

@@ -220,7 +220,7 @@
     "deterministic"
   ],
   "peerDependencies": {
-    "simple-git": "^3.0.0"
+    "simple-git": "^3.0.0 || ^4.0.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.4",

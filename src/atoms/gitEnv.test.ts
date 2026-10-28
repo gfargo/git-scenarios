@@ -218,3 +218,95 @@ describe('gitEnv: date pins do not leak onto the shared instance', () => {
     }
   })
 })
+
+/**
+ * simple-git 4 added an environment guard: ambient `GIT_*` variables are
+ * stripped from git children unless listed in `allowEnvironment`, and an
+ * explicit `.env({...})` that names a guarded variable THROWS. The atoms pin
+ * dates through `.env()`, and `gitAt()` forwards the contributor's own
+ * environment, so any ambient `GIT_*` in a developer shell (or in CI) used to
+ * make every commit atom fail on v4: for example
+ * `Use of "GIT_TERMINAL_PROMPT" is blocked by the environment guard`.
+ * These pin that behaviour on both simple-git majors.
+ */
+describe('gitEnv: ambient variables in the contributor\'s shell do not break atoms', () => {
+  /** Set `vars` for the duration of `fn`, restoring the previous values. */
+  async function withEnv(vars: Record<string, string>, fn: () => Promise<void>): Promise<void> {
+    const previous: Record<string, string | undefined> = {}
+    for (const [key, value] of Object.entries(vars)) {
+      previous[key] = process.env[key]
+      process.env[key] = value
+    }
+    try {
+      await fn()
+    } finally {
+      for (const [key, value] of Object.entries(previous)) {
+        if (value === undefined) delete process.env[key]
+        else process.env[key] = value
+      }
+    }
+  }
+
+  it.each([
+    ['GIT_TERMINAL_PROMPT', '0'],
+    ['GIT_OPTIONAL_LOCKS', '0'],
+    ['GIT_SCENARIOS_CACHE_DIR', '/tmp/not-used-by-git'],
+    ['GIT_PAGER_IN_USE', '1'],
+  ])('a commit atom still works with %s set', async (name, value) => {
+    const repo = await createTempGitRepo()
+    try {
+      await withEnv({ [name]: value }, async () => {
+        await chain(
+          addCommit({ message: 'first', files: { 'a.txt': 'a\n' } }),
+          addCommit({ message: 'second', files: { 'b.txt': 'b\n' } }),
+        )(repo)
+      })
+      const subjects = (await repo.git.raw(['log', '--format=%s'])).trim().split('\n')
+      expect(subjects).toEqual(['second', 'first'])
+    } finally {
+      await repo.cleanup()
+    }
+  })
+
+  it('the pinned dates and the withAuthor identity still reach git alongside ambient GIT_* variables', async () => {
+    const repo = await createTempGitRepo()
+    try {
+      await withEnv({ GIT_TERMINAL_PROMPT: '0', GIT_OPTIONAL_LOCKS: '0' }, async () => {
+        await chain(
+          addCommit({ message: 'base', files: { 'a.txt': 'a\n' } }),
+          withAuthor({ name: 'Alice', email: 'alice@example.com' },
+            addCommit({ message: 'authored', files: { 'b.txt': 'b\n' } })),
+        )(repo)
+      })
+      const [subject, author, email, authorDate, committerDate] =
+        (await repo.git.raw(['log', '-1', '--format=%s\t%an\t%ae\t%aI\t%cI'])).trim().split('\t')
+      expect([subject, author, email]).toEqual(['authored', 'Alice', 'alice@example.com'])
+      // The deterministic clock pinned both dates, rather than "now".
+      expect(authorDate).toBe(committerDate)
+      expect(new Date(authorDate).getFullYear()).toBeLessThan(new Date().getFullYear())
+    } finally {
+      await repo.cleanup()
+    }
+  })
+
+  it('a contributor\'s $VISUAL is stripped like $EDITOR, so fixtures stay hermetic', async () => {
+    const repo = await createTempGitRepo()
+    const probe = join(repo.path, 'visual-probe.txt')
+    try {
+      await chain(
+        addCommit({ message: 'base', files: { 'a.txt': 'a\n' } }),
+        installHook('pre-commit',
+          `#!/bin/sh\necho "VISUAL=\${VISUAL:-unset} EDITOR=\${EDITOR:-unset}" > "${probe}"\nexit 0\n`),
+        writeFiles({ 'b.txt': 'b\n' }),
+        stageFiles('b.txt'),
+      )(repo)
+      await withEnv({ VISUAL: 'should-not-leak', EDITOR: 'should-not-leak' }, async () => {
+        await chain(commit('probe'))(repo)
+      })
+      expect(readFileSync(probe, 'utf8').trim()).toBe('VISUAL=unset EDITOR=unset')
+    } finally {
+      rmSync(probe, { force: true })
+      await repo.cleanup()
+    }
+  })
+})
