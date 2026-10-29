@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793232729050,
+  "lastUpdate": 1793235185015,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2889,6 +2889,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1236.57,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41898282+github-actions[bot]@users.noreply.github.com",
+            "name": "github-actions[bot]",
+            "username": "github-actions[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d8bbd5f7552eb12175276499729061eb7d918ad8",
+          "message": "chore(main): release 1.5.0 (#148)\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+          "timestamp": "2026-10-28T20:51:18-04:00",
+          "tree_id": "84a7805a1767a05ed9e4c29f4526f113359e1b65",
+          "url": "https://github.com/gfargo/git-scenarios/commit/d8bbd5f7552eb12175276499729061eb7d918ad8"
+        },
+        "date": 1793235184544,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 171.59,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 968.04,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7593.57,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3468.53,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1269.2,
             "unit": "ms"
           }
         ]
