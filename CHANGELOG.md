@@ -4,6 +4,13 @@ All notable changes to `@gfargo/git-scenarios` are documented here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [semver](https://semver.org/).
 
+## [1.5.0](https://github.com/gfargo/git-scenarios/compare/v1.4.1...v1.5.0) (2026-10-29)
+
+
+### Features
+
+* **atoms:** support simple-git 4 ([#147](https://github.com/gfargo/git-scenarios/issues/147)) ([0d9e8ba](https://github.com/gfargo/git-scenarios/commit/0d9e8ba51f8257c2f59eb301f2cd9fbd91fc9d34)), closes [#146](https://github.com/gfargo/git-scenarios/issues/146)
+
 ## [1.4.1](https://github.com/gfargo/git-scenarios/compare/v1.4.0...v1.4.1) (2026-08-11)
 
 
