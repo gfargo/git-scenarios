@@ -95,7 +95,8 @@ pnpm add --save-dev @gfargo/git-scenarios simple-git
 
 `simple-git` is a `peerDependency` — installed alongside so your
 project picks the version compatible with both this package and any
-other simple-git consumer you have.
+other simple-git consumer you have. Both **simple-git 3 and 4** are
+supported (`^3.0.0 || ^4.0.0`); CI runs the suite against each.
 
 **Node requirement**: `^22.22.2 || ^24.15.0 || >=26.0.0`. The
 package ships both ESM and CJS — use `import` or `require`, both work.

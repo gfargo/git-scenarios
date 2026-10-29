@@ -13,7 +13,7 @@ yarn add --dev @gfargo/git-scenarios simple-git
 pnpm add --save-dev @gfargo/git-scenarios simple-git
 ```
 
-`simple-git` is a peer dependency — installed alongside so your project picks the version compatible with both this package and any other simple-git consumer you have.
+`simple-git` is a peer dependency — installed alongside so your project picks the version compatible with both this package and any other simple-git consumer you have. Both **simple-git 3 and 4** are supported (`^3.0.0 || ^4.0.0`); CI runs the suite against each.
 
 ## Requirements
 

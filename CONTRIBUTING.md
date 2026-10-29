@@ -13,6 +13,28 @@ npm test          # run the full suite
 npm run build     # compile TypeScript
 ```
 
+### Testing against both simple-git majors
+
+The peer range is `simple-git ^3.0.0 || ^4.0.0` and the lockfile installs 3.x,
+so a plain `npm test` exercises v3. CI also runs the suite against v4. To
+reproduce that locally, swap the installed version without touching
+`package.json` or the lockfile:
+
+```bash
+npm install --no-save simple-git@^4
+npm run build && npm test     # typechecks against v4's typings, then runs the suite
+npm ci                        # restore the locked simple-git 3.x
+```
+
+simple-git 4 adds an **environment guard**: ambient `GIT_*` variables are
+stripped from git children unless listed in the `allowEnvironment` option, and
+`.env({...})` throws if it names one that is not listed. Anything here that
+passes `GIT_*` variables explicitly (the commit atoms pin dates this way) must
+build its instance through `gitAt()` / `gitForRepo()` in
+`src/atoms/gitEnv.ts`, which computes `allowEnvironment` from the variables it
+actually passes. A bare `simpleGit(path).env({ GIT_AUTHOR_DATE })` works on v3
+and fails on v4. simple-git 3 ignores the option, so the same code serves both.
+
 ## Project structure
 
 ```

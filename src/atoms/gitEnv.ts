@@ -37,7 +37,7 @@
  * caller's additions.
  */
 
-import { simpleGit, type SimpleGit } from 'simple-git'
+import { simpleGit, type SimpleGit, type SimpleGitOptions } from 'simple-git'
 
 import type { TempGitRepo } from '../tempGitRepo'
 
@@ -80,7 +80,26 @@ const UNSAFE_ENV_KEYS = new Set([
   'PAGER',
   'PREFIX',
   'SSH_ASKPASS',
+  'VISUAL',
 ])
+
+/**
+ * simple-git 4 guards the environment: ambient `GIT_*` variables are stripped
+ * from every git child, and an explicit `.env({...})` that names one throws
+ * `Use of "GIT_AUTHOR_DATE" is blocked by the environment guard` unless it is
+ * listed in the `allowEnvironment` constructor option. Commit atoms pin dates
+ * through `.env()`, and the contributor's own environment is forwarded, so
+ * every `GIT_*` name this module passes must be allow-listed.
+ *
+ * simple-git 3 has no such option (it simply ignores it), so one code path
+ * serves both majors. The option is absent from v3's typings, hence this
+ * local widening instead of an object literal that would fail the excess-
+ * property check when compiled against v3.
+ */
+type SimpleGitOptionsCompat = Partial<SimpleGitOptions> & { allowEnvironment?: string[] }
+
+/** The names simple-git 4's environment guard watches that this module may pass. */
+const GUARDED_ENV_PREFIX = /^GIT_/i
 
 /**
  * `process.env` with the unsafe/git-redirecting keys removed, and
@@ -128,11 +147,16 @@ export function getScopedEnv(repo: object): GitEnv {
  * clone sub-repos).
  */
 export function gitAt(path: string, extra: GitEnv = {}, inherited: GitEnv = {}): SimpleGit {
-  return simpleGit(path).env({
+  const env = {
     ...inheritableProcessEnv(),
     ...inherited,
     ...extra,
-  })
+  }
+  const options: SimpleGitOptionsCompat = {
+    baseDir: path,
+    allowEnvironment: Object.keys(env).filter((key) => GUARDED_ENV_PREFIX.test(key)),
+  }
+  return simpleGit(options).env(env)
 }
 
 /**
