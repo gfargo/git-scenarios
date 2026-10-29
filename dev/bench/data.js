@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786799574441,
+  "lastUpdate": 1793232729050,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2840,6 +2840,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1207.28,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0d9e8ba51f8257c2f59eb301f2cd9fbd91fc9d34",
+          "message": "feat(atoms): support simple-git 4 (#147)\n\nsimple-git 4 added an environment guard: ambient GIT_* variables are\nstripped from every git child, and an explicit .env({...}) that names one\nthrows unless it is listed in the allowEnvironment option. gitAt() pins\ndates and scope identity through .env() and forwards the contributor's own\nenvironment, so on v4 every commit atom failed (683 of 1221 tests).\n\ngitAt() now passes allowEnvironment computed from the GIT_* names it hands\nto git. simple-git 3 ignores the option, so one code path serves both\nmajors; a local options type keeps it compiling against both sets of\ntypings. VISUAL joins EDITOR and PAGER in the stripped set so a\ncontributor's $VISUAL cannot change what a fixture builds.\n\nThe peer range widens to ^3.0.0 || ^4.0.0, CI gains a job that runs the\nbuild and suite against simple-git 4, and CONTRIBUTING explains how to\ntest both majors.\n\nCloses #146",
+          "timestamp": "2026-10-28T20:10:25-04:00",
+          "tree_id": "36fa2338571bfcf70c3ad416c0f392840cc71b5d",
+          "url": "https://github.com/gfargo/git-scenarios/commit/0d9e8ba51f8257c2f59eb301f2cd9fbd91fc9d34"
+        },
+        "date": 1793232728132,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 171.8,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 950.65,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7545.14,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3445.31,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1236.57,
             "unit": "ms"
           }
         ]
