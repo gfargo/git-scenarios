@@ -4,6 +4,13 @@ All notable changes to `@gfargo/git-scenarios` are documented here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [semver](https://semver.org/).
 
+## [1.5.1](https://github.com/gfargo/git-scenarios/compare/v1.5.0...v1.5.1) (2026-10-30)
+
+
+### Bug Fixes
+
+* keep the CLI bins when publishing with newer npm ([#151](https://github.com/gfargo/git-scenarios/issues/151)) ([0c2486f](https://github.com/gfargo/git-scenarios/commit/0c2486f2a7cc742351310879d061b5a83e4d5241))
+
 ## [1.5.0](https://github.com/gfargo/git-scenarios/compare/v1.4.1...v1.5.0) (2026-10-29)
 
 
