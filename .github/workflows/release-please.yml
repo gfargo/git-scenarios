@@ -29,7 +29,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
   # npm Trusted Publishing (OIDC): no NPM_TOKEN secret. The package's
-  # trusted publisher on npmjs.com must name this repo and this workflow file.
+  # trusted publisher on npmjs.com must name this repo and this workflow file,
+  # with the "npm stage publish" permission.
   publish:
     needs: release-please
     if: ${{ always() && (needs.release-please.outputs.release_created == 'true' || github.event_name == 'workflow_dispatch') }}
@@ -50,4 +51,7 @@ jobs:
       - run: npm install -g npm@11
       - run: npm ci
       - run: npm run build
-      - run: npm publish
+      # Staged publish: the trusted publisher grants `npm stage publish`, so
+      # the version waits on npmjs.com until a maintainer approves it with
+      # 2FA (`npm stage approve <stage-id>`).
+      - run: npm stage publish
