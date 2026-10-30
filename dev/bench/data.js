@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793235185015,
+  "lastUpdate": 1793375816689,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2938,6 +2938,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1269.2,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a477173ae9be04e64430613bfe60ae3fa57c79b2",
+          "message": "ci: publish to npm with Trusted Publishing instead of an NPM_TOKEN (#149)",
+          "timestamp": "2026-10-30T11:55:06-04:00",
+          "tree_id": "f3c596cf74c5f719dbca1c9d9b4256f328cd8754",
+          "url": "https://github.com/gfargo/git-scenarios/commit/a477173ae9be04e64430613bfe60ae3fa57c79b2"
+        },
+        "date": 1793375815663,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 167.19,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 940.93,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7553.53,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3416.07,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1201.09,
             "unit": "ms"
           }
         ]
