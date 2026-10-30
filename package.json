@@ -177,8 +177,8 @@
     }
   },
   "bin": {
-    "git-scenarios": "./dist/bin/cli.cjs",
-    "git-scenarios-mcp": "./dist/bin/mcp.cjs"
+    "git-scenarios": "dist/bin/cli.cjs",
+    "git-scenarios-mcp": "dist/bin/mcp.cjs"
   },
   "files": [
     "dist",
