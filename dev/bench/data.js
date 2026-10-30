@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793378498239,
+  "lastUpdate": 1793382364661,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -3036,6 +3036,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1243.27,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0c2486f2a7cc742351310879d061b5a83e4d5241",
+          "message": "fix: keep the CLI bins when publishing with newer npm (#151)\n\nnpm 12 rejects bin paths with a leading ./ and drops the entries, so the\npublished package would have shipped without its git-scenarios and\ngit-scenarios-mcp commands. Pin the publish job to npm 11.",
+          "timestamp": "2026-10-30T13:44:23-04:00",
+          "tree_id": "b7aea12315b27ee5d86fa1c8453a33498951abcc",
+          "url": "https://github.com/gfargo/git-scenarios/commit/0c2486f2a7cc742351310879d061b5a83e4d5241"
+        },
+        "date": 1793382363724,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 169.98,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 944.28,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7149.86,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3306.11,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1172.47,
             "unit": "ms"
           }
         ]
