@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793375816689,
+  "lastUpdate": 1793378498239,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -2987,6 +2987,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1201.09,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "de1a93ab4398e80415e5765faf3f787f66a87993",
+          "message": "chore: updates homepage in package.json (#150)",
+          "timestamp": "2026-10-30T12:39:52-04:00",
+          "tree_id": "376416c893e7feb65d4e8fc94e14dd60c3bb7c77",
+          "url": "https://github.com/gfargo/git-scenarios/commit/de1a93ab4398e80415e5765faf3f787f66a87993"
+        },
+        "date": 1793378496259,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 168.14,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 956.82,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7498.77,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3421.21,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1243.27,
             "unit": "ms"
           }
         ]
