@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793382364661,
+  "lastUpdate": 1793383517468,
   "repoUrl": "https://github.com/gfargo/git-scenarios",
   "entries": {
     "git-scenarios spin-up benchmarks": [
@@ -3085,6 +3085,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spinUpAll-parallel-8",
             "value": 1172.47,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "GhFargo@gmail.com",
+            "name": "Griffen Fargo",
+            "username": "gfargo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "62e272ef1fc3717b224dda9c935b9406560278a1",
+          "message": "ci: stage npm releases for 2FA approval instead of publishing directly (#153)\n\nThe trusted publisher grants npm stage publish, so a direct npm publish is\nrefused with an OIDC 403. Staged versions wait for maintainer approval.",
+          "timestamp": "2026-10-30T14:03:30-04:00",
+          "tree_id": "45afa54926bfaa3f805764fbdda40b66a19616b6",
+          "url": "https://github.com/gfargo/git-scenarios/commit/62e272ef1fc3717b224dda9c935b9406560278a1"
+        },
+        "date": 1793383516625,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "empty-repo",
+            "value": 168.7,
+            "unit": "ms"
+          },
+          {
+            "name": "dirty-many-files",
+            "value": 953.93,
+            "unit": "ms"
+          },
+          {
+            "name": "large-repo",
+            "value": 7428.89,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-serial-8",
+            "value": 3412.29,
+            "unit": "ms"
+          },
+          {
+            "name": "spinUpAll-parallel-8",
+            "value": 1243.63,
             "unit": "ms"
           }
         ]
